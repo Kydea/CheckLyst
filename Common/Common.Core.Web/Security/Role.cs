@@ -8,11 +8,11 @@
 
         public long? PrototypeType { get; set; }
 
-        public string Tag { get; set; }
+        public string Level { get; set; }
 
 	    public override string ToString()
 	    {
-		    return $"{Code} - {PrototypeType} - {Tag}";
+		    return $"{Code}-{PrototypeType}";
 	    }
     }
 }

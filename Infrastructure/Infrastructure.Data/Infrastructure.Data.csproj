@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="IInfrastructureRepository.cs" />
     <Compile Include="InfrastructureRepository.cs" />
+    <Compile Include="ListItems\SettingValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

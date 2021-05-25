@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.AccessControl.Logic.Services;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Terminal.Scheduler;
@@ -18,9 +19,14 @@ namespace CheckListManager.Trail.Terminal
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
-				var service = scope.Resolve<IUserService>();
-				await service.CheckInactiveUsers(CancellationTokenSource.Token);
-				await service.CheckUnchangedPins(CancellationTokenSource.Token);
+				var userService = scope.Resolve<IUserService>();
+                var commonRepository = scope.Resolve<ICommonRepository>();
+                foreach (var company in await commonRepository.GetCompaniesAsync())
+                    if (company.ID > 1)
+                    {
+                        await userService.CheckInactiveUsers(company.ID, CancellationTokenSource.Token);
+                        await userService.CheckUnchangedPins(company.ID, CancellationTokenSource.Token);
+                    }
 			}
 		}
 	}

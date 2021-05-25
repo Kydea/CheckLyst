@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Data
 {
@@ -24,7 +25,10 @@ namespace CheckListManager.Instances.Data
         void SaveExpressionValues(long instanceID, IEnumerable<InstanceExpressionValues> instanceExpressionValues);
         Task ValidateUniqueExpressions(long instance);
         Task<int?> GetActivePrototypeVersion(long prototype);
-        Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState);
+        Task<List<Users>> GetInstanceEditors(long company, long department, long prototypeType, string versionState);
         Task<List<InstanceExpressionValues>> GetNotifications();
+        Task<List<InstanceRelation>> GetParentInstances(long Instance);
+        Task DeleteRelation(long parent, int item);
+        void AddRelation(long parent, int item, long child);
     }
 }

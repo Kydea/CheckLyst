@@ -1,4 +1,4 @@
-create schema "Configuration";
+ocreate schema "Configuration";
 
 create table "Configuration"."Configurations"
 (
@@ -27,8 +27,6 @@ create table "Configuration"."Settings"
 );
 
 insert into "Configuration"."Settings" ("Code") values
-	('InstancesFtpConnection'),
-	('PrototypesFtpConnection'),
 	('LDAPHost'),
 	('SmtpHost'),
 	('SmtpPort'),
@@ -43,7 +41,14 @@ insert into "Configuration"."Settings" ("Code") values
 	('DecimalSeparator'),
 	('RequireUserReason'),
 	('PrototypesAttachmentMaxSizeBytes'),
-	('InstancesAttachmentMaxSizeBytes');
+	('InstancesAttachmentMaxSizeBytes'),
+	('InactivityTimeoutSeconds'),
+	('MaximumNumberOfPasswordFailure'),
+	('MaximumNumberOfPINFailure'),
+	('PINDaysLife'),
+	('WarningUserInactivityDays'),
+	('MaximumUserInactivityDays');
+
 
 create table "Configuration"."SettingValues"
 (

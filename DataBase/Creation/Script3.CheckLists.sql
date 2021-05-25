@@ -22,7 +22,7 @@ create table "CheckLists"."PrototypeTypes"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Company", "Department", upper("Name"));
+create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Department", upper("Name"));
 
 create table "CheckLists"."Prototypes"
 (
@@ -210,8 +210,8 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Unique" int not null,
 	"Exception" boolean not null,
 	"Notification" boolean not null, 
-	"NotificationNote" varchar (100), 
-	"NotificationEmail" varchar (100), 
+	"NotificationNote" varchar (200), 
+	"NotificationEmail" varchar (200), 
 	"NotificationDate" timestamptz, 
 	"Notified" boolean not null,
 
@@ -222,7 +222,7 @@ create table "CheckLists"."InstanceExpressionValues"
 
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
 create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where "Notification" and not "Notified";
-	
+
 create or replace function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint
@@ -263,6 +263,36 @@ begin
 end
 $$
 language plpgsql;
+
+create table "CheckLists"."InstanceRelations"
+(
+	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
+	"Item" int,
+	"Child" bigint references "CheckLists"."Instances" on delete cascade,
+
+	constraint "PK_InstanceRelations" primary key ("Parent", "Item", "Child"),
+
+	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child"),
+
+	"CreatedBy" varchar (60),
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedBy" varchar (60),
+	"ModifiedOn" timestamptz
+);
+
+create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
+
+create table "CheckLists"."InstanceRelations"
+(
+	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
+	"Item" int,
+	constraint "PK_InstanceRelations" primary key ("Parent", "Item"),
+
+	"Child" bigint references "CheckLists"."Instances" on delete cascade,
+	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child")
+);
+
+create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
 
 create table "CheckLists"."PrototypeVersionsHistory"
 (

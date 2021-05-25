@@ -55,13 +55,20 @@ namespace CheckListManager.Prototypes.Terminal
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
         private async Task ProcessMessageAsync(QueueMessage<PrototypesFTPMessage> message, CancellationToken cancellationToken = default(CancellationToken))
@@ -117,11 +124,6 @@ namespace CheckListManager.Prototypes.Terminal
 
         private async Task<FTPConnectionSettings> Send(PrototypesFTPMessage message)
         {
-            ////we are not using company settings from v2.0.0
-            //var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
-            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
             FTPConnectionSettings Settings;

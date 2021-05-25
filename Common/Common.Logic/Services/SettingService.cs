@@ -18,13 +18,41 @@ namespace CheckListManager.Common.Logic.Services
 			_cache = cache;
 		}
 
+        public void Clear(long companyId)
+        {
+            _cache.Remove($"Companies", "CommonRepository");
+            _cache.Remove($"LDAPHost-{companyId}", RegionName);
+            _cache.Remove($"SmtpHost-{companyId}", RegionName);
+            _cache.Remove($"SmtpPort-{companyId}", RegionName);
+            _cache.Remove($"SmtpUsername-{companyId}", RegionName);
+            _cache.Remove($"SmtpPassword-{companyId}", RegionName);
+            _cache.Remove($"EmailSender-{companyId}", RegionName);
+            _cache.Remove($"UserBlockMessage-{companyId}", RegionName);
+            _cache.Remove($"UserBlockWarningMessage-{companyId}", RegionName);
+            _cache.Remove($"SignatureMessage-{companyId}", RegionName);
+            _cache.Remove($"InstanceMessage-{companyId}", RegionName);
+            _cache.Remove($"NotificationMessage-{companyId}", RegionName);
+            _cache.Remove($"PrototypesFtpConnection-{companyId}", RegionName);
+            _cache.Remove($"InstancesFtpConnection-{companyId}", RegionName);
+            _cache.Remove($"DecimalSeparator-{companyId}", RegionName);
+            _cache.Remove($"TimeZone-{companyId}", RegionName);
+            _cache.Remove($"RequireUserReason-{companyId}", RegionName);
+            _cache.Remove($"InactivityTimeoutSeconds-{companyId}", RegionName);
+            _cache.Remove($"MaximumNumberOfPasswordFailure-{companyId}", RegionName);
+            _cache.Remove($"MaximumNumberOfPasswordFailure-{companyId}", RegionName);
+            _cache.Remove($"PINDaysLife-{companyId}", RegionName);
+            _cache.Remove($"WarningUserInactivityDays-{companyId}", RegionName);
+            _cache.Remove($"MaximumUserInactivity-{companyId}", RegionName);
+            _cache.Remove($"PrototypesAttachmentMaxSizeBytes-{companyId}", RegionName);
+            _cache.Remove($"InstancesAttachmentMaxSizeBytes-{companyId}", RegionName);
+        }
+
         public Task<string> LDAPHostAsync(long companyId)
         {
             const string code = "LDAPHost";
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
         }
-
-
+        
         public Task<string> SmtpHostAsync(long companyId)
 		{
 			const string code = "SmtpHost";
@@ -113,6 +141,42 @@ namespace CheckListManager.Common.Logic.Services
         {
 	        const string code = "RequireUserReason";
 	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
+        }
+
+        public Task<int> InactivityTimeoutSecondsAsync(long companyId)
+        {
+            const string code = "InactivityTimeoutSeconds";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> MaximumNumberOfPasswordFailureAsync(long companyId)
+        {
+            const string code = "MaximumNumberOfPasswordFailure";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> MaximumNumberOfPINFailureAsync(long companyId)
+        {
+            const string code = "MaximumNumberOfPasswordFailure";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> PINDaysLifeAsync(long companyId)
+        {
+            const string code = "PINDaysLife";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> WarningUserInactivityDaysAsync(long companyId)
+        {
+            const string code = "WarningUserInactivityDays";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<int> MaximumUserInactivityDaysAsync(long companyId)
+        {
+            const string code = "MaximumUserInactivityDays";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
         public Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId)

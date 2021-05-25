@@ -16,155 +16,151 @@ namespace CheckListManager.Common.Data
             _memoryCache = memoryCache;
         }
 
-        public Task<Companies> GetCompanyAsync(long id)
-            => Entities.Companies.SingleAsync(c => c.ID == id);
+        public Task<Companies> GetCompanyAsync(long id) => 
+            Entities.Companies.SingleAsync(c => c.ID == id);
 
-        public Task<List<ListItems.Company>> GetCompaniesAsync()
-            => _memoryCache.GetOrAddAsync("Companies", key =>
-            Entities.Companies.Where(c => c.ID > 1)
-            .OrderBy(c => c.Name).ThenBy(c => c.ID)
-            .Select(c => new ListItems.Company
-            {
-                ID = c.ID,
-                Name = c.Name,
-                InactivityTimeoutSeconds = c.InactivityTimeoutSeconds
-            }).ToListAsync(), "CommonRepository");
+        public Task<List<ListItems.Company>> GetCompaniesAsync() => 
+            _memoryCache.GetOrAddAsync("Companies", key =>
+                Entities.Companies
+                    .OrderBy(c => c.Name).ThenBy(c => c.ID)
+                    .Select(c => new ListItems.Company
+                    {
+                        ID = c.ID,
+                        Name = c.Name,
+                    }).ToListAsync(), "CommonRepository");
 
-        public Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
+
+        private const string DEPARTMENTS_QUERY =
+            "select d.* from \"Infrastructure\".\"Departments\" d " +
+            "where " +
+                "d.\"Company\" = :company " +
+                "and d.\"ID\" in (select ug.\"Department\" from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) ug)" +
+            "order by d.\"Name\"";
+        public async Task<List<Departments>> GetDepartmentsAsync(IDefaultIdentity identity, string functionGroup, string function)
         {
-            IQueryable<Departments> Departments = Entities.Departments.Where(d => d.Company == identity.CompanyId);
-            if (functionGroup != null)
-                Departments = Departments.Where(d => d.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ));
-            return Departments.ToListAsync();
+            var Departments = await Read<Departments>(DEPARTMENTS_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function });
+            return Departments.ToList();
         }
 
-        public Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
+        private const string PROTOTYPE_TYPES_QUERY =
+            "select pt.*, d.\"Name\" \"DepartmentName\" " +
+            "from " +
+                "\"CheckLists\".\"PrototypeTypes\" pt " +
+                "inner join \"Infrastructure\".\"Departments\" d on pt.\"Department\" = d.\"ID\" " +
+            "where " +
+                "pt.\"Company\" = :company " +
+                "and (:department = -1 or \"Department\" = :department) " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
+                    "where g.\"Department\" = pt.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = pt.\"ID\")" +
+                ")" +
+            "order by pt.\"Name\"";
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
-            IQueryable<PrototypeTypes> PrototypeTypes = Entities.PrototypeTypes.Where(pt => pt.Company == identity.CompanyId && (department < 0 || pt.Department == department));
-            if (functionGroup != null)
-                PrototypeTypes = PrototypeTypes.Where(pt => pt.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ) || pt.Departments.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                    && uf.PrototypeType == null
-                ));
-            return PrototypeTypes.ToListAsync();
+            var PrototypeTypes = await Read<PrototypeTypes>(PROTOTYPE_TYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department});
+            return PrototypeTypes.ToList();
         }
 
-        public async Task<List<Departments>> GetDepartmentsAsync(long companyId)
+        private const string PROTOTYPES_QUERY =
+            "select p.* " +
+            "from \"CheckLists\".\"Prototypes\" p " +
+            "where " +
+                "p.\"Company\" = :company " +
+                "and (:department = -1 or \"Department\" = :department) " +
+                "and (:prototypetype = -1 or \"PrototypeType\" = :prototypeType) " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
+                    "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                ")" +
+            "order by p.\"Name\"";
+        public async Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long department, long prototypeType, string functionGroup, string function)
         {
-            return await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
+            var Prototypes = await Read<Prototypes>(PROTOTYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department, prototypeType });
+            return Prototypes.ToList();
         }
 
-        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId)
+        private const string PROTOTYPE_VERSIONS_QUERY =
+            "select pv.* " +
+            "from " +
+                "\"CheckLists\".\"PrototypeVersions\" pv " +
+                "inner join \"CheckLists\".\"Prototypes\" p on pv.\"Prototype\" = p.\"ID\" " +
+            "where " +
+                "p.\"Company\" = :company " +
+                "and pv.\"Prototype\" = :prototype " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
+                    "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                ")" +
+            "order by pv.\"Version\"";
+        public async Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup, string function)
         {
-            return await Entities.PrototypeTypes.Where(pt => pt.Company == companyId).ToListAsync();
+            var PrototypeVersions = await Read<ListItems.PrototypeVersion>(PROTOTYPE_VERSIONS_QUERY, new { company = identity.CompanyId, user = identity.Code, prototype, functionGroup, function });
+            return PrototypeVersions.ToList();
         }
 
-        public Task<List<Prototypes>> GetPrototypesAsync(IDefaultIdentity identity, long prototypeType, string functionGroup, string function)
+        private const string PROTOTYPE_VERSION_TAGS_QUERY =
+            "select distinct pvt.\"Code\" " +
+            "from " +
+                "\"CheckLists\".\"PrototypeVersionTags\" pvt " +
+                "inner join \"CheckLists\".\"PrototypeVersions\" pv on pvt.\"Prototype\" = pv.\"Prototype\" and pvt.\"Version\" = pv.\"Version\" " +
+                "inner join \"CheckLists\".\"Prototypes\" p on pv.\"Prototype\" = p.\"ID\" " +
+            "where " +
+                "p.\"Company\" = :company " +
+                "and pv.\"Prototype\" = :prototype " +
+                "and (:version = -1 or pv.\"Version\" = :version) " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
+                    "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                ")" +
+            "order by pvt.\"Code\"";
+        public async Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup, string function)
         {
-            IQueryable<Prototypes> Prototypes = Entities.Prototypes.Where(p => p.Company == identity.CompanyId && (prototypeType < 0 || p.PrototypeType == prototypeType));
-            if (functionGroup != null)
-                Prototypes = Prototypes.Where(p => p.PrototypeTypes.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ) || p.Departments.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                    && uf.PrototypeType == null
-                ));
-            if (functionGroup == "Instances")
-                Prototypes = Prototypes.Where(p => p.PrototypeVersions.Any(pv => pv.VersionState == VersionState.Draft || pv.VersionState == VersionState.InSimulation));
-            return Prototypes.ToListAsync();
+            var PrototypeVersions = await Read<string>(PROTOTYPE_VERSION_TAGS_QUERY, new { company = identity.CompanyId, user = identity.Code, prototype, version = version ?? -1, functionGroup, function });
+            return PrototypeVersions.ToList();
         }
 
-        public Task<List<ListItems.PrototypeVersion>> GetPrototypeVersionsAsync(IDefaultIdentity identity, long prototype, string functionGroup, string function)
+        public async Task<List<Users>> GetAppointedUsersAsync(long companyID, string functionGroup, string function, long department, long prototypeType, string levelName, IEnumerable<string> levels)
         {
-            IQueryable<PrototypeVersions> PrototypeVersion = Entities.PrototypeVersions.Where(pv => pv.Prototypes.Company == identity.CompanyId && pv.Prototype == prototype);
-            if (functionGroup != null)
-                PrototypeVersion = PrototypeVersion.Where(pv => pv.Prototypes.PrototypeTypes.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ) || pv.Prototypes.Departments.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                    && uf.PrototypeType == null
-                ));
+            string query =
+                "select u.* " +
+                "from " +
+                    "\"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u " +
+                    (
+                        levels.Any() ?
+                            string.Empty :
+                            " and (" +
+                                $"select \"{levelName}\" " +
+                                "from \"Security\".\"UserLevels\" ul " +
+                                "where " +
+                                    "ul.\"Company\" = u.\"Company\" " +
+                                    "and ul.\"Code\" = u.\"Code\" " +
+                                    "and (ul.\"Department\" is null || ul.\"Department\" = :department) " +
+                                    "and (ul.\"PrototypeType\" is null || ul.\"PrototypeType\" = :prototypeType) " +
+                                    $"and not \"{levelName}\" is null " +
+                                "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
+                                "limit 1" +
+                            $") in ({string.Join(", ", levels.Select(l => l.Replace("\'", "\'\'")))}) "
+                    ) +
+                "order by u.\"Code\"";
 
-            return PrototypeVersion.Select(pv => new ListItems.PrototypeVersion { Version = pv.Version, VersionState = pv.VersionState }).ToListAsync();
+            var users = await Read<Users>(query, new { company = companyID, department, prototypeType, functionGroup, function });
+            return users.ToList();
         }
 
-        public Task<List<string>> GetPrototypeVersionTagsAsync(IDefaultIdentity identity, long prototype, int? version, string functionGroup, string function)
-        {
-            IQueryable<PrototypeVersionTags> PrototypeVersionTags = Entities.PrototypeVersionTags.Where(pv => pv.PrototypeVersions.Prototypes.Company == identity.CompanyId && pv.Prototype == prototype && (version == null || pv.Version == version));
-            if (functionGroup != null)
-                PrototypeVersionTags = PrototypeVersionTags.Where(pvt => pvt.PrototypeVersions.Prototypes.PrototypeTypes.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                ) || pvt.PrototypeVersions.Prototypes.Departments.UserFunctions.Any(uf =>
-                    uf.Company == identity.CompanyId
-                    && uf.User == identity.Code
-                    && uf.FunctionGroup == functionGroup
-                    && uf.Function == function
-                    && uf.PrototypeType == null
-               ));
-            return PrototypeVersionTags.Select(pv => pv.Code).Distinct().ToListAsync();
-        }
+        public async Task<List<Departments>> GetDepartmentsAsync(long companyId) =>
+            await Entities.Departments.Where(d => d.Company == companyId).ToListAsync();
 
-        public Task<List<string>> GetVersionStatesAsync()
-            => _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+        public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long? department = null) =>
+            await Entities.PrototypeTypes.Where(pt => pt.Company == companyId && (department == null || pt.Department == department)).ToListAsync();
 
-        public Task<List<string>> GetInstanceStatesAsync()
-            => _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+        public Task<List<string>> GetVersionStatesAsync() => 
+            _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
 
-
-        public Users GetUser(long CompanyID, string Code)
-        {
-            return Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
-        }
-
-        private IQueryable<Users> GetAppointedUsersQuery(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
-        {
-            return Entities.UserFunctions.Where(uf =>
-                uf.Company == CompanyID
-                && uf.FunctionGroup == FunctionGroup
-                && uf.Function == Function
-                && uf.Department == Department
-                && (uf.PrototypeType == null || uf.PrototypeType == PrototypeType)
-                && (Tags.Count() == 0 || Tags.Contains(uf.Tag))
-            ).Select(uf => uf.Users);
-        }
-
-        public List<Users> GetAppointedUsers(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
-        {
-            return GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToList();
-        }
-
-        public async Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, IEnumerable<string> Tags)
-        {
-            return await GetAppointedUsersQuery(CompanyID, FunctionGroup, Function, Department, PrototypeType, Tags).ToListAsync();
-        }
+        public Task<List<string>> GetInstanceStatesAsync() => 
+            _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
+        
+        public Users GetUser(long CompanyID, string Code) =>
+            Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
 
         public async Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType)
         {

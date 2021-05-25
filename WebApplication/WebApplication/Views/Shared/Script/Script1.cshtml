@@ -108,16 +108,17 @@
     matematici.menu.toggleItemsByRole();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken()) // && !matematici.appMode)
+    if (matematici.tokenManager.getAccessToken())
         matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;
+        if (key == 13 && e.target.type == "textarea") return;
+
         switch (key)
         {
             case 13:
             case 27:
-
                 var
                     selector = key == 13 ? ".DefaultButton:visible" : ".CancelButton:visible",
                     container = $("div.Blip"),

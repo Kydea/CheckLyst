@@ -32,14 +32,14 @@ namespace CheckListManager.Common.Core.Web.Security
 
 		public string Description => Name;
 
-		public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null)
+		public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string level = null)
 		{
             if (string.IsNullOrWhiteSpace(functionGroup) || functionGroup.Contains('#')) throw new ArgumentException($"Invalid function group '{functionGroup}'");
 			return Roles.Any(r =>
 				r.Code.StartsWith(functionGroup + "#" + function)
                 && r.Department == department
                 && r.PrototypeType == prototypeType
-				&& (tag == null || r.Tag == tag)
+				&& (level == null || r.Level == level)
 			);
 		}
 
@@ -54,7 +54,7 @@ namespace CheckListManager.Common.Core.Web.Security
 				Code = roleTokens[0] + '#' + roleTokens[1],
                 Department = roleTokens.Length < 3 || roleTokens[2] == string.Empty ? (int?)null : int.Parse(roleTokens[2]),
                 PrototypeType = roleTokens.Length < 4 || roleTokens[3] == string.Empty ? (int?)null : int.Parse(roleTokens[3]),
-				Tag = roleTokens.Length < 5 ? null : roleTokens[4]
+				Level = roleTokens.Length < 5 ? null : roleTokens[4]
 			};
         }
     }

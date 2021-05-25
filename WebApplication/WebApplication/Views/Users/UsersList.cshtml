@@ -1,0 +1,137 @@
+﻿<div id="UsersListPage">
+    <h1>Users List</h1>
+
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="Icon fa fa-caret-down"></i></a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/AccessControl/Users">
+            <label>
+                <span>User code</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                <span>Name and surname</span>
+                <i class="Icon fal fa-id-card" />
+                <input type="text" name="description" />
+            </label>
+
+            <label>
+                <span>Corporate ID</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="corporateID" />
+            </label>
+
+            <label>
+                <span>Group</span>
+                <i class="Icon fal fa-users" />
+                <input type="text" name="group" />
+            </label>
+
+            <label>
+                <span>Role</span>
+                <i class="Icon fal fa-user-cog" />
+                <input type="text" name="role" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>User code</th>
+                    <th>Name and surname</th>
+                    <th>Email</th>
+                    <th>Corporate ID</th>
+                    <th>Enabled</th>
+                    <th>Last login</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="code"></td>
+                    <td data-column="description"></td>
+                    <td data-column="email"></td>
+                    <td data-column="corporateID"></td>
+                    <td data-column="enabled" data-type="Boolean"></td>
+                    <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var formSelector = "form#Filters";
+
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Users",
+            detailUrl: "@Url.Action("UsersDetail")",
+            filterFormSelector: formSelector,
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "users" }
+            ]
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
+            data: {
+                data: {
+                    name: ""
+                },
+                itemsPerPage: 5000
+            }
+        }).done(function (result) {
+            $(formSelector).data("prototypeTypes", result.data);
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/AccessControl/Roles/GetSyntheticData"
+        }).done(function (result) {
+            var roles = {
+                general: {},
+                prototypes: {},
+                instances: {}
+            }
+            for (var index in result) {
+                var role = result[index]; 
+                roles[!role.functionGroup ? "general" : role.functionGroup.toLowerCase()][role.code] = role;
+            }
+            $(formSelector).data("roles", roles);
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/AccessControl/Groups/GetSyntheticData"
+        }).done(function (result) {
+            $(formSelector).data("groups", result);
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
+        });
+
+        callback.call();
+    };
+</script>

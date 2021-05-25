@@ -28,10 +28,10 @@ namespace CheckListManager.Common.Logic.Services
         public string WebApplicationUrl => _cache.GetOrAdd("WebApplicationUrl", Load<string>, RegionName);
         public string PublicRepositoryUrl => _cache.GetOrAdd("PublicRepositoryUrl", Load<string>, RegionName);
         public int InstanceCloseTimeout => _cache.GetOrAdd("InstanceCloseTimeout", Load<int>, RegionName);
-        public string PrototypesStorageBucket => _cache.GetOrAdd(nameof(PrototypesStorageBucket), Load<string>, RegionName);
-        //public string PrototypesStorageBucket => "c:\\matematici\";
-        public string InstancesStorageBucket => _cache.GetOrAdd(nameof(InstancesStorageBucket), Load<string>, RegionName);
-        //public string InstancesStorageBucket => "c:\\matematici\\";
+        //public string PrototypesStorageBucket => _cache.GetOrAdd(nameof(PrototypesStorageBucket), Load<string>, RegionName);
+        public string PrototypesStorageBucket => "c:\\matematici\\";
+        //public string InstancesStorageBucket => _cache.GetOrAdd(nameof(InstancesStorageBucket), Load<string>, RegionName);
+        public string InstancesStorageBucket => "c:\\matematici\\";
         public string NotificationsEmailAddress => _cache.GetOrAdd(nameof(NotificationsEmailAddress), Load<string>, RegionName);
 
         private T Load<T>(string key)

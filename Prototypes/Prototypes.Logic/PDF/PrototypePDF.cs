@@ -69,7 +69,7 @@ namespace CheckListManager.Prototypes.Logic.PDF
         protected override Task<Template> GenerateTemplateAsync() => Task.FromResult(new Template(this,
             $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version} - {PrototypeVersion.VersionState}"));
 
-        public override string GetFieldValue(ICheckListField Field) => new string('\n', Field.LinesCount);
+        public override string GetFieldValue(ICheckListField Field) => new string('\n', Math.Max(Field.LinesCount, 0));
 
         public override string GetItemDescription(ICheckListItem Item) => Item.Description;
 

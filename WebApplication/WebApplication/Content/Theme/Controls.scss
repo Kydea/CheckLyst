@@ -299,6 +299,10 @@ div.Errors {
     margin-top: $Metric-Control-Space;
     display: none;
     line-height: 1.5;
+
+    &:first-child {
+        margin-top: 0;
+    }
 }
 
 form {
@@ -335,6 +339,11 @@ form {
     }
 
     > a.FiltersLinkButton {
+        display: none;
+    }
+
+    &#Filters > a.FiltersLinkButton {
+        display: block;
         top: 10px;
         right: 10px;
         position: absolute;
@@ -389,7 +398,7 @@ form {
         clear: both;
     }
 
-    > table.Grid {
+    table.Grid {
         margin-top: 3px;
         margin-left: $Metric-Control-Space;
         width: calc(100% - #{$Metric-Control-Space});
@@ -398,6 +407,11 @@ form {
         td {
             position: relative;
         }
+    }
+
+    div.Control {
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
     }
 }
 

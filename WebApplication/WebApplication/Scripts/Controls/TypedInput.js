@@ -4,9 +4,10 @@
         input,
         hoursSelect,
         minutesSelect,
+        dataPicker,
 
         getValue = function () {
-            if (!matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect)) return null;
+            if (!matematici.TypedInput.validate(ttrash - altype, input, hoursSelect, minutesSelect)) return null;
 
             var value = input && (input.value || "").trim();
 
@@ -34,6 +35,7 @@
             if (type != "Time") {
                 input = document.createElement("input");
                 input.setAttribute("type", type == "Boolean" ? "checkbox" : "text");
+                input.setAttribute("autocomplete", "off");
                 input.addEventListener("keypress", function (e) {
                     matematici.TypedInput.keyPress(type, e);
                 });
@@ -41,10 +43,11 @@
                     matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect);
                 });
                 if (readOnly) matematici.controls.setEditable($(input), false);
+                if (options.maxLength) input.setAttribute("maxlength", options.maxLength);
                 container.appendChild(input);
 
                 if (type == "Date" || type == "DateTime")
-                    new matematici.DatePicker(input);
+                    dataPicker = new matematici.DatePicker(input);
             }
 
             if (type == "DateTime" || type == "Time") {
@@ -82,10 +85,40 @@
             }
 
             if (options && options.value) setValue(options.value);
+        },
+
+        destroy = function () {
+            if (input) {
+                input.remove();
+                delete input;
+            }
+
+            if (hoursSelect) {
+                var hoursAutoComplete = matematici.AutoComplete.get(hoursSelect);
+                hoursAutoComplete.destroy();
+                delete hoursAutoComplete;
+                hoursSelect.remove();
+                delete hoursSelect;
+            }
+
+            if (minutesSelect) {
+                var minutesAutoComplete = matematici.AutoComplete.get(minutesSelect);
+                minutesAutoComplete.destroy();
+                delete minutesAutoComplete;
+                minutesSelect.remove();
+                delete minutesSelect;
+            }
+
+            if (dataPicker)
+                dataPicker.destroy();
         };
 
     typedInput.getInput = function () {
         return input;
+    };
+
+    typedInput.getElements = function () {
+        return elements;
     };
 
     typedInput.getHoursSelect = function () {
@@ -106,6 +139,7 @@
 
     typedInput.setValue = setValue;
     typedInput.getValue = getValue;
+    typedInput.destroy = destroy;
 
     setup();
 };

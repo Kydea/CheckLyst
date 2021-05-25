@@ -54,6 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\InfrastructureController.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="Models\Help\Tab.cs" />
     <Compile Include="Models\Help\Field.cs" />
     <Compile Include="Models\Help\HelpPage.cs" />
+    <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Instance.cs" />
     <Compile Include="Models\Prototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,6 +85,7 @@
     <Content Include="Content\Media\Dashboard\Logout.jpg" />
     <Content Include="Content\Media\Dashboard\Pin.jpg" />
     <Content Include="Content\Media\Dashboard\Prototypes.jpg" />
+    <Content Include="Content\Media\Dashboard\Reports.jpg" />
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
@@ -115,6 +119,15 @@
     </Content>
     <Content Include="Content\Theme\CheckListGrid.css">
       <DependentUpon>CheckListGrid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ClausesList.css">
+      <DependentUpon>ClausesList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ColumnsList.css">
+      <DependentUpon>ColumnsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Companies.css">
+      <DependentUpon>Companies.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Content.css">
       <DependentUpon>Content.scss</DependentUpon>
@@ -157,6 +170,9 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.svg" />
+    <Content Include="Content\Theme\GrantsDetailPage.css">
+      <DependentUpon>GrantsDetailPage.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
     </Content>
@@ -224,6 +240,9 @@
     <Content Include="Content\Theme\Prototype.css">
       <DependentUpon>Prototype.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Report.css">
+      <DependentUpon>Report.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
     </Content>
@@ -238,9 +257,6 @@
     </Content>
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\Users.css">
-      <DependentUpon>Users.scss</DependentUpon>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -282,11 +298,13 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
     <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\SQLEditor.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\GrantsDetailPage.js" />
     <Content Include="Scripts\Custom\GridFixedHeader.js" />
     <Content Include="Scripts\Custom\ScriptEditor.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
@@ -337,7 +355,7 @@
     <Content Include="Content\Theme\ShadowPanel.scss" />
     <Content Include="Content\Theme\Accordion.scss" />
     <Content Include="Content\Theme\Popup.scss" />
-    <Content Include="Content\Theme\Users.scss" />
+    <Content Include="Content\Theme\GrantsDetailPage.scss" />
     <Content Include="Content\Theme\ButtonGroup.scss" />
     <Content Include="Content\Theme\Blip.scss" />
     <Content Include="Content\Theme\Dashboard.scss" />
@@ -410,6 +428,10 @@
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.ttf" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
+    <Content Include="Content\Theme\Companies.scss" />
+    <Content Include="Content\Theme\Report.scss" />
+    <Content Include="Content\Theme\ColumnsList.scss" />
+    <Content Include="Content\Theme\ClausesList.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -476,6 +498,11 @@
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
+    <Content Include="Scripts\Reports\ClausesList.js" />
+    <Content Include="Scripts\Reports\ClauseEditor.js" />
+    <Content Include="Scripts\Reports\ColumnsList.js" />
+    <Content Include="Scripts\Reports\ColumnEditor.js" />
+    <Content Include="Scripts\Reports\ReportEditor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -491,8 +518,8 @@
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
-    <Content Include="Views\Users\List.cshtml" />
-    <Content Include="Views\Users\Detail.cshtml" />
+    <Content Include="Views\Users\UsersList.cshtml" />
+    <Content Include="Views\Users\UsersDetail.cshtml" />
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
     <Content Include="Views\Infrastructure\PrototypeTypes\List.cshtml" />
@@ -530,6 +557,21 @@
     <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
     <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
     <Content Include="Views\Prototypes\SourceEditor.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\List.cshtml" />
+    <Content Include="Views\Users\RolesDetail.cshtml" />
+    <Content Include="Views\Users\RolesList.cshtml" />
+    <Content Include="Views\Users\GeneralGrants.cshtml" />
+    <Content Include="Views\Help\Companies.cshtml" />
+    <Content Include="Views\Help\Roles.cshtml" />
+    <Content Include="Views\Help\Groups.cshtml" />
+    <Content Include="Views\Help\FTPServers.cshtml" />
+    <Content Include="Views\Users\GroupsDetail.cshtml" />
+    <Content Include="Views\Users\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Editor.cshtml" />
+    <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\ColumnEditor.cshtml" />
+    <Content Include="Views\Reports\ClauseEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

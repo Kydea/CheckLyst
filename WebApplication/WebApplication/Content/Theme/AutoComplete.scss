@@ -19,21 +19,30 @@ input.AutoComplete {
     &.Red {
         color: $Color-Red-Regular;
     }
+
+    &.Locked {
+        background-color: $Color-Silver-Light;
+    }
 }
 
 input.AutoComplete-Filter {
     min-width: unset !important;
-    position: absolute;
     border-radius: 0 !important;
     margin-top: 0 !important;
     border-top: none !important;
     border-bottom: none !important;
     background-color: $Color-Grey-Light !important;
-    z-index: $Depth-AutoComplete;
     outline: none;
 
+    &:not(.FullHeight) {
+        position: absolute;
+        z-index: $Depth-AutoComplete;
+    }
+
     &.FullHeight {
-        display: none !important;
+        display: block !important;
+        position: static;
+        width: 100% !important;
     }
 }
 
@@ -76,17 +85,24 @@ div.AutoComplete-List {
             }
         }
 
-        &:hover {
-            background: $Color-Silver-Dark !important;
-            text-decoration: none !important;
-        }
-
         &.None {
             i {
                 font-style: normal;
                 color: $Color-Grey-Dark;
             }
         }
+
+        &:hover {
+            text-decoration: none !important;
+        }
+    }
+
+    &:not(.Locked) a:hover {
+        background: $Color-Silver-Dark !important;
+    }
+
+    &.Locked a {
+        cursor: default !important;
     }
 
     &.NoCheck {

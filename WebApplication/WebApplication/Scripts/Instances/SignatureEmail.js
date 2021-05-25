@@ -32,7 +32,7 @@
                 }
                 //select.val(value); //select all by default
 
-                new matematici.AutoComplete(select);
+                new matematici.AutoComplete(select[0]);
 
                 matematici.popup.show({
                     title: "Email notification",

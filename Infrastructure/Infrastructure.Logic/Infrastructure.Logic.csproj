@@ -63,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Companies\CompanySettingsResponse.cs" />
+    <Compile Include="Companies\CompaniesRow.cs" />
+    <Compile Include="Companies\CompaniesRequest.cs" />
+    <Compile Include="Companies\CompaniesResponse.cs" />
     <Compile Include="FTPServers\FTPServersRequest.cs" />
     <Compile Include="FTPServers\FTPServersResponse.cs" />
     <Compile Include="FTPServers\FTPServersRow.cs" />

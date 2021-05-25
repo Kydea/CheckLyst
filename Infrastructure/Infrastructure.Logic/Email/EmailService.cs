@@ -27,15 +27,20 @@ namespace CheckListManager.Infrastructure.Logic.Email
 
         public async Task ProcessEmailMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var messages =
-                await _queueService.ReceiveObjectsAsync<EmailMessage>(QueueName.Email,
-                    cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<EmailMessage>(QueueName.Email, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
         private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message, CancellationToken cancellationToken = default(CancellationToken))
@@ -44,8 +49,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
             {
                 await SendInternal(message.Message);
 
-                var deleteTask =
-                    _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
+                var deleteTask = _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
                 if (message.Message.TrailMessage != null)
                 {
                     var recipients = message.Message.To.Concat(message.Message.Cc).ToArray();

@@ -1,0 +1,95 @@
+﻿<div id="ReportsListPage">
+    <h1>Reports List</h1>
+
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New report</a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Reports/List">
+            <label>
+                <span>Code</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                <span>Description</span>
+                <i class="Icon fal fa-align-left" />
+                <input type="text" name="description" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Report source</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="code"></td>
+                    <td data-column="description"></td>
+                    <td data-column="reportSource"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var
+            editor = matematici.tokenManager.checkRole("Reports#Edit#");
+
+        new matematici.SearchPage({
+            pageName: "Reports",
+            readOnly: true,
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [{ content: "reports" }],
+
+            rowClickHandler: function (row) {
+                var
+                    openEditor = function () {
+                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").code));
+                    },
+                    openViewer = function () {
+                        matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").code));
+                    };
+
+                if (editor) {
+                    var buttons = [
+                        { text: "cancel", icon: "times", cancelButton: true },
+                        { text: "report editor", icon: "pencil", handler: openEditor},
+                        { text: "report viewer", icon: "file-chart-line", handler: openViewer }
+                    ];
+                    matematici.dialog.popupMenu(buttons);
+                } else
+                    openViewer();
+            }
+        });
+
+        if (editor)
+            $("#AddButton").on("click", function () {
+                matematici.navigator.open("@Url.Action("Editor")");
+            });
+        else
+            $("#AddButton").remove();
+        callback.call();
+    };
+</script>

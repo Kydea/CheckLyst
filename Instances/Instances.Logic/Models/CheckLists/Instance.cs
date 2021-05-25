@@ -12,6 +12,7 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Models.ExternalSources;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -47,11 +48,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         Expression.Value?.Value
                     };
 
+            var ChildInstances = this.ChildInstances.Keys.Select(i =>
+            {
+                var InstanceLink = (InstanceLink)cacheObject.Instance.Items[i];
+                return new InstanceRelation
+                {
+                    Item = i,
+                    InstanceCode = InstanceLink.Record.Code,
+                    Description = InstanceLink.Record.Description,
+                    Code = InstanceLink.AttachedInstanceCode,
+                    RelationType = InstanceRelation.RelationTypes.Child
+                };
+            });
+
             return new
             {
                 ReadOnly,
                 Exceptions,
                 ExternalSources = ExternalSources.ToDictionary(k => k.Key, v => v.Value.GetViewModel()),
+                ChildInstances,
                 Header = ((Group)Header).GetViewModel(),
                 Pages = Pages.Select(p => ((Page)p).GetViewModel()),
                 Description,
@@ -86,8 +101,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Formula FileNameFormula { get; } = new Formula();
         public string FileNameFormulaString { get; set; }
         public string FileName => FileNameFormula.Value;
+
+        //ParentInstanceCode and ParentInstanceLinkID are used to keep the parent/child relationship for instances still in draft (not saved)
         public string ParentInstanceCode { get; set; }
         public int? ParentInstanceLinkID { get; set; }
+
+        public Dictionary<int, long> ChildInstances { get; } = new Dictionary<int, long>();
 
         public bool FTPExport { get; set; }
 
@@ -235,11 +254,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             UpdateNodes(this, Roots);
         }
 
-        public void UpdateReadOnly(string userCode, string state)
+        public void UpdateReadOnly(string userCode, string state, bool ignoreNullLock)
         {
             ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
             foreach (var page in Pages)
-                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
+                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress, ignoreNullLock);
         }
 
         [JsonIgnore]
@@ -310,7 +329,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public static string GetYearCode(string VersionState, int? Year) =>
-            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+            VersionState == Common.Data.VersionState.Draft ? "Test" : !Year.HasValue || Year == 0 ? "SE" : (Year?.ToString() ?? "?");
 
         public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>
             $"{PrototypeName}.{Version}.{GetYearCode(VersionState, Year)}.{Number?.ToString() ?? "?"}";

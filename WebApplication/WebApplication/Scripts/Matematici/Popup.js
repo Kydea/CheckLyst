@@ -176,7 +176,7 @@ matematici.popup = function () {
 		},
 
 		center: function () {
-			autoCenter.center();
+			autoCenter && autoCenter.center();
 		},
 
 		addCloseButton: function (handler) {

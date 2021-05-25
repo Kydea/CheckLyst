@@ -65,6 +65,7 @@
                                 || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Group" || element.typeName == "Signature")
                                 || s.interface == "Iterator" && (element.typeName == "Group" && element.iterator)
                                 || s.interface == "Signature" && element.typeName == "Signature"
+                                || s.interface == "InstanceLink" && element.typeName == "InstanceLink"
                             );
                         }
 

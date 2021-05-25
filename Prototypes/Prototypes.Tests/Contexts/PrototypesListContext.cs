@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Prototypes.Data.Models;
 using CheckListManager.Prototypes.Logic.List;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace CheckListManager.Prototypes.Tests.Contexts
 {
     public class PrototypesListContext
     {
-        public ListRequest Request { get; set; }
+        public PrototypeFilters Request { get; set; }
 
-        public PagingResponse<List<ListRow>> Response { get; set; }
+        public PagingResponse<List<PrototypeRecord>> Response { get; set; }
     }
 }

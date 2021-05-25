@@ -37,6 +37,7 @@ using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.ExternalSources;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -94,7 +95,7 @@ namespace CheckListManager.Instances.Logic.Services
         public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData)
         {
             var cacheObject = await GetCacheObjectAsync(company, code, includeData);
-            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState);
+            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState, false);
             return cacheObject;
         }
 
@@ -107,7 +108,7 @@ namespace CheckListManager.Instances.Logic.Services
                     !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                     || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                     || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
             }
             return cacheObject;
         }
@@ -233,7 +234,7 @@ namespace CheckListManager.Instances.Logic.Services
                             await HandleValueChangeAsync(cacheObject, identity.Code, item.Id, parameter.Value);
 
                 cacheObject.Instance.UpdateAll(cacheObject);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
 
                 return cacheObject;
             }
@@ -257,11 +258,13 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckInvalidItems(Child, InvalidItems);
         }
 
-        public async Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity)
+        public async Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity)
         {
             try
             {
-                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+                if (cacheObject == null)
+                    cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+
                 if (cacheObject.ID.HasValue)
                     throw new InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
@@ -311,9 +314,12 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.StateChange);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
-                    cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress);
+                    cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress, false);
 
                     _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
+
+                    foreach (var Relation in cacheObject.Instance.ChildInstances)
+                        _instancesRepository.AddRelation(row.ID, Relation.Key, Relation.Value);
 
                     await _instancesRepository.SaveChangesAsync();
 
@@ -344,7 +350,7 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckListID = cacheObject.ID
                 });
 
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, false);
 
                 return cacheObject;
             }
@@ -407,7 +413,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed);
+                cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -532,7 +538,7 @@ namespace CheckListManager.Instances.Logic.Services
             return Result;
         }
 
-        private async Task UpdateParentInstance(InstanceCacheObject cacheObject, IDefaultIdentity identity)
+        private async Task UpdateParentInstance(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool Refresh)
         {
             if (cacheObject.Instance.ParentInstanceCode != null)
                 try
@@ -543,7 +549,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Code = cacheObject.Instance.ParentInstanceCode,
                         ItemId = cacheObject.Instance.ParentInstanceLinkID,
                         Instance = cacheObject.ID,
-                        Type = EventTypes.RefreshAttachedInstance
+                        Type = Refresh ? EventTypes.RefreshAttachedInstance : EventTypes.AttachInstance
                     });
                     await SaveCacheObjectAsync(parentCacheObject);
                 }
@@ -613,7 +619,7 @@ namespace CheckListManager.Instances.Logic.Services
                             throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
-                        if (!string.IsNullOrEmpty(row.FileName))
+                        if (!row.PrototypeVersions.VersionState.In(VersionState.Draft, VersionState.InSimulation) && !string.IsNullOrEmpty(row.FileName))
                             await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
                             {
                                 Company = identity.CompanyId,
@@ -642,7 +648,7 @@ namespace CheckListManager.Instances.Logic.Services
                         _instanceCache.TouchAsync(cacheObject.Code)
                     );
 
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, true);
 
                 return cacheObject;
             }
@@ -684,7 +690,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 await _instancesRepository.SaveChangesAsync();
-                await UpdateParentInstance(cacheObject, identity);
+                await UpdateParentInstance(cacheObject, identity, true);
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
@@ -840,6 +846,65 @@ namespace CheckListManager.Instances.Logic.Services
             }).ToList();
         }
 
+        public async Task<InstanceLinkParametersResponse> GetInstanceLinkParameters(string code, IDefaultIdentity identity, int itemId)
+        {
+            try
+            {
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
+                if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+                if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                    throw new InstanceException("Access denied");
+                if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item) || !(item is InstanceLink instanceLink))
+                    throw new InstanceException($"InstanceLink {itemId} not found");
+
+                await _instanceCache.TouchAsync(code);
+
+                return new InstanceLinkParametersResponse
+                {
+                    Parameters = instanceLink.Parameters?.Select(p =>
+                    {
+                        string Value = null;
+                        string Error = null;
+                        if (p.ExpressionCode != null)
+                        {
+                            if (cacheObject.Instance.Expressions.TryGetValue(p.ExpressionCode, out var Expression))
+                                Value = Expression.Value?.Value?.ToString();
+                            else
+                                Error = $"Expression {p.ExpressionCode} not found";
+                        }
+                        else if (p?.ElementCode != null)
+                        {
+                            if (!instanceLink.GetBranchElements().TryGetValue(p.ElementCode, out var Element))
+                                Error = $"Element {p.ElementCode} not found";
+                            else if (!(Element is Field Field))
+                                Error = $"Element {p.ElementCode} is not a Field";
+                            else
+                                Value = Field.Value;
+                        }
+                        else
+                            Value = p.Value;
+
+                        return new InstanceLinkParametersResponse.Parameter
+                        {
+                            Name = p.Name,
+                            Value = Value,
+                            Error = Error
+                        };
+                    }).ToList()
+                };
+            }
+            catch (InstanceException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Unable to retrieve the external source data");
+                throw new InstanceException("Unable to retrieve the external source data", e);
+            }
+        }
+
         public async Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string externalSourceCode, int itemId)
         {
             try
@@ -918,9 +983,41 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Unable to retrieve the external source data");
-                throw new InstanceException("Unable to retrieve the external source data", e);
+                Logger.Error(e, "Unable to retrieve the external source rows");
+                throw new InstanceException("Unable to retrieve the external source rows", e);
             }
+        }
+
+        public async Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity)
+        {
+            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
+            if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                throw new InstanceException("Access denied");
+
+            var list = new List<InstanceRelation>();
+            if (cacheObject.ID.HasValue)
+                list = await _instancesRepository.GetParentInstances(cacheObject.ID.Value);
+            if (cacheObject.Instance.ParentInstanceCode != null && cacheObject.Instance.ParentInstanceLinkID.HasValue && !list.Any(r => r.Code == cacheObject.Instance.ParentInstanceCode))
+                try
+                {
+                    var parentCacheObject = await GetCacheObjectAsync(identity.CompanyId, cacheObject.Instance.ParentInstanceCode, true);
+                    list.Add(new InstanceRelation
+                    {
+                        Prototype = parentCacheObject.PrototypeName,
+                        Version = parentCacheObject.Version,
+                        Year = parentCacheObject.Year,
+                        Number = parentCacheObject.Number,
+                        VersionState = parentCacheObject.VersionState,
+                        Description = parentCacheObject.Instance.Description,
+                        ID = parentCacheObject.ID,
+                        Item = cacheObject.Instance.ParentInstanceLinkID.Value,
+                        Code = cacheObject.Instance.ParentInstanceCode,
+                        RelationType = InstanceRelation.RelationTypes.Parent
+                    });
+                }
+                catch { } //the child ignores if the parent instance has been deleted
+            list.ForEach(r => r.InstanceCode = Instance.GetCode(r.Prototype, r.Version, r.VersionState, r.Year, r.Number));
+            return list;
         }
 
         private async Task ExportSignedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
@@ -969,7 +1066,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await _instanceCache.TouchAsync(code);
 
-                return (await _instancesRepository.GetInstanceEditors(cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
+                return (await _instancesRepository.GetInstanceEditors(identity.CompanyId, cacheObject.Department, cacheObject.PrototypeType, cacheObject.VersionState)).Select(u => new InstanceEventRequest.Email
                 {
                     Code = u.Code,
                     Description = u.Description,
@@ -1037,7 +1134,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
                 throw new UnauthorizedAccessException();
 
-            return await Task.FromResult(Instance.InstancesHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            return (await Task.WhenAll(Instance.InstancesHistory.OrderBy(h => h.ID).Select(async h => new HistoryRow
             {
                 ID = h.ID,
                 Date = h.Date,
@@ -1046,7 +1143,7 @@ namespace CheckListManager.Instances.Logic.Services
                 ProposedState = h.WorkFlowApplications == null ? null : InstanceState.Confirmed,
                 Approved = h.WorkFlowApplications?.Approved,
                 Note = h.Note,
-                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                Steps = h.WorkFlowApplications == null ? null : (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
                 {
                     ID = s.ID,
                     Step = s.Step + 1,
@@ -1056,9 +1153,9 @@ namespace CheckListManager.Instances.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
-                }).ToList()
-            }).ToList());
+                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                }))).ToList()
+            }))).ToList();
         }
 
         public async Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request)
@@ -1224,7 +1321,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security), NB: SignatureCheck is before the choice of signer
                 var lockUser = request.Type == "Signature" ? request.Username : identity.Code;
-                cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
+                cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, request.Type == EventTypes.AttachInstance || request.Type == EventTypes.RefreshAttachedInstance);
 
                 stopWatch = Stopwatch.StartNew();
 
@@ -1338,10 +1435,10 @@ namespace CheckListManager.Instances.Logic.Services
                     foreach (var Element in AffectedElements)
                         Element.MarkNodeAsChanged(cacheObject.Instance, Roots, Property.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
-                    cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState);
+                    cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState, false);
                 }
                 else if (Property == DependencyRelation.Properties.ReadOnly)
-                    cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState);
+                    cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, false);
 
                 stopWatch.Stop();
                 handleTime = stopWatch.Elapsed.TotalMilliseconds;
@@ -1419,12 +1516,12 @@ namespace CheckListManager.Instances.Logic.Services
                 else
                 {
                     if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
-                        oldFormattedValue = Date.Format(TimeZone);
+                        oldFormattedValue = Date.Format(null);
                     else
                         oldFormattedValue = string.Empty;
 
                     if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
-                        loggedValue = Date.Format(TimeZone);
+                        loggedValue = Date.Format(null);
                     else
                         formattedValue = loggedValue = string.Empty;
                 }
@@ -2012,7 +2109,7 @@ namespace CheckListManager.Instances.Logic.Services
             //call audit trail only after the rest of the process has worked
             for (var rowIndex = 0; rowIndex < rows.Count; ++rowIndex)
             {
-                for (var columnIndex = 0; columnIndex < rows.Count; ++columnIndex)
+                for (var columnIndex = 0; columnIndex < columns.Count; ++columnIndex)
                     rowDictionary[columns[columnIndex]] = rows[rowIndex][columnIndex];
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -2122,7 +2219,7 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException($"Instance link {itemId} not found");
 
             if (item.ReadOnly)
-                return null;
+                return !instance.HasValue ? throw new InstanceException($"The Instance Link {itemId} is not editable and cannot be linked to the instance {instance.Value}") : default(Element);
 
             var instanceRecord = instance.HasValue ? await _instancesRepository.GetAsync(identity.CompanyId, instance.Value) : null;
 
@@ -2140,7 +2237,26 @@ namespace CheckListManager.Instances.Logic.Services
                     DateTime = DateTimeOffset.UtcNow,
                     User = identity.Code
                 }
-             );
+            );
+
+            if (instance.HasValue)
+            {
+                if (cacheObject.ID.HasValue)
+                {
+                    _instancesRepository.AddRelation(cacheObject.ID.Value, itemId.Value, instance.Value);
+                    await _instancesRepository.SaveChangesAsync();
+                }
+                cacheObject.Instance.ChildInstances[itemId.Value] = instance.Value;
+            }
+            else
+            {
+                if (cacheObject.ID.HasValue)
+                {
+                    await _instancesRepository.DeleteRelation(cacheObject.ID.Value, itemId.Value);
+                    await _instancesRepository.SaveChangesAsync();
+                }
+                cacheObject.Instance.ChildInstances.Remove(itemId.Value);
+            }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
@@ -2181,14 +2297,11 @@ namespace CheckListManager.Instances.Logic.Services
             if (item.ReadOnly)
                 return null;
 
-            if (instanceLink.AttachedInstanceID.HasValue && instance.HasValue && instanceLink.AttachedInstanceID.Value != instance.Value)
-                return null; //the parent instance detached the child which is trying to update it
-
-            if (!instanceLink.AttachedInstanceID.HasValue && instance.HasValue)
-                instanceLink.AttachedInstanceID = instance; //the first refresh from the child instance is an attach as a matter of fact
-
             if (!instanceLink.AttachedInstanceID.HasValue)
                 throw new InstanceException("No instance attached");
+
+            if (instanceLink.AttachedInstanceID.Value != instance.Value)
+                return null; //the parent instance is not attached to the child {instance} anymore
 
             var instanceRecord = await _instancesRepository.GetAsync(identity.CompanyId, instanceLink.AttachedInstanceID.Value);
 
@@ -2207,7 +2320,7 @@ namespace CheckListManager.Instances.Logic.Services
                 && instanceLink.Record.State == newInstanceLinkRecord.State
             )
                 return null; //no changes found
-            
+
             instanceLink.Attach(instanceLink.AttachedInstanceID.Value, instanceRecord.Code, newInstanceLinkRecord);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

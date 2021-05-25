@@ -33,6 +33,10 @@ create table "Security"."Users"
 create unique index "Users_Code" on "Security"."Users" ("Company", upper("Code"));
 
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "Enabled") values (1, 'CheckListManager', 'System administrator', decode('5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36', 'hex'), '1'); --V4sc0 R0ss1, sha256
+insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 
+	(1, 'CheckListManager', 'Companies', 'Edit'),
+	(1, 'CheckListManager', 'Companies', 'View'),
+	(1, 'CheckListManager', 'Trail', 'View');
 
 create table "Security"."UserSessions"
 (

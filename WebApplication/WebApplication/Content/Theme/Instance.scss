@@ -93,6 +93,7 @@ div.Instance {
                 line-height: 1.5em;
                 font-size: 12px;
                 width: 228px;
+                text-align: left;
 
                 i.fa, i.fal {
                     margin-left: -20px;
@@ -734,6 +735,28 @@ div.Instance {
                         }
                     }
 
+                    &.InstanceLink {
+                        text-align: center;
+                        width: 100px;
+
+                        input {
+                            display: none;
+                        }
+
+                        > i {
+                            display: none;
+                        }
+
+                        a.Button {
+                            float: none;
+                            min-width: unset;
+                            margin-top: 0;
+                            max-width: 250px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
+                    }
+
                     &.Link {
                         font-size: 13px;
 
@@ -758,7 +781,7 @@ div.Instance {
                         left: 3px;
                     }
 
-                    &:not(.Signature):not(.Image):not(.Attachment) i.Icon {
+                    &:not(.Signature):not(.Image):not(.Attachment):not(.InstanceLink) i.Icon {
                         display: none;
                     }
 

@@ -16,7 +16,6 @@ namespace CheckListManager.Common.Core.Cache
         private T Get<T>(string key, string regionName = null)
         {
             var result = Get(ResolveKey(key, regionName));
-            // ReSharper disable once MergeConditionalExpression
             return result != null
                 ? (T)result
                 : default(T);
@@ -86,7 +85,7 @@ namespace CheckListManager.Common.Core.Cache
             await Task.Run(() => Set(key, value, regionName, expiry));
         }
 
-        private void Remove(string key, string regionName = null)
+        public void Remove(string key, string regionName)
         {
             _storage.Remove(ResolveKey(key, regionName));
         }
@@ -98,5 +97,6 @@ namespace CheckListManager.Common.Core.Cache
 
         private static string ResolveKey(string key, string regionName)
             => string.IsNullOrEmpty(regionName) ? key : $"{regionName}.{key}";
+
     }
 }

@@ -248,6 +248,20 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             }
 
                             break;
+                        case "InstanceLink":
+                            if (CheckListPDF.IsPrototype() || Item.Hidden)
+                                Cell = NewCell("").SetHorizontalAlign(ParagraphAlignment.Center);
+                            else
+                            {
+                                var InstanceLink = (ICheckListInstanceLink)Item;
+                                var Value = InstanceLink.Record.Code;
+                                Cell = NewCell(string.IsNullOrWhiteSpace(Value) ? $"{InstanceLink.PrototypeName}.?.?.?" : Value);
+                            }
+
+                            if (Item.ReadOnly)
+                                Cell.Content.Format.Shading.Color = PDFBase.LightGray;
+
+                            break;
                         case "Text":
                             Cell = NewCell(Item.Hidden ? string.Empty : Description);
                             break;
@@ -281,8 +295,15 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 Cell = NewCell(Item.Hidden ? string.Empty :"(# no key)");
                             else if (Image.Key != null)
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
-                                Cell = NewCell($"(see attachment {Index})");
+                                try
+                                {
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
+                                    Cell = NewCell($"(see attachment {Index})");
+                                }
+                                catch(Exception Exception)
+                                {
+                                    Cell = NewCell($"Image error: {Exception.Message})");
+                                }
                             }
                             break;
                         case "Attachment":
@@ -291,10 +312,16 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 Cell = NewCell(string.Empty);
                             else if (Attachment.Key != null)
                             {
-                                var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
-                                Cell = NewCell($"(see attachment {Index})");
+                                try
+                                {
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
+                                    Cell = NewCell($"(see attachment {Index})");
+                                }
+                                catch (Exception Exception)
+                                {
+                                    Cell = NewCell($"Attachment error: {Exception.Message})");
+                                }
                             }
-
                             break;
                         default:
                             Cell = NewCell(Item.Hidden ? string.Empty : Item.TypeName);
@@ -372,7 +399,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public async Task<PdfPTable> RenderTableHeader(ICheckListGroup Group)
         {
-            Size Size = await CreateTableHeader(new List<RenderingRow> { }, 0/*, null*/, Group.Items);
+            Size Size = await CreateTableHeader(new List<RenderingRow> { }, 0, Group.Items);
 
             PdfPTable Table = new PdfPTable(Size.ColumnsCount) { HorizontalAlignment = RowAlignment.Center, WidthPercentage = 100 };
 

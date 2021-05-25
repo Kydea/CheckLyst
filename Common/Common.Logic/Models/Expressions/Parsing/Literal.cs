@@ -56,228 +56,228 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 
                 //Functions
                 else switch (LowerValue)
-                    {
-                        case "dateincrement":
-                            var DateIncrement = new Functions.DateIncrement { Position = this.Position };
-                            CheckArguments(4);
-                            DateIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            Symbol = DateIncrement;
-                            Operator = OperatorType.No;
-                            break;
-                        case "datetimeincrement":
-                            var DateTimeIncrement = new Functions.DateTimeIncrement { Position = this.Position };
-                            CheckArguments(6);
-                            DateTimeIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            Symbol = DateTimeIncrement;
-                            Operator = OperatorType.No;
-                            break;
-                        case "error":
-                            var Error = new Functions.Error { Position = this.Position };
-                            CheckArguments(1);
-                            Error.Argument = Arguments[0].Symbol;
-                            Symbol = Error;
-                            Operator = OperatorType.No;
-                            break;
-                        case "null":
-                            var Null = new Functions.Null { Position = this.Position };
-                            CheckArguments(1);
-                            Null.Argument = Arguments[0].Symbol;
-                            Symbol = Null;
-                            Operator = OperatorType.No;
-                            break;
-                        case "date":
-                            var Date = new Functions.Date { Position = this.Position };
-                            CheckArguments(3);
-                            Date.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            Symbol = Date;
-                            Operator = OperatorType.No;
-                            break;
-                        case "datetime":
-                            var DateTime = new Functions.DateTime { Position = this.Position };
-                            CheckArguments(5);
-                            DateTime.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            Symbol = DateTime;
-                            Operator = OperatorType.No;
-                            break;
-                        case "time":
-                            var Time = new Functions.Time { Position = this.Position };
-                            CheckArguments(2);
-                            Time.Left = Arguments[0].Symbol;
-                            Time.Right = Arguments[1].Symbol;
-                            Symbol = Time;
-                            Operator = OperatorType.No;
-                            break;
-                        case "statedatetime":
-                            var StateDateTime = new Functions.StateDateTime { Position = this.Position };
-                            CheckArguments(1);
-                            StateDateTime.Argument = Arguments[0].Symbol;
-                            Symbol = StateDateTime;
-                            Operator = OperatorType.No;
-                            break;
+                {
+                    case "dateincrement":
+                        var DateIncrement = new Functions.DateIncrement { Position = this.Position };
+                        CheckArguments(4);
+                        DateIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateIncrement;
+                        Operator = OperatorType.No;
+                        break;
+                    case "datetimeincrement":
+                        var DateTimeIncrement = new Functions.DateTimeIncrement { Position = this.Position };
+                        CheckArguments(6);
+                        DateTimeIncrement.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateTimeIncrement;
+                        Operator = OperatorType.No;
+                        break;
+                    case "error":
+                        var Error = new Functions.Error { Position = this.Position };
+                        CheckArguments(1);
+                        Error.Argument = Arguments[0].Symbol;
+                        Symbol = Error;
+                        Operator = OperatorType.No;
+                        break;
+                    case "null":
+                        var Null = new Functions.Null { Position = this.Position };
+                        CheckArguments(1);
+                        Null.Argument = Arguments[0].Symbol;
+                        Symbol = Null;
+                        Operator = OperatorType.No;
+                        break;
+                    case "date":
+                        var Date = new Functions.Date { Position = this.Position };
+                        CheckArguments(3);
+                        Date.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = Date;
+                        Operator = OperatorType.No;
+                        break;
+                    case "datetime":
+                        var DateTime = new Functions.DateTime { Position = this.Position };
+                        CheckArguments(5);
+                        DateTime.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = DateTime;
+                        Operator = OperatorType.No;
+                        break;
+                    case "time":
+                        var Time = new Functions.Time { Position = this.Position };
+                        CheckArguments(2);
+                        Time.Left = Arguments[0].Symbol;
+                        Time.Right = Arguments[1].Symbol;
+                        Symbol = Time;
+                        Operator = OperatorType.No;
+                        break;
+                    case "statedatetime":
+                        var StateDateTime = new Functions.StateDateTime { Position = this.Position };
+                        CheckArguments(1);
+                        StateDateTime.Argument = Arguments[0].Symbol;
+                        Symbol = StateDateTime;
+                        Operator = OperatorType.No;
+                        break;
 
-                        //Math functions
-                        case "sqrt":
+                    //Math functions
+                    case "sqrt":
 
-                            var SqRt = new MathFunctions.SqRt { Position = this.Position };
-                            CheckArguments(1);
-                            SqRt.Argument = Arguments[0].Symbol;
-                            Symbol = SqRt;
-                            Operator = OperatorType.No;
-                            break;
-                        case "sin":
-                            var Sin = new MathFunctions.Sin { Position = this.Position };
-                            CheckArguments(1);
-                            Sin.Argument = Arguments[0].Symbol;
-                            Symbol = Sin;
-                            Operator = OperatorType.No;
-                            break;
-                        case "cos":
-                            var Cos = new MathFunctions.Cos { Position = this.Position };
-                            CheckArguments(1);
-                            Cos.Argument = Arguments[0].Symbol;
-                            Symbol = Cos;
-                            Operator = OperatorType.No;
-                            break;
-                        case "tan":
-                            var Tan = new MathFunctions.Tan { Position = this.Position };
-                            CheckArguments(1);
-                            Tan.Argument = Arguments[0].Symbol;
-                            Symbol = Tan;
-                            Operator = OperatorType.No;
-                            break;
-                        case "abs":
-                            var Abs = new MathFunctions.Abs { Position = this.Position };
-                            CheckArguments(1);
-                            Abs.Argument = Arguments[0].Symbol;
-                            Symbol = Abs;
-                            Operator = OperatorType.No;
-                            break;
-                        case "atan":
-                            var ATan = new MathFunctions.ATan { Position = this.Position };
-                            CheckArguments(1);
-                            ATan.Argument = Arguments[0].Symbol;
-                            Symbol = ATan;
-                            Operator = OperatorType.No;
-                            break;
-                        case "ln":
-                            var LN = new MathFunctions.LN { Position = this.Position };
-                            CheckArguments(1);
-                            LN.Argument = Arguments[0].Symbol;
-                            Symbol = LN;
-                            Operator = OperatorType.No;
-                            break;
-                        case "log":
-                            var Log = new MathFunctions.Log { Position = this.Position };
-                            CheckArguments(1);
-                            Log.Argument = Arguments[0].Symbol;
-                            Symbol = Log;
-                            Operator = OperatorType.No;
-                            break;
-                        case "round":
-                            var Round = new MathFunctions.Round { Position = this.Position };
-                            CheckArguments(2);
-                            Round.Left = Arguments[0].Symbol;
-                            Round.Right = Arguments[1].Symbol;
-                            Symbol = Round;
-                            Operator = OperatorType.No;
-                            break;
+                        var SqRt = new MathFunctions.SqRt { Position = this.Position };
+                        CheckArguments(1);
+                        SqRt.Argument = Arguments[0].Symbol;
+                        Symbol = SqRt;
+                        Operator = OperatorType.No;
+                        break;
+                    case "sin":
+                        var Sin = new MathFunctions.Sin { Position = this.Position };
+                        CheckArguments(1);
+                        Sin.Argument = Arguments[0].Symbol;
+                        Symbol = Sin;
+                        Operator = OperatorType.No;
+                        break;
+                    case "cos":
+                        var Cos = new MathFunctions.Cos { Position = this.Position };
+                        CheckArguments(1);
+                        Cos.Argument = Arguments[0].Symbol;
+                        Symbol = Cos;
+                        Operator = OperatorType.No;
+                        break;
+                    case "tan":
+                        var Tan = new MathFunctions.Tan { Position = this.Position };
+                        CheckArguments(1);
+                        Tan.Argument = Arguments[0].Symbol;
+                        Symbol = Tan;
+                        Operator = OperatorType.No;
+                        break;
+                    case "abs":
+                        var Abs = new MathFunctions.Abs { Position = this.Position };
+                        CheckArguments(1);
+                        Abs.Argument = Arguments[0].Symbol;
+                        Symbol = Abs;
+                        Operator = OperatorType.No;
+                        break;
+                    case "atan":
+                        var ATan = new MathFunctions.ATan { Position = this.Position };
+                        CheckArguments(1);
+                        ATan.Argument = Arguments[0].Symbol;
+                        Symbol = ATan;
+                        Operator = OperatorType.No;
+                        break;
+                    case "ln":
+                        var LN = new MathFunctions.LN { Position = this.Position };
+                        CheckArguments(1);
+                        LN.Argument = Arguments[0].Symbol;
+                        Symbol = LN;
+                        Operator = OperatorType.No;
+                        break;
+                    case "log":
+                        var Log = new MathFunctions.Log { Position = this.Position };
+                        CheckArguments(1);
+                        Log.Argument = Arguments[0].Symbol;
+                        Symbol = Log;
+                        Operator = OperatorType.No;
+                        break;
+                    case "round":
+                        var Round = new MathFunctions.Round { Position = this.Position };
+                        CheckArguments(2);
+                        Round.Left = Arguments[0].Symbol;
+                        Round.Right = Arguments[1].Symbol;
+                        Symbol = Round;
+                        Operator = OperatorType.No;
+                        break;
 
-                        //String functions
-                        case "format":
-                            var Format = new StringFunctions.Format { Position = this.Position };
-                            CheckArguments(2);
-                            Format.Left = Arguments[0].Symbol;
-                            Format.Right = Arguments[1].Symbol;
-                            Symbol = Format;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringlength":
-                            var Length = new StringFunctions.Length { Position = this.Position };
-                            CheckArguments(1);
-                            Length.Argument = Arguments[0].Symbol;
-                            Symbol = Length;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringtolowercase":
-                        case "stringtouppercase":
-                            var ToggleCase = new StringFunctions.ToggleCase(LowerValue) { Position = this.Position };
-                            CheckArguments(1);
-                            ToggleCase.Argument = Arguments[0].Symbol;
-                            Symbol = ToggleCase;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringfind":
-                            var Find = new StringFunctions.Find { Position = this.Position };
-                            CheckArguments(2, 3);
-                            Find.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            if (Arguments.Count == 2) Find.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
-                            Symbol = Find;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringreplace":
-                            var Replace = new StringFunctions.Replace { Position = this.Position };
-                            CheckArguments(3);
-                            Replace.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            Symbol = Replace;
-                            Operator = OperatorType.No;
-                            break;
-                        case "substring":
-                            var Substring = new StringFunctions.Substring { Position = this.Position };
-                            CheckArguments(2, 3);
-                            Substring.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            if (Arguments.Count == 2) Substring.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
-                            Symbol = Substring;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringleft":
-                        case "stringright":
-                            var Extreme = new StringFunctions.Extreme(LowerValue) { Position = this.Position };
-                            CheckArguments(2);
-                            Extreme.Left = Arguments[0].Symbol;
-                            Extreme.Right = Arguments[1].Symbol;
-                            Symbol = Extreme;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringleftpad":
-                        case "stringrightpad":
-                            var Pad = new StringFunctions.Pad(LowerValue) { Position = this.Position };
-                            CheckArguments(2, 3);
-                            Pad.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                            if (Arguments.Count == 2) Pad.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
-                            Symbol = Pad;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringlefttrim":
-                        case "stringrighttrim":
-                        case "stringtrim":
-                            var Trim = new StringFunctions.Trim(LowerValue) { Position = this.Position };
-                            CheckArguments(1, 2);
-                            Trim.Left = Arguments[0].Symbol;
-                            Trim.Right = Arguments.Count == 2 ? Arguments[1].Symbol : new Constant(new TypedValue(DataType.Text, " "));
-                            Symbol = Trim;
-                            Operator = OperatorType.No;
-                            break;
-                        case "stringtonumber":
-                            var NumberValue = new StringFunctions.NumberValue { Position = this.Position };
-                            CheckArguments(1);
-                            NumberValue.Argument = Arguments[0].Symbol;
-                            Symbol = NumberValue;
-                            Operator = OperatorType.No;
-                            break;
+                    //String functions
+                    case "format":
+                        var Format = new StringFunctions.Format { Position = this.Position };
+                        CheckArguments(2);
+                        Format.Left = Arguments[0].Symbol;
+                        Format.Right = Arguments[1].Symbol;
+                        Symbol = Format;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringlength":
+                        var Length = new StringFunctions.Length { Position = this.Position };
+                        CheckArguments(1);
+                        Length.Argument = Arguments[0].Symbol;
+                        Symbol = Length;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringtolowercase":
+                    case "stringtouppercase":
+                        var ToggleCase = new StringFunctions.ToggleCase(LowerValue) { Position = this.Position };
+                        CheckArguments(1);
+                        ToggleCase.Argument = Arguments[0].Symbol;
+                        Symbol = ToggleCase;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringfind":
+                        var Find = new StringFunctions.Find { Position = this.Position };
+                        CheckArguments(2, 3);
+                        Find.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        if (Arguments.Count == 2) Find.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
+                        Symbol = Find;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringreplace":
+                        var Replace = new StringFunctions.Replace { Position = this.Position };
+                        CheckArguments(3);
+                        Replace.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        Symbol = Replace;
+                        Operator = OperatorType.No;
+                        break;
+                    case "substring":
+                        var Substring = new StringFunctions.Substring { Position = this.Position };
+                        CheckArguments(2, 3);
+                        Substring.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        if (Arguments.Count == 2) Substring.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
+                        Symbol = Substring;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringleft":
+                    case "stringright":
+                        var Extreme = new StringFunctions.Extreme(LowerValue) { Position = this.Position };
+                        CheckArguments(2);
+                        Extreme.Left = Arguments[0].Symbol;
+                        Extreme.Right = Arguments[1].Symbol;
+                        Symbol = Extreme;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringleftpad":
+                    case "stringrightpad":
+                        var Pad = new StringFunctions.Pad(LowerValue) { Position = this.Position };
+                        CheckArguments(2, 3);
+                        Pad.Arguments.AddRange(Arguments.Select(a => a.Symbol));
+                        if (Arguments.Count == 2) Pad.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
+                        Symbol = Pad;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringlefttrim":
+                    case "stringrighttrim":
+                    case "stringtrim":
+                        var Trim = new StringFunctions.Trim(LowerValue) { Position = this.Position };
+                        CheckArguments(1, 2);
+                        Trim.Left = Arguments[0].Symbol;
+                        Trim.Right = Arguments.Count == 2 ? Arguments[1].Symbol : new Constant(new TypedValue(DataType.Text, " "));
+                        Symbol = Trim;
+                        Operator = OperatorType.No;
+                        break;
+                    case "stringtonumber":
+                        var NumberValue = new StringFunctions.NumberValue { Position = this.Position };
+                        CheckArguments(1);
+                        NumberValue.Argument = Arguments[0].Symbol;
+                        Symbol = NumberValue;
+                        Operator = OperatorType.No;
+                        break;
 
-                        //Conditional operator
-                        case "iif":
-                            var ConditionalOperator = new Expressions.ConditionalOperator { Position = this.Position };
-                            CheckArguments(3);
-                            ConditionalOperator.Condition = Arguments[0].Symbol;
-                            ConditionalOperator.TruePart = Arguments[1].Symbol;
-                            ConditionalOperator.FalsePart = Arguments[2].Symbol;
-                            Symbol = ConditionalOperator;
-                            Operator = OperatorType.No;
-                            break;
-                        default:
-                            throw new ParseException("Invalid function: " + Value, Position);
-                    }
+                    //Conditional operator
+                    case "iif":
+                        var ConditionalOperator = new Expressions.ConditionalOperator { Position = this.Position };
+                        CheckArguments(3);
+                        ConditionalOperator.Condition = Arguments[0].Symbol;
+                        ConditionalOperator.TruePart = Arguments[1].Symbol;
+                        ConditionalOperator.FalsePart = Arguments[2].Symbol;
+                        Symbol = ConditionalOperator;
+                        Operator = OperatorType.No;
+                        break;
+                    default:
+                        throw new ParseException("Invalid function: " + Value, Position);
+                }
             }
             else if (Values.Length == 2)
             {
@@ -285,16 +285,16 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                 switch (Values[1])
                 {
                     case "Signed":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED) { Code = Values[0], Position = this.Position };
-                        break;
                     case "SignedBy":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_BY) { Code = Values[0], Position = this.Position };
-                        break;
                     case "SignedOn":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.SIGNED_ON) { Code = Values[0], Position = this.Position };
-                        break;
                     case "HistoryLength":
-                        Symbol = new ElementProperties.SignatureProperty(ElementProperties.SignatureProperty.HISTORY_LENGTH) { Code = Values[0], Position = this.Position };
+                        Symbol = new ElementProperties.SignatureProperty(Values[1]) { Code = Values[0], Position = this.Position };
+                        break;
+                    case "InstanceState":
+                    case "InstanceDescription":
+                    case "InstanceID":
+                    case "InstanceCode":
+                        Symbol = new ElementProperties.InstanceLinkProperty(Values[1]) { Code = Values[0], Position = this.Position };
                         break;
                     case "Value":
                         Symbol = new ElementProperties.FieldProperty { Code = Values[0], Position = this.Position };

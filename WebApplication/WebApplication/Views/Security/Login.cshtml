@@ -1,5 +1,4 @@
-@model string
-@*Matematici.ViewModels.Membership.Login*@
+@model CheckListManager.WebApplication.Models.Login
 
 <div class="Login">
     <div class="Box AutoCenter">
@@ -14,7 +13,7 @@
             <input type="hidden" name="grant_type" value="password" />
 
             <label class="FullWidth">
-                <span>Company</span>
+                <span>@(Model.Administration ? "Administration company" : "Company")</span>
                 <i class="Icon fal fa-industry"></i>
                 <select name="companyId"></select>
             </label>
@@ -43,13 +42,13 @@
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
 
-		var
+        var
+            administration = @(Model.Administration ? "true" : "false"),
 			form = $("form"),
 			error = $("div.Errors", form),
 			companyList = $("select[name=companyId]", form),
 			userCode = $("input[name=username]", form),
 			password = $("input[name=password]", form),
-			companies = {},
 
 			showError = function (message) {
 				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
@@ -86,10 +85,7 @@
                     type: "post",
                     suppressErrors: true
                 }).done(function (result) {
-                    var autoComplete = matematici.AutoComplete.get(companyList[0]);
-                    localStorage.companyName = autoComplete.getControl().val();
-                    var company = autoComplete.getValue();
-                    localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
+                    localStorage.companyName = companyList.next().val();
                     matematici.tokenManager.login(result);
 					matematici.clock.resume();
 
@@ -124,17 +120,17 @@
         matematici.loader.checkInitialCurtain();
 
         //load the companies
-        $.ajax(matematici.urls.infrastructure.companies.getData, {
+        $.ajax(matematici.urls.infrastructure.companies.getSyntheticData, {
             type: "post",
-            suppressErrors: true
+            suppressErrors: true,
         }).done(function (result) {
             for (var index in result) {
                 var company = result[index];
-                companies[company.id] = company;
-                companyList.append($("<option />").attr("value", company.id).data("inactivityTimeoutSeconds", company.inactivityTimeoutSeconds).text(company.name));
+                if (administration && company.id == 1 || !administration && company.id > 1)
+                    companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
-            companyList.val(null);
             callback.call();
+            matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : localStorage.company);
         }).fail(function (jqXhr, textStatus, errorThrown) {
             showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
         });

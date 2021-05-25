@@ -19,7 +19,11 @@ namespace CheckListManager.Common.Data
         {
             this.Prototypes = new HashSet<Prototypes>();
             this.PrototypeTypes = new HashSet<PrototypeTypes>();
+            this.GroupFunctions = new HashSet<GroupFunctions>();
+            this.GroupRoles = new HashSet<GroupRoles>();
             this.UserFunctions = new HashSet<UserFunctions>();
+            this.UserLevels = new HashSet<UserLevels>();
+            this.UserRoles = new HashSet<UserRoles>();
         }
     
         public long ID { get; set; }
@@ -36,6 +40,14 @@ namespace CheckListManager.Common.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeTypes> PrototypeTypes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupFunctions> GroupFunctions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupRoles> GroupRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserFunctions> UserFunctions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserLevels> UserLevels { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserRoles> UserRoles { get; set; }
     }
 }

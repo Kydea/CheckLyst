@@ -18,6 +18,14 @@ values
 	('User edited'),
 	('User deleted'),
 
+	('Group created'),
+	('Group edited'),
+	('Group deleted'),
+
+	('Role created'),
+	('Role edited'),
+	('Role deleted'),
+
 	('Prototype created'),
 	('Prototype deleted'),
 	('Prototype state auto-changed'),
@@ -60,18 +68,25 @@ values
 	('DataSource updated'),
 	('DataSource deleted'),
 	
+	('Company created'),
+	('Company updated'),
+
+	('Department created'),
+	('Department updated'),
+	('Department deleted'),
+
 	('PrototypeType created'),
 	('PrototypeType updated'),
 	('PrototypeType deleted'),
 	('Prototype downloaded'),
 	
-	('Department created'),
-	('Department updated'),
-	('Department deleted'),
-
 	('FTPServer created'),
 	('FTPServer updated'),
-	('FTPServer deleted');
+	('FTPServer deleted'),
+
+	('Report created'),
+	('Report updated'),
+	('Report deleted');
 
 create table "Trail"."Records"
 (

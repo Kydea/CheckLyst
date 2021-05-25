@@ -1,0 +1,24 @@
+﻿@import "_Library.scss";
+
+div.Report {
+    h2 {
+        margin: 0 $Metric-Control-Space $Metric-Control-Space !important;
+        color: white !important;
+        min-height: 1em;
+        margin-top: -$Metric-Control-Space !important;
+        margin-left: -$Metric-Control-Space !important;
+        margin-right: -$Metric-Control-Space !important;
+        padding: $Metric-Control-Space;
+        background-color: $Color-Green-Regular;
+        width: calc(100% + #{2 * $Metric-Control-Space});
+        top: 0;
+        left: 0;
+        border-radius: 15px 15px 0 0;
+    }
+
+    form#Detail {
+        > div.Errors {
+            display: none !important;
+        }
+    }
+}

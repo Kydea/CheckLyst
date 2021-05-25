@@ -8,6 +8,7 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Api.Instances;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Instances.Data.ListItems;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -19,15 +20,17 @@ namespace CheckListManager.Instances.Logic.Services
         Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
         Task<GetPrototypeResponse> CheckCreationGrantsAsync(IDefaultIdentity identity, long prototype, int? version);
         Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID);
-		Task<InstanceCacheObject> OpenInstanceAsync(string code, IDefaultIdentity identity);
+		Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity);
         Task SaveInstanceAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);
         Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
         Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
+        Task<InstanceLinkParametersResponse> GetInstanceLinkParameters(string code, IDefaultIdentity identity, int itemId);
         Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string dataSourceCode, int itemId);
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, int itemId, Dictionary<string, string> parameters, int page);
+        Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity);
         Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity);
         Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key);
         Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request);

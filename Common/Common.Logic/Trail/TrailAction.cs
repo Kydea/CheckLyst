@@ -10,6 +10,14 @@
         public const string UserEdited = "User edited";
         public const string UserDeleted = "User deleted";
 
+        public const string GroupCreated = "Group created";
+        public const string GroupEdited = "Group edited";
+        public const string GroupDeleted = "Group deleted";
+
+        public const string RoleCreated = "Role created";
+        public const string RoleEdited = "Role edited";
+        public const string RoleDeleted = "Role deleted";
+
         public const string EmailFailed = "Email failed";
         public const string EmailSent = "Email sent";
 
@@ -57,17 +65,24 @@
         public const string DataSourceCreated = "DataSource created";
         public const string DataSourceUpdated = "DataSource updated";
         public const string DataSourceDeleted = "DataSource deleted";
-        
-        public const string PrototypeTypeCreated = "PrototypeType created";
-        public const string PrototypeTypeUpdated = "PrototypeType updated";
-        public const string PrototypeTypeDeleted = "PrototypeType deleted";
-        
+
+        public const string CompanyCreated = "Company created";
+        public const string CompanyUpdated = "Company updated";
+
         public const string DepartmentCreated = "Department created";
         public const string DepartmentUpdated = "Department updated";
         public const string DepartmentDeleted = "Department deleted";
-        
+
+        public const string PrototypeTypeCreated = "PrototypeType created";
+        public const string PrototypeTypeUpdated = "PrototypeType updated";
+        public const string PrototypeTypeDeleted = "PrototypeType deleted";
+
         public const string FtpServerCreated = "FTPServer created";
         public const string FtpServerUpdated = "FTPServer updated";
         public const string FtpServerDeleted = "FTPServer deleted";
+
+        public const string ReportCreated = "Report created";
+        public const string ReportUpdated = "Report updated";
+        public const string ReportDeleted = "Report deleted";
     }
 }

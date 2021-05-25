@@ -14,6 +14,7 @@ div.Popup {
     left: 0;
     z-index: $Depth-Popup;
     background-color: rgba(102, 102, 102, .7);
+    padding: 20px;
 
     div.Container {
         padding: 20px;

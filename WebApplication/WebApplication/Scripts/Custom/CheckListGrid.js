@@ -8,6 +8,7 @@
         parameters,
         tableHeader,
         tableBody,
+        autoCenter,
         fixedHeader,
         next,
         nextHandler,
@@ -152,6 +153,10 @@
     checkListGrid.setNextHandler = function (handler) {
         nextHandler = handler;
         toggleNext(!!handler);
+    };
+
+    checkListGrid.center = function () {
+        autoCenter.center();
     };
 
     checkListGrid.addRow = addRow;

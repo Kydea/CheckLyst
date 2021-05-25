@@ -21,7 +21,6 @@ namespace CheckListManager.Common.Data
         public string Function { get; set; }
         public Nullable<long> Department { get; set; }
         public Nullable<long> PrototypeType { get; set; }
-        public string Tag { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Dapper;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -57,6 +58,23 @@ namespace CheckListManager.Common.Data
             {
                 Logger.Error(e);
                 throw;
+            }
+        }
+
+        protected async Task<IEnumerable<T>> Read<T>(string query, dynamic parameters)
+        {
+            try
+            {
+                if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
+                return Entities.Database.Connection.Query<T>(query, new DynamicParameters(parameters));
+            }
+            catch (AggregateException AggregateException)
+            {
+                throw new DatabaseAggregateException(AggregateException.InnerExceptions);
+            }
+            catch (Exception Exception)
+            {
+                throw new DatabaseException(Exception.Message, Exception.InnerException);
             }
         }
 

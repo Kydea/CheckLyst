@@ -8,14 +8,81 @@ using System.Linq.Expressions;
 using System.Data.Entity;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Infrastructure.Data.ListItems;
 
 namespace CheckListManager.Infrastructure.Data
 {
-	public class InfrastructureRepository : Repository, IInfrastructureRepository
-	{
-		public InfrastructureRepository(RelationalDatabaseEntities entities) : base(entities)
-		{
-		}
+    public class InfrastructureRepository : Repository, IInfrastructureRepository
+    {
+        public InfrastructureRepository(RelationalDatabaseEntities entities) : base(entities)
+        {
+        }
+
+        private async Task<Companies> GetCompany(IDefaultIdentity identity, long id)
+        {
+            var Company = await Entities.Companies.SingleOrDefaultAsync(c => (identity.CompanyId == 1 || c.ID == identity.CompanyId) && c.ID == id);
+            if (Company == null) throw new DatabaseException($"Company {id} not found");
+            return Company;
+        }
+
+        private async Task<List<SettingValues>> GetSettingValues(long company) =>
+            await Entities.SettingValues.Where(sv => sv.Company == company).ToListAsync();
+
+        public async Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company, List<SettingValue> settings)
+        {
+            var ExistingCompany = await GetCompany(identity, company.ID);
+            ExistingCompany.Name = company.Name;
+            ExistingCompany.TimeZone = company.TimeZone;
+            ExistingCompany.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingCompany.ModifiedBy = identity.Code;
+            var newSettingsDictionary = settings.ToDictionary(s => s.Code, s => s.Value);
+            var oldSettingsDictionary = (await GetSettingValues(company.ID)).ToDictionary(s => s.Setting, s => s);
+            foreach (var key in oldSettingsDictionary.Keys)
+                if (key != "SmtpPassword" || newSettingsDictionary[key] != null)
+                {
+                    oldSettingsDictionary[key].Value = newSettingsDictionary[key] ?? "";
+                    oldSettingsDictionary[key].ModifiedOn = DateTimeOffset.UtcNow;
+                }
+
+            foreach (var key in newSettingsDictionary.Keys)
+                if (!oldSettingsDictionary.ContainsKey(key))
+                    ExistingCompany.SettingValues.Add(new SettingValues { Company = company.ID, Setting = key, Value = newSettingsDictionary[key] ?? "", CreatedOn = DateTimeOffset.UtcNow });
+
+            await SaveChangesAsync();
+            return company;
+        }
+
+        public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings)
+        {
+            company.CreatedOn = DateTimeOffset.UtcNow;
+            company.CreatedBy = identity.Code;
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Users",
+                Function = "View",
+                CreatedOn = DateTimeOffset.UtcNow
+            });
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Users",
+                Function = "Edit",
+                CreatedOn = DateTimeOffset.UtcNow
+            });
+            company.Users.Add(configurator);
+            foreach (var setting in settings)
+                company.SettingValues.Add(new SettingValues { Setting = setting.Code, Value = setting.Value ?? "", CreatedOn = DateTimeOffset.UtcNow });
+            Entities.Companies.Add(company);
+            await SaveChangesAsync();
+            return company;
+        }
+
+        public async Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? company) =>
+            await Entities
+                .Settings.OrderBy(s => s.Code)
+                .Select(s => 
+                    s.SettingValues.Where(sv => sv.Company == company)
+                    .Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Setting == "SmtpPassword" ? null : sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null })
+                .ToListAsync();
 
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
         {
@@ -25,14 +92,14 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department)
-		{
+        {
             var ExistingDepartment = await GetDepartment(identity, department.ID);
             ExistingDepartment.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingDepartment.ModifiedBy = identity.Code;
             ExistingDepartment.Name = department.Name;
             await SaveChangesAsync();
             return department;
-		}
+        }
 
         public async Task<Departments> AddDepartmentAsync(IDefaultIdentity identity, Departments department)
         {
@@ -132,6 +199,35 @@ namespace CheckListManager.Infrastructure.Data
             Entities.FTPServers.Remove(await GetFTPServerAsync(identity, id));
             await SaveChangesAsync();
         }
+        public async Task<PagingResponse<List<TResult>>> GetCompaniesAsync<TResult>(
+            IDefaultIdentity identity,
+            Expression<Func<Companies, TResult>> select,
+            string name, int currentPage, int itemsPerPage)
+        {
+            IQueryable<TResult> Query = Entities.Companies
+                .Where(c =>
+                    (identity.CompanyId == 1 || c.ID == identity.CompanyId)
+                    && (name == "" || c.Name != null && c.Name.ToUpper().Contains(name.ToUpper()))
+                )
+                .OrderBy(d => d.Name).ThenBy(d => d.ID)
+                .Select(select);
+
+            var Data = await Query
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .ToListAsync();
+
+            int Count = await Query.CountAsync();
+
+            return new PagingResponse<List<TResult>>
+            {
+                Data = Data,
+                Count = Count,
+                ItemsPerPage = itemsPerPage,
+                CurrentPage = currentPage
+            };
+        }
+
         public async Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<Departments, TResult>> select,
@@ -162,8 +258,8 @@ namespace CheckListManager.Infrastructure.Data
         }
 
         public async Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
-            IDefaultIdentity identity, 
-            Expression<Func<PrototypeTypes, TResult>> select, 
+            IDefaultIdentity identity,
+            Expression<Func<PrototypeTypes, TResult>> select,
             long? department, string name, string functionGroup,
             int currentPage, int itemsPerPage, string function = "View")
         {
@@ -187,7 +283,6 @@ namespace CheckListManager.Infrastructure.Data
                     && uf.Function == function
                     && uf.PrototypeType == null
                 ));
-
 
             IQueryable<TResult> Query = PrototypeTypes
                 .OrderBy(pt => pt.Department).ThenBy(pt => pt.Name).ThenBy(pt => pt.ID)
@@ -241,13 +336,16 @@ namespace CheckListManager.Infrastructure.Data
             };
         }
 
-        public async Task<List<WorkFlows>> GetWorkFlows(long companyId)
-        {
-            return await Entities.WorkFlows
+        public async Task<List<WorkFlows>> GetWorkFlows(long companyId) =>
+            await Entities.WorkFlows
                 .Where(wf => wf.Company == companyId)
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
-        }
 
+        public async Task<List<string>> GetTimeZonesAsync() =>
+            await Entities.TimeZones
+                .OrderBy(wf => wf.Code)
+                .Select(wf => wf.Code)
+                .ToListAsync();
     }
 }

@@ -448,7 +448,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            return await Task.FromResult(PrototypeVersion.PrototypeVersionsHistory.OrderBy(h => h.ID).Select(h => new HistoryRow
+            return (await Task.WhenAll(PrototypeVersion.PrototypeVersionsHistory.OrderBy(h => h.ID).Select(async h => new HistoryRow
             {
                 ID = h.ID,
                 Date = h.Date,
@@ -457,7 +457,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
                 ProposedState = h.WorkFlowApplications == null ? null : h.State,
                 Approved = h.WorkFlowApplications?.Approved,
-                Steps = h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(s => new HistoryStep
+                Steps = h.WorkFlowApplications == null ? null : (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
                 {
                     ID = s.ID,
                     Step = s.Step + 1,
@@ -467,9 +467,9 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Reason = s.Reason,
                     Comment = s.Comment,
                     Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", _commonRepository.GetAppointedUsers(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, s.WorkFlowApplicationStepTags.Select(t => t.Tag)).Select(u => u.Code)) : null
-                }).ToList()
-            }).ToList());
+                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                }))).ToList()
+            }))).ToList();
         }
 
         private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State, DateTimeOffset Date)

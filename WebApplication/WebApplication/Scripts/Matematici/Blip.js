@@ -1,5 +1,4 @@
 matematici.blip = function () {
-
     var
         element,
         container,
@@ -61,7 +60,7 @@ matematici.blip = function () {
             });
         },
 
-        countdown: function (milliseconds, callback) {
+        countdown: function (milliseconds, callback, check) {
             var finalDate = new Date(new Date().getTime() + milliseconds);
             var
                 time,
@@ -70,11 +69,15 @@ matematici.blip = function () {
                     countdownInterval = null;
                 },
                 updateContent = function () {
-                    var seconds = Math.floor((finalDate - new Date()) / 1000);
+                    var
+                        seconds = Math.floor((finalDate - new Date()) / 1000),
+                        changed = !check(false);
                     time.text(Math.max(seconds, 0));
-                    if (seconds <= 0) {
+
+                    if (seconds <= 0 || changed) {
                         clearCountdownInterval();
                         callback();
+                        if (changed) close();
                     }
                 };
 

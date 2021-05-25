@@ -7,7 +7,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
     public class SignatureProperty : ElementProperty
     {
-        public const string SIGNED = "property Signed", SIGNED_BY = "property SignedBy", SIGNED_ON = "property SignedOn", HISTORY_LENGTH = "property HisotryLenght";
+        private const string SIGNED = "Signed", SIGNED_BY = "SignedBy", SIGNED_ON = "SignedOn", HISTORY_LENGTH = "HistoryLength";
 
         public SignatureProperty(string Property)
         {

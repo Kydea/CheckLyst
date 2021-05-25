@@ -1,0 +1,133 @@
+﻿@model CheckListManager.WebApplication.Models.Report
+
+<div id="ReportsDetailPage" class="Report">
+    <h1>Report Editor</h1>
+
+    <div class="ActionBar">
+        <span class="ButtonGroup" data-text="Actions"></span>
+    </div>
+
+    <div class="ShadowPanel">
+        <h2>@(Model.Code ?? "(New report)")</h2>
+
+        <form id="Detail" action="@BaseUrl/Reports/List">
+            <input type="hidden" name="reason" />
+            <input type="hidden" name="id" />
+            <label>
+                <span>Code</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="code" autocomplete="off" maxlength="50" />
+            </label>
+
+            <label class="Width200">
+                <span>Source</span>
+                <i class="Icon fal fa-chart-network" />
+                <select name="reportSource" data-nullable="(custom)"></select>
+            </label>
+
+            <label class="FullWidth">
+                <span>Description</span>
+                <i class="Icon fal fa-align-left" />
+                <input type="text" name="description" autocomplete="off" maxlength="100" />
+            </label>
+
+            @*
+                <label class="Clearing">
+                    <span>Instances range restricted</span>
+                    <input type="checkbox" name="instancesRangeRestricted" />
+                </label>
+
+                <label>
+                    <span>Instances ID alias</span>
+                    <i class="Icon fal fa-layer-group" />
+                    <input type="text" name="instancesIDAlias" />
+                </label>
+
+                <label class="Clearing">
+                    <span>Prototypes range restricted</span>
+                    <input type="checkbox" name="prototypesRangeRestricted" />
+                </label>
+
+                <label>
+                    <span>Prototypes ID alias</span>
+                    <i class="Icon fal fa-file-invoice" />
+                    <input type="text" name="prototypesIDAlias" />
+                </label>
+            *@
+
+            <label class="FullWidth">
+                <span>Query</span>
+                <pre id="AceEditor" style="height: 350px"></pre>
+            </label>
+
+            <label class="Clearing Controls2">
+                <span>Creation</span>
+                <i class="Icon fal fa-user" />
+                <input type="text" name="createdBy" readonly="readonly" />
+                <i class="Icon fal fa-calendar-alt" />
+                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+
+            <label class="Controls2">
+                <span>Last edit</span>
+                <i class="Icon fal fa-user" />
+                <input type="text" name="modifiedBy" readonly="readonly" />
+                <i class="Icon fal fa-calendar-alt" />
+                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+            </label>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var
+            element = $("#ReportsDetailPage"),
+            reportEditor = new reports.ReportEditor(element, {
+                code: "@(Model.Code ?? "")",
+                listUrl: "@Url.Action("List")",
+                detailUrl: "@Url.Action("Editor")"
+            }),
+
+            actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fa fa-filter'></i>", function () {
+                    reportEditor.showClauses();
+                }, "Icon ClausesButton")
+                .add("<i class='Icon fa fa-line-columns'></i>", function () {
+                    reportEditor.showColumns();
+                }, "Icon ColumnsButton"),
+
+            buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("Quit", function () {
+                    reportEditor.quit();
+                }, "Quit")
+                .add("Delete", function () {
+                    reportEditor.deleteRecord();
+                }, "Delete")
+                .add("Save", function () {
+                    reportEditor.save();
+                }, "Save");
+
+        new matematici.Page({
+            name: "ReportEditor",
+            cssClass: "ReportEditor",
+            breadcrumbs: [
+                { content: "report editor" }
+            ],
+            initializers: [
+                new matematici.Tab(".TabContainer", element)
+            ]
+        });
+
+        matematici.save = reportEditor.save;
+
+        matematici.events.onPageUnload = function (callback) {
+            reports.reportEditor = null;
+            matematici.canClose = true;
+            matematici.save = undefined;
+            callback();
+        };
+
+        callback.call();
+    }
+</script>

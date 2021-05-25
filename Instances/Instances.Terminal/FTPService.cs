@@ -18,11 +18,11 @@ using CheckListManager.Common.Logic.Email;
 namespace CheckListManager.Instances.Terminal
 {
     public class FTPService : IFTPService
-	{
-		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly IQueueService _queueService;
-		private readonly ISettingService _settingService;
+        private readonly IQueueService _queueService;
+        private readonly ISettingService _settingService;
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly ICommonRepository _commonRepository;
         private readonly IInstancesRepository _instancesRepository;
@@ -39,9 +39,9 @@ namespace CheckListManager.Instances.Terminal
             IConfigurationService configurationService,
             IStorageService storageService,
             IEmailServiceBase emailService)
-		{
-			_queueService = queueService;
-			_settingService = settingService;
+        {
+            _queueService = queueService;
+            _settingService = settingService;
             _instanceManagerService = instanceManagerService;
             _commonRepository = commonRepository;
             _instancesRepository = instancesRepository;
@@ -51,21 +51,29 @@ namespace CheckListManager.Instances.Terminal
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
-		{
-            var messages = await _queueService.ReceiveObjectsAsync<InstancesFTPMessage>(QueueName.InstancesFTP, cancellationToken: cancellationToken);
-            foreach (var message in messages)
+        {
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<InstancesFTPMessage>(QueueName.InstancesFTP, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
         private async Task ProcessMessageAsync(QueueMessage<InstancesFTPMessage> message,
-			CancellationToken cancellationToken = default(CancellationToken))
-		{
-			try
-			{
-				var Settings = await Send(message.Message);
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            try
+            {
+                var Settings = await Send(message.Message);
                 await _queueService.DeleteMessageAsync(QueueName.InstancesFTP, message.MessageHandle, cancellationToken);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -92,7 +100,7 @@ namespace CheckListManager.Instances.Terminal
                 }, cancellationToken);
             }
             catch (Exception exception)
-			{
+            {
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.InstanceExportFailed,
@@ -109,16 +117,11 @@ namespace CheckListManager.Instances.Terminal
                 await _emailService.LogErrorAsync(exception, "Error sending FTP file");
 
                 Logger.Error(exception);
-			}
-		}
+            }
+        }
 
-		private async Task<FTPConnectionSettings> Send(InstancesFTPMessage message)
-		{
-            ////we are not using company settings from v2.0.0
-            //var SerializedSettings = await _settingService.InstancesFtpConnectionAsync(message.Company);
-            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-
+        private async Task<FTPConnectionSettings> Send(InstancesFTPMessage message)
+        {
             string code = await _instancesRepository.GetCodeAsync(message.Company, message.ID);
             var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(message.Company, code, true);
             FTPConnectionSettings Settings;

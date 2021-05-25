@@ -52,7 +52,10 @@
             if (options.applyButton) {
                 $("<a />")
                     .addClass("FiltersLinkButton")
-                    .attr({ href: "#" })
+                    .attr({
+                        href: "#",
+                        title: "link to precompile the filters with the current values"
+                    })
                     .append($("<i >").addClass("fa fa-link"))
                     .appendTo(element)
                     .on("click", popupLink);
@@ -64,7 +67,7 @@
                 if (event)
                     options.applyButton.on("click", function (e) {
                         if (options.applyButton.hasClass("ReadOnly")) return;
-                        if (element.attr("id") == "Filters") saveForm(); //enhance for example with a class or data-persisten="true"
+                        if (element.attr("id") == "Filters") saveForm(); //enhance for example with a class or data-persistence="true"
                         bind(event, handler, prepareRequest({ data: { source: options.applyButton.attr("id") } }));
                     });
                 else if (handler)
@@ -169,9 +172,11 @@
             //saved parameters
             var storageName = getStorageName();
             try {
-                value = localStorage.getItem(storageName);
-                var advancedSearch = localStorage.getItem(storageName + "/AdvancedSearch");
-                options.searchPage.setAdvancedSearchMode(advancedSearch == "true");
+                var value = localStorage.getItem(storageName);
+                if (options.searchPage) {
+                    var advancedSearch = localStorage.getItem(storageName + "/AdvancedSearch");
+                    options.searchPage.setAdvancedSearchMode(advancedSearch == "true");
+                }
                 return stringified ? value : JSON.parse(value);
             } catch (error) {
                 console.log(error);
@@ -187,8 +192,8 @@
                     apply = options.searchPage && options.searchPage.isAdvancedSearchMode && options.searchPage.isAdvancedSearchMode() || field.closest("div.AdvancedSearch").length == 0,
                     value =
                         field.hasClass("DatePicker") || field.data("type") == "DateTimeOffset" ? (apply ? field.val() : null) :
-                        field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
-                        (apply ? field.val() : "");
+                            field.attr("type") == "checkbox" ? (apply ? field.prop("checked") : false) :
+                                (apply ? field.val() : "");
                 if (includeNulls || value != null && value != "")
                     data[field.attr("name")] = value;
             });
@@ -218,7 +223,7 @@
                 for (var index in object)
                     if (object[index] !== undefined)
                         value += "\n" + Array(indentation + 1).join(" ") + ((parseInt(index) + 1) || index) + ": " + prettifyObject(object[index], indentation + 4);
-                return value;
+                return value == "" ? "(no value)" : value;
             } else
                 return object;
         },
@@ -263,11 +268,9 @@
                         );
                 else if (!fieldErrors) {
                     fieldErrors = true;
-                    errors.append(
-                        $("<div />").addClass("Error").text("Some fields are not valid. Click on the error icon of the fields for more details.").prepend(
-                            $("<i />").addClass("fas fa-exclamation-triangle")
-                        )
-                    );
+                    errors.append($("<div />").addClass("Error").text("Some fields are not valid. Click on the error icon of the fields for more details.").prepend(
+                        $("<i />").addClass("fas fa-exclamation-triangle")
+                    ));
                 }
             }
         },
@@ -313,7 +316,8 @@
 
             handleValidationMessages(null, data);
             valid = data.valid;
-            matematici.controls.setEditable(options.applyButton, valid);
+            if (options && options.applyButton) matematici.controls.setEditable(options.applyButton, valid);
+            if (options && options.resultHandler) options.resultHandler(data);
         },
 
         bind = function (event, handler, data) {
@@ -369,9 +373,7 @@
     };
 
     this.handleResult = handleResult;
-
     this.onChange = onChange;
-
     this.saveForm = saveForm;
 
     this.addChangeHandler = function (handler) {

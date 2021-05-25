@@ -2,6 +2,7 @@
     var
         datePicker = this,
         needToParse,
+        icon,
 
         isEnabled = function () {
             return !node.classList.contains("Disabled") && !node.hasAttribute("readonly");
@@ -66,19 +67,26 @@
             node.addEventListener("blur", function () { needToParse = false; });
             node.addEventListener("click", open);
 
-            var i = document.createElement("i");
-            i.className = "Icon fal fa-calendar-alt";
-            i.addEventListener("click", function (e) {
+            icon = document.createElement("i");
+            icon.className = "Icon fal fa-calendar-alt";
+            icon.addEventListener("click", function (e) {
                 e.preventDefault();
                 if (matematici.calendar.isVisible() && matematici.calendar.getDatePicker() == datePicker)
                     close();
                 else
                     open(e);
             });
-            node.parentNode.insertBefore(i, node);
+            node.parentNode.insertBefore(icon, node);
 
             matematici.DatePicker.map.set(node, datePicker);
             parse();
+        },
+
+        destroy = function () {
+            icon.remove();
+            delete icon;
+            matematici.DatePicker.map.delete(node)
+            delete datePicker;
         };
 
     this.setValue = function (value) {
@@ -90,6 +98,8 @@
     this.getValue = function () {
         return node.value;
     };
+
+    this.destroy = destroy;
 
     initialize();
 };
@@ -103,5 +113,3 @@ matematici.destroyers.push(function (context) {
     matematici.DatePicker.map = new WeakMap();
     matematici.DatePicker.current = null;
 });
-
-

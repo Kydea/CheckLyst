@@ -117,7 +117,6 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 
         public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
-            //mettere formattazione invece che tostring generico sui campi
             return LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
         }
     }

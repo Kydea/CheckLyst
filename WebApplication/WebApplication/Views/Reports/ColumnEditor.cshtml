@@ -1,0 +1,56 @@
+﻿<div id="ColumnEditor">
+    <h2>Column Editor</h2>
+
+    <form id="Detail">
+        <label class="Clearing Width300">
+            <span>Label</span>
+            <input type="text" name="label" autocomplete="off" maxlength="50" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Format</span>
+            <input type="text" name="format" autocomplete="off" maxlength="50" />
+        </label>
+
+        <label class="Clearing">
+            <span>Visible</span>
+            <input type="checkbox" name="visible" />
+        </label>
+
+        <label>
+            <span>Order by this column</span>
+            <input type="checkbox" name="orderColumn" />
+        </label>
+
+        <label>
+            <span>Group by this colymn</span>
+            <input type="checkbox" name="groupColumn" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Aggregation</span>
+            <select name="GroupAggregation" data-nullable="hidden">
+                <option value="sum">sum</option>
+                <option value="average">average</option>
+                <option value="count">count</option>
+                <option value="min">min</option>
+                <option value="max">max</option>
+                <option value="first">first</option>
+                <option value="first">last</option>
+            </select>
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Column</span>
+            <pre id="ColumnAceEditor" style="height: 100px"></pre>
+        </label>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        columnEditor = matematici.popup.getData(),
+        form = $("div#ColumnEditor form#Detail");
+
+    columnEditor.fill(form);
+</script>

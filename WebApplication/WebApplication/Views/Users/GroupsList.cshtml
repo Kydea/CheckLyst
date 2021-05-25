@@ -1,0 +1,117 @@
+﻿<div id="GroupsListPage">
+    <h1>Groups List</h1>
+
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="Icon fa fa-caret-down"></i></a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/AccessControl/Groups">
+            <label>
+                <span>Group code</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="code" />
+            </label>
+
+            <label>
+                <span>Description</span>
+                <i class="Icon fal fa-id-card" />
+                <input type="text" name="description" />
+            </label>
+
+            <label>
+                <span>User</span>
+                <i class="Icon fal fa-user" />
+                <input type="text" name="user" />
+            </label>
+
+            <label>
+                <span>Role</span>
+                <i class="Icon fal fa-user-cog" />
+                <input type="text" name="role" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Group code</th>
+                    <th>Description</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="code"></td>
+                    <td data-column="description"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var formSelector = "form#Filters";
+
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Groups",
+            functionGroup: "Users",
+            detailUrl: "@Url.Action("GroupsDetail")",
+            filterFormSelector: formSelector,
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "groups" }
+            ]
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
+            data: {
+                data: {
+                    name: ""
+                },
+                itemsPerPage: 5000
+            }
+        }).done(function (result) {
+            $(formSelector).data("prototypeTypes", result.data);
+        });
+
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/AccessControl/Roles/GetSyntheticData"
+        }).done(function (result) {
+            var roles = {
+                general: {},
+                prototypes: {},
+                instances: {}
+            }
+            for (var index in result) {
+                var role = result[index]; 
+                roles[!role.functionGroup ? "general" : role.functionGroup.toLowerCase()][role.code] = role;
+            }
+            $(formSelector).data("roles", roles);
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
+        });
+
+        callback.call();
+    };
+</script>

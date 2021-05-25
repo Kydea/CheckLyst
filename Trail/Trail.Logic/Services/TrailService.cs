@@ -35,15 +35,19 @@ namespace CheckListManager.Trail.Logic.Services
 
 		public async Task ProcessMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var messages = await _queueService.ReceiveObjectsAsync<TrailMessage>(QueueName.Trail, cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
-			{
-				await ProcessMessageAsync(message, cancellationToken);
-
-				if (cancellationToken.IsCancellationRequested)
-					break;
-			}
+            bool idle;
+            do
+            {
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<TrailMessage>(QueueName.Trail, cancellationToken: cancellationToken);
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+            }
+            while (!idle);
 		}
 
 		private async Task ProcessMessageAsync(QueueMessage<TrailMessage> message, CancellationToken cancellationToken)

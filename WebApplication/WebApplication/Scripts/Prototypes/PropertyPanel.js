@@ -553,7 +553,7 @@
                     properties.push(new prototypes.Property(
                         this, new prototypes.TargetProperty(model, "Image"),
                         "Target",
-                        "It the target is specified, the button will show the image of the specified item."
+                        "If the target is specified, the button will show the image of the specified item."
                     ));
                     break;
                 case "Attachment":
@@ -579,7 +579,7 @@
                     properties.push(new prototypes.Property(
                         this, new prototypes.TargetProperty(model, "Attachment"),
                         "Target",
-                        "It the target is specified, the attachment will be linked to the specified item."
+                        "If the target is specified, the attachment will be linked to the specified item."
                     ));
                     break;
                 default:

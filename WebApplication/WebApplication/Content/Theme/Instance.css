@@ -69,7 +69,8 @@ div.Instance .Element div.Information {
     box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
     line-height: 1.5em;
     font-size: 12px;
-    width: 228px; }
+    width: 228px;
+    text-align: left; }
     div.Instance .Element div.Information div.Panel i.fa, div.Instance .Element div.Information div.Panel i.fal {
       margin-left: -20px;
       color: #666;
@@ -446,6 +447,20 @@ div.Instance table.Grid {
         float: none;
         min-width: unset;
         margin-top: 0; }
+    div.Instance table.Grid tbody tr td.InstanceLink {
+      text-align: center;
+      width: 100px; }
+      div.Instance table.Grid tbody tr td.InstanceLink input {
+        display: none; }
+      div.Instance table.Grid tbody tr td.InstanceLink > i {
+        display: none; }
+      div.Instance table.Grid tbody tr td.InstanceLink a.Button {
+        float: none;
+        min-width: unset;
+        margin-top: 0;
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden; }
     div.Instance table.Grid tbody tr td.Link {
       font-size: 13px; }
       div.Instance table.Grid tbody tr td.Link a.Link {
@@ -460,7 +475,7 @@ div.Instance table.Grid {
         margin-left: 10px; }
     div.Instance table.Grid tbody tr td > div.Information {
       left: 3px; }
-    div.Instance table.Grid tbody tr td:not(.Signature):not(.Image):not(.Attachment) i.Icon {
+    div.Instance table.Grid tbody tr td:not(.Signature):not(.Image):not(.Attachment):not(.InstanceLink) i.Icon {
       display: none; }
     div.Instance table.Grid tbody tr td.IterationCommands {
       white-space: nowrap;

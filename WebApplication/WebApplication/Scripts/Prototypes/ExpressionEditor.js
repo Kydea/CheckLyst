@@ -202,7 +202,7 @@
                 data: expressionEditor,
                 sender: expressionEditor,
                 buttons: buttons,
-                width: 680,
+                width: 770,
             });
         };
 

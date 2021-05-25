@@ -55,6 +55,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper.StrongName, Version=2.0.0.0, Culture=neutral, PublicKeyToken=e3e8412083d25dd3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.StrongName.2.0.90\lib\net461\Dapper.StrongName.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -114,6 +117,7 @@
     </Compile>
     <Compile Include="Exceptions\DatabaseAggregateException.cs" />
     <Compile Include="Exceptions\DatabaseException.cs" />
+    <Compile Include="Extensions\PrototypeTypes.cs" />
     <Compile Include="FTPServers.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
@@ -124,12 +128,24 @@
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GroupFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GroupRoles.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Groups.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ICommonRepository.cs" />
     <Compile Include="CommonRepository.cs" />
     <Compile Include="InstanceExpressionValues.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="InstanceNumerators.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="InstanceRelations.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Instances.cs">
@@ -189,14 +205,44 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RelationalDatabaseModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="ReportClauses.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportColumns.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Reports.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ReportSources.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Repository.cs" />
+    <Compile Include="RoleFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Roles.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="SettingValues.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="TimeZones.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserFunctions.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserGroups.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserLevels.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRoles.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Users.cs">

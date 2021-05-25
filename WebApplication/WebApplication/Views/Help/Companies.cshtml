@@ -1,0 +1,33 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Companies",
+    RecordsName = "companies",
+
+    Filters = new Field[] {
+        new Field("Company", "The name of the company or part of it.")
+    },
+
+    Columns = new Field[]
+    {
+        new Field("Company ID", Field.ID),
+        new Field("Company name", "The name of the department.")
+    },
+
+    DetailTabs = new Tab[]
+    {
+        new Tab("Details") {
+            Fields = new Field[] {
+                new Field("ID", Field.ID, Field.READ_ONLY),
+                new Field("Name", "The name of the company.", Field.MANDATORY),
+                new Field("Time zone", "The time zone of the company.", Field.MANDATORY)
+            },
+            IncludeLogFields = true
+        },
+        new Tab("... setting")
+        {
+            Description = @"
+                A list of <strong>settings</strong> of the company.<br />
+                Click on the row for a detailed explanation of the setting and possibly edit it.
+            "
+        }
+    }
+})

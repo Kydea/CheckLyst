@@ -9,11 +9,15 @@
         label,
         span,
         checkListGrid,
+        cog,
 
         attach = function (page) {
             var
                 handler = function (grid, row) {
-                    new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
+                    if (model.id == row.id)
+                        matematici.dialog.error("error", "Self link not allowed");
+                    else
+                        new instances.Event(instances.Events.attachInstance, model.id, { instance: row.id }).trigger();
                 };
 
             if (page == null) page = 1;
@@ -45,10 +49,11 @@
 
                 if (page == 1)
                     checkListGrid = new matematici.CheckListGrid("Instances of prototype " + model.prototypeName, result.data, handler, null, columns, null);
-                else
+                else {
                     for (var index in result.data)
                         checkListGrid.addRow(result.data[index]);
-
+                    checkListGrid.center();
+                }
                 checkListGrid.setNextHandler(result.pagesCount <= result.currentPage ? null : function () {
                     attach(page + 1)
                 });
@@ -60,13 +65,31 @@
         },
 
         open = function () {
-            matematici.navigator.open(matematici.urls.instances.detail + "/" + model.attachedInstanceCode);
+            instances.instance.openInstance(model.attachedInstanceCode);
         },
 
         create = function () {
             localStorage.parentInstanceCode = instances.instance.getCode();
             localStorage.parentInstanceLinkID = model.id;
-            matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID);
+
+            $.ajax({
+                url: matematici.urls.api + "/Instances/Instance/GetInstanceLinkParameters",
+                type: "post",
+                data: {
+                    instanceCode: instances.instance.getCode(),
+                    itemId: model.id
+                }
+            }).done(function (result) {
+                var query = "";
+                if (result.parameters)
+                    for (var parameterIndex in result.parameters) {
+                        var parameter = result.parameters[parameterIndex];
+                        if (query != "") query += "&";
+                        query += "item." + encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
+                    }
+                if (query != "") query = "?" + query;
+                matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
+            });
         },
 
         refresh = function () {
@@ -74,7 +97,7 @@
         },
 
         action = function () {
-            if (model.readOnly) return;
+            if (button.classList.contains("ReadOnly")) return;
 
             var
                 buttons = [
@@ -82,11 +105,11 @@
                 ];
 
             if (model.attachedInstanceID != null) {
-                buttons.push({ text: "Detach", icon: "unlink", handler: detach });
+                if (!model.readOnly) buttons.push({ text: "Detach", icon: "unlink", handler: detach });
                 buttons.push({ text: "Open", icon: "folder-open", handler: open });
-                if (model.state != instances.Instance.states.confirmed)
+                if (!model.readOnly && model.state != instances.Instance.states.confirmed)
                     buttons.push({ text: "Refresh values", icon: "sync", handler: refresh });
-            } else {
+            } else if (!model.readOnly) {
                 if (model.actions != 2)
                     buttons.push({ text: "Create", icon: "plus", handler: create });
                 if (model.actions != 1)
@@ -94,7 +117,6 @@
             }
             matematici.dialog.popupMenu(buttons);
         },
-
 
         setup = function () {
             label = document.createElement("label");
@@ -133,13 +155,13 @@
             state.readOnly = true;
             parent.appendChild(state);
 
-            i = document.createElement("i");
-            i.className = "Icon fa fa-cog";
+            cog = document.createElement("i");
+            cog.className = "Icon fa fa-cog";
             button = document.createElement("a");
             button.className = "Button GreyYellowButton";
             button.setAttribute("href", "#");
             button.addEventListener("click", action);
-            button.appendChild(i);
+            button.appendChild(cog);
             button.innerHTML += "Actions";
             element.appendChild(button);
         };
@@ -149,15 +171,20 @@
 
         span.innerHTML = model.descriptionValue || "(no description)";
 
-        button.classList.toggle("ReadOnly", model.readOnly);
+        button.classList.toggle("ReadOnly", model.readOnly && model.attachedInstanceID == null);
 
         code.value = model.record.code;
+        code.setAttribute("title", model.record.code || "");
         description.value = model.record.description;
         description.setAttribute("title", model.record.description || "");
         state.value = model.record.state;
 
-        if (item.isTableContent())
+        if (item.isTableContent()) {
             description.style.display = "none";
+            button.textContent = model.record.code;
+            button.setAttribute("title", model.record.code || "");
+            button.appendChild(cog);
+        }
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);

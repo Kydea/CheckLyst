@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Prototypes.Data.Models;
 using CheckListManager.Prototypes.Logic.List;
 using CheckListManager.Prototypes.Tests.Contexts;
 using NUnit.Framework;
@@ -29,7 +30,7 @@ namespace CheckListManager.Prototypes.Tests.Steps
         [BeforeScenario]
         public void BeforeScenario()
         {
-            _context.Request = new ListRequest()
+            _context.Request = new PrototypeFilters()
             {
                 State = String.Empty,
                 Name = String.Empty,
@@ -55,7 +56,7 @@ namespace CheckListManager.Prototypes.Tests.Steps
         [When(@"I access the page")]
         public async Task WhenIAccessThePage()
         {
-            _context.Response = (await _listService.GetDataAsync(_defaultIdentity, new PagingRequest<ListRequest>
+            _context.Response = (await _listService.GetDataAsync(_defaultIdentity, new PagingRequest<PrototypeFilters>
             {
                 Data = _context.Request
             }));

@@ -151,6 +151,10 @@
       <Project>{EC509A88-99D6-4DC2-943B-464E495F672D}</Project>
       <Name>Prototypes.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Prototypes.Data\Prototypes.Data.csproj">
+      <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
+      <Name>Prototypes.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Prototypes.Logic\Prototypes.Logic.csproj">
       <Project>{5F03EBA2-7FF0-4FE0-9945-58FA5F084563}</Project>
       <Name>Prototypes.Logic</Name>

@@ -65,12 +65,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public override void UpdateReadOnly(string userCode, bool ReadOnlyInstance)
+        public void UpdateReadOnly(string userCode, bool ReadOnlyInstance, bool ignoreNullLock)
 		{
-            if (Lock?.User != userCode || ReadOnlyInstance)
-                ReadOnly = true;
+            var PageUnlocked = ignoreNullLock && Lock == null || Lock?.User == userCode;
+            if (PageUnlocked && !ReadOnlyInstance)
+                base.UpdateReadOnly(userCode, false);
             else
-                base.UpdateReadOnly(userCode, ReadOnlyInstance);
+                ReadOnly = true;
 
             foreach (var group in Groups)
 				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance);
