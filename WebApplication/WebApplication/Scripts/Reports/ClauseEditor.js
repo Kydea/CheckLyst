@@ -31,7 +31,7 @@
         toggleControls = function () {
             if (parameterType != parameterTypeSelect.val()) {
                 parameterType = parameterTypeSelect.val();
-                valueTypeInput && valueTypeInput.getInput().remove();
+                valueTypeInput && valueTypeInput.destroy();
                 valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
             }
 
@@ -135,11 +135,11 @@
                 });
 
                 var json = JSON.parse(clause.clause);
-                columnSelect.val(json.column);
-                signSelect.val(json.sign);
-                editor.setValue(json.content);
+                columnSelect.val(json.column || "");
+                signSelect.val(json.sign || "");
+                editor.setValue(json.content || "");
                 toggleControls();
-                valueTypeInput.setValue(json.value);
+                valueTypeInput.setValue(json.value || "");
             } 
 
             $("input[name=parameterName]", form).keyfilter(/^[$A-Z_0-9]*$/i);

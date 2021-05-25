@@ -70,18 +70,18 @@
             editor = new matematici.SQLEditor("ColumnAceEditor");
 
             if (!newRecord) {
-                editor.setValue(column.column);
+                editor.setValue(column.column || "");
 
                 $("input[type=text]", form).each(function () {
-                    this.value = column[this.name];
+                    this.value = column[this.name] || "";
                 });
 
                 $("input[type=checkbox]", form).each(function () {
-                    this.checked = this.value = column[this.name];
+                    this.checked = this.value = column[this.name] || "";
                 });
 
                 $("select", form).each(function () {
-                    this.value = column[this.name];
+                    this.value = column[this.name] || "";
                 });
             } else
                 $("select", form).each(function () {

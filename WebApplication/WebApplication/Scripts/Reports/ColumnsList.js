@@ -92,26 +92,56 @@
         };
 
         generate = function () {
-            var currentColumns = list.map(function (column) { return column.column; });
-            for (var index = 0; index < options.columns.length; ++index) {
-                var queryColumn = options.columns[index];
-                if (!currentColumns.includes(queryColumn))
-                    insert({
-                        label: prettify(queryColumn),
-                        column: queryColumn,
-                        visible: true
-                    });
-            }
-            autoCenter.center();
+            var
+                currentColumns = list.map(function (column) { return column.column; }),
+                createColumns = function () {
+                    for (var index = 0; index < options.columns.length; ++index) {
+                        var queryColumn = options.columns[index];
+                        if (!currentColumns.includes(queryColumn))
+                            insert({
+                                label: prettify(queryColumn),
+                                column: queryColumn,
+                                visible: true
+                            });
+                    }
+                },
+                deleteColumns = function () {
+                    for (var index = options.columns.length - 1; index >= 0; --index) {
+                        var queryColumn = options.columns[index];
+                        remove(index);
+                    }
+                };
+
+            var buttons = [
+                { text: "cancel", icon: "times", cancelButton: true },
+                {
+                    text: "delete columns", icon: "trash-alt", handler: function () {
+                        deleteColumns();
+                        autoCenter.center();
+                    }
+                }, {
+                    text: "replace columns", icon: "sync", handler: function () {
+                        deleteColumns();
+                        createColumns();
+                        autoCenter.center();
+                    }
+                }, {
+                    text: "add columns", icon: "plus", handler: function () {
+                        createColumns();
+                        autoCenter.center();
+                    }
+                }
+            ];
+            matematici.dialog.popupMenu(buttons);
         },
 
         removeItem = function (index) {
             list.splice(index, 1);
         },
 
-        remove = function () {
+        remove = function (index) {
             matematici.canClose = false;
-            getRow(currentIndex).remove();
+            getRow(index == null ? currentIndex : index).remove();
             removeItem(currentIndex);
             toggleNoRecord();
             colorRows();
