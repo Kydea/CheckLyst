@@ -7,7 +7,7 @@
         dataPicker,
 
         getValue = function () {
-            if (!matematici.TypedInput.validate(ttrash - altype, input, hoursSelect, minutesSelect)) return null;
+            if (!matematici.TypedInput.validate(type, input, hoursSelect, minutesSelect)) return null;
 
             var value = input && (input.value || "").trim();
 
