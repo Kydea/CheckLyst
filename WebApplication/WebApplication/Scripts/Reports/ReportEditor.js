@@ -34,6 +34,10 @@
             });
         },
 
+        showGroups = function () {
+            new reports.GroupsList();
+        },
+
         quit = function () {
             matematici.navigator.open(options.listUrl);
         },
@@ -220,6 +224,7 @@
 
     reportEditor.showColumns = showColumns;
     reportEditor.showClauses = showClauses;
+    reportEditor.showGroups = showGroups;
     reportEditor.quit = quit;
     reportEditor.save = save;
     reportEditor.verify = verify;

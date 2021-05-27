@@ -42,5 +42,12 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("ClauseEditor");
         }
+
+        [Authorize(Roles = "Reports#Edit")]
+        [Route("GroupsList")]
+        public ActionResult GroupsList()
+        {
+            return ConditionalView("GroupsList");
+        }
     }
 }
