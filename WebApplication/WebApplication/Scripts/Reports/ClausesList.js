@@ -74,6 +74,23 @@
             autoCenter.center();
         },
 
+        toggleErrors = function (tr, index) {
+            var errorMessage = "";
+            if (model.clauseErrors && model.clauseErrors["item" + index])
+                for (var fieldIndex in model.clauseErrors["item" + index].fields) {
+                    var field = model.clauseErrors["item" + index].fields[fieldIndex];
+                    for (var errorIndex in field.validationMessages) {
+                        var error = field.validationMessages[errorIndex]
+                        errorMessage += fieldIndex + ": " + error.message + "\n";
+                    }
+                }
+
+            $("i.Valid", tr)
+                .removeClass("fa-check fa-times")
+                .attr("title", errorMessage)
+                .addClass(errorMessage == "" ? "fa-check" : "fa-times");
+        },
+
         open = function (index) {
             new reports.ClauseEditor(list, options.columns, index,
                 function (row) {
@@ -84,7 +101,23 @@
                         list[index] = row;
                         update(index);
                     }
-                }, remove);
+                    verify();
+                }, remove, function (editor, row) {
+                    var
+                        oldRow,
+                        newIndex;
+                    if (index == null)
+                        newIndex = insertItem(row, currentIndex);
+                    else {
+                        oldRow = list[index];
+                        list[index] = row;
+                    }
+                    verify(editor.setError);
+                    if (index == null)
+                        removeItem(newIndex);
+                    else
+                        list[index] = oldRow;
+                }, verify);
         },
 
         removeItem = function (index) {
@@ -96,6 +129,7 @@
             getRow(currentIndex).remove();
             removeItem(currentIndex);
             toggleNoRecord();
+            verify();
             colorRows();
             select();
         },
@@ -119,6 +153,7 @@
                     .append($("<td />").addClass("Label"))
                     .append($("<td />").addClass("ParameterName"))
                     .append($("<td />").addClass("Centered")
+                        .append($("<i />").attr("title", "Valid").addClass("Valid fal"))
                         .append($("<i />").attr("title", "Visible").addClass("Visible fal fa-eye"))
                         .append($("<i />").attr("title", "Editable").addClass("Editable fal fa-pencil"))
                     );
@@ -144,6 +179,7 @@
 
         update = function (index) {
             var
+                tr = getRow(index),
                 row = list[index],
                 cells = $("td", getRow(index)),
                 commands = cells.last();
@@ -152,6 +188,8 @@
             cells.filter(".ParameterName").text(row.parameterName).attr("title", row.parameterName);
             commands.find(".Visible").toggleClass("Off", !row.visible);
             commands.find(".Editable").toggleClass("Off", !row.editable);
+
+            toggleErrors(tr, index);
         },
 
         updateReport = function () {
@@ -160,7 +198,14 @@
 
         verify = function (handler) {
             updateReport();
-            reports.reportEditor.test();
+            reports.reportEditor.verify(true, function () {
+                var model = reports.reportEditor.getModel();
+                for (var index in list) {
+                    var tr = getRow(index);
+                    toggleErrors(tr, index);
+                }
+                if (handler) handler.call(this);
+            });
         },
 
         close = function () {
@@ -190,6 +235,8 @@
                     visible = keyword == null;
                 if (!visible && flags[0]) visible = !!clause.label && clause.label.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (!visible && flags[1]) visible = !!clause.parameterName && clause.parameterName.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (visible && !flags[2]) visible = !model.clauseErrors || !model.clauseErrors[index];
+                if (visible && !flags[3]) visible = model.clauseErrors && !!model.clauseErrors[index];
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -213,6 +260,8 @@
             filtersBar = new matematici.GridFiltersBar(container, filter);
             filtersBar.addFlag("label", true);
             filtersBar.addFlag("parameter name", true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")

@@ -34,6 +34,14 @@ body.ReportEditor {
                                     font-size: 14px;
                                     display: inline !important;
 
+                                    &.fa-times {
+                                        color: $Color-Red-Regular !important;
+                                    }
+
+                                    &.fa-check {
+                                        color: $Color-Green-Regular !important;
+                                    }
+
                                     &.Off {
                                         opacity: .1;
                                         color: black !important;

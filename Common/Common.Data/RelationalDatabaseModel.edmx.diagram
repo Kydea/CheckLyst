@@ -133,6 +133,7 @@
         <AssociationConnector Association="RelationalDatabaseModel.ReportColumns_Report_fkey" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.ReportClauses" Width="1.5" PointX="26.875" PointY="0.75" />
         <AssociationConnector Association="RelationalDatabaseModel.ReportClauses_Report_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportGroups" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

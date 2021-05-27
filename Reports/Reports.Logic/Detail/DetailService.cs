@@ -11,6 +11,7 @@ using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
 using System.Data;
+using CheckListManager.Common.Data.Exceptions;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -32,6 +33,38 @@ namespace CheckListManager.Reports.Logic.Detail
             _reportViewerRepository = reportViewerRepository;
             _settingService = settingService;
             _queueService = queueService;
+        }
+
+        private void AddListError(Dictionary<string, ValidationError> List, int Index, string FieldName, string Message)
+        {
+            if (!List.TryGetValue($"item{Index}", out var ValidationError))
+            {
+                ValidationError = new ValidationError { Index = Index };
+                List[$"item{Index}"] = ValidationError;
+            }
+            var Field = new Field();
+            Field.ValidationMessages.Add(new ValidationMessage
+            {
+                Level = ValidationMessage.LevelError,
+                Message = Message
+            });
+            ValidationError.Fields[FieldName] = Field;
+        }
+
+        private void AddQueryError(DetailResponse response, string message, int? position)
+        {
+            response.Fields["Query"] = new Field
+            {
+                ValidationMessages = new List<ValidationMessage> {
+                    new ValidationMessage {
+                        Level = ValidationMessage.LevelError,
+                        Message = message,
+                        Position = position
+                    }
+                }
+            };
+
+            response.Valid = false;
         }
 
         private async Task<DetailResponse> ValidateAsync(IDefaultIdentity identity, DetailRequest record)
@@ -65,7 +98,56 @@ namespace CheckListManager.Reports.Logic.Detail
                 };
             }
 
-            response.Valid = response.Fields.Count == 0;
+            for (var Index = 0; Index < record.Columns.Count; ++Index)
+            {
+                var Column = record.Columns[Index];
+                if (string.IsNullOrWhiteSpace(Column.Label))
+                    AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
+
+                if (string.IsNullOrWhiteSpace(Column.Column))
+                    AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
+            }
+
+            if (!response.ColumnErrors.Any()) response.ColumnErrors = null;
+
+            HashSet<string> ColumnNames = new HashSet<string>(record.Columns.Select(c => c.Label));
+            for (var Index = 0; Index < record.Clauses.Count; ++Index)
+            {
+                var Clause = record.Clauses[Index];
+                if (Clause.Clause.Column != null && !ColumnNames.Contains(Clause.Clause.Column))
+                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+
+                if (string.IsNullOrWhiteSpace(Clause.Label))
+                    AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
+
+                if (string.IsNullOrWhiteSpace(Clause.ParameterName))
+                    AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
+
+                if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
+                    AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
+
+                if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
+                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+            }
+
+            if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
+
+            response.Valid = !response.Fields.Any() && response.ColumnErrors == null && response.ClauseErrors == null;
+
+            if (record.ReportSource == null)
+                try
+                {
+                    await _reportViewerRepository.GetDataTable(identity.CompanyId, record.Query);
+                }
+                catch (DatabaseException DatabaseException)
+                {
+                    AddQueryError(response, DatabaseException.Message, DatabaseException.Position);
+                }
+                catch (Exception Exception)
+                {
+                    AddQueryError(response, Exception.Message, null);
+                }
+
             return response;
         }
 
@@ -81,6 +163,8 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["description"] = new Field { Value = report.Description };
                 response.Fields["reportSource"] = new Field { Value = report.ReportSource };
                 response.Fields["query"] = new Field { Value = report.Query };
+                response.Fields["online"] = new Field { Value = report.Online ? "true" : "false" };
+                response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false" };
                 response.CreatedBy = report.CreatedBy;
                 response.CreatedOn = report.CreatedOn;
                 response.ModifiedBy = report.ModifiedBy;
@@ -92,6 +176,8 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["prototypesRangeRestricted"] = new Field { Value = report.PrototypesRangeRestricted.ToString() };
                 response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
                 */
+
+                response.Groups = response.Groups;
 
                 response.Columns = report.ReportColumns.OrderBy(c => c.ID).Select(c => new ReportColumn
                 {
@@ -108,7 +194,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Clauses = report.ReportClauses.OrderBy(c => c.ID).Select(c => new ReportClause
                 {
                     Label = c.Label,
-                    Clause = c.Clause,
+                    Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(c.Clause),
                     Visible = c.Visible,
                     Editable = c.Editable,
                     ParameterName = c.ParameterName,
@@ -145,6 +231,13 @@ namespace CheckListManager.Reports.Logic.Detail
                         InstancesIDAlias = request.InstancesIDAlias,
                         PrototypesRangeRestricted = request.PrototypesRangeRestricted,
                         PrototypesIDAlias = request.PrototypesIDAlias,
+                        Online = request.Online,
+                        Restricted = request.Restricted,
+                        Groups = request.Groups?.Select(g => new Common.Data.Groups
+                        {
+                            Company = identity.CompanyId,
+                            Code = g
+                        }).ToList(),
                         ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
                             Label = c.Label,
@@ -159,7 +252,7 @@ namespace CheckListManager.Reports.Logic.Detail
                         ReportClauses = request.Clauses?.Select(c => new Common.Data.ReportClauses
                         {
                             Label = c.Label,
-                            Clause = c.Clause,
+                            Clause = JsonConvert.SerializeObject(c.Clause),
                             Visible = c.Visible,
                             Editable = c.Editable,
                             ParameterName = c.ParameterName,
@@ -213,6 +306,9 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
+        public async Task<DetailResponse> VerifyReportAsync(IDefaultIdentity identity, DetailRequest request) =>
+            await ValidateAsync(identity, request);
+
         public async Task<List<ReportSource>> GetReportSourcesAsync() =>
             (await _reportsRepository.GetReportSourcesAsync()).Select(rs => new ReportSource
             {
@@ -244,6 +340,9 @@ namespace CheckListManager.Reports.Logic.Detail
                 record.InstancesIDAlias,
                 record.PrototypesRangeRestricted,
                 record.PrototypesIDAlias,
+                record.Online,
+                record.Restricted,
+                ReportGroups = record.Groups,
                 ReportColumns = record.Columns,
                 ReportClauses = record.Clauses,
                 ReasonForChange = record.Reason

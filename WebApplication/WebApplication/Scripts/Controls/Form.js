@@ -247,7 +247,7 @@
                     field.val(value);
                 }
             else if (field.attr("type") == "checkbox")
-                field.prop("checked", !!value)
+                field.prop("checked", value === true || value === "true")
             else
                 field.val(value);
         },

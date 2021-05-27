@@ -232,6 +232,14 @@
 
         destroy = function () {
             matematici.elements.window.off("resize", setWidth);
+            iconNode.remove();
+            delete iconNode;
+            labelNode.remove();
+            delete labelNode;
+            input && input.remove();
+            delete input;
+            list && list.remove();
+            delete list;
         },
 
         toggleItem = function (index) {

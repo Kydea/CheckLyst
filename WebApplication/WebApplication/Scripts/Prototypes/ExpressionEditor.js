@@ -21,17 +21,15 @@
         },
 
         cancel = function () {
-            if (!edited) {
-                if (cancelHandler) {
-                    cancelHandler();
-                    return true;
-                }
-                else
-                    return false;
-            }
+            if (!edited) return false;
 
             matematici.dialog.show("warning", "Warning: the changes to the expression will be lost.", [
-                { text: "discard the changes", icon: "exclamation", handler: cancelHandler || matematici.popup.close },
+                {
+                    text: "discard the changes", icon: "exclamation", handler: function () {
+                        matematici.popup.close();
+                        if (edited) cancelHandler && cancelHandler();
+                    }
+                },
                 { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
             ]);
             return true;

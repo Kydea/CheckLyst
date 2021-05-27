@@ -10,5 +10,7 @@
         public string Level { get; set; }
 
         public string Message { get; set; }
+
+        public int? Position { get; set; }
     }
 }

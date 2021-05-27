@@ -13,13 +13,16 @@
                 url: matematici.urls.reports.api + "/List/GetColumns",
                 data: {
                     query: editor.getValue()
-                }
+                },
+                suppressErrors: true
             }).done(function (result) {
                 new reports.ColumnsList({
                     columns: (result || []).map(function (column) {
                         return "\"" + column + "\"";
                     })
                 });
+            }).error(function () {
+                new reports.ColumnsList();
             });
         },
 
@@ -54,6 +57,17 @@
             detailPage.clickHandler(null, "Save", callback);
         },
 
+        verify = function (soft, callBack) {
+            detailPage.getForm().trigger("Verify", function (data) {
+                var valid = validate(!soft, data);
+                if (valid)
+                    matematici.blip.ok();
+                else if (soft)
+                    matematici.blip.warning();
+                callBack && callBack(data);
+            }, parametersPrepare());
+        },
+
         deleteRecord = function () {
             detailPage.deleteRecord(function () {
                 matematici.canClose = true;
@@ -79,11 +93,48 @@
             editor.setValue(reportSource && reportSource.query || "", -1);
         },
 
+        validate = function (showErrorDialog, data) {
+            var valid = true;
+            $("div.ActionBar a.ColumnsButton").toggleClass("Invalid", false);
+            $("div.ActionBar a.ClausesButton").toggleClass("Invalid", false);
+
+            if (data && data.valid == false) {
+                valid = false;
+                var
+                    errors = [],
+                    error = $("> div.Errors", detailPage.getForm().getElement()).text();
+
+                if (error && error != "") errors.push(error);
+
+                if (data.columnErrors) {
+                    errors.push("Some columns have errors");
+                    $("div.ActionBar a.ColumnsButton").toggleClass("Invalid", true);
+                }
+
+                if (data.clauseErrors) {
+                    errors.push("Some clauses have errors");
+                    $("div.ActionBar a.ClausesButton").toggleClass("Invalid", true);
+                }
+
+                if (data.fields && data.fields.query) {
+                    record = data.fields.query.validationMessages[0];
+                    errors.push("The query has errors");
+                    editor.setError(record.position || 0, record.message, "error");
+                }
+
+                if (showErrorDialog)
+                    setTimeout(function () {
+                        matematici.dialog.error("error", errors.join("<br />"));
+                    }, 0)
+            }
+
+            model.columnErrors = data.columnErrors;
+            model.clauseErrors = data.clauseErrors;
+            return valid;
+        },
+
         resultHandler = function (data) {
-            if (data && data.valid == false)
-                setTimeout(function () {
-                    matematici.dialog.error("error", $("> div.Errors", detailPage.getForm().getElement()).text());
-                }, 0);
+            validate(true, data);
         },
 
         completeHandler = function (reportSources) {
@@ -171,6 +222,7 @@
     reportEditor.showClauses = showClauses;
     reportEditor.quit = quit;
     reportEditor.save = save;
+    reportEditor.verify = verify;
     reportEditor.deleteRecord = deleteRecord;
 
     setup();

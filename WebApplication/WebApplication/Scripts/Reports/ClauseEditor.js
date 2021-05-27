@@ -1,4 +1,4 @@
-﻿reports.ClauseEditor = function (clauses, columns, clauseIndex, confirmHandler, deleteHandler, cancelHandler) {
+﻿reports.ClauseEditor = function (clauses, columns, clauseIndex, confirmHandler, deleteHandler, verifyHandler, cancelHandler) {
     var
         clause = clauses[clauseIndex],
         newRecord = !clause,
@@ -9,6 +9,7 @@
 
         parameterType,
         parameterTypeSelect,
+        clauseTypeLabel,
         clauseTypeSelect,
         filterPanel,
         columnLabel,
@@ -17,29 +18,26 @@
         signSelect,
         valueLabel,
         valueTypeInput,
-        clauseLabel,
-
-        toggleNotification = function () {
-            var
-                notificationCheck = $("input[name=notification]", form),
-                notifictatonOn = notificationCheck.prop("checked");
-
-            matematici.controls.setEditable($("input[name=notificationEmail]", form), notifictatonOn);
-            matematici.controls.setEditable($("input[name=notificationNote]", form), notifictatonOn);
-        },
+        customLabel,
 
         toggleControls = function () {
             if (parameterType != parameterTypeSelect.val()) {
                 parameterType = parameterTypeSelect.val();
                 valueTypeInput && valueTypeInput.destroy();
-                valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
+                if (parameterType == "Prototypes")
+                    valueTypeInput = null;
+                else
+                    valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
             }
 
-            columnLabel.toggle(clauseTypeSelect.val() == "filter");
-            signLabel.toggle(clauseTypeSelect.val() == "filter");
-            valueLabel.toggle(clauseTypeSelect.val() != "custom" && signSelect.val() != "0" && signSelect.val() != "!0");
-            clauseLabel.toggle(clauseTypeSelect.val() == "custom");
+            clauseTypeLabel.toggle(parameterType != "Prototypes");
+            columnLabel.toggle(clauseTypeSelect.val() == "filter" || parameterType == "Prototypes");
+            signLabel.toggle(clauseTypeSelect.val() == "filter" && parameterType != "Prototypes");
+            valueLabel.toggle(clauseTypeSelect.val() != "custom" && signSelect.val() != "0" && signSelect.val() != "!0" && parameterType != "Prototypes");
+            customLabel.toggle(clauseTypeSelect.val() == "custom" && parameterType != "Prototypes");
+
             matematici.popup.center();
+
             var autoComplete = matematici.AutoComplete.get(columnSelect[0]);
             autoComplete && autoComplete.refresh();
             autoComplete = matematici.AutoComplete.get(signSelect[0]);
@@ -47,17 +45,15 @@
         },
 
         cancel = function () {
-            if (!edited) {
-                if (cancelHandler) {
-                    cancelHandler();
-                    return true;
-                }
-                else
-                    return false;
-            }
+            if (!edited) return false;
 
             matematici.dialog.show("warning", "Warning: the changes to the clause will be lost.", [
-                { text: "discard the changes", icon: "exclamation", handler: cancelHandler || matematici.popup.close },
+                {
+                    text: "discard the changes", icon: "exclamation", handler: function () {
+                        matematici.popup.close();
+                        if (edited) cancelHandler && cancelHandler();
+                    }
+                },
                 { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
             ]);
             return true;
@@ -67,24 +63,24 @@
             var
                 clause = {};
 
-            $("input[type=text]", form).each(function () {
+            $("input[type=text][name]:visible", form).each(function () {
                 clause[this.name] = this.value;
             });
 
-            $("input[type=checkbox]", form).each(function () {
+            $("input[type=checkbox][name]:visible", form).each(function () {
                 clause[this.name] = this.checked;
             });
 
-            $("select", form).each(function () {
+            $("label:visible select[name]", form).each(function () {
                 clause[this.name] = this.value;
             });
 
-            clause.clause = JSON.stringify({
-                column: columnSelect.val(),
-                sign: signSelect.val(),
-                value: valueTypeInput.getValue(),
-                content: editor.getValue()
-            });
+            clause.clause = {
+                column: columnLabel.is(":visible") ? columnSelect.val() : null,
+                sign: signLabel.is(":visible") ? signSelect.val() : null,
+                value: valueLabel.is(":visible") ? valueTypeInput.getValue() : null,
+                custom: customLabel.is(":visible") ? editor.getValue() : null
+            };
 
             return clause;
         },
@@ -100,11 +96,35 @@
             if (!newRecord) deleteHandler();
         },
 
+        verify = function () {
+            var clause = map();
+            if (clause != null) verifyHandler(clauseEditor, clause);
+            return true;
+        },
+
+        setError = function () {
+            var
+                errors = reports.reportEditor.getModel().clauseErrors,
+                errorRecord = errors && errors["item" + clauseIndex];
+            if (errorRecord)
+                for (var fieldIndex in errorRecord.fields) {
+                    var field = errorRecord.fields[fieldIndex];
+
+                    if (fieldIndex == "custom")
+                        editor.setError(0, field.validationMessages[0].message, "error");
+                    else {
+                        var control = fieldIndex == "column" ? columnSelect : $("input[name=" + fieldIndex + "]", form);
+                        matematici.controls.setValidationMessages(control, field.validationMessages);
+                    }
+                }
+        },
+
         fill = function (f) {
             form = f;
-            editor = new matematici.SQLEditor("ClauseAceEditor");
+            editor = new matematici.SQLEditor("CustomAceEditor");
 
             parameterTypeSelect = $("select[name=parameterType]", form).on("change", toggleControls);
+            clauseTypeLabel = $("label#ClauseTypeLabel", form);
             clauseTypeSelect = $("select[name=clauseType]", form).on("change", toggleControls);
             filterPanel = $("div#FilterPanel", form);
             columnLabel = $("label#ColumnLabel", form);
@@ -112,11 +132,11 @@
             signLabel = $("label#SignLabel", form);
             signSelect = $("select#Sign", form).on("change", toggleControls);
             valueLabel = $("label#ValueLabel", form);
-            clauseLabel = $("label#ClauseLabel", form);
+            customLabel = $("label#CustomLabel", form);
 
-            for (var index in columns) {
-                var column = columns[index];
-                columnSelect.append($("<option />").attr("value", column).text(column.split("\"").join("")));
+            for (var fieldIndex in columns) {
+                var column = columns[fieldIndex].split("\"").join("");
+                columnSelect.append($("<option />").attr("value", column).text(column));
             }
 
             if (newRecord)
@@ -134,12 +154,11 @@
                     this.value = clause[this.name];
                 });
 
-                var json = JSON.parse(clause.clause);
-                columnSelect.val(json.column || "");
-                signSelect.val(json.sign || "");
-                editor.setValue(json.content || "");
+                columnSelect.val(clause.clause.column || "");
+                signSelect.val(clause.clause.sign || "");
+                editor.setValue(clause.clause.custom || "");
                 toggleControls();
-                valueTypeInput.setValue(json.value || "");
+                valueTypeInput && valueTypeInput.setValue(clause.clause.value || "");
             } 
 
             $("input[name=parameterName]", form).keyfilter(/^[$A-Z_0-9]*$/i);
@@ -150,6 +169,12 @@
             editor.addCompleterItems(columns.map(function (column) {
                 return { value: column, score: 1000, meta: "report column" };
             }));
+
+            $("input, select", form).each(function () {
+                matematici.controls.setValidationMessages($(this), []);
+            });
+
+            if (clause) setError();
         },
 
         setup = function () {
@@ -158,6 +183,7 @@
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });
             buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
             buttons.push({ text: "confirm", icon: "save", handler: confirm });
+            buttons.push({ text: "verify", icon: "question", handler: verify });
 
             matematici.popup.show({
                 url: matematici.urls.reports.clauseEditor,
@@ -169,6 +195,7 @@
         };
 
     this.fill = fill;
+    this.setError = setError;
 
     setup();
 };

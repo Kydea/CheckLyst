@@ -81,12 +81,16 @@ namespace CheckListManager.Reports.Data
             existingReport.InstancesIDAlias = report.InstancesIDAlias;
             existingReport.PrototypesRangeRestricted = report.PrototypesRangeRestricted;
             existingReport.PrototypesIDAlias = report.PrototypesIDAlias;
+            existingReport.Online = report.Online;
+            existingReport.Restricted = report.Restricted;
             existingReport.ModifiedOn = DateTimeOffset.UtcNow;
             existingReport.ModifiedBy = identity.Code;
             Entities.ReportColumns.RemoveRange(existingReport.ReportColumns);
             Entities.ReportClauses.RemoveRange(existingReport.ReportClauses);
+            Entities.Groups.RemoveRange(existingReport.Groups);
             existingReport.ReportColumns = report.ReportColumns;
             existingReport.ReportClauses = report.ReportClauses;
+            existingReport.Groups = report.Groups;
             await SaveChangesAsync();
             return existingReport;
         }

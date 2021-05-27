@@ -44,6 +44,10 @@ namespace CheckListManager.Reports.Data
                     return DataSet.Tables["Report"];
                 }
             }
+            catch (PostgresException PostgresException)
+            {
+                throw new DatabaseException(PostgresException.Message, PostgresException.InnerException, PostgresException.Position);
+            }
             catch (AggregateException AggregateException)
             {
                 throw new DatabaseAggregateException(AggregateException.InnerExceptions);

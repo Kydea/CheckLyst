@@ -56,6 +56,15 @@ namespace CheckListManager.Reports.Api.Controllers
 
         [Authorize(Roles = "Reports#Edit")]
         [HttpPost]
+        [Route("Verify")]
+        public async Task<IHttpActionResult> Verify(Message<DetailRequest> request)
+        {
+            request.Data.Reason = "-";
+            return Ok(await _detailService.VerifyReportAsync(Identity, request.Data));
+        }
+
+        [Authorize(Roles = "Reports#Edit")]
+        [HttpPost]
         [Route("GetReportSources")]
         public async Task<IHttpActionResult> GetReportSources()
         {

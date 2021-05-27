@@ -112,7 +112,7 @@
                         removeItem(newIndex);
                     else
                         list[index] = oldRow;
-                });
+                }, verify);
         },
 
         removeItem = function (index) {

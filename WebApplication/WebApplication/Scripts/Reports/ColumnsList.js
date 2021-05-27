@@ -74,7 +74,26 @@
             autoCenter.center();
         },
 
+        toggleErrors = function (tr, index) {
+            var errorMessage = "";
+            if (model.columnErrors && model.columnErrors["item" + index])
+                for (var fieldIndex in model.columnErrors["item" + index].fields) {
+                    var field = model.columnErrors["item" + index].fields[fieldIndex];
+                    for (var errorIndex in field.validationMessages) {
+                        var error = field.validationMessages[errorIndex]
+                        errorMessage += fieldIndex + ": " + error.message + "\n";
+                    }
+                }
+
+            $("i.Valid", tr)
+                .removeClass("fa-check fa-times")
+                .attr("title", errorMessage)
+                .addClass(errorMessage == "" ? "fa-check" : "fa-times");
+        },
+
         open = function (index) {
+            if (!options) options = {};
+            if (!options.columns) options.columns = [];
             new reports.ColumnEditor(list, options.columns, index,
                 function (row) {
                     matematici.canClose = false;
@@ -84,12 +103,28 @@
                         list[index] = row;
                         update(index);
                     }
-                }, remove);
+                    verify();
+                }, remove, function (editor, row) {
+                    var
+                        oldRow,
+                        newIndex;
+                    if (index == null)
+                        newIndex = insertItem(row, currentIndex);
+                    else {
+                        oldRow = list[index];
+                        list[index] = row;
+                    }
+                    verify(editor.setError);
+                    if (index == null)
+                        removeItem(newIndex);
+                    else
+                        list[index] = oldRow;
+                }, verify);
         },
 
         prettify = function (name) {
             return name.split("\"").join("").replace(/([a-z0-9])([A-Z])/g, "$1 $2");
-        };
+        },
 
         generate = function () {
             var
@@ -144,6 +179,7 @@
             getRow(index == null ? currentIndex : index).remove();
             removeItem(currentIndex);
             toggleNoRecord();
+            verify();
             colorRows();
             select();
         },
@@ -167,6 +203,7 @@
                     .append($("<td />").addClass("Label"))
                     .append($("<td />").addClass("Column"))
                     .append($("<td />").addClass("Centered")
+                        .append($("<i />").attr("title", "Valid").addClass("Valid fal"))
                         .append($("<i />").attr("title", "Visible").addClass("Visible fal fa-eye"))
                         .append($("<i />").attr("title", "Order").addClass("Order fal fa-list-ol"))
                         .append($("<i />").attr("title", "Group").addClass("Group fal fa-object-group"))
@@ -193,6 +230,7 @@
 
         update = function (index) {
             var
+                tr = getRow(index),
                 row = list[index],
                 cells = $("td", getRow(index)),
                 commands = cells.last();
@@ -202,6 +240,8 @@
             commands.find(".Visible").toggleClass("Off", !row.visible);
             commands.find(".Order").toggleClass("Off", !row.orderColumn);
             commands.find(".Group").toggleClass("Off", !row.groupColumn);
+
+            toggleErrors(tr, index);
         },
 
         updateReport = function () {
@@ -210,7 +250,14 @@
 
         verify = function (handler) {
             updateReport();
-            reports.reportEditor.test();
+            reports.reportEditor.verify(true, function () {
+                var model = reports.reportEditor.getModel();
+                for (var index in list) {
+                    var tr = getRow(index);
+                    toggleErrors(tr, index);
+                }
+                if (handler) handler.call(this);
+            });
         },
 
         close = function () {
@@ -240,6 +287,8 @@
                     visible = keyword == null;
                 if (!visible && flags[0]) visible = !!column.label && column.label.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (!visible && flags[1]) visible = !!column.column && column.column.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+                if (visible && !flags[2]) visible = !model.columnErrors || !model.columnErrors[index];
+                if (visible && !flags[3]) visible = model.columnErrors && !!model.columnErrors[index];
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -263,6 +312,8 @@
             filtersBar = new matematici.GridFiltersBar(container, filter);
             filtersBar.addFlag("label", true);
             filtersBar.addFlag("column", true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")

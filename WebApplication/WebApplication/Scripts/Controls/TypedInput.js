@@ -111,6 +111,8 @@
 
             if (dataPicker)
                 dataPicker.destroy();
+
+            container.classList.remove(type)
         };
 
     typedInput.getInput = function () {
