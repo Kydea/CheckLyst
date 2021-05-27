@@ -177,7 +177,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
                 */
 
-                response.Groups = response.Groups;
+                response.Groups = report.Groups.Select(g => g.Code).ToList();
 
                 response.Columns = report.ReportColumns.OrderBy(c => c.ID).Select(c => new ReportColumn
                 {
@@ -233,11 +233,6 @@ namespace CheckListManager.Reports.Logic.Detail
                         PrototypesIDAlias = request.PrototypesIDAlias,
                         Online = request.Online,
                         Restricted = request.Restricted,
-                        Groups = request.Groups?.Select(g => new Common.Data.Groups
-                        {
-                            Company = identity.CompanyId,
-                            Code = g
-                        }).ToList(),
                         ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
                             Label = c.Label,
@@ -262,12 +257,12 @@ namespace CheckListManager.Reports.Logic.Detail
                     };
                     if (request.ID.HasValue)
                     {
-                        await _reportsRepository.EditReportAsync(identity, report);
+                        await _reportsRepository.EditReportAsync(identity, report, request.Groups);
                         await AuditAsync(identity, TrailAction.ReportUpdated, request);
                     }
                     else
                     {
-                        await _reportsRepository.AddReportAsync(identity, report);
+                        await _reportsRepository.AddReportAsync(identity, report, request.Groups);
                         request.ID = request.ID;
                         await AuditAsync(identity, TrailAction.ReportCreated, request);
                     }

@@ -35,7 +35,8 @@ namespace CheckListManager.Reports.Data
         {
             try
             {
-                using (var Connection = await GetConnection())
+                var Connection = await GetConnection();
+                //using (var Connection = await GetConnection())
                 using (var Command = new NpgsqlCommand(command, Connection))
                 using (var DataAdapter = new NpgsqlDataAdapter(Command))
                 using (var DataSet = new DataSet())

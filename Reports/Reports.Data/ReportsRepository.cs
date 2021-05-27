@@ -61,16 +61,17 @@ namespace CheckListManager.Reports.Data
             return Report;
         }
 
-        public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report)
+        public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
             report.Company = identity.CompanyId;
+            report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             report.CreatedOn = DateTimeOffset.UtcNow;
             report.CreatedBy = identity.Code;
             Entities.Reports.Add(report);
             await SaveChangesAsync();
         }
 
-        public async Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report)
+        public async Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
             var existingReport = await GetReportAsync(identity.CompanyId, report.Code);
             existingReport.Code = report.Code;
@@ -87,10 +88,11 @@ namespace CheckListManager.Reports.Data
             existingReport.ModifiedBy = identity.Code;
             Entities.ReportColumns.RemoveRange(existingReport.ReportColumns);
             Entities.ReportClauses.RemoveRange(existingReport.ReportClauses);
-            Entities.Groups.RemoveRange(existingReport.Groups);
+            foreach(var group in existingReport.Groups.ToList())
+                existingReport.Groups.Remove(group);
             existingReport.ReportColumns = report.ReportColumns;
             existingReport.ReportClauses = report.ReportClauses;
-            existingReport.Groups = report.Groups;
+            existingReport.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             await SaveChangesAsync();
             return existingReport;
         }

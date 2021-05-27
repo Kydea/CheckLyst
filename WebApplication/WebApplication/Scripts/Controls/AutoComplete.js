@@ -169,7 +169,7 @@
             labelNode.value = text;
             labelNode.setAttribute("title", text);
 
-            if (!open) return;
+            if (!fullHeight && !open) return;
 
             if (multiple) {
                 value = element.val();

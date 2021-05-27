@@ -47,7 +47,8 @@
                 data: {
                     query: reportSourceSelect.val() == null ? editor.getValue() : null,
                     columns: model.columns,
-                    clauses: model.clauses
+                    clauses: model.clauses,
+                    groups: model.groups
                 }
             };
         },
