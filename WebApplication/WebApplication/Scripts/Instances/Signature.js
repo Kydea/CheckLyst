@@ -97,6 +97,8 @@
         },
 
         unsign = function () {
+            if (cancelButton.classList.contains("ReadOnly")) return;
+
             var
                 options = {
                     title: model.descriptionValue || "Signature cancelation",

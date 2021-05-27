@@ -75,7 +75,7 @@
                 .append(tableBody = $("<tbody />"))
                 .on("click", "tr.Handler", function () {
                     if (!handler || !handler.call(this, checkListGrid, $(this).data("row")))
-                        element.remove();
+                        checkListGrid.close();
                 }).on("click", "tr.Next", function () {
                     nextHandler();
                 });

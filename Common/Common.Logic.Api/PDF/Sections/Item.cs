@@ -45,16 +45,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         private void DrawInstanceLink(bool Valid, string InstanceCode = null, string InstanceDescription = null, string InstanceState = null)
         {
-            PdfPTable Table = new PdfPTable(3) { WidthPercentage = 100 };
+            PdfPTable Table = new PdfPTable(1) { WidthPercentage = 100 };
 
             Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance code").SetFont(PDFBase.BoldFont).Padding(5)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance description").SetFont(PDFBase.BoldFont).Padding(5)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Instance state").SetFont(PDFBase.BoldFont).Padding(5)));
             Table.CompleteRow();
 
             Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceCode).Padding(5)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceDescription).Padding(5)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(InstanceState).Padding(5)));
             Table.CompleteRow();
 
             if (!Valid && !CheckListPDF.IsPrototype())

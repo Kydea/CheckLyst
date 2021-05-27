@@ -512,10 +512,8 @@
                         "Actions",
                         "The actions available.",
                         function () {
-                            if (!model.prototypeName) {
-                                model.parameters = null;
-                                parametersProperty.setValue();
-                            }
+                            model.parameters = null;
+                            parametersProperty.setValue();
                         }
                     ));
                     properties.push(parametersProperty = new prototypes.Property(

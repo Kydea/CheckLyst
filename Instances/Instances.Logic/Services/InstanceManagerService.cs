@@ -862,14 +862,20 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return new InstanceLinkParametersResponse
                 {
-                    Parameters = instanceLink.Parameters?.Select(p =>
+                    Parameters = ((InstanceLink)instanceLink.FindIteratorModelItem()).Parameters?.Select(p =>
                     {
                         string Value = null;
                         string Error = null;
                         if (p.ExpressionCode != null)
                         {
                             if (cacheObject.Instance.Expressions.TryGetValue(p.ExpressionCode, out var Expression))
-                                Value = Expression.Value?.Value?.ToString();
+                            {
+                                var TypedValue = Expression.Value;
+                                Value =
+                                    TypedValue?.Type == DataType.DateTime ? TypedValue?.DateTimeValue.Format(cacheObject.Instance.TimeZone, DateTimeOffsetHelper.DateTimeFormats[0]) :
+                                    TypedValue?.Type == DataType.Date ? TypedValue?.DateTimeValue.Format(cacheObject.Instance.TimeZone, DateTimeOffsetHelper.DateFormat) :
+                                    TypedValue?.Value?.ToString();
+                            }
                             else
                                 Error = $"Expression {p.ExpressionCode} not found";
                         }

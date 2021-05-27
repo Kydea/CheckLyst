@@ -36,6 +36,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                 AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Signature);
 
+            if (SignatureCode == Code)
+            {
+                Errors.Add(new ConfigurationError("signature", $"A signature cannot block itself"));
+                Result = false;
+            }
+
             return Result;
         }
 

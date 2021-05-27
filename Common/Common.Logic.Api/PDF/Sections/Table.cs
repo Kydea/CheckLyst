@@ -255,7 +255,11 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             {
                                 var InstanceLink = (ICheckListInstanceLink)Item;
                                 var Value = InstanceLink.Record.Code;
-                                Cell = NewCell(string.IsNullOrWhiteSpace(Value) ? $"{InstanceLink.PrototypeName}.?.?.?" : Value);
+                                if (string.IsNullOrWhiteSpace(Value))
+                                    Value = $"?.?.?";
+                                else if (InstanceLink.PrototypeName != null)
+                                    Value = Value.Substring(InstanceLink.PrototypeName.Length + 1);
+                                Cell = NewCell(Value, PDFBase.GenericFont);
                             }
 
                             if (Item.ReadOnly)
@@ -384,6 +388,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     if (Size.ColumnsCount > 1)
                         Cell.Colspan = Size.ColumnsCount;
                 }
+                else if (Item.TypeName == "InstanceLink")
+                    Cell.Text = Description + "\n(" + ((ICheckListInstanceLink)Item).PrototypeName + ")";
                 else if (Item.TypeName != "Text" && Item.TypeName != "Link")
                     Cell.Text = Description;
 
