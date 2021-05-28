@@ -14,7 +14,10 @@ namespace CheckListManager.Reports.Logic.Detail
         public string InstancesIDAlias { get; set; }
         public bool PrototypesRangeRestricted { get; set; }
         public string PrototypesIDAlias { get; set; }
+        public bool Online { get; set; }
+        public bool Restricted { get; set; }
 
+        public List<string> Groups { get; set; }
         public List<ReportColumn> Columns { get; set; }
         public List<ReportClause> Clauses { get; set; }
 

@@ -300,6 +300,16 @@
           <Property Name="ValueAggregation" Type="varchar" MaxLength="50" />
           <Property Name="GroupAggregation" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="ReportGroups">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Report" />
+            <PropertyRef Name="Group" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Report" Type="int8" Nullable="false" />
+          <Property Name="Group" Type="varchar" MaxLength="60" Nullable="false" />
+        </EntityType>
         <EntityType Name="Reports">
           <Key>
             <PropertyRef Name="ID" />
@@ -318,6 +328,8 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Online" Type="bool" Nullable="false" />
+          <Property Name="Restricted" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -866,9 +878,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="GroupRoles_Role">
-          <End Role="Roles" Type="Self.Roles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
           <End Role="GroupRoles" Type="Self.GroupRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Roles">
@@ -1239,6 +1249,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ReportGroups_Group">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1" />
+          <End Role="ReportGroups" Type="Self.ReportGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="ReportGroups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReportGroups_Report_fkey">
+          <End Role="Reports" Type="Self.Reports" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ReportGroups" Type="Self.ReportGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ReportGroups">
+              <PropertyRef Name="Report" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Reports_ReportSource_fkey">
           <End Role="ReportSources" Type="Self.ReportSources" Multiplicity="0..1" />
           <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
@@ -1400,9 +1438,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="UserGroups_Group">
-          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1" />
           <End Role="UserGroups" Type="Self.UserGroups" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Groups">
@@ -1496,9 +1532,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="UserRoles_Role">
-          <End Role="Roles" Type="Self.Roles" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
           <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Roles">
@@ -1711,6 +1745,7 @@
           <EntitySet Name="TimeZones" EntityType="Self.TimeZones" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="ReportClauses" EntityType="Self.ReportClauses" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportColumns" EntityType="Self.ReportColumns" Schema="Reports" store:Type="Tables" />
+          <EntitySet Name="ReportGroups" EntityType="Self.ReportGroups" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="Reports" EntityType="Self.Reports" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportSources" EntityType="Self.ReportSources" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
@@ -1920,6 +1955,14 @@
           <AssociationSet Name="ReportColumns_Report_fkey" Association="Self.ReportColumns_Report_fkey">
             <End Role="Reports" EntitySet="Reports" />
             <End Role="ReportColumns" EntitySet="ReportColumns" />
+          </AssociationSet>
+          <AssociationSet Name="ReportGroups_Group" Association="Self.ReportGroups_Group">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="ReportGroups" EntitySet="ReportGroups" />
+          </AssociationSet>
+          <AssociationSet Name="ReportGroups_Report_fkey" Association="Self.ReportGroups_Report_fkey">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="ReportGroups" EntitySet="ReportGroups" />
           </AssociationSet>
           <AssociationSet Name="Reports_ReportSource_fkey" Association="Self.Reports_ReportSource_fkey">
             <End Role="ReportSources" EntitySet="ReportSources" />
@@ -2527,6 +2570,10 @@
           <AssociationSet Name="ReportClauses_Report_fkey" Association="RelationalDatabaseModel.ReportClauses_Report_fkey">
             <End Role="Reports" EntitySet="Reports" />
             <End Role="ReportClauses" EntitySet="ReportClauses" />
+          </AssociationSet>
+          <AssociationSet Name="ReportGroups" Association="RelationalDatabaseModel.ReportGroups">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="Reports" EntitySet="Reports" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -3687,6 +3734,7 @@
           <NavigationProperty Name="GroupFunctions" Relationship="RelationalDatabaseModel.GroupFunctions_Group" FromRole="Groups" ToRole="GroupFunctions" />
           <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_Group" FromRole="Groups" ToRole="GroupRoles" />
           <NavigationProperty Name="UserGroups" Relationship="RelationalDatabaseModel.UserGroups_Group" FromRole="Groups" ToRole="UserGroups" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportGroups" FromRole="Groups" ToRole="Reports" />
         </EntityType>
         <EntityType Name="RoleFunctions">
           <Key>
@@ -4175,6 +4223,9 @@
           <NavigationProperty Name="ReportSources" Relationship="RelationalDatabaseModel.Reports_ReportSource_fkey" FromRole="Reports" ToRole="ReportSources" />
           <NavigationProperty Name="ReportColumns" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="Reports" ToRole="ReportColumns" />
           <NavigationProperty Name="ReportClauses" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="Reports" ToRole="ReportClauses" />
+          <Property Name="Online" Type="Boolean" Nullable="false" />
+          <Property Name="Restricted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.ReportGroups" FromRole="Reports" ToRole="Groups" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -4254,6 +4305,10 @@
               <PropertyRef Name="Report" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <Association Name="ReportGroups">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="*" />
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -4863,6 +4918,8 @@
           <EntitySetMapping Name="Reports">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Reports">
               <MappingFragment StoreEntitySet="Reports">
+                <ScalarProperty Name="Restricted" ColumnName="Restricted" />
+                <ScalarProperty Name="Online" ColumnName="Online" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
@@ -4919,6 +4976,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="ReportGroups" TypeName="RelationalDatabaseModel.ReportGroups" StoreEntitySet="ReportGroups">
+            <EndProperty Name="Reports">
+              <ScalarProperty Name="ID" ColumnName="Report" />
+            </EndProperty>
+            <EndProperty Name="Groups">
+              <ScalarProperty Name="Code" ColumnName="Group" />
+              <ScalarProperty Name="Company" ColumnName="Company" />
+            </EndProperty>
+          </AssociationSetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

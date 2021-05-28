@@ -15,7 +15,7 @@
         var
             url,
             appMode = "@(ViewBag.AppMode)" == "True",
-            instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create"))" == "True",
+            instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create") || Model.StartsWith("Instances/List"))" == "True",
             search = window.location.search,
             iPad =
                 (navigator.userAgent.match(/(iPad)/) /* iOS pre 13 */ ||

@@ -10,7 +10,7 @@ create table "Reports"."Reports"
 (
 	"ID" bigserial primary key,
 
-	"Company" bigint not null,	
+	"Company" bigint not null,
 	"Code" varchar (50) not null,
 	"Description" varchar (100),
 	
@@ -23,6 +23,9 @@ create table "Reports"."Reports"
 	"PrototypesRangeRestricted" boolean not null default false,
 	"PrototypesIDAlias" varchar(100),
 
+	"Online" boolean not null default false,
+	"Restricted" boolean not null default false,
+
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
@@ -30,6 +33,18 @@ create table "Reports"."Reports"
 );
 
 create unique index "Reports_Name" on "Reports"."Reports" ("Company", upper("Code"));
+
+create table "Reports"."ReportGroups"
+(
+	"Company" bigint not null,
+	"Report" bigint references "Reports"."Reports" on delete cascade,
+	"Group" varchar(60),
+	constraint "ReportGroups_Group" foreign key ("Company", "Group") references "Security"."Groups" on update cascade,
+
+	constraint PK_ReportGroups primary key ("Company", "Report", "Group")
+);
+
+create index "ReportGroups_Report" on "Reports"."ReportGroups" ("Report");
 
 create table "Reports"."ReportColumns"
 (

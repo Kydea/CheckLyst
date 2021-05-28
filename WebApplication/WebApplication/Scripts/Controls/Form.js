@@ -247,7 +247,7 @@
                     field.val(value);
                 }
             else if (field.attr("type") == "checkbox")
-                field.prop("checked", !!value)
+                field.prop("checked", value === true || value === "true")
             else
                 field.val(value);
         },
@@ -316,7 +316,7 @@
 
             handleValidationMessages(null, data);
             valid = data.valid;
-            if (options && options.applyButton) matematici.controls.setEditable(options.applyButton, valid);
+            //if (options && options.applyButton) matematici.controls.setEditable(options.applyButton, valid);
             if (options && options.resultHandler) options.resultHandler(data);
         },
 
@@ -329,8 +329,10 @@
                 data: data
             }).done(function (result) {
                 if (event == options.bindEvent) bindResult = result;
+                /*
                 if (options.applyButton && data && data.source && (data.source == options.applyButton.attr("name") || data.source == options.applyButton.attr("id")))
                     matematici.controls.setEditable(options.applyButton, false); //by default, the action button is disabled when clicked with success
+                */
                 if (handler)
                     handler(result);
             }).progress(function (e) {
@@ -340,8 +342,7 @@
 
         onChange = function (control) {
             clearFormErrors();
-            if (options.applyButton)
-                matematici.controls.setEditable(options.applyButton, true);
+            //if (options.applyButton) matematici.controls.setEditable(options.applyButton, true);
 
             for (var index in changeHandlers)
                 changeHandlers[index].call();

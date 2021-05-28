@@ -1,0 +1,69 @@
+﻿reports.GroupsList = function () {
+    var
+        groupsList = this,
+        model = reports.reportEditor.getModel(),
+        groupsSelect,
+        groupsAutoComplete,
+        modified = false,
+        form,
+        unrestrictedInput,
+
+        toggleGroups = function () {
+            var locked = unrestrictedInput.prop("checked");
+            groupsAutoComplete.lock(locked);
+            if (locked) groupsAutoComplete.setValue(null);
+        },
+
+        confirm = function () {
+            if (modified) {
+                matematici.canClose = true;
+                model.fields.restricted = !unrestrictedInput.prop("checked");
+                model.groups = groupsSelect.val();
+            }
+        },
+
+        fill = function (f) {
+            form = f;
+            unrestrictedInput = $("input[name=unrestricted]").prop("checked", model.fields.restricted == "false");
+            form
+                .on("toggle", "select", function () {
+                    console.log("ok");
+                    modified = true;
+                })
+                .on("change", "input", function () {
+                    toggleGroups();
+                    modified = true;
+                });
+            $.ajax({
+                type: "post",
+                url: matematici.urls.api + "/AccessControl/Groups/GetSyntheticData"
+            }).done(function (result) {
+                groupsSelect = $("<select />").appendTo($("div.Control", form)).prop("multiple", true).addClass("FullHeight");
+                for (var index in result)
+                    groupsSelect.append($("<option />").text(result[index]).attr("value", result[index]));
+                groupsSelect.val(model.groups);
+                groupsAutoComplete = new matematici.AutoComplete(groupsSelect[0]);
+                groupsAutoComplete.initialize();
+
+                toggleGroups();
+            });
+        },
+
+        setup = function () {
+            var buttons = [];
+
+            buttons.push({ cancelButton: true, hidden: true });
+            buttons.push({ text: "confirm", icon: "save", handler: confirm });
+
+            matematici.popup.show({
+                url: matematici.urls.reports.groupsList,
+                data: groupsList,
+                sender: groupsList,
+                buttons: buttons,
+                width: 770,
+            });
+        };
+
+    groupsList.fill = fill;
+    setup();
+};

@@ -19,40 +19,45 @@
                 <input type="text" name="code" autocomplete="off" maxlength="50" />
             </label>
 
-            <label class="Width200">
+            <label>
                 <span>Source</span>
                 <i class="Icon fal fa-chart-network" />
                 <select name="reportSource" data-nullable="(custom)"></select>
             </label>
 
-            <label class="FullWidth">
+            <label>
+                <span>Online</span>
+                <input type="checkbox" name="online" />
+            </label>
+
+            <label class="Clearing FullWidth">
                 <span>Description</span>
                 <i class="Icon fal fa-align-left" />
                 <input type="text" name="description" autocomplete="off" maxlength="100" />
             </label>
 
             @*
-                <label class="Clearing">
-                    <span>Instances range restricted</span>
-                    <input type="checkbox" name="instancesRangeRestricted" />
-                </label>
+        <label class="Clearing">
+            <span>Instances range restricted</span>
+            <input type="checkbox" name="instancesRangeRestricted" />
+        </label>
 
-                <label>
-                    <span>Instances ID alias</span>
-                    <i class="Icon fal fa-layer-group" />
-                    <input type="text" name="instancesIDAlias" />
-                </label>
+        <label>
+            <span>Instances ID alias</span>
+            <i class="Icon fal fa-layer-group" />
+            <input type="text" name="instancesIDAlias" />
+        </label>
 
-                <label class="Clearing">
-                    <span>Prototypes range restricted</span>
-                    <input type="checkbox" name="prototypesRangeRestricted" />
-                </label>
+        <label class="Clearing">
+            <span>Prototypes range restricted</span>
+            <input type="checkbox" name="prototypesRangeRestricted" />
+        </label>
 
-                <label>
-                    <span>Prototypes ID alias</span>
-                    <i class="Icon fal fa-file-invoice" />
-                    <input type="text" name="prototypesIDAlias" />
-                </label>
+        <label>
+            <span>Prototypes ID alias</span>
+            <i class="Icon fal fa-file-invoice" />
+            <input type="text" name="prototypesIDAlias" />
+        </label>
             *@
 
             <label class="FullWidth">
@@ -90,6 +95,9 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fa fa-users'></i>", function () {
+                    reportEditor.showGroups();
+                }, "Icon GroupsButton")
                 .add("<i class='Icon fa fa-filter'></i>", function () {
                     reportEditor.showClauses();
                 }, "Icon ClausesButton")
@@ -106,7 +114,10 @@
                 }, "Delete")
                 .add("Save", function () {
                     reportEditor.save();
-                }, "Save");
+                }, "Save")
+                .add("Verify", function () {
+                    reportEditor.verify(false);
+                }, "Verify");
 
         new matematici.Page({
             name: "ReportEditor",

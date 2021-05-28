@@ -104,6 +104,12 @@
   <ItemGroup>
     <Compile Include="Contexts\DepartmentsContext.cs" />
     <Compile Include="Contexts\PrototypeTypesContext.cs" />
+    <Compile Include="Data\IPrototypesRepositoryExtended.cs" />
+    <Compile Include="Data\IWorkFlowsRepositoryExtended.cs" />
+    <Compile Include="Data\PrototypesRepositoryExtended.cs" />
+    <Compile Include="Data\WorkFlowsRepositoryExtended.cs" />
+    <Compile Include="IInfrastructureHelper.cs" />
+    <Compile Include="InfrastructureHelper.cs" />
     <Compile Include="DefaultIdentityHelper.cs" />
     <Compile Include="Features\DepartmentsList.feature.cs">
       <AutoGen>True</AutoGen>

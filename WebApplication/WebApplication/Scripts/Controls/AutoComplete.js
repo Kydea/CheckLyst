@@ -169,7 +169,7 @@
             labelNode.value = text;
             labelNode.setAttribute("title", text);
 
-            if (!open) return;
+            if (!fullHeight && !open) return;
 
             if (multiple) {
                 value = element.val();
@@ -232,6 +232,14 @@
 
         destroy = function () {
             matematici.elements.window.off("resize", setWidth);
+            iconNode.remove();
+            delete iconNode;
+            labelNode.remove();
+            delete labelNode;
+            input && input.remove();
+            delete input;
+            list && list.remove();
+            delete list;
         },
 
         toggleItem = function (index) {

@@ -9,6 +9,7 @@ namespace CheckListManager.Reports.Logic.Detail
     {
         Task<DetailResponse> SaveReportAsync(IDefaultIdentity identity, DetailRequest request);
         Task<DetailResponse> DeleteReportAsync(IDefaultIdentity identity, DetailRequest request);
+        Task<DetailResponse> VerifyReportAsync(IDefaultIdentity identity, DetailRequest request);
         Task<DetailResponse> LoadReportAsync(long companyId, DetailRequest request);
 
         Task<List<ReportSource>> GetReportSourcesAsync();

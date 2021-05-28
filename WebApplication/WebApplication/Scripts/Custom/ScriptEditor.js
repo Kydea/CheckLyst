@@ -227,8 +227,11 @@
             if (editable)
                 buttons.push(
                     { text: "update prototype", icon: "sign-in", handler: save, hidden: true, cssClass: "Save" },
-                    { text: "generate json", icon: "sign-out", handler: load, cssClass: "Load" }
                 );
+
+            buttons.push(
+                { text: "generate json", icon: "sign-out", handler: load, cssClass: "Load" }
+            );
 
             matematici.popup.show({
                 url: matematici.urls.prototypes.scriptEditor,

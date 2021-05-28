@@ -18,6 +18,10 @@ body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td {
     body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i {
       font-size: 14px;
       display: inline !important; }
+      body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i.fa-times {
+        color: #cc0000 !important; }
+      body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i.fa-check {
+        color: #009688 !important; }
       body.ReportEditor div.CheckListGrid div.Container.ColumnsList table tr td:last-child i.Off {
         opacity: .1;
         color: black !important; }

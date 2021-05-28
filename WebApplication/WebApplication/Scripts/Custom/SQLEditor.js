@@ -61,5 +61,32 @@
         });
     };
 
+    this.setError = function (position, text, type) {
+        editor.session.clearAnnotations();
+        if (text) {
+            if (position > 0) //position is a number
+            {
+                var
+                    query = editor.session.getValue(),
+                    characterPosition = position;
+
+                position = { column: 0, row: 0 };
+                for (var index = 0; index < characterPosition && query != null && index < query.length; ++index)
+                    if (query[index] == "\n") {
+                        ++position.row;
+                        position.column = 0;
+                    } else
+                        ++position.column;
+            }
+            var annotation = {
+                row: position && position.row || 0,
+                column: position && position.column || 0,
+                text: text + (position && position.row && position.column && (" at row " + (position.row + 1) + ", column " + (position.column + 1)) || ""),
+                type: type
+            }
+            editor.session.setAnnotations([annotation]);
+        }
+    };
+
     setup();
 }

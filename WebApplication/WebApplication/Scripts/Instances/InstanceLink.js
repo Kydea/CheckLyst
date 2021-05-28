@@ -40,8 +40,8 @@
                         { label: "Year", name: "year" },
                         { label: "Number", name: "number" },
                         { label: "Description", name: "description" },
-                        { label: "Prototype version", name: "prototypeVersion" },
-                        { label: "Created on", name: "createOn", type: "DateTimeOffset" },
+                        { label: "Prototype version", name: "version" },
+                        { label: "Created on", name: "createdOn", type: "DateTimeOffset" },
                         { label: "Created by", name: "createdBy" },
                         { label: "Modified on", name: "modifiedOn", type: "DateTimeOffset" },
                         { label: "Modified by", name: "modifiedBy" },
@@ -85,7 +85,7 @@
                     for (var parameterIndex in result.parameters) {
                         var parameter = result.parameters[parameterIndex];
                         if (query != "") query += "&";
-                        query += "item." + encodeURIComponent(parameter.name) + "=" + encodeURIComponent(parameter.value);
+                        query += "item." + encodeURIComponent(parameter.name) + "=" + (parameter.value == null ? "" : encodeURIComponent(parameter.value));
                     }
                 if (query != "") query = "?" + query;
                 matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
@@ -93,7 +93,7 @@
         },
 
         refresh = function () {
-            new instances.Event(instances.Events.refreshAttachedInstance, model.id).trigger();
+            new instances.Event(instances.Events.refreshAttachedInstance, model.id, { instance: model.attachedInstanceID }).trigger();
         },
 
         action = function () {

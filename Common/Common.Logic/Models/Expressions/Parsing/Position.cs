@@ -22,7 +22,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
             this.Column = Column;
         }
 
-
         public void Increment(bool Row)
         {
             ++Index;
