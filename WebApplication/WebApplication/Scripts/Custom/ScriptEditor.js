@@ -42,7 +42,7 @@
                 for (var index in element.items)
                     traverseForImport(element.items[index]);
             else if (element.typeName == "Image")
-                element.cloned = true;
+                element.key = element.imageName = null;
         },
 
         traverseForExport = function (source, destination) {

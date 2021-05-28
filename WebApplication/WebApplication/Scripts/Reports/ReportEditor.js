@@ -102,6 +102,7 @@
             var valid = true;
             $("div.ActionBar a.ColumnsButton").toggleClass("Invalid", false);
             $("div.ActionBar a.ClausesButton").toggleClass("Invalid", false);
+            editor.setError();
 
             if (data && data.valid == false) {
                 valid = false;

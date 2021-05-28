@@ -988,7 +988,9 @@
     prototype.setModel = function (newModel) {
         newModel.name = model.name;
         newModel.department = model.department;
+        newModel.departmentName = model.departmentName;
         newModel.prototypeType = model.prototypeType;
+        newModel.prototypeTypeName = model.prototypeTypeName;
         newModel.version = model.version;
         newModel.validFrom = model.validFrom;
         newModel.validUntil = model.validUntil;

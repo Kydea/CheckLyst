@@ -425,7 +425,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns true if for all the iterations the argument is true"
         },
         {
-            content: "Corr(${1:y}, ${1:x})",
+            content: "Corr(${1:y}, ${2:x})",
             name: "Corr",
             scope: "expression",
             meta: "method",
@@ -433,7 +433,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns the correlation coefficient of the provided (x, y) set"
         },
         {
-            content: "Slope(${1:y}, ${1:x})",
+            content: "Slope(${1:y}, ${2:x})",
             name: "Slope",
             scope: "expression",
             meta: "method",
@@ -441,7 +441,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns the slope of the provided (x, y) set"
         },
         {
-            content: "Intercept(${1:y}, ${1:x})",
+            content: "Intercept(${1:y}, ${2:x})",
             name: "Intercept",
             scope: "expression",
             meta: "method",

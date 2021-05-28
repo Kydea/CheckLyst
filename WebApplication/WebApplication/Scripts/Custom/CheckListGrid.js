@@ -83,7 +83,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                        .append($("<a />").addClass("Button CancelButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
+                        .append($("<a />").addClass("Button CancelButton DefaultButton").text("close").prepend($("<i />").addClass("Icon fa fa-times")).on("click", function () {
                             checkListGrid.close();
                         }));
 

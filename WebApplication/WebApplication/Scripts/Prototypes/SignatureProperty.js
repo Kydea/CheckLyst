@@ -39,8 +39,9 @@
         valuePanel.addClass("Signature");
         if (options.readOnly) {
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
-            if (model.iterator && !model.dumpExternalSourceName)
-                $("<input />").attr({ type: "text", readOnly: true }).val(model.dumpExternalSourceName).appendTo(valuePanel);
+            if (model.iterator && model.dumpExternalSourceName)
+                $("<label />").addClass("DumpExternalDataSource").append($("<span />").text("Export source"))
+                    .append($("<input />").attr({ type: "text", readOnly: true }).val(model.dumpExternalSourceName)).appendTo(valuePanel);
         } else {
             input = $("<select />").attr("data-nullable", "").appendTo(valuePanel);
             var found = false;

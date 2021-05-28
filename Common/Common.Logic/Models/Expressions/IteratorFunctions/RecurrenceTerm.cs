@@ -16,7 +16,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             if (!Group.Iterator) throw new ParseException("The group " + IteratorCode + " is not an Iterator", Position);
 
             if (IteratorStack.IndexOf(Group.Code) < 0)
-                throw new ParseException($"{nameof(RecurrenceTerm)} is not in a iterator {Group.Code} context", Position);
+                throw new ParseException($"{OperatorName} is not in a iterator {Group.Code} context", Position);
 
             Left.Check(CheckList, Expression, IteratorStack);
 
@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             IteratorStack.RemoveAt(IteratorStack.Count - 1);
 
             if (Left.DataType != DataType.Number)
-                throw new ParseException("The first operand of the function IterationValue must be a number", Position);
+                throw new ParseException($"The first operand of the function {OperatorName} must be a number", Position);
 
             DataType = Right.DataType;
         }
@@ -45,6 +45,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             return Iterator.Iterations.Where(x => !x.Removed).ElementAt(Index - (int)Delta).ReccurencyValue;
         }
 
-        protected override string OperatorName => "IterationValue";
+        protected override string OperatorName => "RecurrenceTerm";
     }
 }

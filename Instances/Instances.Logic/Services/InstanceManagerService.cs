@@ -1974,7 +1974,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.Instance.ReadOnly)
                 {
                     UnlockPages(cacheObject.Instance, identity.Code);
-                    TrackChanges(cacheObject, identity.Code);
+                    cacheObject.NeedToSave = true;
                 }
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
