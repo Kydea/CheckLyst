@@ -2,9 +2,12 @@
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.WorkFlows;
 using CheckListManager.Infrastructure.Data;
 using CheckListManager.Infrastructure.Logic.Departments;
+using CheckListManager.Infrastructure.Logic.PrototypeTypes;
 using CheckListManager.Infrastructure.Tests.Contexts;
+using CheckListManager.Infrastructure.Tests.Data;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -21,16 +24,25 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         private readonly IDefaultIdentity _defaultIdentity;
         private readonly ICommonRepository _commonRepository;
         private readonly IDepartmentsService _departmentsService;
+        private readonly IInfrastructureHelper _infrastructureHelper;
+        private readonly IPrototypeTypesService _prototypeTypesService;
+        private readonly IWorkFlowsRepositoryExtended _workFlowsRepositoryExtended;
+        private readonly IPrototypesRepositoryExtended _prototypesRepositoryExtended;
 
         public DepartmentsListSteps(DepartmentsContext context,
             IDefaultIdentity defaultIdentity,
             ICommonRepository commonRepository,
-            IDepartmentsService departmentsService)
+            IDepartmentsService departmentsService,
+            IInfrastructureHelper infrastructureHelper,
+            IPrototypeTypesService prototypeTypesService,
+            IWorkFlowsRepositoryExtended workFlowsRepositoryExtended,
+            IPrototypesRepositoryExtended prototypesRepositoryExtended)
         {
             _context = context;
             _defaultIdentity = defaultIdentity;
             _commonRepository = commonRepository;
             _departmentsService = departmentsService;
+            _infrastructureHelper = infrastructureHelper;
         }
 
         [BeforeScenario]
@@ -57,49 +69,19 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a department")]
         public async Task GivenIClickOnADeparment()
         {
-            string Name = Guid.NewGuid().ToString();
-
-            // Create the department
-            GivenIAssignAsTheNameOfTheDepartment(Name);
-            await WhenISendTheAddRequestAsync();
-
-            // "Click" on the department
-            List<DepartmentsRow> data = (await _departmentsService.GetDataAsync(_defaultIdentity, new PagingRequest<DepartmentsRequest>
-            {
-                Data = new DepartmentsRequest()
-                {
-                    Department = Name
-                }
-            })).Data;
-
-            // If you click on a department: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a department implies that the number of departments is greater than 0.");
-
-            _context.Record.ID = data.First().ID;
+            _context.Record = await _infrastructureHelper.CreateDepartmentAsync();
         }
 
         [Given(@"I click on a department that is used for creating a prototype type")]
         public async Task GivenIClickOnADepartmentThatIsUsedForAPrototypeType()
         {
-            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity.CompanyId))
-                .Where(d => d.PrototypeTypes.Any()).ToList();
-
-            // If you click on a department: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a department implies that the number of departments is greater than 0.");
-
-            _context.Record.ID = data.First().ID;
+             _context.Record = await _infrastructureHelper.CreateDepartmentWithPrototypeTypeAsync();
         }
 
         [Given(@"I click on a department that is used for creating a prototype")]
         public async Task GivenIClickOnADepartmentThatIsUsedForAPrototype()
         {
-            List<Departments> data = (await _commonRepository.GetDepartmentsAsync(_defaultIdentity.CompanyId))
-                .Where(d => d.Prototypes.Any()).ToList();
-
-            // If you click on a department: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a department implies that the number of departments is greater than 0.");
-
-            _context.Record.ID = data.First().ID;
+            _context.Record = await _infrastructureHelper.CreateDepartmentWithPrototypeAsync();
         }
 
         [When(@"I submit the request to add this department")]
@@ -124,6 +106,6 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Then(@"the system does not allow to add the unnamed department")]
         [Then(@"the system does not allow the department deletion from the database")]
         public void ThenTheSystemDoesNotAllowTheDepartmentDeletionFromTheDatabase()
-            => Assert.IsFalse(_context.Response.Valid);
+            => Assert.IsFalse(_context.Response.Valid, "the system must be in an invalid state");
     }
 }
