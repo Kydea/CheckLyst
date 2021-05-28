@@ -50,6 +50,26 @@ namespace CheckListManager.WorkFlows.Tests.Steps
             _context.Response = null;
         }
 
+        private async Task<DetailRequest> CreateWorkFlow()
+        {
+            var Record = new DetailRequest
+            {
+                Description = Guid.NewGuid().ToString(),
+                Reason = "Testing",
+                Steps = new Step[] {
+                    new Step()
+                    {
+                        Reason = "Testing",
+                        Signatures = new List<string[]>().ToArray()
+                    }
+                }
+            };
+
+            var Response = await _detailService.AddAsync(_defaultIdentity, Record);
+            Assert.IsTrue(Response.Valid, "Impossibile creare un work flow.");
+            return Record;
+        }
+
         [Given(@"I assign '(.*)' as the description of the workflow")]
         public void GivenIAssignAsTheDescriptionOfTheWorkflow(string Description)
         {
@@ -91,41 +111,17 @@ namespace CheckListManager.WorkFlows.Tests.Steps
 
             _context.Request.Steps = steps.ToArray();
         }
-
-        private async Task<ListRow> IClickOnAWorkFlow()
-        {
-            var workFlowDescription = Guid.NewGuid().ToString();
-
-            GivenIAssignAsTheDescriptionOfTheWorkflow(workFlowDescription);
-            GivenIAddTheSignatureInTheWorkflowsSteps("Revisor");
-            await WhenISubmitTheRequestToAddTheWorkflow();
-
-            // #1: Get WorkFlows.
-            var workFlow = (await _workFlowsRepositoryExtended.GetRecordsAsync(_defaultIdentity.CompanyId, wp => wp.Description == workFlowDescription)).First();
-
-            // #2: Fetch detailed workflow.
-            var detailedWorkFlow = (await _detailService.LoadAsync(_defaultIdentity, new DetailRequest()
-            {
-                ID = workFlow.ID,
-            }));
-
-            _context.Request.ID = workFlow.ID;
-            _context.Request.Steps = detailedWorkFlow.Steps;
-            _context.Request.Description = workFlow.Description;
-
-            return workFlow;
-        }
         
         [Given(@"I click on a workflow")]
         public async Task GivenIClickOnAWorkflow()
         {
-            await IClickOnAWorkFlow();
+            _context.Request = await CreateWorkFlow();
         }
 
         [Given(@"I click on a workflow that has been used for a prototype type")]
         public async Task GivenIClickOnAWorkflowThatHasBeenUsedForAPrototypeType()
         {
-            var workFlow = await IClickOnAWorkFlow();
+            var workFlow = await CreateWorkFlow();
 
             _prototypeTypesRepositoryExtended.Add(_defaultIdentity.CompanyId, new Common.Data.PrototypeTypes()
             {
@@ -138,7 +134,7 @@ namespace CheckListManager.WorkFlows.Tests.Steps
         [Given(@"I delete the steps from the workflow")]
         public void GivenIDeleteTheStepsFromTheWorkflow()
         {
-            _context.Request.Steps = null ;
+            _context.Request.Steps = null;
         }
 
         [When(@"I submit the request to add the workflow")]

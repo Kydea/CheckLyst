@@ -55,6 +55,11 @@ namespace CheckListManager.Infrastructure.Tests.Setup
                 .AsSelf()
                 .InstancePerLifetimeScope();
 
+            builder.RegisterType<InfrastructureHelper>()
+                .As<IInfrastructureHelper>()
+                .AsSelf()
+                .InstancePerLifetimeScope();
+
             return builder;
         }
 
