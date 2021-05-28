@@ -103,7 +103,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
         
-        //FileManager.default.clearTemporaryDirectory()
+        FileManager.default.clearTemporaryDirectory()
     }
     
     override func didReceiveMemoryWarning()

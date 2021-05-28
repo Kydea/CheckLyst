@@ -183,6 +183,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        if (url.getCallType == .Filters) {
+            mApp.requestToOpenSearch = true
+            mApp.backFromBackGround()
+            
+            if let params = url.queryParameters {
+                FilterManager.shared.clearFilters()
+                for param in params {
+                    FilterManager.shared.setFilter(name: param.key, value: param.value)
+                }
+            }
+            
+            if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
+                mApp.openSearch()
+            }
+            
+        }
+        
         return true
     }
     

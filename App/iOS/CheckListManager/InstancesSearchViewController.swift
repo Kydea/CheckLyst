@@ -20,16 +20,15 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     /*  static text for the labels */
     var indexTextDictionary =
-    [0:"Departments", 1:"Prototype Types", 2:"Prototype", 3:"Version", 4:"Description", 5:"Tags", 6:"Tags Value" ,7:"States"]
+        [0: "Instance ID", 1:"Departments", 2:"Prototype Types", 3:"Prototype", 4:"Version", 5:"Description", 6:"Tags", 7:"Tags Value", 8:"States"]
     
     /*  values sent to the server like query    */
-    var searchDictionary : Dictionary<String, Any?> = ["department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : "", "from" : nil, "to" : nil, "advancedSearch" : false, "source" : nil]
+    var searchDictionary : Dictionary<String, Any?> = ["id": "", "department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : "", "from" : nil, "to" : nil, "advancedSearch" : false, "source" : nil]
     
     var fieldIndexDictionary =
-    ["department":0, "prototypeType":1, "prototype":2, "version":3, "description":4, "tagCode":5, "tagValue":6 ,"state":7]
+        ["id": 0, "department":1, "prototypeType":2, "prototype":3, "version":4, "description":5, "tagCode":6, "tagValue":7 ,"state":8]
     
-    var indexFieldDictionary =
-    [0:"department", 1:"prototypeType", 2:"prototype", 3:"version", 4:"description", 5:"tagCode", 6:"tagValue", 7:"state"]
+    var indexFieldDictionary = [0:"id", 1:"department", 2:"prototypeType", 3:"prototype", 4:"version", 5:"description", 6:"tagCode", 7:"tagValue", 8:"state"]
     
     let allowedSearchFieldValues = ["department","prototypeType","prototype","version"]
     
@@ -60,15 +59,19 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         for i in 0...7 {
             selectedItemsDictionary[i] = Option(text: "",value: "")
         }
+        loadFilters()
     }
     
     
     override func viewDidAppear(_ animated: Bool) {
+
         if appDelegate.requestToOpenInstance {
             appDelegate.openInstance()
             return
         }
+        
         fromSelectionToSearchDictionary()
+        saveFilters()
         fillSearchFields()
     }
     
@@ -119,7 +122,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         cell?.isUserInteractionEnabled = true
         fieldValue!.isEnabled = true;
         
-        let isList = !(indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? true : false
+        let isList = indexTextDictionary[indexPath.row] != "Description" || indexTextDictionary[indexPath.row] != "Tags Value" || indexTextDictionary[indexPath.row] != "Instance ID"
 
         fieldValue?.textColor = (isList) ? UIColor.black : fieldValue?.textColor
         
@@ -130,6 +133,12 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             blocked = true
             selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text = ""
             fieldValue?.text = ""
+        }
+        
+        if (indexPath.row == fieldIndexDictionary["id"]) {
+            if(selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text == "") {
+                selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text = "Insert"
+            }
         }
         
         if (indexPath.row == fieldIndexDictionary["description"]) {
@@ -221,6 +230,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             let field = self.indexFieldDictionary[index]!
                             
                             self.indexArrayDictionary[index] = departments
+                            self.indexArrayDictionary[self.fieldIndexDictionary["department"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.department?.value {
                             
@@ -242,6 +252,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             let field = self.indexFieldDictionary[index]!
                             
                             self.indexArrayDictionary[index] = prototypeTypes
+                            self.indexArrayDictionary[self.fieldIndexDictionary["prototypeType"]!]?.insert(Option(text: "All", value: ""), at: 0)
                             
                             if let value = searchFields.fields.prototypeType?.value {
                             
@@ -437,13 +448,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     @IBAction func searchInstances(_ sender: AnyObject) {
         
         self.startActivityIndicator()
-        /*Needed to avoid the first call with all parameters set to "" (this is experienced when the user start search without changing filters at the first time)*/
-        if(searchDictionary["department"]!! as! String == "" || searchDictionary["prototypeType"]!! as! String == "") {
         
-            self.fromSelectionToSearchDictionary()
-        
-        }
-        
+        self.saveFilters()
         self.listInstances = []
         self.getResearchResultForFirstPage()
         
@@ -582,6 +588,28 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             }
         }
         
+    }
+    
+    func loadFilters() {
+        for field in searchDictionary.keys {
+            if let index = fieldIndexDictionary[field] {
+                if (field == "description" || field == "tagValue") {
+                    selectedItemsDictionary[index]?.text = FilterManager.shared[field] ?? ""
+                }
+                selectedItemsDictionary[index]?.value = FilterManager.shared[field] ?? ""
+            }
+        }
+    }
+    
+    func saveFilters() {
+        for (key, value) in searchDictionary {
+            if let stringValue = value as? String {
+                FilterManager.shared.setFilter(name: key, value: stringValue)
+            }
+            if let boolValue = value as? Bool {
+                FilterManager.shared.setFilter(name: key, value: boolValue.description)
+            }
+        }
     }
     
     @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {

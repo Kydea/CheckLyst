@@ -38,7 +38,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     var isEditingServer = false
     
-    var companyChooseDictionary : NSMutableDictionary = [:]
+    var companyChooseDictionary : [CompanyShortJSON] = []
     
     fileprivate var _typedServerUrl : String?
     
@@ -64,7 +64,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    var selectedCompany : Company?
+    var selectedCompany : CompanyShortJSON?
     
     let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
@@ -173,12 +173,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 
                 if serverResponse.data != nil
                 {
-                    let json = try JSONDecoder().decode([Company].self, from: serverResponse.data!)
+                    let json = try JSONDecoder().decode([CompanyShortJSON].self, from: serverResponse.data!)
                     
-                    self.companyChooseDictionary.removeAllObjects()
+                    self.companyChooseDictionary.removeAll()
                     
                     for company in json {
-                        self.companyChooseDictionary.addEntries(from: [company.name : ["id" : String(company.id), "inactivityTimeoutSeconds" : String(company.inactivityTimeoutSeconds)]])
+                        self.companyChooseDictionary.append(company)
                     }
                     
                     self.activityIndicator.stopAnimating()
@@ -319,11 +319,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         
                         self.setUserInformation(userInfo: json)
                         
-                        (UIApplication.shared as! MyApplication).startInactivityTimer(timeToExpireActivity: (UIApplication.shared as! MyApplication).inactivityInterval)
-                        
-                        (UIApplication.shared as! MyApplication).startTokenTimer()
-                        
-                        self.getClient()
+                        self.getCompanyData()
                         
                     } else {
                         
@@ -349,25 +345,50 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func getClient() {
+    func getCompanyData() {
         
-        ServerConnection.sendGetClientRequest(["data":["code":UserDefaults.standard.value(forKey: "userCode") as! String, "description":""]]){ (serverResponse) -> Void in
+        self.activityIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
+        
+        ServerConnection.getCompanieSettingsRequest { (serverResponse) -> Void in
             
-            self.activityIndicator.stopAnimating()
+             self.activityIndicator.stopAnimating()
             self.view.isUserInteractionEnabled = true
             
-            if(serverResponse.data != nil && serverResponse.error == nil) {
+            if(serverResponse.error != nil) {
                 
-                self.performSegue(withIdentifier: "loggedSegue", sender: self)
-            
-            } else {
-               
                 self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+            }
             
+            do {
+                
+                if serverResponse.data != nil {
+                    let json = try JSONDecoder().decode(CompanySettingsJSON.self, from: serverResponse.data!)
+                    
+                    self.setCompanySettings(companyInfo: json)
+                    
+                    (UIApplication.shared as! MyApplication).startInactivityTimer()
+                    
+                    (UIApplication.shared as! MyApplication).startTokenTimer()
+                    
+                    self.performSegue(withIdentifier: "loggedSegue", sender: self)
+                }
+                
+            } catch {
+                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                print("Error deserializing JSON: \(error)")
+                self.activityIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
             }
             
         }
         
+    }
+    
+    func setCompanySettings(companyInfo: CompanySettingsJSON) {
+        UserDefaults.standard.setValue(companyInfo.inactivityTimeoutSeconds, forKey: "inactivityTimeoutSeconds")
+        UserDefaults.standard.setValue(companyInfo.requireUserReason, forKey: "requireUserReason")
+        UserDefaults.standard.setValue(companyInfo.webApplicationUrl, forKey: "webApplicationUrl")
     }
     
     func setUserInformation(userInfo json:[String:Any]) {
@@ -382,7 +403,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         UserDefaults.standard.setValue(json["name"], forKey: "name")
         UserDefaults.standard.setValue(json["timeZone"], forKey: "timeZone")
         UserDefaults.standard.setValue(self.companyTextField.text!, forKey: "companyName")
-        UserDefaults.standard.setValue(self.selectedCompany!.inactivityTimeoutSeconds, forKey: "inactivityTimeoutSeconds")
+        
         UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
         UserDefaults.standard.setValue(json["decimalSeparator"], forKey: "decimalSeparator")
         
@@ -400,7 +421,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 controller.fieldNameString = "Select Server"
                 
             } else {
-                controller.companyFieldsDictionary = companyChooseDictionary as? Dictionary<String,Dictionary<String, String>>
+                controller.companyFieldsDictionary = companyChooseDictionary
                 
                 controller.fieldNameString = "Select Company"
             }
@@ -442,33 +463,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         if(animation) {
             
-            UIView.animate(withDuration: 0.3){
-                
-                self.passwordView.isHidden = !value
-                self.userCodeView.isHidden = !value
-                self.companyView.isHidden = !value
-            
+            UIView.animate(withDuration: animation ? 0.3 : 0) {
+                self.toggleLoginView(value)
             }
-            
-            self.loginButton.isHidden = !value
-            self.verifyServerButton.isHidden = value
-            self.serverTextField.isEnabled = !value
-            self.ChooseServerButton.isHidden = Server.any(managedObjectContext: self.context) ? value : true
-            self.EditServerButton.isHidden = !value
-        
         } else {
-            
-            self.companyView.isHidden = !value
-            self.userCodeView.isHidden = !value
-            self.passwordView.isHidden = !value
-            self.loginButton.isHidden = !value
-            self.verifyServerButton.isHidden = value
-            self.serverTextField.isEnabled = !value
-            self.ChooseServerButton.isHidden = Server.any(managedObjectContext: self.context) ? value : true
-            self.EditServerButton.isHidden = !value
-            
+            toggleLoginView(value)
         }
         
+        self.loginButton.isHidden = !value
+        self.verifyServerButton.isHidden = value
+        self.serverTextField.isEnabled = !value
+        self.ChooseServerButton.isHidden = Server.any(managedObjectContext: self.context) ? value : true
+        self.EditServerButton.isHidden = !value
+        
+    }
+    
+    private func toggleLoginView(_ value: Bool) {
+        self.passwordView.isHidden = !value
+        self.userCodeView.isHidden = !value
+        self.companyView.isHidden = !value
     }
     
     @objc func dismissKeyboard() {

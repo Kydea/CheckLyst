@@ -21,16 +21,15 @@ import CoreData
     var isInactivityCatched = false
     var isTokenExpired = false
     var requestToOpenInstance = false
+    var requestToOpenSearch = false
     var needToUpdateTokens = false
-    var isInactivityAlertPresented = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
     var inactivityStartingTime = Date()
-    var countdownController: CountDownViewController?
     
     let defaultInactivityTime = 900.0 /* 15 minutes */
-    let showCountdownThreshold = 10.0
+    let showCountdownThreshold = 60.0
     
     var requestedUrlInfo : Dictionary<String, String>?
     
@@ -61,6 +60,7 @@ import CoreData
         
         if restartTimer {
             inactivityStartingTime = Date()
+            CountDownViewController.shared.reset()
         }
         super.sendEvent(event)
     }
@@ -176,13 +176,50 @@ import CoreData
                 
                 let tabBarController = (topController as! TabViewController)
                 
+                if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
+                    instanceController.closeInstance()
+                }
+                
+                if let navController = tabBarController.viewControllers?[1] as? UINavigationController, navController.childViewControllers.count > 1 {
+                    navController.popToRootViewController(animated: false)
+                }
+                
                 if let controller = tabBarController.viewControllers![tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController {
+                    
                     requestToOpenInstance = false
+                     
                     controller.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
                 }
             }
         }
     }
+    
+    func openSearch() {
+        if let tabBarController = searchPresentedController(controllerClass: TabViewController.self) as? TabViewController {
+            var isPresented = true
+            if tabBarController.selectedIndex != 1 {
+                tabBarController.selectedIndex = 1
+                isPresented = false
+            }
+            
+            if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
+                instanceController.closeInstance()
+            }
+            
+            if let navController = tabBarController.viewControllers?[1] as? UINavigationController, navController.childViewControllers.count > 1 {
+                navController.popToRootViewController(animated: false)
+            }
+            
+            if let instancesSearcController = tabBarController.viewControllers![1].childViewControllers[0] as? InstancesSearchViewController {
+                instancesSearcController.loadFilters()
+                
+                if isPresented { instancesSearcController.viewDidAppear(false) }
+            }
+            
+            requestToOpenSearch = false
+        }
+    }
+    
     
     func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
         
@@ -251,6 +288,7 @@ import CoreData
         UserDefaults.standard.setValue(nil, forKey: "access_token")
         UserDefaults.standard.setValue(nil, forKey: "refresh_token")
         UserDefaults.standard.setValue(nil, forKey: "roles")
+        FilterManager.shared.clearFilters()
         
         if let timer = timer {
             timer.invalidate()
@@ -358,29 +396,26 @@ import CoreData
             return
         }
         
-        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) < Date() && !isInactivityAlertPresented) {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            countdownController = storyboard.instantiateViewController(withIdentifier: "countdown_id") as? CountDownViewController
-            searchPresentedController()?.present(countdownController!, animated: true)
-            return
-        }
-        
-        countdownController?.updateCountDown(time: inactivityStartingTime.timeIntervalSinceNow)
-        
-        if (inactivityStartingTime.addingTimeInterval(inactivityInterval) < Date()) {
-            inactivityTimer?.invalidate()
-            isInactivityCatched = true
-            #if DEBUG
-            let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime, timeOnly: true))
-            self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) < Date() && !CountDownViewController.shared.isPresented) {
+            CountDownViewController.shared.completition = { [weak self] in
+                self?.inactivityTimer?.invalidate()
+                self?.isInactivityCatched = true
+                #if DEBUG
+                let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(self?.inactivityStartingTime ?? Date(), timeOnly: true))
+                self?.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                    self?.logoutAndGoToLogin()
+                    self?.isInactivityCatched = false
+                }
+                #else
                 self?.logoutAndGoToLogin()
                 self?.isInactivityCatched = false
+                #endif
+                
             }
-            #else
-            self.logoutAndGoToLogin()
-            self.isInactivityCatched = false
-            #endif
+            searchPresentedController()?.present(CountDownViewController.shared, animated: false)
         }
+        
+        CountDownViewController.shared.updateCountDown(time: inactivityStartingTime.addingTimeInterval(inactivityInterval).timeIntervalSinceNow)
     }
     
     func goBackGround(){
@@ -406,16 +441,19 @@ import CoreData
                 
                 if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {
                     self.isInactivityCatched = true
-                    #if DEBUG
-                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime ?? Date(), timeOnly: true))
-                        self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                    CountDownViewController.shared.completition = { [weak self] in
+                        #if DEBUG
+                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(self?.inactivityStartingTime ?? Date(), timeOnly: true))
+                            self?.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                                self?.logoutAndGoToLogin()
+                                self?.isInactivityCatched = false
+                            }
+                        #else
                             self?.logoutAndGoToLogin()
                             self?.isInactivityCatched = false
-                        }
-                    #else
-                        self.logoutAndGoToLogin()
-                        self.isInactivityCatched = false
-                    #endif
+                        #endif
+                    }
+                    CountDownViewController.shared.updateCountDown(time: inactivityStartingTime.timeIntervalSinceNow)
                 } else {
                     self.startInactivityTimer()
                 }

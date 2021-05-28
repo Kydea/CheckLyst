@@ -31,7 +31,14 @@ open class ServerConnection {
     
     static func getCompaniesRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetData", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetSyntheticData", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
+            completion(result)
+        }
+    }
+    
+    static func getCompanieSettingsRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
+        
+        ServerConnection.sendHTTPGetRequest(serverUrl+"/Infrastructure/Companies/GetSettings", isAuthenticated: true){ (result) -> Void in
             completion(result)
         }
     }
@@ -49,13 +56,6 @@ open class ServerConnection {
             completion(result)
         }
     }
-    
-    static func sendGetClientRequest(_ params : Dictionary<String, Dictionary<String, String>>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(baseUrl+"/AccessControl/Users/GetData", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
-            completion(result)
-        }
-    }
-    
     
     static func loginOrRefreshToServer(server serverUrl:String = baseUrl,_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
         sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
