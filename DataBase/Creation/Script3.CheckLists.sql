@@ -268,24 +268,6 @@ create table "CheckLists"."InstanceRelations"
 (
 	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
 	"Item" int,
-	"Child" bigint references "CheckLists"."Instances" on delete cascade,
-
-	constraint "PK_InstanceRelations" primary key ("Parent", "Item", "Child"),
-
-	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child"),
-
-	"CreatedBy" varchar (60),
-	"CreatedOn" timestamptz not null default current_timestamp,
-	"ModifiedBy" varchar (60),
-	"ModifiedOn" timestamptz
-);
-
-create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
-
-create table "CheckLists"."InstanceRelations"
-(
-	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
-	"Item" int,
 	constraint "PK_InstanceRelations" primary key ("Parent", "Item"),
 
 	"Child" bigint references "CheckLists"."Instances" on delete cascade,

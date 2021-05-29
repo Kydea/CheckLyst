@@ -73,6 +73,8 @@ namespace CheckListManager.Infrastructure.Data
                 company.SettingValues.Add(new SettingValues { Setting = setting.Code, Value = setting.Value ?? "", CreatedOn = DateTimeOffset.UtcNow });
             Entities.Companies.Add(company);
             await SaveChangesAsync();
+
+            if (!await Call<bool>("\"Security\".\"CreateReportUser\"", new Parameter("company", company.ID))) throw new Exception("Unexpected result creating report user");
             return company;
         }
 
