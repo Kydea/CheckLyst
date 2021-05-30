@@ -30,6 +30,21 @@ body:not(.Login) div#Content h2, body:not(.Login) div.Popup h2, body:not(.Login)
   color: #00877a;
   clear: both; }
 
+body:not(.Login) div#Content h1.Green, body:not(.Login) div#Content h2.Green, body:not(.Login) div.Popup h1.Green, body:not(.Login) div.Popup h2.Green, body:not(.Login) div.Dialog h1.Green, body:not(.Login) div.Dialog h2.Green {
+  text-transform: uppercase;
+  margin: 0 20px 20px !important;
+  color: white !important;
+  min-height: 1em;
+  margin-top: -20px !important;
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+  padding: 20px;
+  background-color: #009688;
+  width: calc(100% + 40px);
+  top: 0;
+  left: 0;
+  border-radius: 15px 15px 0 0; }
+
 body:not(.Login) div#Content h3, body:not(.Login) div.Popup h3, body:not(.Login) div.Dialog h3 {
   margin: 20px 0;
   font-size: 16px;

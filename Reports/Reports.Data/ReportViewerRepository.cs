@@ -14,7 +14,7 @@ namespace CheckListManager.Reports.Data
 {
     public class ReportViewerRepository : Repository, IReportViewerRepository
     {
-        public ReportViewerRepository(RelationalDatabaseEntities entities): base(entities)
+        public ReportViewerRepository(RelationalDatabaseEntities entities) : base(entities)
         {
             var DatabaseConnection = entities.Database.Connection;
 
@@ -44,6 +44,55 @@ namespace CheckListManager.Reports.Data
                     DataAdapter.FillSchema(DataSet, SchemaType.Source, "Report");
                     return DataSet.Tables["Report"];
                 }
+            }
+            catch (PostgresException PostgresException)
+            {
+                throw new DatabaseException(PostgresException.Message, PostgresException.InnerException, PostgresException.Position);
+            }
+            catch (AggregateException AggregateException)
+            {
+                throw new DatabaseAggregateException(AggregateException.InnerExceptions);
+            }
+            catch (Exception Exception)
+            {
+                throw new DatabaseException(Exception.Message, Exception.InnerException);
+            }
+        }
+
+        public async Task<List<List<string>>> GetData(long company, Common.Data.Reports report)
+        {
+            try
+            {
+                var Result = new List<List<string>>();
+                var Connection = await GetConnection();
+                var Columns = report.ReportColumns.ToList();
+                //using (var Connection = await GetConnection())
+                using (var Command = new NpgsqlCommand(report.Query + " limit 20", Connection))
+                using (var DataReader = await Command.ExecuteReaderAsync())
+                    if (DataReader.HasRows)
+                        while (DataReader.Read())
+                        {
+                            var Record = new List<string>();
+                            var Index = 0;
+                            foreach (var Column in Columns)
+                            {
+                                if (await DataReader.IsDBNullAsync(Index))
+                                    Record.Add(string.Empty);
+                                else
+                                    switch (DataReader.GetDataTypeName(Index))
+                                    {
+                                        case "timestamptz":
+                                            Record.Add((await DataReader.GetFieldValueAsync<DateTime>(Index)).ToString("dd/MM/yyyy TBD"));
+                                            break;
+                                        default:
+                                            Record.Add(await DataReader.GetFieldValueAsync<string>(Index));
+                                            break;
+                                    }
+                                ++Index;
+                            }
+                            Result.Add(Record);
+                        }
+                return Result;
             }
             catch (PostgresException PostgresException)
             {

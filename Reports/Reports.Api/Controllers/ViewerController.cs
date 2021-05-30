@@ -8,10 +8,12 @@ using System;
 using CheckListManager.Common.Logic.Cache;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using CheckListManager.Reports.Logic.Detail;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
-	[RoutePrefix("Viewer")]
+    [Authorize(Roles = "Reports#View")]
+    [RoutePrefix("Viewer")]
 	public class ViewerController : BaseApiController
 	{
 		private readonly IViewerEditorService _reportViewerService;
@@ -20,5 +22,20 @@ namespace CheckListManager.Reports.Api.Controllers
 		{
             _reportViewerService = reportViewerService;
         }
+
+        [HttpPost]
+        [Route("LoadParameters")]
+        public async Task<IHttpActionResult> LoadParameters(DetailRequest request)
+        {
+            return Ok(await _reportViewerService.LoadParameters(Identity, request.Code));
+        }
+
+        [HttpPost]
+        [Route("GetReportData")]
+        public async Task<IHttpActionResult> GetReportData(ReportRequest request)
+        {
+            return Ok(await _reportViewerService.GetReportData(Identity, request));
+        }
+
     }
 }

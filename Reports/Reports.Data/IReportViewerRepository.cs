@@ -12,5 +12,6 @@ namespace CheckListManager.Reports.Data
     public interface IReportViewerRepository : IRepository
     {
         Task<DataTable> GetDataTable(long company, string command);
+        Task<List<List<string>>> GetData(long company, Common.Data.Reports report);
     }
 }

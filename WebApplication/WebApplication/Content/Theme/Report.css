@@ -1,16 +1,13 @@
-﻿div.Report h2 {
-  margin: 0 20px 20px !important;
-  color: white !important;
-  min-height: 1em;
-  margin-top: -20px !important;
-  margin-left: -20px !important;
-  margin-right: -20px !important;
-  padding: 20px;
-  background-color: #009688;
-  width: calc(100% + 40px);
-  top: 0;
-  left: 0;
-  border-radius: 15px 15px 0 0; }
-
-div.Report form#Detail > div.Errors {
-  display: none !important; }
+﻿body.Report {
+  width: unset;
+  min-width: 100%; }
+  body.Report header, body.Report footer, body.Report div#Breadcrumbs {
+    display: none !important; }
+  body.Report div#Content {
+    margin: 0 !important;
+    padding: 20px !important; }
+    body.Report div#Content h1 {
+      font-size: 28px !important; }
+      body.Report div#Content h1 button.hamburger {
+        padding: 0;
+        margin-right: 10px; }

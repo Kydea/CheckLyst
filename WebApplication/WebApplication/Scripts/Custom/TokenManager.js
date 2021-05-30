@@ -52,7 +52,10 @@
                 warningTimeout = setTimeout(function () {
                     if (localStorage.refreshToken && checkLastActivity(true))
                         matematici.blip.countdown(countdownLength, function () {
-                            if (checkLastActivity(true)) logout();
+                            if (checkLastActivity(true)) {
+                                matematici.navigator.setLastPath(matematici.navigator.getLastPath());
+                                logout();
+                            }
                         }, checkLastActivity);
                 }, time);
         },

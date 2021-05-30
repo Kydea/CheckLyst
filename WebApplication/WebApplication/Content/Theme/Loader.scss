@@ -1,6 +1,12 @@
 ﻿$width: 50px;
 $height: 50px;
 
+body.Loader {
+    header, footer {
+        display: none !important;
+    }
+}
+
 div#Loader {
     position: fixed;
     top: 0;

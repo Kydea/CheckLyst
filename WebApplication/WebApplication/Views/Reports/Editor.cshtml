@@ -8,7 +8,7 @@
     </div>
 
     <div class="ShadowPanel">
-        <h2>@(Model.Code ?? "(New report)")</h2>
+        <h2 class="Green">@(Model.Code ?? "(New report)")</h2>
 
         <form id="Detail" action="@BaseUrl/Reports/List">
             <input type="hidden" name="reason" />
@@ -91,7 +91,8 @@
             reportEditor = new reports.ReportEditor(element, {
                 code: "@(Model.Code ?? "")",
                 listUrl: "@Url.Action("List")",
-                detailUrl: "@Url.Action("Editor")"
+                detailUrl: "@Url.Action("Editor")",
+                viewerUrl: "@Url.Action("Viewer")"
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
@@ -115,6 +116,9 @@
                 .add("Save", function () {
                     reportEditor.save();
                 }, "Save")
+                .add("View", function () {
+                    reportEditor.view();
+                }, "View")
                 .add("Verify", function () {
                     reportEditor.verify(false);
                 }, "Verify");
@@ -124,9 +128,6 @@
             cssClass: "ReportEditor",
             breadcrumbs: [
                 { content: "report editor" }
-            ],
-            initializers: [
-                new matematici.Tab(".TabContainer", element)
             ]
         });
 

@@ -73,6 +73,10 @@
             }, parametersPrepare());
         },
 
+        view = function () {
+            matematici.navigator.open(options.viewerUrl);
+        },
+
         deleteRecord = function () {
             detailPage.deleteRecord(function () {
                 matematici.canClose = true;
@@ -145,6 +149,11 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
+                matematici.breadcrumbs.set([
+                    { content: "report editor", label: "page" },
+                    { content: options.code || "(new report)", label: "code" }
+                ]);
+
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.code == "");
 
                 detailPage = new matematici.DetailPage({
@@ -230,6 +239,7 @@
     reportEditor.quit = quit;
     reportEditor.save = save;
     reportEditor.verify = verify;
+    reportEditor.view = view;
     reportEditor.deleteRecord = deleteRecord;
 
     setup();

@@ -206,5 +206,9 @@
   {
     "outputFile": "Content/Theme/ClausesList.css",
     "inputFile": "Content/Theme/ClausesList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ReportEditor.css",
+    "inputFile": "Content/Theme/ReportEditor.scss"
   }
 ]

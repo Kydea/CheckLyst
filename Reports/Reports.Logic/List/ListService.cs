@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Data;
+﻿using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Reports.Data;
 using System.Collections.Generic;
@@ -18,10 +19,11 @@ namespace CheckListManager.Reports.Logic.List
             _reportsRepository = reportsRepository;
         }
 
-        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> Form)
+        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(IDefaultIdentity Identity, PagingRequest<ListRequest> Form)
         {
             var Result = await _reportsRepository.GetReportsAsync(
-                Company,
+                Identity.CompanyId,
+                Identity.HasPermission("Report", "Edit") ? string.Empty : Identity.Code,
                 Form.Data.Code,
                 Form.Data.Description,
                 Form.CurrentPage,

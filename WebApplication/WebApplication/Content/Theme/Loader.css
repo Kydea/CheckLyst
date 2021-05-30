@@ -1,4 +1,7 @@
-﻿div#Loader {
+﻿body.Loader header, body.Loader footer {
+  display: none !important; }
+
+div#Loader {
   position: fixed;
   top: 0;
   left: 0;
