@@ -70,11 +70,14 @@ namespace CheckListManager.Reports.Data
             StringBuilder.AppendLine(report.Query);
             StringBuilder.AppendLine($")");
             StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.Select(c => $"{c.Column} \"{c.Label}\""))} from q");
-            StringBuilder.AppendLine("limit 100");
+            StringBuilder.AppendLine($"where");
+            StringBuilder.AppendLine($"    1 = 1");
+            StringBuilder.AppendLine($"    and q.\"CreatedOn\" >= @from");
+            StringBuilder.AppendLine($"limit 500");
             return StringBuilder;
         }
 
-        public async Task<List<List<string>>> GetDataAsync(long company, string timeZone, Common.Data.Reports report, CancellationToken cancellationToken)
+        public async Task<List<List<string>>> GetDataAsync(long company, string timeZone, Common.Data.Reports report, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -82,31 +85,34 @@ namespace CheckListManager.Reports.Data
                 var Columns = report.ReportColumns.ToList();
                 using (var Connection = await GetConnectionAsync(cancellationToken))
                 using (var Command = new NpgsqlCommand(BuildQuery(company, report).ToString(), Connection))
-                using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
-                    if (DataReader.HasRows)
-                        while (DataReader.Read())
-                        {
-                            var Record = new List<string>();
-                            var Index = 0;
-                            foreach (var Column in Columns)
+                {
+                    Command.Parameters.AddRange(parameters.Select(p => new NpgsqlParameter(p.Name, p.Value)).ToArray());
+                    using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
+                        if (DataReader.HasRows)
+                            while (DataReader.Read())
                             {
-                                cancellationToken.ThrowIfCancellationRequested();
-                                if (await DataReader.IsDBNullAsync(Index, cancellationToken))
-                                    Record.Add(string.Empty);
-                                else
-                                    switch (DataReader.GetDataTypeName(Index))
-                                    {
-                                        case "timestamptz":
-                                            Record.Add((await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken)).Format(timeZone));
-                                            break;
-                                        default:
-                                            Record.Add(await DataReader.GetFieldValueAsync<string>(Index, cancellationToken));
-                                            break;
-                                    }
-                                ++Index;
+                                var Record = new List<string>();
+                                var Index = 0;
+                                foreach (var Column in Columns)
+                                {
+                                    cancellationToken.ThrowIfCancellationRequested();
+                                    if (await DataReader.IsDBNullAsync(Index, cancellationToken))
+                                        Record.Add(string.Empty);
+                                    else
+                                        switch (DataReader.GetDataTypeName(Index))
+                                        {
+                                            case "timestamptz":
+                                                Record.Add((await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken)).Format(timeZone));
+                                                break;
+                                            default:
+                                                Record.Add(await DataReader.GetFieldValueAsync<string>(Index, cancellationToken));
+                                                break;
+                                        }
+                                    ++Index;
+                                }
+                                Result.Add(Record);
                             }
-                            Result.Add(Record);
-                        }
+                }
                 return Result;
             }
             catch (PostgresException PostgresException)

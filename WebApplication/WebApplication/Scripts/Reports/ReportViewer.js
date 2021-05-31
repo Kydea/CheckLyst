@@ -10,7 +10,7 @@
                 var
                     parameter = parameters[parameterIndex],
                     value = parameter.getValue();
-                if (value != "" && parameter.getOption("readOnly"))
+                if (value != "" && !parameter.getOption("readOnly"))
                     queryStrings.push(encodeURIComponent(parameter.getOption("parameterName")) + "=" + encodeURIComponent(value));
             }
             window.open(options.reportUrl + "?" + queryStrings.join("&"));

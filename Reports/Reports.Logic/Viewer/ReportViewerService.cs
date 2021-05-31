@@ -1,7 +1,9 @@
 ﻿using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Reports.Data;
 using CheckListManager.Reports.Logic.Detail;
@@ -61,7 +63,14 @@ namespace CheckListManager.Reports.Logic.Viewer
             string value = eo.Property;
             */
 
-            var Rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), Report, cancellationToken);
+            var Parameters = request.Parameters.Select(p => {
+                if (DataType.FromName("Date").TryParse(p.Value, out var Value))
+                    return new Parameter(p.Code, Value);
+                else
+                    return new Parameter(p.Code, p.Value);
+            });
+
+            var Rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), Report, Parameters, cancellationToken);
 
             //var Rows = await _reportViewerRepository.GetData(Report, request.Parameters.ToDictionary(p => p.Code, v => v.Value));
             return new ReportResponse
