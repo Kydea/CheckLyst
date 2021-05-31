@@ -9,6 +9,8 @@ using CheckListManager.Common.Logic.Cache;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using CheckListManager.Reports.Logic.Detail;
+using System.Threading;
+using System.Web;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -34,7 +36,8 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("GetReportData")]
         public async Task<IHttpActionResult> GetReportData(ReportRequest request)
         {
-            return Ok(await _reportViewerService.GetReportData(Identity, request));
+            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+            return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
         }
 
     }

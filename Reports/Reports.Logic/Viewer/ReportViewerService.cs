@@ -2,6 +2,7 @@
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Services;
 using CheckListManager.Reports.Data;
 using CheckListManager.Reports.Logic.Detail;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Reports.Logic.Viewer
@@ -18,13 +20,15 @@ namespace CheckListManager.Reports.Logic.Viewer
     {
         private readonly IReportsRepository _reportsRepository;
         private readonly IReportViewerRepository _reportViewerRepository;
+        private readonly ISettingService _settingService;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public ReportViewerService(IReportsRepository reportsRepository, IReportViewerRepository reportViewerRepository)
+        public ReportViewerService(IReportsRepository reportsRepository, IReportViewerRepository reportViewerRepository, ISettingService settingService)
         {
             _reportsRepository = reportsRepository;
             _reportViewerRepository = reportViewerRepository;
+            _settingService = settingService;
         }
 
         public async Task<DetailResponse> LoadParameters(IDefaultIdentity identity, string code)
@@ -46,7 +50,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             return result;
         }
 
-        public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request)
+        public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
             var Report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Code);
 
@@ -57,7 +61,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             string value = eo.Property;
             */
 
-            var Rows = await _reportViewerRepository.GetData(identity.CompanyId, Report);
+            var Rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), Report, cancellationToken);
 
             //var Rows = await _reportViewerRepository.GetData(Report, request.Parameters.ToDictionary(p => p.Code, v => v.Value));
             return new ReportResponse

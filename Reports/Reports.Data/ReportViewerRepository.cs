@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Data;
+﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Exceptions;
 using Dapper;
 using Npgsql;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Reports.Data
@@ -17,13 +19,13 @@ namespace CheckListManager.Reports.Data
         public ReportViewerRepository(RelationalDatabaseEntities entities) : base(entities)
         {
             var DatabaseConnection = entities.Database.Connection;
-
         }
 
-        private async Task<NpgsqlConnection> GetConnection()
+        private async Task<NpgsqlConnection> GetConnectionAsync(CancellationToken cancellationToken)
         {
-            if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
-            return (NpgsqlConnection)Entities.Database.Connection;
+            var Connection = Entities.Database.Connection;
+            if (Connection.State != ConnectionState.Open) await Connection.OpenAsync(cancellationToken);
+            return (NpgsqlConnection)Connection;
         }
 
         private object GetDefaultParameterValue(Parameter Parameter)
@@ -31,12 +33,11 @@ namespace CheckListManager.Reports.Data
             return string.Empty;
         }
 
-        public async Task<DataTable> GetDataTable(long company, string command)
+        public async Task<DataTable> GetDataTableAsync(long company, string command, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                var Connection = await GetConnection();
-                //using (var Connection = await GetConnection())
+                var Connection = await GetConnectionAsync(cancellationToken);
                 using (var Command = new NpgsqlCommand(command, Connection))
                 using (var DataAdapter = new NpgsqlDataAdapter(Command))
                 using (var DataSet = new DataSet())
@@ -59,16 +60,27 @@ namespace CheckListManager.Reports.Data
             }
         }
 
-        public async Task<List<List<string>>> GetData(long company, Common.Data.Reports report)
+        private StringBuilder BuildQuery(long company, Common.Data.Reports report)
+        {
+            var StringBuilder = new StringBuilder();
+            StringBuilder.AppendLine($"set role \"ReportUser{company}\";");
+            StringBuilder.AppendLine($"with q as (");
+            StringBuilder.AppendLine(report.Query);
+            StringBuilder.AppendLine($")");
+            StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.Select(c => $"{c.Column} \"{c.Label}\""))} from q");
+            StringBuilder.AppendLine("limit 100");
+            return StringBuilder;
+        }
+
+        public async Task<List<List<string>>> GetDataAsync(long company, string timeZone, Common.Data.Reports report, CancellationToken cancellationToken)
         {
             try
             {
                 var Result = new List<List<string>>();
-                var Connection = await GetConnection();
                 var Columns = report.ReportColumns.ToList();
-                //using (var Connection = await GetConnection())
-                using (var Command = new NpgsqlCommand(report.Query + " limit 20", Connection))
-                using (var DataReader = await Command.ExecuteReaderAsync())
+                var Connection = await GetConnectionAsync(cancellationToken);
+                using (var Command = new NpgsqlCommand(BuildQuery(company, report).ToString(), Connection))
+                using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
                     if (DataReader.HasRows)
                         while (DataReader.Read())
                         {
@@ -76,16 +88,17 @@ namespace CheckListManager.Reports.Data
                             var Index = 0;
                             foreach (var Column in Columns)
                             {
-                                if (await DataReader.IsDBNullAsync(Index))
+                                cancellationToken.ThrowIfCancellationRequested();
+                                if (await DataReader.IsDBNullAsync(Index, cancellationToken))
                                     Record.Add(string.Empty);
                                 else
                                     switch (DataReader.GetDataTypeName(Index))
                                     {
                                         case "timestamptz":
-                                            Record.Add((await DataReader.GetFieldValueAsync<DateTime>(Index)).ToString("dd/MM/yyyy TBD"));
+                                            Record.Add((await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken)).Format(timeZone));
                                             break;
                                         default:
-                                            Record.Add(await DataReader.GetFieldValueAsync<string>(Index));
+                                            Record.Add(await DataReader.GetFieldValueAsync<string>(Index, cancellationToken));
                                             break;
                                     }
                                 ++Index;

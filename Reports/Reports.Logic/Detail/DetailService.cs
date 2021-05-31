@@ -137,7 +137,7 @@ namespace CheckListManager.Reports.Logic.Detail
             if (record.ReportSource == null)
                 try
                 {
-                    await _reportViewerRepository.GetDataTable(identity.CompanyId, record.Query);
+                    _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query);
                 }
                 catch (DatabaseException DatabaseException)
                 {
@@ -313,7 +313,7 @@ namespace CheckListManager.Reports.Logic.Detail
 
         public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query)
         {
-            using (var dataTable = await _reportViewerRepository.GetDataTable(identity.CompanyId, query))
+            using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query))
             {
                 var reportColumns = new List<string>(dataTable.Columns.Count);
                 foreach (DataColumn column in dataTable.Columns)
