@@ -1,4 +1,6 @@
-﻿$width: 50px;
+﻿@import "_Library.scss";
+
+$width: 50px;
 $height: 50px;
 
 body.Loader {
@@ -47,6 +49,21 @@ div#Loader {
                     color: white;
                     text-align: center;
                     font-size: 10px;
+                }
+            }
+
+            a.CancelButton {
+                color: white;
+                font-size: 18px;
+                position: absolute;
+                text-align: center;
+                display: block;
+                height: $height;
+                width: $width;
+                line-height: $height;
+
+                &:hover {
+                    color: $Color-Red-Regular;
                 }
             }
         }

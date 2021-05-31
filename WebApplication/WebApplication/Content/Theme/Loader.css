@@ -35,3 +35,14 @@ div#Loader {
           color: white;
           text-align: center;
           font-size: 10px; }
+      div#Loader div.Center div.Background a.CancelButton {
+        color: white;
+        font-size: 18px;
+        position: absolute;
+        text-align: center;
+        display: block;
+        height: 50px;
+        width: 50px;
+        line-height: 50px; }
+        div#Loader div.Center div.Background a.CancelButton:hover {
+          color: #cc0000; }

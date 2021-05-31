@@ -100,7 +100,7 @@
         },
 
         load = function (page) {
-            $.ajax({
+            var request = $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/GetReportData",
                 data: {
@@ -110,6 +110,15 @@
                 }
             }).done(function (result) {
                 loadHandler(result);
+            });
+
+            matematici.loader.setCancelHandler(function () {
+                request.abort("operation canceled");
+                loadHandler({
+                    description: "operation canceled",
+                    columns: [""],
+                    rows: []
+                });
             });
         },
 

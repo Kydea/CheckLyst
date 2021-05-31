@@ -5,6 +5,7 @@ using Dapper;
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -23,9 +24,10 @@ namespace CheckListManager.Reports.Data
 
         private async Task<NpgsqlConnection> GetConnectionAsync(CancellationToken cancellationToken)
         {
-            var Connection = Entities.Database.Connection;
-            if (Connection.State != ConnectionState.Open) await Connection.OpenAsync(cancellationToken);
-            return (NpgsqlConnection)Connection;
+            var connectionString = ConfigurationManager.ConnectionStrings["ReportDatabase"].ConnectionString;
+            var connection = new NpgsqlConnection(connectionString);
+            await connection.OpenAsync(cancellationToken);
+            return connection;
         }
 
         private object GetDefaultParameterValue(Parameter Parameter)
@@ -37,7 +39,7 @@ namespace CheckListManager.Reports.Data
         {
             try
             {
-                var Connection = await GetConnectionAsync(cancellationToken);
+                using (var Connection = await GetConnectionAsync(cancellationToken))
                 using (var Command = new NpgsqlCommand(command, Connection))
                 using (var DataAdapter = new NpgsqlDataAdapter(Command))
                 using (var DataSet = new DataSet())
@@ -78,7 +80,7 @@ namespace CheckListManager.Reports.Data
             {
                 var Result = new List<List<string>>();
                 var Columns = report.ReportColumns.ToList();
-                var Connection = await GetConnectionAsync(cancellationToken);
+                using (var Connection = await GetConnectionAsync(cancellationToken))
                 using (var Command = new NpgsqlCommand(BuildQuery(company, report).ToString(), Connection))
                 using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
                     if (DataReader.HasRows)
