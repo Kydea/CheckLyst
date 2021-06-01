@@ -490,4 +490,8 @@ $func$
 		)
 $func$ language sql;
 
+alter table "CheckLists"."Instances" add column "ItemsByLabel" text;
+alter table "CheckLists"."Instances" add column "ItemsByCode" text;
+alter table "CheckLists"."Instances" add column "Expressions" text;
+
 --Script8.Reports.sql

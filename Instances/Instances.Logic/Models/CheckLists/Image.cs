@@ -13,10 +13,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return image;
         }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
-            ItemModel.Key = Target == null || !GetBranchElements().TryGetValue(Target, out var Item) || !(Item is Image Image) ? Key : Image.Key;
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (!ReportModel)
+                ItemModel.Key = Target == null || !GetBranchElements().TryGetValue(Target, out var Item) || !(Item is Image Image) ? Key : Image.Key;
             return ItemModel;
         }
 

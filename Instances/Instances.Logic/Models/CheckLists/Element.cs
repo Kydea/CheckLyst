@@ -59,7 +59,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public virtual dynamic GetViewModel()
+        public virtual dynamic GetViewModel(bool ReportModel)
         {
             dynamic ViewModel = new ExpandoObject();
             ViewModel.Code = Code;

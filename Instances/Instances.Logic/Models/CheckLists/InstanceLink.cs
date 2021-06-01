@@ -23,14 +23,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public InstanceLinkRecord Record { get; set; }
         public List<InstanceLinkParameter> Parameters { get; set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
+            var ItemModel = base.GetViewModel(ReportModel);
             ItemModel.PrototypeName = PrototypeName;
             ItemModel.PrototypeID = PrototypeID;
             ItemModel.AttachedInstanceID = AttachedInstanceID;
             ItemModel.AttachedInstanceCode = AttachedInstanceCode;
-            ItemModel.Actions = Actions;
             ItemModel.Record = Record;
 
             if (History.Any())
@@ -42,6 +41,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     x.User,
                     x.DateTime
                 });
+
+            if (!ReportModel)
+                ItemModel.Actions = Actions;
 
             return ItemModel;
         }

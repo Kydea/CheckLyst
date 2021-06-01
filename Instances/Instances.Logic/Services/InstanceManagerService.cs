@@ -258,6 +258,17 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckInvalidItems(Child, InvalidItems);
         }
 
+        private void UpdateJSONFields(Instance instance, Common.Data.Instances record)
+        {
+            var itemValues = instance.Items.Where(i => !i.Value.Removed && !i.Value.IterationItem && !i.Value.IteratorModelItem).ToDictionary(k => k.Key, v => ((Item)v.Value).GetViewModel(true));
+            var itemsByLabel = new PascalCaseDictionary<string, dynamic>(instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Description, v => itemValues[v.Key]));
+            var itemsByCode = new PascalCaseDictionary<string, dynamic>(instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Code, v => itemValues[v.Key]));
+            var expressions = new PascalCaseDictionary<string, dynamic>(instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel()));
+            record.ItemsByCode = JsonConvert.SerializeObject(itemsByCode);
+            record.ItemsByLabel = JsonConvert.SerializeObject(itemsByLabel);
+            record.Expressions = JsonConvert.SerializeObject(expressions);
+        }
+
         public async Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity)
         {
             try
@@ -296,6 +307,8 @@ namespace CheckListManager.Instances.Logic.Services
                     ModifiedBy = identity.Code,
                     ModifiedOn = DateTimeOffset.UtcNow
                 };
+
+                UpdateJSONFields(cacheObject.Instance, row);
 
                 try
                 {
@@ -589,6 +602,8 @@ namespace CheckListManager.Instances.Logic.Services
                     $"Instance{cacheObject.InstanceCode}";
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;
+
+                UpdateJSONFields(cacheObject.Instance, row);
 
                 _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 

@@ -35,22 +35,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public DateTimeOffset? ModifiedOn { get; set; }
         public string DumpExternalSourceName { get; set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
-            if (Iterator)
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (!ReportModel)
             {
-                ItemModel.Iterator = true;
-                ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel());
-                ItemModel.AddIterationButton = AddIterationButton;
-                ItemModel.RemoveIterationButton = RemoveIterationButton;
-                ItemModel.MoveIterationButton = MoveIterationButton;
-                if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
-                if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
-            }
+                if (Iterator)
+                {
+                    ItemModel.Iterator = true;
+                    ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel(ReportModel));
+                    ItemModel.AddIterationButton = AddIterationButton;
+                    ItemModel.RemoveIterationButton = RemoveIterationButton;
+                    ItemModel.MoveIterationButton = MoveIterationButton;
+                    if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
+                    if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
+                }
 
-            ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel());
-            if (ShowAsTable) ItemModel.ShowAsTable = true;
+                ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel(ReportModel));
+                if (ShowAsTable) ItemModel.ShowAsTable = true;
+            }
             return ItemModel;
         }
 

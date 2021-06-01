@@ -177,8 +177,12 @@ create table "CheckLists"."Instances"
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",
 
 	"Description" text,
-	"Data" text, --replace with no sql table
+	"Data" text,
 	"FileName" text,
+
+	"ItemsByLabel" text,
+	"ItemsByCode" text,
+	"Expressions" text,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

@@ -24,5 +24,5 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string Color { get; set; }
         void Remove();
         bool Removed { get; set; }
-	}
+    }
 }
