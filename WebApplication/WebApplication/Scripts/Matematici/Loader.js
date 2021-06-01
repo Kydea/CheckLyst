@@ -10,7 +10,7 @@
         _background = $("<div />").addClass("Background").appendTo(_center).append(_image),
         _div = $("<div />").attr("id", "Loader").hide().appendTo($(document.body)).append(_center),
         _percentageLabel = $("<div />").addClass("Percentage").appendTo(_background),
-        _cancelButton = $("<a />").addClass("CancelButton").attr({ href: "#", title: "cancel operation" }).appendTo(_background).append($("<i />").addClass("fa fa-times")),//.hide(),
+        _cancelButton = $("<a />").addClass("CancelButton").attr({ href: "#", title: "cancel operation" }).appendTo(_background).append($("<i />").addClass("fa fa-times")).hide(),
         _cancelHandler,
 
         _show = function () {
@@ -108,7 +108,7 @@
         show: function () {
             if (_count == 0) {
                 _cancelHandler = null;
-                //_cancelButton.hide();
+                _cancelButton.hide();
             }
             ++_count;
             ++_in;
