@@ -106,7 +106,7 @@ create table "CheckLists"."InstanceNumerators"
 	"Number" int not null default 0	
 );
 
-create or replace function "CheckLists"."GetInstanceNumber"
+create function "CheckLists"."GetInstanceNumber"
 (
 	_Prototype bigint,
 	_Version int,
@@ -180,10 +180,6 @@ create table "CheckLists"."Instances"
 	"Data" text,
 	"FileName" text,
 
-	"ItemsByLabel" text,
-	"ItemsByCode" text,
-	"Expressions" text,
-
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
@@ -227,7 +223,7 @@ create table "CheckLists"."InstanceExpressionValues"
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
 create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where "Notification" and not "Notified";
 
-create or replace function "CheckLists"."ValidateUniqueExpressions"
+create function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint
 ) 
@@ -318,3 +314,41 @@ create index "Index_InstancesHistory_Instance" on "CheckLists"."InstancesHistory
 
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade;
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade;
+
+create table "CheckLists"."InstanceData"
+(
+	"Instance" bigint primary key references "CheckLists"."Instances" on delete cascade,
+	"ItemsByLabel" jsonb,
+	"ItemsByCode" jsonb,
+	"Expressions" jsonb
+);
+
+create index "Index_ItemsByLabel" on "CheckLists"."InstanceData" using gin ("ItemsByLabel");
+create index "Index_ItemsByCode" on "CheckLists"."InstanceData" using gin ("ItemsByCode");
+create index "Index_ItemsByExpressions" on "CheckLists"."InstanceData" using gin ("Expressions");
+
+create function "CheckLists"."UpdateInstanceData"
+(
+	"_Instance" bigint,
+	"_ItemsByCode" text,
+	"_ItemsByLabel" text,
+	"_Expressions" text
+) 
+returns int as
+$$ 
+declare 
+	"_ItemsByCodeJSON" jsonb := "_ItemsByCode"::jsonb;
+	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
+	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
+begin
+	insert into "CheckLists"."InstanceData" ("Instance", "ItemsByLabel", "ItemsByCode", "Expressions")
+	values ("_Instance", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
+	on conflict ("Instance") do update set
+		"ItemsByCode" = "_ItemsByCodeJSON", 
+		"ItemsByLabel" = "_ItemsByLabelJSON", 
+		"Expressions" = "_ExpressionsJSON";
+
+	return 0;
+end
+$$
+language plpgsql;

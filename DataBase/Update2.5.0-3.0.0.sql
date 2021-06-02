@@ -490,8 +490,42 @@ $func$
 		)
 $func$ language sql;
 
-alter table "CheckLists"."Instances" add column "ItemsByLabel" text;
-alter table "CheckLists"."Instances" add column "ItemsByCode" text;
-alter table "CheckLists"."Instances" add column "Expressions" text;
+create table "CheckLists"."InstanceData"
+(
+	"Instance" bigint primary key references "CheckLists"."Instances" on delete cascade,
+	"ItemsByLabel" jsonb,
+	"ItemsByCode" jsonb,
+	"Expressions" jsonb
+);
+
+create index "Index_ItemsByLabel" on "CheckLists"."InstanceData" using gin ("ItemsByLabel");
+create index "Index_ItemsByCode" on "CheckLists"."InstanceData" using gin ("ItemsByCode");
+create index "Index_ItemsByExpressions" on "CheckLists"."InstanceData" using gin ("Expressions");
+
+create function "CheckLists"."UpdateInstanceData"
+(
+	"_Instance" bigint,
+	"_ItemsByCode" text,
+	"_ItemsByLabel" text,
+	"_Expressions" text
+) 
+returns int as
+$$ 
+declare 
+	"_ItemsByCodeJSON" jsonb := "_ItemsByCode"::jsonb;
+	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
+	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
+begin
+	insert into "CheckLists"."InstanceData" ("Instance", "ItemsByLabel", "ItemsByCode", "Expressions")
+	values ("_Instance", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
+	on conflict ("Instance") do update set
+		"ItemsByCode" = "_ItemsByCodeJSON", 
+		"ItemsByLabel" = "_ItemsByLabelJSON", 
+		"Expressions" = "_ExpressionsJSON";
+
+	return 0;
+end
+$$
+language plpgsql;
 
 --Script8.Reports.sql
