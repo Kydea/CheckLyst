@@ -96,6 +96,7 @@
     <Compile Include="Detail\DetailService.cs" />
     <Compile Include="Detail\ValidationError.cs" />
     <Compile Include="Viewer\IReportViewerService.cs" />
+    <Compile Include="Viewer\ReportViewerException.cs" />
     <Compile Include="Viewer\ReportViewerService.cs" />
     <Compile Include="Detail\ReportSource.cs" />
     <Compile Include="List\ListRow.cs" />

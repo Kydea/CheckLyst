@@ -60,19 +60,22 @@ namespace CheckListManager.Reports.Logic.Viewer
             Clause.Sign == "!0" ? $"not q.\"{Clause.Column}\" is null" :
             $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
 
-        private string ParseClause(ReportClauses ReportClause)
+        private string ParseClause(ReportClauses ReportClause, ReportClause.ClauseRecord Clause)
         {
-            var Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(ReportClause.Clause); //
             switch (ReportClause.ClauseType)
             {
                 case "filter":
                     return ParseFilter(Clause, ReportClause.ParameterName);
+                case "custom":
+                    return $"({Clause.Custom})";
+                case "parameter":
+                    return null;
                 default:
                     throw new ArgumentException($"Invalid clause type {ReportClause.ClauseType}");
             }
         }
 
-        private StringBuilder BuildQuery(long company, Common.Data.Reports report)
+        private StringBuilder BuildQuery(long company, Common.Data.Reports report, List<Parameter> parameters, Dictionary<string, string> requestValues)
         {
             var StringBuilder = new StringBuilder();
             StringBuilder.AppendLine($"set role \"ReportUser{company}\";");
@@ -83,33 +86,38 @@ namespace CheckListManager.Reports.Logic.Viewer
             StringBuilder.AppendLine($"from q");
             StringBuilder.AppendLine($"where");
             StringBuilder.AppendLine($"    1 = 1");
-            foreach (var clause in report.ReportClauses)
-                StringBuilder.AppendLine($"    and {ParseClause(clause)}");
-            StringBuilder.AppendLine($"limit 10"); //togliere
+            foreach (var ReportClause in report.ReportClauses)
+            {
+                var Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(ReportClause.Clause);
+                var ParameterValue = ReportClause.Editable && requestValues != null && requestValues.TryGetValue(ReportClause.ParameterName, out var RequestValue) ? RequestValue : Clause.Value;
+                if (!string.IsNullOrEmpty(ParameterValue))
+                {
+                    if (!DataType.FromName(ReportClause.ParameterType).TryParse(ParameterValue, out var TypedValue))
+                        throw new ReportViewerException($"Ivalid value {ParameterValue} for type {ReportClause.ParameterType}");
+                    var clause = ParseClause(ReportClause, Clause);
+                    if (clause != null)
+                        StringBuilder.AppendLine($"    and {clause}");
+                    parameters.Add(new Parameter(ReportClause.ParameterName, TypedValue));
+                }
+            }
+            var OrderColumns = report.ReportColumns.Where(c => c.OrderColumn != 0);
+            if (OrderColumns.Any())
+                StringBuilder.AppendLine($"order by {string.Join(", ", OrderColumns.Select(c => c.Column + (c.OrderColumn == -1 ? " desc" : string.Empty)))}");
             return StringBuilder;
         }
 
         public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
-            var Report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Code);
-
-            var Parameters = request.Parameters.Select(p => {
-                if (DataType.FromName("Date").TryParse(p.Value, out var Value))
-                    return new Parameter(p.Code, Value);
-                else
-                    return new Parameter(p.Code, p.Value);
-            });
-
-            var query = BuildQuery(identity.CompanyId, Report).ToString();
-
-            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), query, Parameters, cancellationToken);
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Code);
+            var parameters = new List<Parameter>(report.ReportClauses.Count);
+            var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
+            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
             return new ReportResponse
             {
-                Description = Report.Description,
-                Columns = Report.ReportColumns.Select(c => c.Label).ToList(),
+                Description = report.Description,
+                Columns = report.ReportColumns.Select(c => c.Label).ToList(),
                 Rows = rows
             };
         }
     }
 }
- 

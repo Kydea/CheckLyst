@@ -13,6 +13,6 @@ namespace CheckListManager.Reports.Logic.Detail
         Task<DetailResponse> LoadReportAsync(long companyId, DetailRequest request);
 
         Task<List<ReportSource>> GetReportSourcesAsync();
-        Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query);
+        Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query, Dictionary<string, string> parameters);
     }
 }

@@ -20,5 +20,30 @@ body.Report {
                 margin-right: 10px;
             }
         }
+
+        table {
+            tbody {
+                tr {
+                    cursor: pointer;
+
+                    &:not(.Current) {
+                        td {
+                            white-space: nowrap;
+                            max-width: 200px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+
+                    &.Current {
+                        border: solid 1px black;
+                    }
+
+                    &:hover {
+                        background-color: $Color-Pink;
+                    }
+                }
+            }
+        }
     }
 }

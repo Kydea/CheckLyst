@@ -296,9 +296,9 @@
           <Property Name="Visible" Type="bool" Nullable="false" />
           <Property Name="Format" Type="varchar" MaxLength="50" />
           <Property Name="GroupColumn" Type="bool" Nullable="false" />
-          <Property Name="OrderColumn" Type="bool" Nullable="false" />
           <Property Name="ValueAggregation" Type="varchar" MaxLength="50" />
           <Property Name="GroupAggregation" Type="varchar" MaxLength="50" />
+          <Property Name="OrderColumn" Type="int4" Nullable="false" />
         </EntityType>
         <EntityType Name="ReportGroups">
           <Key>
@@ -4258,7 +4258,7 @@
           <Property Name="Visible" Type="Boolean" Nullable="false" />
           <Property Name="Format" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="GroupColumn" Type="Boolean" Nullable="false" />
-          <Property Name="OrderColumn" Type="Boolean" Nullable="false" />
+          <Property Name="OrderColumn" Type="Int32" Nullable="false" />
           <Property Name="ValueAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="GroupAggregation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="ReportColumns" ToRole="Reports" />

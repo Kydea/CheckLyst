@@ -9,6 +9,7 @@
         noRecord,
         hamburger,
         parameters = [],
+        tr,
 
         createCSV = function (fileName, columns, rows) {
             var processRow = function (row) {
@@ -51,6 +52,17 @@
             }
         },
 
+        toggleRow = function () {
+            var newRow = $(this);
+            if (newRow.hasClass("Current")) {
+                tr.removeClass("Current");
+                tr = null;
+            } else {
+                if (tr) tr.removeClass("Current");
+                tr = newRow.addClass("Current");
+            }
+        },
+
         cancel = function () {
             hamburger.toggle(false);
         },
@@ -84,7 +96,7 @@
                 var tr = $("<tr />").appendTo(tableHead);
                 for (var columnIndex in result.columns)
                     $("<th />").appendTo(tr).text(result.columns[columnIndex]);
-                noRecord.attr("colspan", result.columns.length || 1)
+                noRecord.children().eq(0).attr("colspan", result.columns.length || 1)
                 initialized = true;
             }
             if (result.rows.length)
@@ -92,8 +104,8 @@
                     var
                         row = result.rows[rowIndex],
                         tr = $("<tr />").appendTo(tableBody);
-                    for (var columnIndex in row)
-                        $("<td />").appendTo(tr).text(row[columnIndex]);
+                    for (var columnIndex in row.record)
+                        $("<td />").appendTo(tr).text(row.record[columnIndex]);
                 }
             else
                 noRecord.appendTo(tableBody);
@@ -134,7 +146,7 @@
             }
             h1 = $("h1", selector);
             tableHead = $("table thead", selector);
-            tableBody = $("table tbody", selector);
+            tableBody = $("table tbody", selector).on("click", "tr", toggleRow);
             noRecord = $("tr.NoRecord", selector).remove();
             load(1);
         };

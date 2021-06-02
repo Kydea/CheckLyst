@@ -57,7 +57,7 @@ create table "Reports"."ReportColumns"
 	"Visible" boolean not null default false,
 	"Format" varchar (50),
 	"GroupColumn" boolean not null default false,
-	"OrderColumn" boolean not null default false,
+	"OrderColumn" int not null default 0,
 	"ValueAggregation" varchar(50),
 	"GroupAggregation" varchar(50)
 );

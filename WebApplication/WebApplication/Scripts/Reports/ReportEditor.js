@@ -12,13 +12,14 @@
                 type: "post",
                 url: matematici.urls.reports.api + "/List/GetColumns",
                 data: {
-                    query: editor.getValue()
+                    query: editor.getValue(),
+                    clauses: model.clauses,
                 },
                 suppressErrors: true
             }).done(function (result) {
                 handler(result);
             }).error(function () {
-                new reports.ColumnsList();
+                handler([])
             });
         },
 

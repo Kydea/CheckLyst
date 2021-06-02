@@ -134,7 +134,7 @@ namespace CheckListManager.Reports.Logic.Detail
             if (record.ReportSource == null)
                 try
                 {
-                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query);
+                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query, record.Clauses.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType));
                 }
                 catch (DatabaseException DatabaseException)
                 {
@@ -308,9 +308,9 @@ namespace CheckListManager.Reports.Logic.Detail
                 Query = rs.Query
             }).ToList();
 
-        public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query)
+        public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query, Dictionary<string, string> parameters)
         {
-            using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query))
+            using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query, parameters))
             {
                 var reportColumns = new List<string>(dataTable.Columns.Count);
                 foreach (DataColumn column in dataTable.Columns)

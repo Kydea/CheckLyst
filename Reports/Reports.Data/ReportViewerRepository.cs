@@ -1,6 +1,7 @@
 ﻿using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Reports.Data.Models;
 using Dapper;
 using Npgsql;
 using System;
@@ -35,7 +36,13 @@ namespace CheckListManager.Reports.Data
             return string.Empty;
         }
 
-        public async Task<DataTable> GetDataTableAsync(long company, string command, CancellationToken cancellationToken = default(CancellationToken))
+        private object GetDefaultParameterValue(string DataType) =>
+            DataType == "Date" || DataType == "DateTime" ? new DateTime(2000, 1, 1) :
+            DataType == "Number" ? 0 :
+            DataType == "Boolean" ? false :
+            (object)string.Empty;
+
+        public async Task<DataTable> GetDataTableAsync(long company, string command, Dictionary<string, string> parameters, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
@@ -44,6 +51,8 @@ namespace CheckListManager.Reports.Data
                 using (var DataAdapter = new NpgsqlDataAdapter(Command))
                 using (var DataSet = new DataSet())
                 {
+                    Command.Parameters.AddRange(parameters.Select(p => new NpgsqlParameter(p.Key, GetDefaultParameterValue(p.Value))).ToArray());
+                    cancellationToken.ThrowIfCancellationRequested();
                     DataAdapter.FillSchema(DataSet, SchemaType.Source, "Report");
                     return DataSet.Tables["Report"];
                 }
@@ -62,11 +71,11 @@ namespace CheckListManager.Reports.Data
             }
         }
 
-        public async Task<List<List<string>>> GetDataAsync(long company, string timeZone, string query, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
+        public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
         {
             try
             {
-                var Result = new List<List<string>>();
+                var Result = new List<ReportRow>();
                 using (var Connection = await GetConnectionAsync(cancellationToken))
                 using (var Command = new NpgsqlCommand(query, Connection))
                 {
@@ -74,27 +83,92 @@ namespace CheckListManager.Reports.Data
                     cancellationToken.ThrowIfCancellationRequested();
                     using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
                         if (DataReader.HasRows)
+                        {
+                            var numberTotals = new List<decimal?>();
+                            var stringTotals = new List<string>();
+                            var numberFinalTotals = new List<decimal?>();
+                            var stringFinalTotals = new List<string>();
+                            var distinctValues = new HashSet<string>();
+                            int rowsCount = 0;
+                            var ValuesRow = new List<object>();
+                            //bool NeedToAddTotal = false;
                             while (DataReader.Read())
                             {
-                                var Record = new List<string>();
-                                for(var Index = 0; Index < DataReader.FieldCount; ++Index)
+                                ++rowsCount;
+                                var ReportRow = new ReportRow { Record = new List<string>() };
+                                for (var Index = 0; Index < DataReader.FieldCount; ++Index)
                                 {
+                                    var column = columns[Index];
+                                    var format = string.IsNullOrEmpty(column.Format) ? null : column.Format;
+                                    object value;
+                                    string formattedValue = null;
+                                    decimal? numberValue = null;
                                     cancellationToken.ThrowIfCancellationRequested();
-                                    if (await DataReader.IsDBNullAsync(Index, cancellationToken))
-                                        Record.Add(string.Empty);
-                                    else
+                                    if (!await DataReader.IsDBNullAsync(Index, cancellationToken))
+                                    {
                                         switch (DataReader.GetDataTypeName(Index))
                                         {
                                             case "timestamptz":
-                                                Record.Add((await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken)).Format(timeZone));
+                                                var DateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
+                                                value = DateTimeOffsetValue;
+                                                formattedValue = DateTimeOffsetValue.Format(timeZone, format);
+                                                break;
+                                            case "int4":
+                                            case "int8":
+                                            case "decimal":
+                                                numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
+                                                value = numberValue;
+                                                formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
                                                 break;
                                             default:
-                                                Record.Add(await DataReader.GetFieldValueAsync<string>(Index, cancellationToken));
+                                                value = formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
                                                 break;
                                         }
+                                    }
+
+                                    /*
+                                    switch (column.GroupAggregation)
+                                    {
+                                        case "sum":
+                                        case "average":
+                                            numberTotals[Index] = (numberTotals[Index] ?? 0) + (numberValue ?? 0);
+                                            numberFinalTotals[Index] = (numberFinalTotals[Index] ?? 0) + (numberValue ?? 0);
+                                            break;
+                                        case "count":
+                                            distinctValues.Add(formattedValue);
+                                            break;
+                                        case "min":
+                                            if (numberValue.HasValue)
+                                                numberTotals[Index] = numberTotals[Index] < numberValue ? numberTotals[Index] : numberValue;
+                                            else
+                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", formattedValue ?? "") < 0 ? stringTotals[Index] : formattedValue;
+                                            break;
+                                        case "max":
+                                            if (numberValue.HasValue)
+                                                numberTotals[Index] = numberTotals[Index] > numberValue ? numberTotals[Index] : numberValue;
+                                            else
+                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", formattedValue ?? "") > 0 ? stringTotals[Index] : formattedValue;
+                                            break;
+                                        case "first":
+                                            if (numberValue.HasValue && !numberTotals[Index].HasValue)
+                                                numberTotals[Index] = numberValue;
+                                            else if (stringTotals[Index] == null)
+                                                stringTotals[Index] = formattedValue;
+                                            break;
+                                        case "last":
+                                            if (numberValue.HasValue)
+                                                numberTotals[Index] = numberValue;
+                                            else
+                                                stringTotals[Index] = formattedValue;
+                                            break;
+                                    }
+
+                                    */
+                                    ReportRow.Record.Add(formattedValue ?? string.Empty);
                                 }
-                                Result.Add(Record);
+                                Result.Add(ReportRow);
                             }
+                        }
                 }
                 return Result;
             }

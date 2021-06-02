@@ -16,12 +16,12 @@ namespace CheckListManager.Reports.Api.Controllers
 {
     [Authorize(Roles = "Reports#View")]
     [RoutePrefix("Viewer")]
-	public class ViewerController : BaseApiController
-	{
-		private readonly IViewerEditorService _reportViewerService;
+    public class ViewerController : BaseApiController
+    {
+        private readonly IViewerEditorService _reportViewerService;
 
         public ViewerController(IViewerEditorService reportViewerService)
-		{
+        {
             _reportViewerService = reportViewerService;
         }
 
@@ -36,9 +36,17 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("GetReportData")]
         public async Task<IHttpActionResult> GetReportData(ReportRequest request)
         {
-            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
+            try
+            {
+                var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+                return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
+            }
+            catch (ReportViewerException ReportViewerException)
+            {
+                var Response = new ResponseMessage<Exception> { Data = ReportViewerException };
+                Response.Messages.AddRange(BuildErrorMessage(ReportViewerException));
+                return new ErrorResult(Request, Response);
+            }
         }
-
     }
 }
