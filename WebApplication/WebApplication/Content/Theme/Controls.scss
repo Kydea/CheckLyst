@@ -413,6 +413,13 @@ form {
         margin-top: $Metric-Control-Space;
         margin-left: $Metric-Control-Space;
     }
+
+    div.NoParameter {
+        margin-top: $Metric-Control-Space;
+        margin-left: $Metric-Control-Space;
+        text-align: center;
+        color: $Color-Grey-Dark;
+    }
 }
 
 form, div.CheckList, div.PropertyPanel div.PropertyValue, div.Module {

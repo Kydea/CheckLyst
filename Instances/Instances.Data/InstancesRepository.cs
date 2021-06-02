@@ -216,9 +216,10 @@ namespace CheckListManager.Instances.Data
         public void AddRelation(long parent, int item, long child) =>
             Entities.InstanceRelations.Add(new InstanceRelations { Parent = parent, Item = item, Child = child });
 
-        public async Task UpdateJSONFieldsAsync(long instance, string itemsByCode, string itemsByLabel, string expressions) =>
+        public async Task UpdateJSONFieldsAsync(long instance, long company, string itemsByCode, string itemsByLabel, string expressions) =>
             await Call<int>("\"CheckLists\".\"UpdateInstanceData\"",
                 new Parameter("_Instance", instance),
+                new Parameter("_Company", company),
                 new Parameter("_ItemsByCode", itemsByCode),
                 new Parameter("_ItemsByLabel", itemsByLabel),
                 new Parameter("_Expressions", expressions)

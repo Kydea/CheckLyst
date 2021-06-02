@@ -264,7 +264,7 @@ namespace CheckListManager.Instances.Logic.Services
             var itemsByLabel = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Description, v => itemValues[v.Key]));
             var itemsByCode = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Code, v => itemValues[v.Key]));
             var expressions = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel()));
-            await _instancesRepository.UpdateJSONFieldsAsync(cacheObject.ID.Value, JsonConvert.SerializeObject(itemsByCode), JsonConvert.SerializeObject(itemsByLabel), JsonConvert.SerializeObject(expressions));
+            await _instancesRepository.UpdateJSONFieldsAsync(cacheObject.ID.Value, cacheObject.CompanyId, JsonConvert.SerializeObject(itemsByCode), JsonConvert.SerializeObject(itemsByLabel), JsonConvert.SerializeObject(expressions));
         }
 
         public async Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity)
@@ -305,8 +305,6 @@ namespace CheckListManager.Instances.Logic.Services
                     ModifiedBy = identity.Code,
                     ModifiedOn = DateTimeOffset.UtcNow
                 };
-
-                await UpdateJSONFieldsAsync(cacheObject);
 
                 try
                 {
@@ -362,6 +360,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
 
                 await UpdateParentInstance(cacheObject, identity, false);
+                await UpdateJSONFieldsAsync(cacheObject);
 
                 return cacheObject;
             }

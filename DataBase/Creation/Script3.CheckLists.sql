@@ -318,6 +318,7 @@ alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplicati
 create table "CheckLists"."InstanceData"
 (
 	"Instance" bigint primary key references "CheckLists"."Instances" on delete cascade,
+	"Company" bigint references "Infrastructure"."Companies",
 	"ItemsByLabel" jsonb,
 	"ItemsByCode" jsonb,
 	"Expressions" jsonb
@@ -330,6 +331,7 @@ create index "Index_ItemsByExpressions" on "CheckLists"."InstanceData" using gin
 create function "CheckLists"."UpdateInstanceData"
 (
 	"_Instance" bigint,
+	"_Company" bigint,
 	"_ItemsByCode" text,
 	"_ItemsByLabel" text,
 	"_Expressions" text
@@ -341,8 +343,8 @@ declare
 	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
 	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
 begin
-	insert into "CheckLists"."InstanceData" ("Instance", "ItemsByLabel", "ItemsByCode", "Expressions")
-	values ("_Instance", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
+	insert into "CheckLists"."InstanceData" ("Instance", "Company", "ItemsByLabel", "ItemsByCode", "Expressions")
+	values ("_Instance", "_Company", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
 	on conflict ("Instance") do update set
 		"ItemsByCode" = "_ItemsByCodeJSON", 
 		"ItemsByLabel" = "_ItemsByLabelJSON", 

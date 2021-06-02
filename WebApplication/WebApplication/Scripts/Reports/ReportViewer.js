@@ -46,18 +46,21 @@
 
             $("h2", element).text(result.description == null || result.description == "" ? options.code : result.description);
 
-            for (var index = 0; index < result.clauses.length; ++index) {
-                var
-                    clause = result.clauses[index],
-                    label = $("<label />").appendTo(form).append($("<span />").text(clause.label)),
-                    input = new matematici.TypedInput(label[0], clause.parameterType, {
-                        parameterName: clause.parameterName,
-                        readOnly: !clause.editable
-                    });
+            if (result.clauses.length)
+                for (var index = 0; index < result.clauses.length; ++index) {
+                    var
+                        clause = result.clauses[index],
+                        label = $("<label />").appendTo(form).append($("<span />").text(clause.label)),
+                        input = new matematici.TypedInput(label[0], clause.parameterType, {
+                            parameterName: clause.parameterName,
+                            readOnly: !clause.editable
+                        });
 
-                input.setValue(clause.clause.value);
-                parameters.push(input);
-            }
+                    input.setValue(clause.clause.value);
+                    parameters.push(input);
+                }
+            else
+                label = $("<div />").addClass("NoParameter").appendTo(form).text("(this report has no parameter)");  
         },
 
         setup = function () {

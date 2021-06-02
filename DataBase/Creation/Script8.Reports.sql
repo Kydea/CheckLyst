@@ -142,6 +142,7 @@ grant select on table "CheckLists"."InstanceExpressionValues" to "ReportRole";
 grant select on table "CheckLists"."InstanceRelations" to "ReportRole";
 grant select on table "CheckLists"."PrototypeVersionsHistory" to "ReportRole";
 grant select on table "CheckLists"."InstancesHistory" to "ReportRole";
+grant select on table "CheckLists"."InstanceData" to "ReportRole";
 
 grant usage on schema "Trail" to "ReportRole";
 grant select on table "Trail"."Records" to "ReportRole";
@@ -178,6 +179,8 @@ begin
 		("Prototype" in (select p."ID" from "CheckLists"."Prototypes" p where p."Company" = $));
 		create policy "Company$InstancesHistory" on "CheckLists"."InstancesHistory" to "ReportRole$" using 
 		("Instance" in (select i."ID" from "CheckLists"."Instances" i where i."Company" = $));
+		create policy "Company$InstanceData" on "CheckLists"."InstanceData" to "ReportRole$" using 
+		("Company" = $);
 		create policy "Company$Records" on "Trail"."Records" to "ReportRole$" using 
 		("Company" = $);
 
