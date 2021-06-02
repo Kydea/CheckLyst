@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.DataEngine;
+using System;
 using System.Collections.Generic;
 
 namespace CheckListManager.Reports.Logic.Detail
@@ -20,6 +21,5 @@ namespace CheckListManager.Reports.Logic.Detail
             public string Value { get; set; }
             public string Custom { get; set; }
         }
-
     }
 }

@@ -13,6 +13,7 @@ using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,16 +53,45 @@ namespace CheckListManager.Reports.Logic.Viewer
             return result;
         }
 
+        private string ParseFilter(ReportClause.ClauseRecord Clause, string ParameterName) =>
+            Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%@{ParameterName}%'" :
+            Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%@{ParameterName}%'" :
+            Clause.Sign == "0" ? $"q.\"{Clause.Column}\" is null" :
+            Clause.Sign == "!0" ? $"not q.\"{Clause.Column}\" is null" :
+            $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
+
+        private string ParseClause(ReportClauses ReportClause)
+        {
+            var Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(ReportClause.Clause); //
+            switch (ReportClause.ClauseType)
+            {
+                case "filter":
+                    return ParseFilter(Clause, ReportClause.ParameterName);
+                default:
+                    throw new ArgumentException($"Invalid clause type {ReportClause.ClauseType}");
+            }
+        }
+
+        private StringBuilder BuildQuery(long company, Common.Data.Reports report)
+        {
+            var StringBuilder = new StringBuilder();
+            StringBuilder.AppendLine($"set role \"ReportUser{company}\";");
+            StringBuilder.AppendLine($"with q as (");
+            StringBuilder.AppendLine(report.Query);
+            StringBuilder.AppendLine($")");
+            StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.Select(c => $"{c.Column} \"{c.Label}\""))}");
+            StringBuilder.AppendLine($"from q");
+            StringBuilder.AppendLine($"where");
+            StringBuilder.AppendLine($"    1 = 1");
+            foreach (var clause in report.ReportClauses)
+                StringBuilder.AppendLine($"    and {ParseClause(clause)}");
+            StringBuilder.AppendLine($"limit 10"); //togliere
+            return StringBuilder;
+        }
+
         public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
             var Report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Code);
-
-            /*
-            var dict = new Dictionary<string, object> { { "Property", "foo" } };
-            dynamic eo = dict.Aggregate(new ExpandoObject() as IDictionary<string, Object>,
-                                        (a, p) => { a.Add(p.Key, p.Value); return a; });
-            string value = eo.Property;
-            */
 
             var Parameters = request.Parameters.Select(p => {
                 if (DataType.FromName("Date").TryParse(p.Value, out var Value))
@@ -70,14 +100,14 @@ namespace CheckListManager.Reports.Logic.Viewer
                     return new Parameter(p.Code, p.Value);
             });
 
-            var Rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), Report, Parameters, cancellationToken);
+            var query = BuildQuery(identity.CompanyId, Report).ToString();
 
-            //var Rows = await _reportViewerRepository.GetData(Report, request.Parameters.ToDictionary(p => p.Code, v => v.Value));
+            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), query, Parameters, cancellationToken);
             return new ReportResponse
             {
                 Description = Report.Description,
                 Columns = Report.ReportColumns.Select(c => c.Label).ToList(),
-                Rows = Rows
+                Rows = rows
             };
         }
     }

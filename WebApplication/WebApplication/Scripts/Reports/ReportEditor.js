@@ -7,7 +7,7 @@
         editor,
         model,
 
-        showColumns = function () {
+        getQueryColumns = function (handler) {
             $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/List/GetColumns",
@@ -16,21 +16,29 @@
                 },
                 suppressErrors: true
             }).done(function (result) {
-                new reports.ColumnsList({
-                    columns: (result || []).map(function (column) {
-                        return "\"" + column + "\"";
-                    })
-                });
+                handler(result);
             }).error(function () {
                 new reports.ColumnsList();
             });
         },
 
+        showColumns = function () {
+            getQueryColumns(function (result) {
+                new reports.ColumnsList({
+                    columns: (result || []).map(function (column) {
+                        return "\"" + column + "\"";
+                    })
+                });
+            });
+        },
+
         showClauses = function () {
-            new reports.ClausesList({
-                columns: (model.columns || []).map(function (column) {
-                    return "\"" + column.label + "\"";
-                })
+            getQueryColumns(function (result) {
+                new reports.ClausesList({
+                    columns: (result || []).map(function (column) {
+                        return "\"" + column + "\"";
+                    })
+                });
             });
         },
 

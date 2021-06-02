@@ -114,9 +114,6 @@ namespace CheckListManager.Reports.Logic.Detail
             for (var Index = 0; Index < record.Clauses.Count; ++Index)
             {
                 var Clause = record.Clauses[Index];
-                if (Clause.Clause.Column != null && !ColumnNames.Contains(Clause.Clause.Column))
-                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
-
                 if (string.IsNullOrWhiteSpace(Clause.Label))
                     AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
 
@@ -137,7 +134,7 @@ namespace CheckListManager.Reports.Logic.Detail
             if (record.ReportSource == null)
                 try
                 {
-                    _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query);
+                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query);
                 }
                 catch (DatabaseException DatabaseException)
                 {

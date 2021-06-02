@@ -13,6 +13,6 @@ namespace CheckListManager.Reports.Data
     public interface IReportViewerRepository : IRepository
     {
         Task<DataTable> GetDataTableAsync(long company, string command, CancellationToken cancellationToken = default(CancellationToken));
-        Task<List<List<string>>> GetDataAsync(long company, string timeZone, Common.Data.Reports report, IEnumerable<Parameter> parameters, CancellationToken cancellationToken);
+        Task<List<List<string>>> GetDataAsync(long company, string timeZone, string query, IEnumerable<Parameter> parameters, CancellationToken cancellationToken);
     }
 }
