@@ -1,24 +1,50 @@
-﻿body.Report {
-  width: unset;
-  min-width: 100%; }
-  body.Report header, body.Report footer, body.Report div#Breadcrumbs {
-    display: none !important; }
-  body.Report div#Content {
-    margin: 0 !important;
-    padding: 20px !important; }
-    body.Report div#Content h1 {
-      font-size: 28px !important; }
-      body.Report div#Content h1 button.hamburger {
+﻿body.Report header, body.Report footer, body.Report div#Breadcrumbs {
+  display: none !important; }
+
+body.Report label.PrintDialog {
+  display: none; }
+
+@media screen {
+  body.Report {
+    width: unset;
+    min-width: 100%;
+    zoom: 1 !important; }
+    body.Report div#Content {
+      margin: 0 !important;
+      padding: 20px !important; }
+      body.Report div#Content h1 {
+        font-size: 28px !important; }
+        body.Report div#Content h1 button.hamburger {
+          padding: 0;
+          margin-right: 10px; }
+      body.Report div#Content table tbody tr {
+        cursor: pointer; }
+        body.Report div#Content table tbody tr:not(.Current) td {
+          white-space: nowrap;
+          max-width: 200px;
+          overflow: hidden;
+          text-overflow: ellipsis; }
+        body.Report div#Content table tbody tr.Current {
+          border: solid 1px black; }
+        body.Report div#Content table tbody tr:hover {
+          background-color: #fce6e8; } }
+
+@media print {
+  body.Report {
+    background-color: white !important; }
+    body.Report div#Content {
+      padding: 0 !important;
+      margin: 0 !important; }
+      body.Report div#Content div.ShadowPanel {
         padding: 0;
-        margin-right: 10px; }
-    body.Report div#Content table tbody tr {
-      cursor: pointer; }
-      body.Report div#Content table tbody tr:not(.Current) td {
-        white-space: nowrap;
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis; }
-      body.Report div#Content table tbody tr.Current {
-        border: solid 1px black; }
-      body.Report div#Content table tbody tr:hover {
-        background-color: #fce6e8; }
+        box-shadow: none;
+        border-radius: 0; }
+        body.Report div#Content div.ShadowPanel h1.Green {
+          background-color: white !important;
+          color: black !important;
+          padding: 0 !important;
+          margin: 0 0 10px !important; }
+          body.Report div#Content div.ShadowPanel h1.Green button.hamburger {
+            display: none; }
+        body.Report div#Content div.ShadowPanel table.Grid {
+          width: 100vh; } }

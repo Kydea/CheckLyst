@@ -72,6 +72,31 @@
             createCSV(options.code + ".csv", model.columns, model.rows)
         },
 
+        print = function () {
+            hamburger.toggle(false);
+
+            var
+                select = $("<select />"),
+                content = $("<label />").text("Zoom factor").append(select);
+
+            for (var index = 10; index > 0; --index)
+                select.append($("<option />").text(index * 10 + "%").attr("value", index / 10));
+
+            setTimeout(function () {
+                matematici.dialog.show("print scale", content, [
+                    {
+                        text: "OK", icon: "check", defaultButton: true, handler: function () {
+                            $("body").css("zoom", select.val());
+                            setTimeout(function () {
+                                window.print();
+                            }, 0);
+                        }
+                    },
+                    { hidden: true, cancelButton: true }
+                ]);
+            }, 0);
+        },
+
         quit = function () {
             hamburger.toggle(false);
             window.close();
@@ -81,7 +106,8 @@
             matematici.dialog.popupMenu([
                 { text: "cancel", icon: "times", cancelButton: true, handler: cancel },
                 { text: "quit", icon: "door-closed", handler: quit },
-                { text: "download", icon: "download", handler: download }
+                { text: "download", icon: "download", handler: download },
+                { text: "print", icon: "print", handler: print }
             ]);
         },
 

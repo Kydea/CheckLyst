@@ -1,47 +1,84 @@
 ﻿@import "_Library.scss";
 
 body.Report {
-    width: unset;
-    min-width: 100%;
-
     header, footer, div#Breadcrumbs {
         display: none !important;
     }
 
-    div#Content {
-        margin: 0 !important;
-        padding: 20px !important;
+    label.PrintDialog {
+        display: none;
+    }
 
-        h1 {
-            font-size: 28px !important;
+    @media screen {
+        width: unset;
+        min-width: 100%;
+        zoom: 1 !important;
 
-            button.hamburger {
-                padding: 0;
-                margin-right: 10px;
+        div#Content {
+            margin: 0 !important;
+            padding: 20px !important;
+
+            h1 {
+                font-size: 28px !important;
+
+                button.hamburger {
+                    padding: 0;
+                    margin-right: 10px;
+                }
             }
-        }
 
-        table {
-            tbody {
-                tr {
-                    cursor: pointer;
+            table {
+                tbody {
+                    tr {
+                        cursor: pointer;
 
-                    &:not(.Current) {
-                        td {
-                            white-space: nowrap;
-                            max-width: 200px;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
+                        &:not(.Current) {
+                            td {
+                                white-space: nowrap;
+                                max-width: 200px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                        }
+
+                        &.Current {
+                            border: solid 1px black;
+                        }
+
+                        &:hover {
+                            background-color: $Color-Pink;
                         }
                     }
+                }
+            }
+        }
+    }
 
-                    &.Current {
-                        border: solid 1px black;
-                    }
+    @media print {
+        background-color: white !important;
 
-                    &:hover {
-                        background-color: $Color-Pink;
+        div#Content {
+            padding: 0 !important;
+            margin: 0 !important;
+
+            div.ShadowPanel {
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+
+                h1.Green {
+                    background-color: white !important;
+                    color: black !important;
+                    padding: 0 !important;
+                    margin: 0 0 10px !important;
+
+                    button.hamburger {
+                        display: none;
                     }
+                }
+
+                table.Grid {
+                    width: 100vh;
                 }
             }
         }

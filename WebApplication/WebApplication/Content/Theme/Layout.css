@@ -10,8 +10,10 @@ html, body {
   position: absolute;
   width: 100%;
   color: black;
-  font-size: 14px;
-  background-color: #ebebeb; }
+  font-size: 14px; }
+  @media screen {
+    html, body {
+      background-color: #ebebeb; } }
 
 ul.Plain {
   margin: 0;
