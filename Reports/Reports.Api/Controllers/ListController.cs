@@ -79,7 +79,7 @@ namespace CheckListManager.Reports.Api.Controllers
         {
             try
             {
-                return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
+                return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
             }
             catch (Exception Exception)
             {

@@ -117,7 +117,7 @@
                 .on("change", "input, select", function () { edited = true; })
                 .on("change", "input[name=notification]", toggleNotification);
 
-            $("select#Behaviour", form).val((column.orderColumn == 1 ? "u" : column.orderColumn == -1 ? "d" : "") + (column.groupColumn ? "g" : ""));
+            $("select#Behaviour", form).val(column && ((column.orderColumn == 1 ? "u" : column.orderColumn == -1 ? "d" : "") + (column.groupColumn ? "g" : "")));
 
             editor.setChangeHandler(function () { edited = true; })
             editor.addCompleterItems(queryColumns.map(function (column) {

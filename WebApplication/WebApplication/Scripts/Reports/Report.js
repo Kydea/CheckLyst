@@ -31,7 +31,7 @@
             var csvFile = "";
             csvFile += processRow(columns);
             for (var i = 0; i < rows.length; i++)
-                csvFile += processRow(rows[i]);
+                csvFile += processRow(rows[i].row);
 
             var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
             if (navigator.msSaveBlob) { // IE 10+

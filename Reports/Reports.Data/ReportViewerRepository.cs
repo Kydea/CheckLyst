@@ -51,7 +51,7 @@ namespace CheckListManager.Reports.Data
                 using (var DataAdapter = new NpgsqlDataAdapter(Command))
                 using (var DataSet = new DataSet())
                 {
-                    Command.Parameters.AddRange(parameters.Select(p => new NpgsqlParameter(p.Key, GetDefaultParameterValue(p.Value))).ToArray());
+                    if (parameters != null) Command.Parameters.AddRange(parameters.Select(p => new NpgsqlParameter(p.Key, GetDefaultParameterValue(p.Value))).ToArray());
                     cancellationToken.ThrowIfCancellationRequested();
                     DataAdapter.FillSchema(DataSet, SchemaType.Source, "Report");
                     return DataSet.Tables["Report"];

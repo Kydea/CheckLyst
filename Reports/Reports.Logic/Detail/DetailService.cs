@@ -123,6 +123,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
                     AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
 
+                //rimuovere prototypes
                 if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
                     AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
             }
