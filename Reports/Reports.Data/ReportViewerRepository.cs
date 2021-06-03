@@ -106,12 +106,13 @@ namespace CheckListManager.Reports.Data
                                     cancellationToken.ThrowIfCancellationRequested();
                                     if (!await DataReader.IsDBNullAsync(Index, cancellationToken))
                                     {
-                                        switch (DataReader.GetDataTypeName(Index))
+                                        var typeName = DataReader.GetDataTypeName(Index);
+                                        switch (typeName)
                                         {
                                             case "timestamptz":
-                                                var DateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
-                                                value = DateTimeOffsetValue;
-                                                formattedValue = DateTimeOffsetValue.Format(timeZone, format);
+                                                var dateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
+                                                value = dateTimeOffsetValue;
+                                                formattedValue = dateTimeOffsetValue.Format(timeZone, format);
                                                 break;
                                             case "int4":
                                             case "int8":
@@ -119,6 +120,11 @@ namespace CheckListManager.Reports.Data
                                                 numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 value = numberValue;
                                                 formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
+                                                break;
+                                            case "bool":
+                                                var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
+                                                value = booleanValue;
+                                                formattedValue = booleanValue ? "X" : string.Empty;
                                                 break;
                                             default:
                                                 value = formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
