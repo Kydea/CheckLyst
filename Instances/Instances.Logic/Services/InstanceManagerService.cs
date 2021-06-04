@@ -261,8 +261,8 @@ namespace CheckListManager.Instances.Logic.Services
         private async Task UpdateJSONFieldsAsync(InstanceCacheObject cacheObject)
         {
             var itemValues = cacheObject.Instance.Items.Where(i => !i.Value.Removed && !i.Value.IterationItem && !i.Value.IteratorModelItem).ToDictionary(k => k.Key, v => ((Item)v.Value).GetViewModel(true));
-            var itemsByLabel = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Description, v => itemValues[v.Key]));
-            var itemsByCode = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).ToDictionary(k => k.Value.Code, v => itemValues[v.Key]));
+            var itemsByLabel = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Description, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
+            var itemsByCode = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Code, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
             var expressions = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel()));
             await _instancesRepository.UpdateJSONFieldsAsync(cacheObject.ID.Value, cacheObject.CompanyId, JsonConvert.SerializeObject(itemsByCode), JsonConvert.SerializeObject(itemsByLabel), JsonConvert.SerializeObject(expressions));
         }
@@ -703,6 +703,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await _instancesRepository.SaveChangesAsync();
                 await UpdateParentInstance(cacheObject, identity, true);
+                await UpdateJSONFieldsAsync(cacheObject);
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
