@@ -17,6 +17,10 @@ body.Report label.PrintDialog {
         body.Report div#Content h1 button.hamburger {
           padding: 0;
           margin-right: 10px; }
+      body.Report div#Content table thead {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0; }
       body.Report div#Content table tbody tr {
         cursor: pointer; }
         body.Report div#Content table tbody tr:not(.Current) td {
