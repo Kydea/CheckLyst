@@ -56,10 +56,15 @@
             var newRow = $(this);
             if (newRow.hasClass("Current")) {
                 tr.removeClass("Current");
+                tr.prev().removeClass("CurrentPrevious")
                 tr = null;
             } else {
-                if (tr) tr.removeClass("Current");
+                if (tr) {
+                    tr.removeClass("Current");
+                    tr.prev().removeClass("CurrentPrevious")
+                }
                 tr = newRow.addClass("Current");
+                tr.prev().addClass("CurrentPrevious")
             }
         },
 
@@ -120,16 +125,24 @@
                 hamburger = new matematici.Hamburger(selector + " h1 button", showMenu)
 
                 var tr = $("<tr />").appendTo(tableHead);
+                $("<th />").appendTo(tr).text("");
                 for (var columnIndex in result.columns)
                     $("<th />").appendTo(tr).text(result.columns[columnIndex]);
                 noRecord.children().eq(0).attr("colspan", result.columns.length || 1)
                 initialized = true;
             }
+
+            detailRowIndex = 1;
             if (result.rows.length)
                 for (var rowIndex in result.rows) {
                     var
                         row = result.rows[rowIndex],
                         tr = $("<tr />").appendTo(tableBody);
+                    if (row.total) {
+                        tr.addClass("Total");
+                        $("<td />").appendTo(tr).text("");
+                    } else 
+                        $("<td />").appendTo(tr).text(detailRowIndex++);
                     for (var columnIndex in row.record)
                         $("<td />").appendTo(tr).text(row.record[columnIndex]);
                 }

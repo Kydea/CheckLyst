@@ -73,7 +73,8 @@ namespace CheckListManager.Reports.Data
         public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
             report.Company = identity.CompanyId;
-            report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
+            if (groups != null && groups.Any())
+                report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             report.CreatedOn = DateTimeOffset.UtcNow;
             report.CreatedBy = identity.Code;
             Entities.Reports.Add(report);
@@ -101,7 +102,8 @@ namespace CheckListManager.Reports.Data
                 existingReport.Groups.Remove(group);
             existingReport.ReportColumns = report.ReportColumns;
             existingReport.ReportClauses = report.ReportClauses;
-            existingReport.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
+            if (groups != null && groups.Any())
+                existingReport.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             await SaveChangesAsync();
             return existingReport;
         }

@@ -71,6 +71,34 @@ namespace CheckListManager.Reports.Data
             }
         }
 
+        private ReportRow AddTotalRow(int columnsCount, int rowsCount, List<ReportColumns> columns, List<string> columnTypes, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
+        {
+            for (var Index = 0; Index < columnsCount; ++Index)
+            {
+                var column = columns[Index];
+                switch (column.GroupAggregation)
+                {
+                    case "average":
+                        if (numberTotals[Index].HasValue)
+                            numberTotals[Index] /= rowsCount;
+                        break;
+                    case "count":
+                        numberTotals[Index] = distinctValues[Index].Count();
+                        break;
+                }
+            }
+
+            var ReportRow = new ReportRow { Total = true, Record = new List<string>() };
+            for (var Index = 0; Index < columnsCount; ++Index)
+            {
+                ReportRow.Record.Add(stringTotals[Index] ?? numberTotals[Index]?.ToString() ?? string.Empty);
+                numberTotals[Index] = null;
+                stringTotals[Index] = null;
+                distinctValues[Index] = null;
+            }
+            return ReportRow;
+        }
+
         public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
         {
             try
@@ -84,96 +112,143 @@ namespace CheckListManager.Reports.Data
                     using (var DataReader = await Command.ExecuteReaderAsync(cancellationToken))
                         if (DataReader.HasRows)
                         {
+                            var firstRow = true;
+                            int columnsCount = 0;
+                            var columnTypes = new List<string>();
+                            var numberRow = new List<decimal?>();
+                            var stringRow = new List<string>();
                             var numberTotals = new List<decimal?>();
                             var stringTotals = new List<string>();
                             var numberFinalTotals = new List<decimal?>();
                             var stringFinalTotals = new List<string>();
-                            var distinctValues = new HashSet<string>();
+                            var distinctValues = new List<HashSet<string>>();
+                            var distinctFinalValues = new List<HashSet<string>>();
                             int rowsCount = 0;
-                            var ValuesRow = new List<object>();
-                            //bool NeedToAddTotal = false;
+                            bool anyGroupColumn = false;
+                            bool needToAddTotal = false;
                             while (DataReader.Read())
                             {
                                 ++rowsCount;
+                                needToAddTotal = false;
                                 var ReportRow = new ReportRow { Record = new List<string>() };
-                                for (var Index = 0; Index < DataReader.FieldCount; ++Index)
+                                if (firstRow)
+                                {
+                                    columnsCount = Math.Min(DataReader.FieldCount, columns.Count);
+                                    for (var Index = 0; Index < columnsCount; ++Index)
+                                    {
+                                        columnTypes.Add(DataReader.GetDataTypeName(Index));
+
+                                        numberRow.Add(null);
+                                        stringRow.Add(null);
+                                        numberTotals.Add(null);
+                                        stringTotals.Add(null);
+                                        numberFinalTotals.Add(null);
+                                        stringFinalTotals.Add(null);
+                                        distinctValues.Add(null);
+                                        distinctFinalValues.Add(null);
+                                        stringRow.Add(null);
+                                    }
+                                    firstRow = false;
+                                }
+
+                                for (var Index = 0; Index < columnsCount; ++Index)
                                 {
                                     var column = columns[Index];
                                     var format = string.IsNullOrEmpty(column.Format) ? null : column.Format;
-                                    object value;
                                     string formattedValue = null;
-                                    decimal? numberValue = null;
                                     cancellationToken.ThrowIfCancellationRequested();
+
                                     if (!await DataReader.IsDBNullAsync(Index, cancellationToken))
                                     {
-                                        var typeName = DataReader.GetDataTypeName(Index);
-                                        switch (typeName)
+                                        switch (columnTypes[Index])
                                         {
                                             case "timestamptz":
                                                 var dateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
-                                                value = dateTimeOffsetValue;
                                                 formattedValue = dateTimeOffsetValue.Format(timeZone, format);
                                                 break;
                                             case "int4":
                                             case "int8":
                                             case "decimal":
-                                                numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
-                                                value = numberValue;
+                                                var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
+                                                numberRow[Index] = numberValue;
                                                 formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
                                                 break;
                                             case "bool":
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
-                                                value = booleanValue;
                                                 formattedValue = booleanValue.ToString();
                                                 break;
                                             default:
-                                                value = formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
+                                                formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
                                                 break;
                                         }
                                     }
 
-                                    /*
+                                    if (!needToAddTotal && column.GroupColumn && formattedValue != stringRow[Index])
+                                    {
+                                        anyGroupColumn = true;
+                                        needToAddTotal = stringRow[Index] != null;
+                                    }
+                                    stringRow[Index] = formattedValue;
+
+                                    ReportRow.Record.Add(formattedValue ?? string.Empty);
+                                }
+
+                                if (needToAddTotal)
+                                {
+                                    Result.Add(AddTotalRow(columnsCount, rowsCount - 1, columns, columnTypes, numberTotals, stringTotals, distinctValues));
+                                    rowsCount = 1;
+                                }
+
+                                for (var Index = 0; Index < columnsCount; ++Index)
+                                {
+                                    var column = columns[Index];
                                     switch (column.GroupAggregation)
                                     {
                                         case "sum":
                                         case "average":
-                                            numberTotals[Index] = (numberTotals[Index] ?? 0) + (numberValue ?? 0);
-                                            numberFinalTotals[Index] = (numberFinalTotals[Index] ?? 0) + (numberValue ?? 0);
+                                            numberTotals[Index] = (numberTotals[Index] ?? 0) + (numberRow[Index] ?? 0);
+                                            numberFinalTotals[Index] = (numberFinalTotals[Index] ?? 0) + (numberRow[Index] ?? 0);
                                             break;
                                         case "count":
-                                            distinctValues.Add(formattedValue);
+                                            if (distinctValues[Index] == null) distinctValues[Index] = new HashSet<string>();
+                                            distinctValues[Index].Add(stringRow[Index]);
+                                            if (distinctFinalValues[Index] == null) distinctFinalValues[Index] = new HashSet<string>();
+                                            distinctFinalValues[Index].Add(stringRow[Index]);
                                             break;
                                         case "min":
-                                            if (numberValue.HasValue)
-                                                numberTotals[Index] = numberTotals[Index] < numberValue ? numberTotals[Index] : numberValue;
+                                            if (numberRow[Index].HasValue)
+                                                numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
                                             else
-                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", formattedValue ?? "") < 0 ? stringTotals[Index] : formattedValue;
+                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringTotals[Index] : stringRow[Index];
                                             break;
                                         case "max":
-                                            if (numberValue.HasValue)
-                                                numberTotals[Index] = numberTotals[Index] > numberValue ? numberTotals[Index] : numberValue;
+                                            if (numberRow[Index].HasValue)
+                                                numberTotals[Index] = numberTotals[Index] > numberRow[Index] ? numberTotals[Index] : numberRow[Index];
                                             else
-                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", formattedValue ?? "") > 0 ? stringTotals[Index] : formattedValue;
+                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") > 0 ? stringTotals[Index] : stringRow[Index];
                                             break;
                                         case "first":
-                                            if (numberValue.HasValue && !numberTotals[Index].HasValue)
-                                                numberTotals[Index] = numberValue;
+                                            if (numberRow[Index].HasValue && !numberTotals[Index].HasValue)
+                                                numberTotals[Index] = numberRow[Index];
                                             else if (stringTotals[Index] == null)
-                                                stringTotals[Index] = formattedValue;
+                                                stringTotals[Index] = stringRow[Index];
                                             break;
                                         case "last":
-                                            if (numberValue.HasValue)
-                                                numberTotals[Index] = numberValue;
+                                            if (numberRow[Index].HasValue)
+                                                numberTotals[Index] = numberRow[Index];
                                             else
-                                                stringTotals[Index] = formattedValue;
+                                                stringTotals[Index] = stringRow[Index];
                                             break;
                                     }
-
-                                    */
-                                    ReportRow.Record.Add(formattedValue ?? string.Empty);
                                 }
+
                                 Result.Add(ReportRow);
                             }
+
+                            if (anyGroupColumn)
+                                Result.Add(AddTotalRow(columnsCount, rowsCount, columns, columnTypes, numberTotals, stringTotals, distinctValues));
+
+                            Result.Add(AddTotalRow(columnsCount, Result.Count, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
                         }
                 }
                 return Result;

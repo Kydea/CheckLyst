@@ -9,6 +9,57 @@ body.Report {
         display: none;
     }
 
+    table {
+        tbody {
+            tr {
+                &.Total {
+                    background: $Color-Silver-Light !important;
+
+                    td:not(:first-child) {
+                        border-top: solid 1px $Color-Grey-Light;
+                    }
+
+                    &:not(:nth-last-child(2)) {
+                        td:not(:first-child) {
+                            border-bottom: solid 1px $Color-Grey-Light;
+                        }
+                    }
+
+                    &:hover {
+                        background: $Color-Silver-Dark !important;
+                    }
+
+                    td:first-child {
+                        border-right: none !important;
+                    }
+                }
+
+                td:first-child {
+                    text-align: right !important;
+                }
+
+                &:not(:last-child) {
+                    td:first-child {
+                        background: $Color-Silver-Light;
+                    }
+                }
+
+                &:last-child {
+                    td {
+                        border-top: solid 1px $Color-Grey-Light !important;
+                        border-bottom: solid 2px $Color-Grey-Light !important;
+                    }
+
+                    background: $Color-Silver-Dark !important;
+
+                    &:hover {
+                        background: $Color-Grey-Light-Over !important;
+                    }
+                }
+            }
+        }
+    }
+
     @media screen {
         width: unset;
         min-width: 100%;
@@ -29,8 +80,8 @@ body.Report {
 
             table {
                 thead {
-                    position: -webkit-sticky;
-                    position: sticky;
+                    position: -webkit-sticky !important;
+                    position: sticky !important;
                     top: 0;
                 }
 
@@ -47,8 +98,17 @@ body.Report {
                             }
                         }
 
+                        &.CurrentPrevious {
+                            td {
+                                border-bottom: solid 1px black !important;
+                            }
+                        }
+
                         &.Current {
-                            border: solid 1px black;
+                            td {
+                                border-top: solid 1px black !important;
+                                border-bottom: solid 1px black !important;
+                            }
                         }
 
                         &:hover {

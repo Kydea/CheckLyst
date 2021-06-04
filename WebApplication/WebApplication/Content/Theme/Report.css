@@ -4,6 +4,31 @@
 body.Report label.PrintDialog {
   display: none; }
 
+body.Report table tbody tr.Total {
+  background: #f5f5f5 !important; }
+  body.Report table tbody tr.Total td:not(:first-child) {
+    border-top: solid 1px #ccc; }
+  body.Report table tbody tr.Total:not(:nth-last-child(2)) td:not(:first-child) {
+    border-bottom: solid 1px #ccc; }
+  body.Report table tbody tr.Total:hover {
+    background: #ebebeb !important; }
+  body.Report table tbody tr.Total td:first-child {
+    border-right: none !important; }
+
+body.Report table tbody tr td:first-child {
+  text-align: right !important; }
+
+body.Report table tbody tr:not(:last-child) td:first-child {
+  background: #f5f5f5; }
+
+body.Report table tbody tr:last-child {
+  background: #ebebeb !important; }
+  body.Report table tbody tr:last-child td {
+    border-top: solid 1px #ccc !important;
+    border-bottom: solid 2px #ccc !important; }
+  body.Report table tbody tr:last-child:hover {
+    background: #bbb !important; }
+
 @media screen {
   body.Report {
     width: unset;
@@ -18,8 +43,8 @@ body.Report label.PrintDialog {
           padding: 0;
           margin-right: 10px; }
       body.Report div#Content table thead {
-        position: -webkit-sticky;
-        position: sticky;
+        position: -webkit-sticky !important;
+        position: sticky !important;
         top: 0; }
       body.Report div#Content table tbody tr {
         cursor: pointer; }
@@ -28,8 +53,11 @@ body.Report label.PrintDialog {
           max-width: 200px;
           overflow: hidden;
           text-overflow: ellipsis; }
-        body.Report div#Content table tbody tr.Current {
-          border: solid 1px black; }
+        body.Report div#Content table tbody tr.CurrentPrevious td {
+          border-bottom: solid 1px black !important; }
+        body.Report div#Content table tbody tr.Current td {
+          border-top: solid 1px black !important;
+          border-bottom: solid 1px black !important; }
         body.Report div#Content table tbody tr:hover {
           background-color: #fce6e8; } }
 

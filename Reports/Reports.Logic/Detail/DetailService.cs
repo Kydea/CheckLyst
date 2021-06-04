@@ -98,35 +98,36 @@ namespace CheckListManager.Reports.Logic.Detail
                 };
             }
 
-            for (var Index = 0; Index < record.Columns.Count; ++Index)
-            {
-                var Column = record.Columns[Index];
-                if (string.IsNullOrWhiteSpace(Column.Label))
-                    AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
+            if (record.Columns != null)
+                for (var Index = 0; Index < record.Columns.Count; ++Index)
+                {
+                    var Column = record.Columns[Index];
+                    if (string.IsNullOrWhiteSpace(Column.Label))
+                        AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
 
-                if (string.IsNullOrWhiteSpace(Column.Column))
-                    AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
-            }
+                    if (string.IsNullOrWhiteSpace(Column.Column))
+                        AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
+                }
 
             if (!response.ColumnErrors.Any()) response.ColumnErrors = null;
 
-            HashSet<string> ColumnNames = new HashSet<string>(record.Columns.Select(c => c.Label));
-            for (var Index = 0; Index < record.Clauses.Count; ++Index)
-            {
-                var Clause = record.Clauses[Index];
-                if (string.IsNullOrWhiteSpace(Clause.Label))
-                    AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
+            if (record.Clauses != null)
+                for (var Index = 0; Index < record.Clauses.Count; ++Index)
+                {
+                    var Clause = record.Clauses[Index];
+                    if (string.IsNullOrWhiteSpace(Clause.Label))
+                        AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
 
-                if (string.IsNullOrWhiteSpace(Clause.ParameterName))
-                    AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
+                    if (string.IsNullOrWhiteSpace(Clause.ParameterName))
+                        AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
 
-                if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
-                    AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
+                    if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
+                        AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
 
-                //rimuovere prototypes
-                if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
-                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
-            }
+                    //rimuovere prototypes
+                    if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
+                        AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+                }
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
 
