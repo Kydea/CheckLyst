@@ -699,11 +699,12 @@ namespace CheckListManager.Instances.Logic.Services
                         State = row.InstanceState,
                         Note = note
                     });
+
+                    await UpdateJSONFieldsAsync(cacheObject);
                 }
 
                 await _instancesRepository.SaveChangesAsync();
                 await UpdateParentInstance(cacheObject, identity, true);
-                await UpdateJSONFieldsAsync(cacheObject);
             }
             await _instanceCache.RemoveAsync(cacheObject.Code);
         }
