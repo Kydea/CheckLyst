@@ -124,7 +124,7 @@ namespace CheckListManager.Reports.Data
                                             case "bool":
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
                                                 value = booleanValue;
-                                                formattedValue = booleanValue ? "X" : string.Empty;
+                                                formattedValue = booleanValue.ToString();
                                                 break;
                                             default:
                                                 value = formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
