@@ -80,6 +80,14 @@ namespace CheckListManager.AccessControl.Api.Controllers
         }
 
         [HttpPost]
+        [Route("GetConflicts")]
+        [Authorize(Roles = "Users#Edit")]
+        public async Task<IHttpActionResult> GetConflicts(UserRequest request)
+        {
+            return Ok(await _userService.GetConflicts(Identity, request.Groups));
+        }
+
+        [HttpPost]
         [Route("Export")]
         [Authorize(Roles = "Users#View")]
         public async Task<IHttpActionResult> Export(Message<UsersRequest> request)

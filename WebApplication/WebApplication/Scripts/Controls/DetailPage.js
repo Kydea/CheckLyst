@@ -8,13 +8,11 @@
         lastReason,
         title,
 
-        clickHandler = function (button, event, callback, takeOpen) {
-            if (button && button.hasClass("ReadOnly")) return false;
-
+        submit = function (event, callback, takeOpen) {
             var settings = matematici.tokenManager.getCompanySettings();
             var input;
 
-            var save = function () {
+            var trigger = function () {
                 form.trigger(event, function (result) {
                     form.handleResult(result);
 
@@ -59,7 +57,7 @@
                                 else {
                                     input.removeClass("Error");
                                     form.setValue("reason", input.val());
-                                    save();
+                                    trigger();
                                 }
 
                                 return true;
@@ -70,13 +68,23 @@
                 });
                 setTimeout(function () { input.focus(); }, 1);
             } else {
-                save();
-                if (event === "Delete") {
-                    return false; // Close dialog in case event is delete and reason is not required
-                }
+                trigger();
+                if (event === "Delete") return false; // Close dialog in case event is delete and reason is not required
             }
 
             return true;
+        },
+
+        clickHandler = function (button, event, callback, takeOpen) {
+            if (button && button.hasClass("ReadOnly")) return false;
+
+            if (options && options.validateHandler) {
+                options.validateHandler(event, function () {
+                    submit(event, callback, takeOpen)
+                });
+                return false;
+            } else
+                return submit(button, event, callback, takeOpen);
         },
 
         deleteRecord = function (deleteHandler) {

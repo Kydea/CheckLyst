@@ -33,5 +33,6 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default(CancellationToken));
 		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default(CancellationToken));
-	}
+        Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups);
+    }
 }

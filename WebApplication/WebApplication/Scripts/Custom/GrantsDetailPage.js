@@ -87,7 +87,7 @@
                 departmentsSelect, prototypeTypesSelect, rolesSelect, functionsSelect,
                 departmentsAutoComplete, prototypeTypesAutoComplete, rolesAutoComplete, functionsAutoComplete;
 
-                $("<hr />").appendTo(div)
+            $("<hr />").appendTo(div)
 
             if (page != "Roles") {
                 departmentsSelect = $("<select />").addClass("Department");
@@ -512,6 +512,33 @@
             }
         },
 
+        validateHandler = function (event, callback) {
+            if (page != "Users" || event != "Edit")
+                callback();
+
+            $.ajax({
+                type: "post",
+                url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
+                data: {
+                    groups: groupsSelect.val()
+                }
+            }).done(function (result) {
+                if (result.length == 0)
+                    callback();
+                else {
+                    var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
+                    matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
+                        {
+                            text: "Ignore conflicts", icon: "check", handler: function () {
+                                setTimeout(callback, 0);
+                            }
+                        },
+                        { text: "Cancel", icon: "times" }
+                    ]);
+                }
+            });
+        },
+
         setup = function () {
             tab = new matematici.Tab(formSelector + " div.TabContainer", {
                 fixedHeight: true
@@ -522,6 +549,7 @@
                 initHandler: initHandler,
                 parametersPrepareHandler: parametersPrepareHandler,
                 completeHandler: completeHandler,
+                validateHandler: validateHandler,
                 width: "inherit",
                 buttons: [{
                     icon: "plus",
