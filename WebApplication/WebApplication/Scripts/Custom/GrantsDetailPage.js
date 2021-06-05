@@ -262,6 +262,8 @@
 
             if (page == "Users")
                 data.groups = groupsSelect.val();
+            else if (page == "Groups")
+                data.conflictingGroups = groupsSelect.val();
 
             $("div.Function", tab.getItem(prototypesTab).tab).each(function () {
                 var record = {};
@@ -429,6 +431,14 @@
                     for (var index in groups)
                         groupsSelect.append($("<option />").text(groups[index]).attr("value", groups[index]));
                     groupsSelect.val(result.groups);
+                    var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
+                    autoComplete.initialize();
+                    if (detailPage.isReadOnly()) autoComplete.lock(true)
+                } else if (page == "Groups") {
+                    groupsSelect = $("<select />").appendTo($("div.Tab.Conflicts div.Control", detailPage.getElement())).prop("multiple", true).addClass("FullHeight");
+                    for (var index in groups)
+                        groupsSelect.append($("<option />").text(groups[index]).attr("value", groups[index]));
+                    groupsSelect.val(result.conflictingGroups);
                     var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
                     autoComplete.initialize();
                     if (detailPage.isReadOnly()) autoComplete.lock(true)

@@ -21,6 +21,8 @@ namespace CheckListManager.Common.Data
             this.GroupRoles = new HashSet<GroupRoles>();
             this.UserGroups = new HashSet<UserGroups>();
             this.Reports = new HashSet<Reports>();
+            this.GroupConflicts = new HashSet<GroupConflicts>();
+            this.GroupConflicts1 = new HashSet<GroupConflicts>();
         }
     
         public long Company { get; set; }
@@ -40,5 +42,9 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<UserGroups> UserGroups { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reports> Reports { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupConflicts> GroupConflicts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupConflicts> GroupConflicts1 { get; set; }
     }
 }

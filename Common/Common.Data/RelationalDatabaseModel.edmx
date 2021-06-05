@@ -352,6 +352,16 @@
           <Property Name="FunctionGroup" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
+        <EntityType Name="GroupConflicts">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Group1" />
+            <PropertyRef Name="Group2" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="Group1" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Group2" Type="varchar" MaxLength="60" Nullable="false" />
+        </EntityType>
         <EntityType Name="GroupFunctions">
           <Key>
             <PropertyRef Name="ID" />
@@ -780,6 +790,38 @@
             </Principal>
             <Dependent Role="Functions">
               <PropertyRef Name="FunctionGroup" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupConflicts_Group1">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GroupConflicts" Type="Self.GroupConflicts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupConflicts">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupConflicts_Group2">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="GroupConflicts" Type="Self.GroupConflicts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupConflicts">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group2" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1750,6 +1792,7 @@
           <EntitySet Name="ReportSources" EntityType="Self.ReportSources" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Functions" EntityType="Self.Functions" Schema="Security" store:Type="Tables" />
+          <EntitySet Name="GroupConflicts" EntityType="Self.GroupConflicts" Schema="Security" store:Type="Tables" />
           <EntitySet Name="GroupFunctions" EntityType="Self.GroupFunctions" Schema="Security" store:Type="Tables" />
           <EntitySet Name="GroupRoles" EntityType="Self.GroupRoles" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Groups" EntityType="Self.Groups" Schema="Security" store:Type="Tables" />
@@ -1811,6 +1854,14 @@
           <AssociationSet Name="Functions_FunctionGroup_fkey" Association="Self.Functions_FunctionGroup_fkey">
             <End Role="FunctionGroups" EntitySet="FunctionGroups" />
             <End Role="Functions" EntitySet="Functions" />
+          </AssociationSet>
+          <AssociationSet Name="GroupConflicts_Group1" Association="Self.GroupConflicts_Group1">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupConflicts" EntitySet="GroupConflicts" />
+          </AssociationSet>
+          <AssociationSet Name="GroupConflicts_Group2" Association="Self.GroupConflicts_Group2">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupConflicts" EntitySet="GroupConflicts" />
           </AssociationSet>
           <AssociationSet Name="GroupFunctions_Department_fkey" Association="Self.GroupFunctions_Department_fkey">
             <End Role="Departments" EntitySet="Departments" />
@@ -2574,6 +2625,15 @@
           <AssociationSet Name="ReportGroups" Association="RelationalDatabaseModel.ReportGroups">
             <End Role="Groups" EntitySet="Groups" />
             <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <EntitySet Name="GroupConflicts" EntityType="RelationalDatabaseModel.GroupConflicts" />
+          <AssociationSet Name="GroupConflicts_Group1" Association="RelationalDatabaseModel.GroupConflicts_Group1">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupConflicts" EntitySet="GroupConflicts" />
+          </AssociationSet>
+          <AssociationSet Name="GroupConflicts_Group2" Association="RelationalDatabaseModel.GroupConflicts_Group2">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupConflicts" EntitySet="GroupConflicts" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -3735,6 +3795,8 @@
           <NavigationProperty Name="GroupRoles" Relationship="RelationalDatabaseModel.GroupRoles_Group" FromRole="Groups" ToRole="GroupRoles" />
           <NavigationProperty Name="UserGroups" Relationship="RelationalDatabaseModel.UserGroups_Group" FromRole="Groups" ToRole="UserGroups" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportGroups" FromRole="Groups" ToRole="Reports" />
+          <NavigationProperty Name="GroupConflicts" Relationship="RelationalDatabaseModel.GroupConflicts_Group1" FromRole="Groups" ToRole="GroupConflicts" />
+          <NavigationProperty Name="GroupConflicts1" Relationship="RelationalDatabaseModel.GroupConflicts_Group2" FromRole="Groups" ToRole="GroupConflicts" />
         </EntityType>
         <EntityType Name="RoleFunctions">
           <Key>
@@ -4309,6 +4371,50 @@
         <Association Name="ReportGroups">
           <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="*" />
           <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
+        </Association>
+        <EntityType Name="GroupConflicts">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="Group1" />
+            <PropertyRef Name="Group2" />
+          </Key>
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="Group1" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Group2" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.GroupConflicts_Group1" FromRole="GroupConflicts" ToRole="Groups" />
+          <NavigationProperty Name="Groups1" Relationship="RelationalDatabaseModel.GroupConflicts_Group2" FromRole="GroupConflicts" ToRole="Groups" />
+        </EntityType>
+        <Association Name="GroupConflicts_Group1">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.GroupConflicts" Role="GroupConflicts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupConflicts">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GroupConflicts_Group2">
+          <End Type="RelationalDatabaseModel.Groups" Role="Groups" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.GroupConflicts" Role="GroupConflicts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="GroupConflicts">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Group2" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -4985,6 +5091,15 @@
               <ScalarProperty Name="Company" ColumnName="Company" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="GroupConflicts">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.GroupConflicts">
+              <MappingFragment StoreEntitySet="GroupConflicts">
+                <ScalarProperty Name="Group2" ColumnName="Group2" />
+                <ScalarProperty Name="Group1" ColumnName="Group1" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

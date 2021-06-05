@@ -530,4 +530,21 @@ end
 $$
 language plpgsql;
 
+create table "Security"."GroupConflicts"
+(
+    "Company" bigint not null,
+
+	"Group1" varchar (60) not null,
+	constraint "GroupConflicts_Group1" foreign key ("Company", "Group1") references "Security"."Groups" on update cascade on delete cascade,
+
+	"Group2" varchar (60) not null,
+	constraint "GroupConflicts_Group2" foreign key ("Company", "Group2") references "Security"."Groups" on update cascade on delete cascade,
+
+    constraint "GroupConflicts_PK" primary key ("Company", "Group1", "Group2"),
+
+    constraint "GroupConflicts_SelfConflict" check ("Group1" <> "Group2")
+);
+
+create unique index "Index_GroupFunctions_Groups2" on "Security"."GroupConflicts" ("Company", "Group2", "Group1");
+
 --Script8.Reports.sql

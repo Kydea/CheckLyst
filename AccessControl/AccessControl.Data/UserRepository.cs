@@ -379,8 +379,11 @@ namespace CheckListManager.AccessControl.Data
             existingGroup.ModifiedBy = identity.Code;
             Entities.GroupRoles.RemoveRange(existingGroup.GroupRoles);
             Entities.GroupFunctions.RemoveRange(existingGroup.GroupFunctions);
+            Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts);
+            Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts1);
             existingGroup.GroupRoles = group.GroupRoles;
             existingGroup.GroupFunctions = group.GroupFunctions;
+            existingGroup.GroupConflicts = group.GroupConflicts;
             await SaveChangesAsync();
             return existingGroup;
         }

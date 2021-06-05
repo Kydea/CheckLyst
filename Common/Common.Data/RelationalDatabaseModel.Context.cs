@@ -74,5 +74,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<ReportSources> ReportSources { get; set; }
         public virtual DbSet<ReportColumns> ReportColumns { get; set; }
         public virtual DbSet<ReportClauses> ReportClauses { get; set; }
+        public virtual DbSet<GroupConflicts> GroupConflicts { get; set; }
     }
 }
