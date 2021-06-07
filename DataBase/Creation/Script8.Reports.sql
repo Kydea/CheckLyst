@@ -110,6 +110,7 @@ alter table "Infrastructure"."Departments" enable row level security;
 alter table "Security"."Users" enable row level security;
 alter table "Security"."Roles" enable row level security;
 alter table "Security"."Groups" enable row level security;
+alter table "CheckLists"."PrototypeTypes" enable row level security;
 alter table "CheckLists"."Prototypes" enable row level security;
 alter table "CheckLists"."PrototypeVersions" enable row level security;
 alter table "CheckLists"."Instances" enable row level security;
@@ -134,6 +135,7 @@ grant select on table "Security"."Roles" to "ReportRole";
 grant select on table "Security"."Groups" to "ReportRole";
 
 grant usage on schema "CheckLists" to "ReportRole";
+grant select on table "CheckLists"."PrototypeTypes" to "ReportRole";
 grant select on table "CheckLists"."Prototypes" to "ReportRole";
 grant select on table "CheckLists"."PrototypeVersions" to "ReportRole";
 grant select on table "CheckLists"."Instances" to "ReportRole";
@@ -162,6 +164,8 @@ begin
 		create policy "Company$Roles" on "Security"."Roles" to "ReportRole$" using 
 		("Company" = $);
 		create policy "Company$Groups" on "Security"."Groups" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$Prototypes" on "CheckLists"."PrototypeTypes" to "ReportRole$" using 
 		("Company" = $);
 		create policy "Company$Prototypes" on "CheckLists"."Prototypes" to "ReportRole$" using 
 		("Company" = $);
