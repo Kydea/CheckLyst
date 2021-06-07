@@ -169,11 +169,15 @@ namespace CheckListManager.Reports.Data
                                             case "int2":
                                             case "int4":
                                             case "int8":
-                                            case "float8":
                                             case "decimal":
                                                 var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 numberRow[Index] = numberValue;
                                                 formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
+                                                break;
+                                            case "float8":
+                                                var floatValue = await DataReader.GetFieldValueAsync<double>(Index, cancellationToken);
+                                                numberRow[Index] = (decimal)floatValue;
+                                                formattedValue = format == null ? floatValue.ToString() : string.Format($"{{0:{format}}}", floatValue);
                                                 break;
                                             case "bool":
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);

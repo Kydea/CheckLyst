@@ -11,7 +11,7 @@ body.Report {
 
     table {
         tbody {
-            tr {
+            tr:not(.NoRecord) {
                 &.Total {
                     background: $Color-Silver-Light !important;
 

@@ -4,29 +4,29 @@
 body.Report label.PrintDialog {
   display: none; }
 
-body.Report table tbody tr.Total {
+body.Report table tbody tr:not(.NoRecord).Total {
   background: #f5f5f5 !important; }
-  body.Report table tbody tr.Total td:not(:first-child) {
+  body.Report table tbody tr:not(.NoRecord).Total td:not(:first-child) {
     border-top: solid 1px #ccc; }
-  body.Report table tbody tr.Total:not(:nth-last-child(2)) td:not(:first-child) {
+  body.Report table tbody tr:not(.NoRecord).Total:not(:nth-last-child(2)) td:not(:first-child) {
     border-bottom: solid 1px #ccc; }
-  body.Report table tbody tr.Total:hover {
+  body.Report table tbody tr:not(.NoRecord).Total:hover {
     background: #ebebeb !important; }
-  body.Report table tbody tr.Total td:first-child {
+  body.Report table tbody tr:not(.NoRecord).Total td:first-child {
     border-right: none !important; }
 
-body.Report table tbody tr td:first-child {
+body.Report table tbody tr:not(.NoRecord) td:first-child {
   text-align: right !important; }
 
-body.Report table tbody tr:not(.Total:last-child) td:first-child {
+body.Report table tbody tr:not(.NoRecord):not(.Total:last-child) td:first-child {
   background: #f5f5f5; }
 
-body.Report table tbody tr.Total:last-child {
+body.Report table tbody tr:not(.NoRecord).Total:last-child {
   background: #ebebeb !important; }
-  body.Report table tbody tr.Total:last-child td {
+  body.Report table tbody tr:not(.NoRecord).Total:last-child td {
     border-top: solid 1px #ccc !important;
     border-bottom: solid 2px #ccc !important; }
-  body.Report table tbody tr.Total:last-child:hover {
+  body.Report table tbody tr:not(.NoRecord).Total:last-child:hover {
     background: #bbb !important; }
 
 @media screen {

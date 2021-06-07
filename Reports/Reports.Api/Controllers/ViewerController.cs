@@ -41,10 +41,10 @@ namespace CheckListManager.Reports.Api.Controllers
                 var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
                 return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
             }
-            catch (ReportViewerException ReportViewerException)
+            catch (Exception Exception)
             {
-                var Response = new ResponseMessage<Exception> { Data = ReportViewerException };
-                Response.Messages.AddRange(BuildErrorMessage(ReportViewerException));
+                var Response = new ResponseMessage<Exception> { Data = Exception };
+                Response.Messages.AddRange(BuildErrorMessage(Exception));
                 return new ErrorResult(Request, Response);
             }
         }

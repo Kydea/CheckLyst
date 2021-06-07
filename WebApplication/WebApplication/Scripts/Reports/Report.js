@@ -129,7 +129,7 @@
                 $("<th />").appendTo(tr).text("");
                 for (var columnIndex in result.columns)
                     $("<th />").appendTo(tr).text(result.columns[columnIndex]);
-                noRecord.children().eq(0).attr("colspan", result.columns.length || 1)
+                noRecord.children().eq(0).attr("colspan", (result.columns.length || 1) + 1)
                 initialized = true;
             }
 
