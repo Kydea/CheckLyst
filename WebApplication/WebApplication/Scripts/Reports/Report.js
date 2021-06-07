@@ -10,6 +10,7 @@
         hamburger,
         parameters = [],
         tr,
+        startedOn = new Date(),
 
         createCSV = function (fileName, columns, rows) {
             var processRow = function (row) {
@@ -148,6 +149,8 @@
                 }
             else
                 noRecord.appendTo(tableBody);
+
+            console.log("Elapsed time: " + (new Date() - startedOn) + "ms");
         },
 
         load = function (page) {

@@ -177,6 +177,10 @@ namespace CheckListManager.Reports.Data
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
                                                 formattedValue = booleanValue.ToString();
                                                 break;
+                                            case "interval":
+                                                var intervalValue = await DataReader.GetFieldValueAsync<TimeSpan>(Index, cancellationToken);
+                                                formattedValue = intervalValue.ToString(@"dd\.hh\:mm\:ss");
+                                                break;
                                             default:
                                                 formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
                                                 break;
