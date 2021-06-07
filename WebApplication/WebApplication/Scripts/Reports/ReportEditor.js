@@ -233,7 +233,9 @@
                 model = {
                     fields: {
                         query: { value: null },
-                        reportSource: { value: null }
+                        reportSource: { value: null },
+                        columns: [],
+                        clauses: []
                     }
                 };
         };

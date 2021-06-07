@@ -80,7 +80,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             var StringBuilder = new StringBuilder();
             StringBuilder.AppendLine($"set role \"ReportUser{company}\";");
             StringBuilder.AppendLine($"with q as (");
-            StringBuilder.AppendLine(report.Query);
+            StringBuilder.AppendLine(report.ReportSource == null ? report.Query : report.ReportSources.Query);
             StringBuilder.AppendLine($")");
             StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.Select(c => $"{c.Column} \"{c.Label}\""))}");
             StringBuilder.AppendLine($"from q");

@@ -38,13 +38,13 @@ body.Report {
                     text-align: right !important;
                 }
 
-                &:not(:last-child) {
+                &:not(.Total:last-child) {
                     td:first-child {
                         background: $Color-Silver-Light;
                     }
                 }
 
-                &:last-child {
+                &.Total:last-child {
                     td {
                         border-top: solid 1px $Color-Grey-Light !important;
                         border-bottom: solid 2px $Color-Grey-Light !important;

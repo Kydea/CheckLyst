@@ -84,7 +84,7 @@
                 });
                 return false;
             } else
-                return submit(button, event, callback, takeOpen);
+                return submit(event, callback, takeOpen);
         },
 
         deleteRecord = function (deleteHandler) {

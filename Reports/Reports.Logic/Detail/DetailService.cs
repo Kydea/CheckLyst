@@ -136,7 +136,7 @@ namespace CheckListManager.Reports.Logic.Detail
             if (record.ReportSource == null)
                 try
                 {
-                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query, record.Clauses.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType));
+                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query, record.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType));
                 }
                 catch (DatabaseException DatabaseException)
                 {

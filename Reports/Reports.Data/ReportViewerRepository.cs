@@ -246,9 +246,10 @@ namespace CheckListManager.Reports.Data
                             }
 
                             if (anyGroupColumn)
+                            {
                                 Result.Add(AddTotalRow(columnsCount, rowsCount, columns, columnTypes, numberTotals, stringTotals, distinctValues));
-
-                            Result.Add(AddTotalRow(columnsCount, Result.Count, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
+                                Result.Add(AddTotalRow(columnsCount, Result.Count, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
+                            }
                         }
                 }
                 return Result;
