@@ -166,8 +166,10 @@ namespace CheckListManager.Reports.Data
                                                 var dateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
                                                 formattedValue = dateTimeOffsetValue.Format(timeZone, format);
                                                 break;
+                                            case "int2":
                                             case "int4":
                                             case "int8":
+                                            case "float8":
                                             case "decimal":
                                                 var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 numberRow[Index] = numberValue;

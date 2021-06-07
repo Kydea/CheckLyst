@@ -1,5 +1,10 @@
 alter table "Trail"."Records" add column "CheckListID" bigint;
 alter table "Trail"."Records" rename column "CheckList" to "CheckListCode";
+
+drop index "Trail"."Index_Records_CheckList";
+create index "Index_Records_CheckListCode" on "Trail"."Records" ("Company", "CheckListCode");
+create index "Index_Records_CheckListID" on "Trail"."Records" ("Company", "CheckListID");
+
 insert into "Trail"."Actions" values ('Instance external source row imported');
 alter table "Security"."Users" add column "CorporateID" varchar(50);
 
