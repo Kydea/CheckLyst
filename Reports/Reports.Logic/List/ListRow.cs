@@ -4,6 +4,7 @@ namespace CheckListManager.Reports.Logic.List
 {
     public class ListRow
     {
+        public long ID { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public string ReportSource { get; set; }

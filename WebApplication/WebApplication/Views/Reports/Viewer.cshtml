@@ -1,7 +1,7 @@
 ﻿@model CheckListManager.WebApplication.Models.Report
 
 <div id="ReportViewerPage" class="Report">
-    <h1>@Model.Code</h1>
+    <h1>Report viewer</h1>
 
     <div class="ActionBar">
         <span class="ButtonGroup" data-text="Actions"></span>
@@ -22,7 +22,7 @@
         var
             element = $("#ReportViewerPage"),
             reportViewer = new reports.ReportViewer(element, {
-                code: "@(Model.Code ?? "")",
+                id: @(Model.ID.Value),
                 reportUrl: "@Url.Action("Report")",
                 editorUrl: "@Url.Action("Editor")",
                 listUrl: "@Url.Action("List")",

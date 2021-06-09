@@ -64,9 +64,10 @@
         },
 
         save = function (callback) {
-            if (!callback && options.code == "")
-                callback = function () {
-                    matematici.navigator.open(options.detailUrl + "/" + $("input[name=code]", detailPage.getElement()).val());
+            if (!callback && options.id == -1)
+                callback = function (result) {
+                    //reloads the page with the correct url
+                    matematici.navigator.open(options.detailUrl + "/" + result.id);
                 };
 
             detailPage.clickHandler(null, "Save", callback);
@@ -217,13 +218,13 @@
                 completeHandler(reportSources);
             });
 
-            if (options.code)
+            if (options.id >= 0)
                 $.ajax({
                     type: "post",
                     url: matematici.urls.reports.api + "/List/Load",
                     data: {
                         data: {
-                            code: options.code
+                            id: options.id
                         }
                     }
                 }).done(function (result) {

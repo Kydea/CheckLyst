@@ -37,6 +37,7 @@ namespace CheckListManager.Reports.Logic.List
                 ItemsPerPage = Result.ItemsPerPage,
                 Data = Result.Data.Select(r => new ListRow
                 {
+                    ID = r.ID,
                     Code = r.Code,
                     Description = r.Description,
                     ReportSource = r.ReportSource,

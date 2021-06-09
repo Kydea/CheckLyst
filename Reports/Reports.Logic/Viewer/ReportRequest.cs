@@ -6,7 +6,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 {
     public class ReportRequest
     {
-        public string Code { get; set; }
+        public long ID { get; set; }
         public List<Parameter> Parameters { get; set; }
 
         public class Parameter

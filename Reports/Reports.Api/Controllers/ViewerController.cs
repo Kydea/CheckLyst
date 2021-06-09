@@ -29,7 +29,7 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("LoadParameters")]
         public async Task<IHttpActionResult> LoadParameters(DetailRequest request)
         {
-            return Ok(await _reportViewerService.LoadParameters(Identity, request.Code));
+            return Ok(await _reportViewerService.LoadParameters(Identity, request.ID.Value));
         }
 
         [HttpPost]

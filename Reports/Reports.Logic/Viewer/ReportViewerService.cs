@@ -34,11 +34,12 @@ namespace CheckListManager.Reports.Logic.Viewer
             _settingService = settingService;
         }
 
-        public async Task<DetailResponse> LoadParameters(IDefaultIdentity identity, string code)
+        public async Task<DetailResponse> LoadParameters(IDefaultIdentity identity, long id)
         {
-            var record = await _reportsRepository.GetReportAsync(identity.CompanyId, code, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+            var record = await _reportsRepository.GetReportAsync(identity.CompanyId, id, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
             var result = new DetailResponse
             {
+                Code = record.Code,
                 Description = record.Description,
                 Clauses = record.ReportClauses.Where(c => c.Visible).Select(c => new ReportClause
                 {
@@ -108,12 +109,13 @@ namespace CheckListManager.Reports.Logic.Viewer
 
         public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
-            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Code, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
             var parameters = new List<Parameter>(report.ReportClauses.Count);
             var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
             var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
             return new ReportResponse
             {
+                Code = report.Code,
                 Description = report.Description,
                 Columns = report.ReportColumns.Select(c => c.Label).ToList(),
                 Rows = rows
