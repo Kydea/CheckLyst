@@ -31,6 +31,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string Key { get; set; }
         public string FileType { get; set; } = "images";
         public string Target { get; set; }
+        public bool RestrictToCamera { get; set; }
 
         [JsonIgnore]
         public string ModifiedBy { get; }

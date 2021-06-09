@@ -31,6 +31,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string Key { get; set; }
         public string FileType { get; set; }
         public string Target { get; set; }
+        public bool RestrictToCamera { get; set; }
 
         public class FileTypes
         {

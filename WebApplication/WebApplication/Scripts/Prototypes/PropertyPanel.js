@@ -555,6 +555,7 @@
                     ));
                     break;
                 case "Attachment":
+                    var restrictToCameraProperty;
                     properties.push(new prototypes.Property(
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
@@ -572,12 +573,24 @@
                             /* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
                             ["images", "pdf"]
                         ), "File type",
-                        "The file type of the attachment."
+                        "The file type of the attachment.",
+                        function () {
+                            if (model.fileType != "images") {
+                                model.restrictToCamera = false;
+                                restrictToCameraProperty.setValue();
+                            }
+                            restrictToCameraProperty.getType().setReadOnly(model.fileType != "images");
+                        }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.TargetProperty(model, "Attachment"),
                         "Target",
                         "If the target is specified, the attachment will be linked to the specified item."
+                    ));
+                    properties.push(restrictToCameraProperty = new prototypes.Property(
+                        this, new prototypes.BooleanProperty(model, "restrictToCamera", model.fileType != "images"),
+                        "Restrict to camera",
+                        "If the flag is set, the attachment will be taken exclusively by camera of the mobile device on the app."
                     ));
                     break;
                 default:
