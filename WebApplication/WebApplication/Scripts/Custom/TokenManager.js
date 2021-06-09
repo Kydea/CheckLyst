@@ -216,6 +216,10 @@
         saveSigners(signers);
     };
 
+    tokenManager.setSigners = function (signers) {
+        saveSigners(signers);
+    };
+
     tokenManager.removeSigner = function (code) {
         var signers = tokenManager.getSigners();
         for (var index in signers)
