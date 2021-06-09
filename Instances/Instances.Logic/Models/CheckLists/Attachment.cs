@@ -50,6 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel(bool ReportModel)
         {
             var ItemModel = base.GetViewModel(ReportModel);
+            if (RestrictToCamera) ItemModel.RestrictToCamera = true;
             if (!ReportModel)
             {
                 var Target = GetTarget();

@@ -4,7 +4,7 @@
         initialized = false,
         element,
         valuesMap,
-        options,
+        selectOptions,
         fullHeight,
         items,
         currentItem,
@@ -35,6 +35,8 @@
 
             input
                 .on("keydown", function (e) {
+                    if (fullHeight) return;
+
                     if (e.which == 38 || e.which == 40) { //up and down
                         e.preventDefault();
                         if (!multiple) setCurrentItem(currentItem + (e.which == 38 ? -1 : 1) || 0);
@@ -47,7 +49,6 @@
                         e.stopPropagation();
                         hideList();
                     }
-
                 })
                 .on("keyup", function (e) {
                     if (e.which < 37 || e.which > 40) { //arrow keys
@@ -122,7 +123,7 @@
                 icon.addClass("FullHeight");
                 input.addClass("FullHeight");
                 list.insertAfter(input).addClass("FullHeight");
-                options = $("option", element);
+                selectOptions = $("option", element);
                 updateList();
             }
 
@@ -246,14 +247,14 @@
             var
                 item = items.eq(index),
                 value = item.data("value"),
-                option = options.filter("[value='" + value + "']"),
+                option = selectOptions.filter("[value='" + value + "']"),
                 on = !option.prop("selected");
 
             items.eq(index).toggleClass("Selected", on);
             option.prop('selected', on);
 
             var texts = [];
-            options.each(function () {
+            selectOptions.each(function () {
                 var option = $(this);
                 if (option.prop("selected"))
                     texts.push(option.text());
@@ -292,7 +293,7 @@
 
             if (matematici.AutoComplete.current) matematici.AutoComplete.current.hideList();
             matematici.AutoComplete.current = autoComplete;
-            options = $("option", element);
+            selectOptions = $("option", element);
             updateList();
             open = true;
             element.addClass("Open");
@@ -357,7 +358,7 @@
             if (nullValue != null)
                 list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue == "" ? "(none)" : nullValue)));
 
-            options
+            selectOptions
                 .each(function () {
                     var
                         option = $(this),
