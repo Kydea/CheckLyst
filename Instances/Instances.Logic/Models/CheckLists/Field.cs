@@ -45,22 +45,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonProperty]
         public int Offset { get; private set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
+            var ItemModel = base.GetViewModel(ReportModel);
             ItemModel.ValueFormulaString = ValueFormulaString;
             ItemModel.ValueTypeName = ValueTypeName;
             ItemModel.Value = Value;
-            ItemModel.LinesCount = LinesCount;
-
-            if (ValuesList != null)
-                ItemModel.ValuesList = ValuesList;
-
-            if (ExternalSourceName != null)
-            {
-                ItemModel.ExternalSourceName = ExternalSourceName;
-                ItemModel.ExternalSourceColumn = ExternalSourceColumn;
-            }
 
             if (LocalTimeZone)
             {
@@ -69,12 +59,26 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
 
             if (History.Any())
-                ItemModel.History = History.Select(x => new {
+                ItemModel.History = History.Select(x => new
+                {
                     x.DateTime,
                     x.User,
                     x.Value,
                     x.TypedValue
                 });
+
+            if (!ReportModel)
+            {
+                ItemModel.LinesCount = LinesCount;
+
+                if (ValuesList != null) ItemModel.ValuesList = ValuesList;
+
+                if (ExternalSourceName != null)
+                {
+                    ItemModel.ExternalSourceName = ExternalSourceName;
+                    ItemModel.ExternalSourceColumn = ExternalSourceColumn;
+                }
+            }
             return ItemModel;
         }
 

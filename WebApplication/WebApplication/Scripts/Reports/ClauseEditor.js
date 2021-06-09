@@ -21,6 +21,7 @@
         customLabel,
 
         toggleControls = function () {
+            //remove prototypes
             if (parameterType != parameterTypeSelect.val()) {
                 parameterType = parameterTypeSelect.val();
                 valueTypeInput && valueTypeInput.destroy();

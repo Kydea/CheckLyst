@@ -112,10 +112,20 @@
     var
         formSelector = "form#Detail",
         protocolChange = function (select) {
-            var ftp = select.val() == "FTP";
-            matematici.controls.setEditable($("input[name=passive]", formSelector), ftp);
-            matematici.controls.setEditable($("input[name=ssl]", formSelector), ftp);
-            matematici.controls.setEditable($("textarea[name=key]", formSelector), !ftp);
+            var
+                ftp = select.val() == "FTP",
+                passive = $("input[name=passive]", formSelector),
+                ssl = $("input[name=ssl]", formSelector),
+                key = $("textarea[name=key]", formSelector);
+            matematici.controls.setEditable(passive, ftp);
+            matematici.controls.setEditable(ssl, ftp);
+            matematici.controls.setEditable(key, !ftp);
+            if (ftp) 
+                key.val("");
+            else {
+                passive.prop("checked", false);
+                ssl.prop("checked", false);
+            }
         };
 
     new matematici.Tab("div.TabContainer", {
@@ -135,7 +145,6 @@
         buttons: [{
             icon: "cog",
             text: "test",
-            ahidden: true,
             id: "TestButton",
             handler: function () {
                 var action = function () {

@@ -181,7 +181,7 @@
                     .append($("<tr />")
                         .append($("<th />"))
                         .append($("<th />").text("item type"))
-                        .append($("<th />").text("id"))
+                        .append($("<th />").text("id / index"))
                         .append($("<th />").text("code"))
                         .append($("<th />").text("description"))
                         .append($("<th />"))
@@ -196,7 +196,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                        .append($("<a />").addClass("Button DefaultButton").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             close();
                         }))
                         .append(openButton = $("<a />").addClass("Button").text("properties").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {

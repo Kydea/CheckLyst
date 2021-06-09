@@ -7,30 +7,39 @@
         editor,
         model,
 
-        showColumns = function () {
+        getQueryColumns = function (handler) {
             $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/List/GetColumns",
                 data: {
-                    query: editor.getValue()
+                    query: editor.getValue(),
+                    clauses: model.clauses,
                 },
                 suppressErrors: true
             }).done(function (result) {
+                handler(result);
+            }).error(function () {
+                handler([])
+            });
+        },
+
+        showColumns = function () {
+            getQueryColumns(function (result) {
                 new reports.ColumnsList({
                     columns: (result || []).map(function (column) {
                         return "\"" + column + "\"";
                     })
                 });
-            }).error(function () {
-                new reports.ColumnsList();
             });
         },
 
         showClauses = function () {
-            new reports.ClausesList({
-                columns: (model.columns || []).map(function (column) {
-                    return "\"" + column.label + "\"";
-                })
+            getQueryColumns(function (result) {
+                new reports.ClausesList({
+                    columns: (result || []).map(function (column) {
+                        return "\"" + column + "\"";
+                    })
+                });
             });
         },
 
@@ -73,6 +82,10 @@
             }, parametersPrepare());
         },
 
+        view = function () {
+            matematici.navigator.open(options.viewerUrl);
+        },
+
         deleteRecord = function () {
             detailPage.deleteRecord(function () {
                 matematici.canClose = true;
@@ -102,6 +115,7 @@
             var valid = true;
             $("div.ActionBar a.ColumnsButton").toggleClass("Invalid", false);
             $("div.ActionBar a.ClausesButton").toggleClass("Invalid", false);
+            editor.setError();
 
             if (data && data.valid == false) {
                 valid = false;
@@ -144,6 +158,11 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
+                matematici.breadcrumbs.set([
+                    { content: "report editor", label: "page" },
+                    { content: options.code || "(new report)", label: "code" }
+                ]);
+
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.code == "");
 
                 detailPage = new matematici.DetailPage({
@@ -214,7 +233,9 @@
                 model = {
                     fields: {
                         query: { value: null },
-                        reportSource: { value: null }
+                        reportSource: { value: null },
+                        columns: [],
+                        clauses: []
                     }
                 };
         };
@@ -229,6 +250,7 @@
     reportEditor.quit = quit;
     reportEditor.save = save;
     reportEditor.verify = verify;
+    reportEditor.view = view;
     reportEditor.deleteRecord = deleteRecord;
 
     setup();

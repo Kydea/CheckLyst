@@ -211,22 +211,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula.IsSet = source.FindIteratorModelItem().DescriptionFormula.IsSet;
         }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var elementModel = base.GetViewModel();
+            var elementModel = base.GetViewModel(ReportModel);
             elementModel.DescriptionValue = TableContent ? FindIteratorModelItem().DescriptionValue : DescriptionValue;
             elementModel.Id = Id;
             elementModel.TypeName = TypeName;
-            if (NewLine)
-                elementModel.NewLine = NewLine;
-            if (!string.IsNullOrEmpty(Color))
-                elementModel.Color = Color;
-            if (FontSize > 0)
-                elementModel.FontSize = FontSize;
-            if (Hidden)
-                elementModel.Hidden = true;
-            if (Removed)
-                elementModel.Removed = true;
+            if (Hidden) elementModel.Hidden = true;
+            if (!ReportModel)
+            {
+                if (NewLine) elementModel.NewLine = NewLine;
+                if (!string.IsNullOrEmpty(Color)) elementModel.Color = Color;
+                if (FontSize > 0) elementModel.FontSize = FontSize;
+                if (Removed) elementModel.Removed = true;
+            }
 
             return elementModel;
         }

@@ -176,6 +176,9 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Role = r.Role
                     }));
                     response.InstanceFunctions = functions.ToArray();
+
+                    response.ConflictingGroups =
+                        group.GroupConflicts.Select(c => c.Group2).Union(group.GroupConflicts1.Select(c => c.Group1)).Distinct().ToList();
                 }
                 catch (Exception exception)
                 {
@@ -261,6 +264,12 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
+
+            foreach (var conflictingGroup in record.ConflictingGroups)
+                Group.GroupConflicts.Add(new GroupConflicts
+                {
+                    Group2 = conflictingGroup
+                });
         }
 
         private static string SerializeGroupInformation(GroupRequest group, IEnumerable<GroupFunctions> groupFunctions, IEnumerable<GroupRoles> groupRoles)
@@ -282,6 +291,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     PrototypeType = gr.PrototypeType.HasValue ? gr.PrototypeType + " " + gr.PrototypeTypes?.Name : null,
                     gr.Role
                 }),
+                group.ConflictingGroups,
                 ReasonForChange = group.Reason
             });
         }

@@ -86,6 +86,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Viewer\ReportRequest.cs" />
+    <Compile Include="Viewer\ReportResponse.cs" />
     <Compile Include="Detail\ReportColumn.cs" />
     <Compile Include="Detail\ReportClause.cs" />
     <Compile Include="Detail\IDetailService.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Detail\DetailService.cs" />
     <Compile Include="Detail\ValidationError.cs" />
     <Compile Include="Viewer\IReportViewerService.cs" />
+    <Compile Include="Viewer\ReportViewerException.cs" />
     <Compile Include="Viewer\ReportViewerService.cs" />
     <Compile Include="Detail\ReportSource.cs" />
     <Compile Include="List\ListRow.cs" />

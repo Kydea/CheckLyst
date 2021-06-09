@@ -11,11 +11,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public int Height { get; set; }
         public int Width { get; set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
-            if (Height > 0) ItemModel.Height = Height;
-            if (Width > 0) ItemModel.Width = Width;
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (!ReportModel)
+            {
+                if (Height > 0) ItemModel.Height = Height;
+                if (Width > 0) ItemModel.Width = Width;
+            }
             return ItemModel;
         }
 

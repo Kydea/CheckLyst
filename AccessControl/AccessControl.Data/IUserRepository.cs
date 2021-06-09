@@ -4,6 +4,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Web.Security;
 using System.Linq;
 using CheckListManager.AccessControl.Data.Models;
+using System;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -43,5 +44,6 @@ namespace CheckListManager.AccessControl.Data
         Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group);
         Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group);
         Task DeleteGroupAsync(long companyId, string code);
+        Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups);
     }
 }

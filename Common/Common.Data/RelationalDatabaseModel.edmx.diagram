@@ -134,6 +134,9 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.ReportClauses" Width="1.5" PointX="26.875" PointY="0.75" />
         <AssociationConnector Association="RelationalDatabaseModel.ReportClauses_Report_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.ReportGroups" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.GroupConflicts" Width="1.5" PointX="20.125" PointY="29" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group1" />
+        <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group2" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

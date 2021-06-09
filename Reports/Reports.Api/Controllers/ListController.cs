@@ -3,6 +3,7 @@ using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Reports.Logic.Detail;
 using CheckListManager.Reports.Logic.List;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -27,10 +28,10 @@ namespace CheckListManager.Reports.Api.Controllers
 		[Route("GetData")]
 		public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
 		{
-            return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _listService.GetDataAsync(Identity, request));
 		}
 
-        [Authorize(Roles = "Reports#View")]
+        [Authorize(Roles = "Reports#Edit")]
         [HttpPost]
         [Route("Load")]
         public async Task<IHttpActionResult> Load(Message<DetailRequest> request)
@@ -78,7 +79,7 @@ namespace CheckListManager.Reports.Api.Controllers
         {
             try
             {
-                return Ok(await _detailService.GetColumnsAsync(Identity, request.Query));
+                return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
             }
             catch (Exception Exception)
             {

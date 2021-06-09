@@ -117,7 +117,8 @@
       position: absolute; }
     div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource {
       position: absolute;
-      bottom: 10px; }
+      bottom: 10px;
+      top: unset; }
       div.PropertyPanel div.PropertyValue.Signature label.DumpExternalDataSource span {
         position: static !important; }
     div.PropertyPanel div.PropertyValue.Link label {

@@ -434,7 +434,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     functions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
                         .Select(g => new Grant
-                        { 
+                        {
                             Department = g.Key.Department,
                             PrototypeType = g.Key.PrototypeType,
                             FunctionGroup = "Instances",
@@ -789,6 +789,12 @@ namespace CheckListManager.AccessControl.Logic.Services
                 await _emailService.LogErrorAsync(e, "Failed to clear users pin");
                 Logger.Error(e);
             }
+        }
+
+        public async Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups)
+        {
+            var conflicts = await _userRepository.GetConflicts(identity.CompanyId, groups);
+            return conflicts.Select(c => new Tuple<string, string>(c.Group1, c.Group2)).ToList();
         }
     }
 }

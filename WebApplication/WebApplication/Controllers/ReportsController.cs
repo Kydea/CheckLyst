@@ -29,6 +29,12 @@ namespace CheckListManager.WebApplication.Controllers
             return PartialView(new Report { Code = Code });
         }
 
+        [Route("Report/{Code}")]
+        public ActionResult Report(string Code)
+        {
+            return PartialView(new Report { Code = Code });
+        }
+
         [Authorize(Roles = "Reports#Edit")]
         [Route("ColumnEditor")]
         public ActionResult ColumnEditor()

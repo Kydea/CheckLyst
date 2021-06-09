@@ -243,6 +243,9 @@
     <Content Include="Content\Theme\Report.css">
       <DependentUpon>Report.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ReportEditor.css">
+      <DependentUpon>ReportEditor.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
     </Content>
@@ -432,6 +435,7 @@
     <Content Include="Content\Theme\Report.scss" />
     <Content Include="Content\Theme\ColumnsList.scss" />
     <Content Include="Content\Theme\ClausesList.scss" />
+    <Content Include="Content\Theme\ReportEditor.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -503,6 +507,8 @@
     <Content Include="Scripts\Reports\GroupsList.js" />
     <Content Include="Scripts\Reports\ColumnsList.js" />
     <Content Include="Scripts\Reports\ColumnEditor.js" />
+    <Content Include="Scripts\Reports\Report.js" />
+    <Content Include="Scripts\Reports\ReportViewer.js" />
     <Content Include="Scripts\Reports\ReportEditor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -574,6 +580,8 @@
     <Content Include="Views\Reports\ColumnEditor.cshtml" />
     <Content Include="Views\Reports\ClauseEditor.cshtml" />
     <Content Include="Views\Reports\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Viewer.cshtml" />
+    <Content Include="Views\Reports\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -25,20 +25,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
         public string SignerDescription { get; set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
-            if (Cancelable)
-                ItemModel.Cancelable = Cancelable;
-            if (AcceptsPin)
-                ItemModel.AcceptsPin = AcceptsPin;
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (Cancelable) ItemModel.Cancelable = Cancelable;
+            if (AcceptsPin) ItemModel.AcceptsPin = AcceptsPin;
             if (SendEmail)
             {
                 ItemModel.SendEmail = SendEmail;
                 ItemModel.SendEmailAddress = SendEmailAddress;
             }
-            if (!string.IsNullOrEmpty(ButtonLabel))
-                ItemModel.ButtonLabel = ButtonLabel;
+            if (!string.IsNullOrEmpty(ButtonLabel)) ItemModel.ButtonLabel = ButtonLabel;
             ItemModel.Signed = Signed;
             if (Signed)
             {

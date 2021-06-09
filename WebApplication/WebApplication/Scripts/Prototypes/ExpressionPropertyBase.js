@@ -32,6 +32,7 @@
                 closeHandler: resumePropertyPanel,
                 useHandler: function (expression) {
                     currentProperty.getType().setExpressionCode(expression.code);
+                    expressionPropertyBase.check(expression.code);
                 }
             });
         },

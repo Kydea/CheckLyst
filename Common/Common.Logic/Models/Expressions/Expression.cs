@@ -56,6 +56,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 throw new Exception($"Expression descriptions must not exceed 100 characters");
         }
 
+        public dynamic GetViewModel() =>
+            new
+            {
+                Description,
+                Value?.Type.TypeName,
+                Value?.Value
+            };
+
         public void Parse(ICheckList checkList)
         {
             Root = new TokenSet(SerializedValue, new Position()).Symbol;

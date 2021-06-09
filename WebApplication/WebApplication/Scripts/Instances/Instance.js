@@ -266,10 +266,10 @@
                 for (var index in tokens) {
                     var
                         parameter = tokens[index].split('='),
-                        key = parameter.length === 2 && parameter[0] && parameter[0].length > 5 && parameter[0].indexOf("item.") == 0 ? parameter[0].substring(5) : null;
+                        name = parameter.length === 2 && parameter[0] && parameter[0].length > 5 && parameter[0].indexOf("item.") == 0 ? parameter[0].substring(5) : null;
 
-                    if (key != null && key.indexOf("'") == -1)
-                        parameters.push({ key: key, value: decodeURIComponent(parameter[1]) });
+                    if (name != null && name.indexOf("'") == -1)
+                        parameters.push({ name: name, value: decodeURIComponent(parameter[1]) });
                 }
             }
 
@@ -279,14 +279,15 @@
             $.ajax({
                 url: matematici.urls.instances.api + "/" + (newInstance ? "Create" : "Get"),
                 type: "post",
-                data: {
+                contentType: "application/json",
+                data: JSON.stringify({
                     code: options.code,
                     prototype: options.prototype,
                     version: options.version == "-1" ? null : options.version,
                     parameters: parameters,
                     parentInstanceCode: parentInstanceCode,
                     parentInstanceLinkID: parentInstanceLinkID
-                },
+                }),
                 onErrorClosed: parentInstanceCode ? function () {
                     matematici.navigator.open(matematici.urls.instances.detail + "/" + parentInstanceCode);
                 } : null

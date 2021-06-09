@@ -104,7 +104,12 @@
                         update(index);
                     }
                     verify();
-                }, remove, function (editor, row) {
+                }, function () {
+                    remove();
+                    verify();
+                    colorRows();
+                    select();
+                }, function (editor, row) {
                     var
                         oldRow,
                         newIndex;
@@ -139,33 +144,35 @@
                                 visible: true
                             });
                     }
+                    autoCenter.center();
+                    verify();
+                },
+                replaceColumns = function () {
+                    for (var index = list.length - 1; index >= 0; --index)
+                        remove(index);
+                    for (var index = 0; index < options.columns.length; ++index) {
+                        var queryColumn = options.columns[index];
+                        insert({
+                            label: prettify(queryColumn),
+                            column: queryColumn,
+                            visible: true
+                        });
+                    }
+                    autoCenter.center();
+                    verify();
                 },
                 deleteColumns = function () {
-                    for (var index = options.columns.length - 1; index >= 0; --index) {
-                        var queryColumn = options.columns[index];
+                    for (var index = list.length - 1; index >= 0; --index)
                         remove(index);
-                    }
+                    autoCenter.center();
+                    verify();
                 };
 
             var buttons = [
                 { text: "cancel", icon: "times", cancelButton: true },
-                {
-                    text: "delete columns", icon: "trash-alt", handler: function () {
-                        deleteColumns();
-                        autoCenter.center();
-                    }
-                }, {
-                    text: "replace columns", icon: "sync", handler: function () {
-                        deleteColumns();
-                        createColumns();
-                        autoCenter.center();
-                    }
-                }, {
-                    text: "add columns", icon: "plus", handler: function () {
-                        createColumns();
-                        autoCenter.center();
-                    }
-                }
+                { text: "delete columns", icon: "trash-alt", handler: deleteColumns },
+                { text: "replace columns", icon: "sync", handler: replaceColumns },
+                { text: "add columns", icon: "plus", handler: createColumns }
             ];
             matematici.dialog.popupMenu(buttons);
         },
@@ -179,9 +186,6 @@
             getRow(index == null ? currentIndex : index).remove();
             removeItem(currentIndex);
             toggleNoRecord();
-            verify();
-            colorRows();
-            select();
         },
 
         insertItem = function (row, index) {

@@ -21,7 +21,7 @@ namespace CheckListManager.Common.Data
         public bool Visible { get; set; }
         public string Format { get; set; }
         public bool GroupColumn { get; set; }
-        public bool OrderColumn { get; set; }
+        public int OrderColumn { get; set; }
         public string ValueAggregation { get; set; }
         public string GroupAggregation { get; set; }
     

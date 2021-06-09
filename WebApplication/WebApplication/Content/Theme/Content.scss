@@ -42,6 +42,24 @@ body:not(.Login) {
             clear: both;
         }
 
+        h1, h2 {
+            &.Green {
+                text-transform: uppercase;
+                margin: 0 $Metric-Control-Space $Metric-Control-Space !important;
+                color: white !important;
+                min-height: 1em;
+                margin-top: -$Metric-Control-Space !important;
+                margin-left: -$Metric-Control-Space !important;
+                margin-right: -$Metric-Control-Space !important;
+                padding: $Metric-Control-Space;
+                background-color: $Color-Green-Regular;
+                width: calc(100% + #{2 * $Metric-Control-Space});
+                top: 0;
+                left: 0;
+                border-radius: 15px 15px 0 0;
+            }
+        }
+
         h3 {
             margin: 20px 0;
             font-size: 16px;

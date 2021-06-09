@@ -46,12 +46,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 BindElement<Attachment>(Target, DependencyRelation.Properties.Validity, DependencyRelation.Properties.Validity);
         }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
-            var Target = GetTarget();
-            ItemModel.Key = Target.Key;
-            ItemModel.FileType = Target.FileType;
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (!ReportModel)
+            {
+                var Target = GetTarget();
+                ItemModel.Key = Target.Key;
+                ItemModel.FileType = Target.FileType;
+            }
             return ItemModel;
         }
     }

@@ -98,37 +98,36 @@ namespace CheckListManager.Reports.Logic.Detail
                 };
             }
 
-            for (var Index = 0; Index < record.Columns.Count; ++Index)
-            {
-                var Column = record.Columns[Index];
-                if (string.IsNullOrWhiteSpace(Column.Label))
-                    AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
+            if (record.Columns != null)
+                for (var Index = 0; Index < record.Columns.Count; ++Index)
+                {
+                    var Column = record.Columns[Index];
+                    if (string.IsNullOrWhiteSpace(Column.Label))
+                        AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
 
-                if (string.IsNullOrWhiteSpace(Column.Column))
-                    AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
-            }
+                    if (string.IsNullOrWhiteSpace(Column.Column))
+                        AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
+                }
 
             if (!response.ColumnErrors.Any()) response.ColumnErrors = null;
 
-            HashSet<string> ColumnNames = new HashSet<string>(record.Columns.Select(c => c.Label));
-            for (var Index = 0; Index < record.Clauses.Count; ++Index)
-            {
-                var Clause = record.Clauses[Index];
-                if (Clause.Clause.Column != null && !ColumnNames.Contains(Clause.Clause.Column))
-                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+            if (record.Clauses != null)
+                for (var Index = 0; Index < record.Clauses.Count; ++Index)
+                {
+                    var Clause = record.Clauses[Index];
+                    if (string.IsNullOrWhiteSpace(Clause.Label))
+                        AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
 
-                if (string.IsNullOrWhiteSpace(Clause.Label))
-                    AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
+                    if (string.IsNullOrWhiteSpace(Clause.ParameterName))
+                        AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
 
-                if (string.IsNullOrWhiteSpace(Clause.ParameterName))
-                    AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
+                    if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
+                        AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
 
-                if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
-                    AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
-
-                if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
-                    AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
-            }
+                    //rimuovere prototypes
+                    if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
+                        AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+                }
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
 
@@ -137,7 +136,7 @@ namespace CheckListManager.Reports.Logic.Detail
             if (record.ReportSource == null)
                 try
                 {
-                    await _reportViewerRepository.GetDataTable(identity.CompanyId, record.Query);
+                    await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query, record.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType));
                 }
                 catch (DatabaseException DatabaseException)
                 {
@@ -311,9 +310,9 @@ namespace CheckListManager.Reports.Logic.Detail
                 Query = rs.Query
             }).ToList();
 
-        public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query)
+        public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query, Dictionary<string, string> parameters)
         {
-            using (var dataTable = await _reportViewerRepository.GetDataTable(identity.CompanyId, query))
+            using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query, parameters))
             {
                 var reportColumns = new List<string>(dataTable.Columns.Count);
                 foreach (DataColumn column in dataTable.Columns)

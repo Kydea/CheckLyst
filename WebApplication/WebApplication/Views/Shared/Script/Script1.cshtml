@@ -8,8 +8,8 @@
 
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
 
-    $(document).ajaxStart(
-        function () {
+    $(document)
+        .ajaxStart(function () {
             matematici.loader.show();
         }).ajaxStop(function () {
             matematici.loader.hide();

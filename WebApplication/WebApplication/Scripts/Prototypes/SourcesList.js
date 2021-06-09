@@ -304,7 +304,7 @@
             var
                 buttons =
                     $("<div />").addClass("Buttons").appendTo(container)
-                        .append($("<a />").addClass("Button").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
+                        .append($("<a />").addClass("Button DefaultButton").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                             updatePrototype();
                             close();
                         }))

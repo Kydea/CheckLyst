@@ -21,13 +21,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public Lock Lock { get; set; }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ElementModel = base.GetViewModel();
+            var ElementModel = base.GetViewModel(ReportModel);
             ElementModel.Description = Description;
-            ElementModel.Groups = Groups.Select(g => ((Group)g).GetViewModel());
-            ElementModel.Lock = Lock;
             if (Hidden) ElementModel.Hidden = true;
+            if (!ReportModel)
+            {
+                ElementModel.Groups = Groups.Select(g => ((Group)g).GetViewModel(ReportModel));
+                ElementModel.Lock = Lock;
+            }
             return ElementModel;
         }
 

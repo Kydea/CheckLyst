@@ -19,8 +19,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public string Url { get; set; }
         public Formula UrlFormula { get; } = new Formula();
-        public string ElementType { get; set; }
-        public string ElementCode { get; set; }
 
 
         protected override void UpdateFormula()
@@ -57,13 +55,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return text;
         }
 
-        public override dynamic GetViewModel()
+        public override dynamic GetViewModel(bool ReportModel)
         {
-            var ItemModel = base.GetViewModel();
+            var ItemModel = base.GetViewModel(ReportModel);
             ItemModel.Url = UrlFormula.Value;
-            ItemModel.ElementType = ElementType;
-            ItemModel.ElementCode = ElementCode;
-            ItemModel.ElementId = ElementCode == null ? default(int?) : ((Item)GetBranchElements()[ElementCode]).Id;
             return ItemModel;
         }
     }

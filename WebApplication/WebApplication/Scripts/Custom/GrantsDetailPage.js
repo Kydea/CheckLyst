@@ -87,7 +87,7 @@
                 departmentsSelect, prototypeTypesSelect, rolesSelect, functionsSelect,
                 departmentsAutoComplete, prototypeTypesAutoComplete, rolesAutoComplete, functionsAutoComplete;
 
-                $("<hr />").appendTo(div)
+            $("<hr />").appendTo(div)
 
             if (page != "Roles") {
                 departmentsSelect = $("<select />").addClass("Department");
@@ -262,6 +262,8 @@
 
             if (page == "Users")
                 data.groups = groupsSelect.val();
+            else if (page == "Groups")
+                data.conflictingGroups = groupsSelect.val();
 
             $("div.Function", tab.getItem(prototypesTab).tab).each(function () {
                 var record = {};
@@ -432,6 +434,14 @@
                     var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
                     autoComplete.initialize();
                     if (detailPage.isReadOnly()) autoComplete.lock(true)
+                } else if (page == "Groups") {
+                    groupsSelect = $("<select />").appendTo($("div.Tab.Conflicts div.Control", detailPage.getElement())).prop("multiple", true).addClass("FullHeight");
+                    for (var index in groups)
+                        groupsSelect.append($("<option />").text(groups[index]).attr("value", groups[index]));
+                    groupsSelect.val(result.conflictingGroups);
+                    var autoComplete = new matematici.AutoComplete(groupsSelect[0]);
+                    autoComplete.initialize();
+                    if (detailPage.isReadOnly()) autoComplete.lock(true)
                 }
 
                 $("input[name=authenticationCode]", detailPage.getElement()).parent().toggleClass("Hidden", !result.showAuthenticationCode);
@@ -502,6 +512,33 @@
             }
         },
 
+        validateHandler = function (event, callback) {
+            if (page != "Users" || event != "Edit")
+                callback();
+
+            $.ajax({
+                type: "post",
+                url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
+                data: {
+                    groups: groupsSelect.val()
+                }
+            }).done(function (result) {
+                if (result.length == 0)
+                    callback();
+                else {
+                    var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
+                    matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
+                        {
+                            text: "Ignore conflicts", icon: "check", handler: function () {
+                                setTimeout(callback, 0);
+                            }
+                        },
+                        { text: "Cancel", icon: "times" }
+                    ]);
+                }
+            });
+        },
+
         setup = function () {
             tab = new matematici.Tab(formSelector + " div.TabContainer", {
                 fixedHeight: true
@@ -512,6 +549,7 @@
                 initHandler: initHandler,
                 parametersPrepareHandler: parametersPrepareHandler,
                 completeHandler: completeHandler,
+                validateHandler: validateHandler,
                 width: "inherit",
                 buttons: [{
                     icon: "plus",

@@ -258,6 +258,15 @@ namespace CheckListManager.Instances.Logic.Services
                     CheckInvalidItems(Child, InvalidItems);
         }
 
+        private async Task UpdateJSONFieldsAsync(InstanceCacheObject cacheObject)
+        {
+            var itemValues = cacheObject.Instance.Items.Where(i => !i.Value.Removed && !i.Value.IterationItem && !i.Value.IteratorModelItem).ToDictionary(k => k.Key, v => ((Item)v.Value).GetViewModel(true));
+            var itemsByLabel = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Description, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
+            var itemsByCode = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Code, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
+            var expressions = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel()));
+            await _instancesRepository.UpdateJSONFieldsAsync(cacheObject.ID.Value, cacheObject.CompanyId, JsonConvert.SerializeObject(itemsByCode), JsonConvert.SerializeObject(itemsByLabel), JsonConvert.SerializeObject(expressions));
+        }
+
         public async Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity)
         {
             try
@@ -351,6 +360,7 @@ namespace CheckListManager.Instances.Logic.Services
                 });
 
                 await UpdateParentInstance(cacheObject, identity, false);
+                await UpdateJSONFieldsAsync(cacheObject);
 
                 return cacheObject;
             }
@@ -590,6 +600,8 @@ namespace CheckListManager.Instances.Logic.Services
                 row.ModifiedOn = ModifiedOn;
                 row.ModifiedBy = ModifiedBy;
 
+                await UpdateJSONFieldsAsync(cacheObject);
+
                 _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
                 if (complete)
@@ -687,6 +699,8 @@ namespace CheckListManager.Instances.Logic.Services
                         State = row.InstanceState,
                         Note = note
                     });
+
+                    await UpdateJSONFieldsAsync(cacheObject);
                 }
 
                 await _instancesRepository.SaveChangesAsync();
@@ -1974,7 +1988,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!cacheObject.Instance.ReadOnly)
                 {
                     UnlockPages(cacheObject.Instance, identity.Code);
-                    TrackChanges(cacheObject, identity.Code);
+                    cacheObject.NeedToSave = true;
                 }
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

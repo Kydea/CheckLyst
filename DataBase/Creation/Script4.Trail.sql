@@ -102,5 +102,6 @@ create table "Trail"."Records"
 	"CheckListID" bigint
 );
 
-create index "Index_Records_CheckList" on "Trail"."Records" ("Company", "CheckList");
+create index "Index_Records_CheckListCode" on "Trail"."Records" ("Company", "CheckListCode");
+create index "Index_Records_CheckListID" on "Trail"."Records" ("Company", "CheckListID");
 create index "Index_Records_User" on "Trail"."Records" ("Company", "User");

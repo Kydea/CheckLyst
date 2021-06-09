@@ -210,13 +210,13 @@ namespace CheckListManager.AccessControl.Data
             return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
 
-        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role) 
+        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role)
             =>
             Entities.Users
                 .Where(
-                    u => u.Company == company 
-                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
-                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper())) 
+                    u => u.Company == company
+                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
+                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
                         && (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
                         && (group == string.Empty || u.UserGroups.Any(ug => ug.Group.ToUpper().Contains(group.ToUpper())))
                         && (role == string.Empty || u.UserRoles.Any(ug => ug.Role.ToUpper().Contains(role.ToUpper())))
@@ -343,8 +343,8 @@ namespace CheckListManager.AccessControl.Data
         private IQueryable<Groups> GetGroupsAsync(long company, string code, string description, string user, string role) =>
             Entities.Groups
                 .Where(
-                    u => u.Company == company 
-                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper())) 
+                    u => u.Company == company
+                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
                         && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
                         && (user == string.Empty || u.UserGroups.Any(ug => ug.User.ToUpper().Contains(user.ToUpper())))
                         && (role == string.Empty || u.GroupRoles.Any(gr => gr.Role.ToUpper().Contains(role.ToUpper())))
@@ -379,8 +379,11 @@ namespace CheckListManager.AccessControl.Data
             existingGroup.ModifiedBy = identity.Code;
             Entities.GroupRoles.RemoveRange(existingGroup.GroupRoles);
             Entities.GroupFunctions.RemoveRange(existingGroup.GroupFunctions);
+            Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts);
+            Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts1);
             existingGroup.GroupRoles = group.GroupRoles;
             existingGroup.GroupFunctions = group.GroupFunctions;
+            existingGroup.GroupConflicts = group.GroupConflicts;
             await SaveChangesAsync();
             return existingGroup;
         }
@@ -394,5 +397,18 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
+        private const string CONFLICTS_QUERY = 
+            "select 1 " +
+            "from \"Security\".\"GroupConflicts\" gc " +
+            "where " +
+                "gc.\"Group1\" in (select ug.\"Group\" from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\") " +
+                "and gc.\"Group2\" in (select ug.\"Group\" from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\") ";
+
+        public async Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups)
+        {
+            return
+                groups == null || !groups.Any() ? new List<GroupConflicts>(0) :
+                await Entities.GroupConflicts.Where(c => c.Company == company && groups.Contains(c.Group1) && groups.Contains(c.Group2)).ToListAsync();
+        }
     }
 }

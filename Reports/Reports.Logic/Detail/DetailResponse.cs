@@ -12,6 +12,7 @@ namespace CheckListManager.Reports.Logic.Detail
         public Dictionary<string, ValidationError> ColumnErrors { get; set; } = new Dictionary<string, ValidationError>();
         public Dictionary<string, ValidationError> ClauseErrors { get; set; } = new Dictionary<string, ValidationError>();
 
+        public string Description { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

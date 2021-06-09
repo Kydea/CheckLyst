@@ -9,6 +9,8 @@ using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.Exceptions;
+using Dapper;
+using System.Data;
 
 namespace CheckListManager.Reports.Data
 {
@@ -23,16 +25,23 @@ namespace CheckListManager.Reports.Data
 
         public async Task<PagingResponse<List<Common.Data.Reports>>> GetReportsAsync(
             long company,
+            string user,
             string code,
             string description,
             int currentPage, 
             int itemsPerPage)
         {
+            IEnumerable<string> userGroups = null;
+            if (string.IsNullOrEmpty(user))
+                user = string.Empty;
+            else
+                userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
             if (code == null) code = string.Empty;
             if (description == null) description = string.Empty;
             var Query = Entities.Reports
                 .Where(r =>
-                    code == string.Empty || r.Code.ToUpper().Contains(code)
+                    user == string.Empty || !r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))
+                    && code == string.Empty || r.Code.ToUpper().Contains(code)
                     && description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description)
                 );
 
@@ -64,7 +73,8 @@ namespace CheckListManager.Reports.Data
         public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
             report.Company = identity.CompanyId;
-            report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
+            if (groups != null && groups.Any())
+                report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             report.CreatedOn = DateTimeOffset.UtcNow;
             report.CreatedBy = identity.Code;
             Entities.Reports.Add(report);
@@ -92,7 +102,8 @@ namespace CheckListManager.Reports.Data
                 existingReport.Groups.Remove(group);
             existingReport.ReportColumns = report.ReportColumns;
             existingReport.ReportClauses = report.ReportClauses;
-            existingReport.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
+            if (groups != null && groups.Any())
+                existingReport.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             await SaveChangesAsync();
             return existingReport;
         }
@@ -102,6 +113,5 @@ namespace CheckListManager.Reports.Data
             Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, code));
             await SaveChangesAsync();
         }
-
     }
 }

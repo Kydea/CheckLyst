@@ -43,9 +43,13 @@
                 column[this.name] = this.checked;
             });
 
-            $("select", form).each(function () {
+            $("select[name]", form).each(function () {
                 column[this.name] = this.value;
             });
+
+            var behaviour = $("select#Behaviour", form).val();
+            column.orderColumn = behaviour == "u" || behaviour == "ug" ? 1 : behaviour == "d" || behaviour == "dg" ? -1 : 0;
+            column.groupColumn = behaviour == "ug" || behaviour == "dg";
 
             column.column = editor.getValue();
             return column;
@@ -112,6 +116,8 @@
             form
                 .on("change", "input, select", function () { edited = true; })
                 .on("change", "input[name=notification]", toggleNotification);
+
+            $("select#Behaviour", form).val(column && ((column.orderColumn == 1 ? "u" : column.orderColumn == -1 ? "d" : "") + (column.groupColumn ? "g" : "")));
 
             editor.setChangeHandler(function () { edited = true; })
             editor.addCompleterItems(queryColumns.map(function (column) {

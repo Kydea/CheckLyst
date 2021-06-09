@@ -273,6 +273,11 @@ form {
   form div.Control {
     margin-top: 20px;
     margin-left: 20px; }
+  form div.NoParameter {
+    margin-top: 20px;
+    margin-left: 20px;
+    text-align: center;
+    color: #666; }
 
 form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.PropertyPanel div.PropertyValue label, div.PropertyPanel div.PropertyValue p.Label, div.Module label, div.Module p.Label {
   float: left;

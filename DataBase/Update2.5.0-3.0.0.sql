@@ -1,5 +1,10 @@
 alter table "Trail"."Records" add column "CheckListID" bigint;
 alter table "Trail"."Records" rename column "CheckList" to "CheckListCode";
+
+drop index "Trail"."Index_Records_CheckList";
+create index "Index_Records_CheckListCode" on "Trail"."Records" ("Company", "CheckListCode");
+create index "Index_Records_CheckListID" on "Trail"."Records" ("Company", "CheckListID");
+
 insert into "Trail"."Actions" values ('Instance external source row imported');
 alter table "Security"."Users" add column "CorporateID" varchar(50);
 
@@ -489,5 +494,62 @@ $func$
 			)
 		)
 $func$ language sql;
+
+create table "CheckLists"."InstanceData"
+(
+	"Instance" bigint primary key references "CheckLists"."Instances" on delete cascade,
+	"Company" bigint references "Infrastructure"."Companies",
+	"ItemsByLabel" jsonb,
+	"ItemsByCode" jsonb,
+	"Expressions" jsonb
+);
+
+create index "Index_ItemsByLabel" on "CheckLists"."InstanceData" using gin ("ItemsByLabel");
+create index "Index_ItemsByCode" on "CheckLists"."InstanceData" using gin ("ItemsByCode");
+create index "Index_ItemsByExpressions" on "CheckLists"."InstanceData" using gin ("Expressions");
+
+create function "CheckLists"."UpdateInstanceData"
+(
+	"_Instance" bigint,
+	"_Company" bigint,
+	"_ItemsByCode" text,
+	"_ItemsByLabel" text,
+	"_Expressions" text
+) 
+returns int as
+$$ 
+declare 
+	"_ItemsByCodeJSON" jsonb := "_ItemsByCode"::jsonb;
+	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
+	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
+begin
+	insert into "CheckLists"."InstanceData" ("Instance", "Company", "ItemsByLabel", "ItemsByCode", "Expressions")
+	values ("_Instance", "_Company", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
+	on conflict ("Instance") do update set
+		"ItemsByCode" = "_ItemsByCodeJSON", 
+		"ItemsByLabel" = "_ItemsByLabelJSON", 
+		"Expressions" = "_ExpressionsJSON";
+
+	return 0;
+end
+$$
+language plpgsql;
+
+create table "Security"."GroupConflicts"
+(
+    "Company" bigint not null,
+
+	"Group1" varchar (60) not null,
+	constraint "GroupConflicts_Group1" foreign key ("Company", "Group1") references "Security"."Groups" on update cascade on delete cascade,
+
+	"Group2" varchar (60) not null,
+	constraint "GroupConflicts_Group2" foreign key ("Company", "Group2") references "Security"."Groups" on update cascade on delete cascade,
+
+    constraint "GroupConflicts_PK" primary key ("Company", "Group1", "Group2"),
+
+    constraint "GroupConflicts_SelfConflict" check ("Group1" <> "Group2")
+);
+
+create unique index "Index_GroupFunctions_Groups2" on "Security"."GroupConflicts" ("Company", "Group2", "Group1");
 
 --Script8.Reports.sql

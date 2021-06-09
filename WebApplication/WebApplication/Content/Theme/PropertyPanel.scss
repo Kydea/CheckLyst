@@ -201,6 +201,7 @@ div.PropertyPanel {
             label.DumpExternalDataSource {
                 position: absolute;
                 bottom: 10px;
+                top: unset;
 
                 span {
                     position: static !important;

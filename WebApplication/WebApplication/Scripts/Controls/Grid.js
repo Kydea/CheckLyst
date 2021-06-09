@@ -25,6 +25,7 @@
                 column = cell.data("column"),
                 value = data[column],
                 type = cell.data("type");
+
             if (!!value) {
                 switch (type) {
                     case "DateTimeOffset":

@@ -98,7 +98,7 @@
     };
 
     this.setReadOnly = function (value) {
-        editable = value;
+        editable = !value;
     };
 }
 
