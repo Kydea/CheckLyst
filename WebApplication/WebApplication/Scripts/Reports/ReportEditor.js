@@ -54,6 +54,7 @@
         parametersPrepare = function () {
             return {
                 data: {
+                    restricted: model.fields && model.fields.restricted && model.fields.restricted.value == "true",
                     query: reportSourceSelect.val() == null ? editor.getValue() : null,
                     columns: model.columns,
                     clauses: model.clauses,

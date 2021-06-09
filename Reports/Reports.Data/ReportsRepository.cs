@@ -31,19 +31,19 @@ namespace CheckListManager.Reports.Data
             int currentPage, 
             int itemsPerPage)
         {
-            IEnumerable<string> userGroups = null;
-            if (string.IsNullOrEmpty(user))
-                user = string.Empty;
-            else
-                userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
             if (code == null) code = string.Empty;
             if (description == null) description = string.Empty;
             var Query = Entities.Reports
                 .Where(r =>
-                    user == string.Empty || !r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))
-                    && code == string.Empty || r.Code.ToUpper().Contains(code)
-                    && description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description)
+                    (code == string.Empty || r.Code.ToUpper().Contains(code))
+                    && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description))
                 );
+
+            if (!string.IsNullOrEmpty(user))
+            {
+                var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
+                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.Online);
+            }
 
             int Count = await Query.CountAsync();
 
@@ -63,9 +63,16 @@ namespace CheckListManager.Reports.Data
             };
         }
 
-        public async Task<Common.Data.Reports> GetReportAsync(long company, string code)
+        public async Task<Common.Data.Reports> GetReportAsync(long company, string code, string user)
         {
-            var Report = await Entities.Reports.SingleOrDefaultAsync(d => d.Company == company && d.Code == code);
+            IQueryable<Common.Data.Reports> Query = Entities.Reports;
+            if (!string.IsNullOrEmpty(user))
+            {
+                var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
+                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.Online);
+            }
+
+            var Report = await Query.SingleOrDefaultAsync(d => d.Company == company && d.Code == code);
             if (Report == null) throw new DatabaseException($"Report {code} not found");
             return Report;
         }
@@ -83,7 +90,7 @@ namespace CheckListManager.Reports.Data
 
         public async Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
-            var existingReport = await GetReportAsync(identity.CompanyId, report.Code);
+            var existingReport = await GetReportAsync(identity.CompanyId, report.Code, null);
             existingReport.Code = report.Code;
             existingReport.Description = report.Description;
             existingReport.ReportSource = report.ReportSource;
@@ -110,7 +117,7 @@ namespace CheckListManager.Reports.Data
 
         public async Task DeleteReportAsync(IDefaultIdentity identity, string code)
         {
-            Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, code));
+            Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, code, null));
             await SaveChangesAsync();
         }
     }
