@@ -49,7 +49,7 @@ class Formatter: NSObject {
         self.testTimeFormatter = DateFormatter()
         
         self.dateToDateTimeFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-        self.dateToDateTimeFormatter.locale = Locale(identifier: "en_US")
+        self.dateToDateTimeFormatter.timeZone = TimeZone(abbreviation: "UTC")
         self.dateToTimeFormatter.dateFormat = "HH:mm"
         
         self.stringToDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
@@ -68,7 +68,9 @@ class Formatter: NSObject {
  
     
     func dateToDateTimeString(_ date: Date) -> String {
-        
+        if ((UserDefaults.standard.value(forKey: "timeZone") as! String) != self.dateToDateTimeFormatter.timeZone.identifier) {
+            self.dateToDateTimeFormatter.timeZone = TimeZone(identifier: UserDefaults.standard.value(forKey: "timeZone") as! String)
+        }
         return self.dateToDateTimeFormatter.string(from: date)
         
     }

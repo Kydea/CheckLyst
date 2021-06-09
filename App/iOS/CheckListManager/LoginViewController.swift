@@ -304,6 +304,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 }
                 
                 self.appDelegate.displayMessage(Title: title, Message: errorMessage)
+                
+                self.activityIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
             }
             
             do{

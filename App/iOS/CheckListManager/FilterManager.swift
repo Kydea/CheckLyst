@@ -69,12 +69,12 @@ class FilterManager {
 
 struct FilterEntry: Codable {
     
+    public var name: String
+    public var value: String
+    
     init(name: String, value: String) {
         self.name = name
         self.value = value
     }
-    
-    public var name: String
-    public var value: String
 
 }

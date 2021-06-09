@@ -10,7 +10,7 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate, UIImagePickerControllerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let appDelegate = UIApplication.shared as! MyApplication
     var instance:Instance!
@@ -30,6 +30,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var scanButton : UIBarButtonItem?
     var creationTime: Date?
     var currentAccessToken: String?
+    var oldImagePickerDelegate: UIImagePickerControllerDelegate?
+    var imagePickerController: UIImagePickerController = UIImagePickerController()
     
     
     @IBOutlet weak var webView: WKWebView!
@@ -145,12 +147,40 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        
+                
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
             requestForScanning = false
         }
+        
+        if let imagePicker = self.presentedViewController as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .camera {
+            setupWatermarkImagePicker(imagePicker)
+        }
 
+    }
+    
+    private func setupWatermarkImagePicker(_ controller: UIImagePickerController) {
+            oldImagePickerDelegate = controller.delegate
+            imagePickerController = controller
+            imagePickerController.delegate = self
+    }
+        
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerControllerDidCancel!(picker)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var newInfo = info
+        if let pickedImage = newInfo[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+            let imageWithWatermark = pickedImage.addWatermark(position: .RightBottom, watermark: WatermarkGenerator.getWatermark(size: CGSize(width: 400, height: 100)) ?? UIImage(), margin: 10)
+            
+            newInfo[UIImagePickerControllerOriginalImage] = imageWithWatermark
+        }
+
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerController!(picker, didFinishPickingMediaWithInfo: newInfo)
     }
     
     func closeInstance() {

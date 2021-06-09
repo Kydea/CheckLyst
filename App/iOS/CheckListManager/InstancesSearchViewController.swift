@@ -56,7 +56,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         newInstanceButton.isEnabled = false
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
-        for i in 0...7 {
+        for i in 0...8 {
             selectedItemsDictionary[i] = Option(text: "",value: "")
         }
         loadFilters()
@@ -122,7 +122,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         cell?.isUserInteractionEnabled = true
         fieldValue!.isEnabled = true;
         
-        let isList = indexTextDictionary[indexPath.row] != "Description" || indexTextDictionary[indexPath.row] != "Tags Value" || indexTextDictionary[indexPath.row] != "Instance ID"
+        let isList = indexTextDictionary[indexPath.row] != "Description" && indexTextDictionary[indexPath.row] != "Tags Value" && indexTextDictionary[indexPath.row] != "Instance ID"
 
         fieldValue?.textColor = (isList) ? UIColor.black : fieldValue?.textColor
         
@@ -533,7 +533,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             controller.fieldsArray = indexArrayDictionary[indexPath.row] as? [Option]
             controller.searchViewController = self
             controller.rowIndex = indexPath.row
-            controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
+            controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Instance ID" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
             controller.fieldNameString = indexTextDictionary[indexPath.row]
             controller.indexFieldDictionary = indexFieldDictionary
             if let sourceValue = indexFieldDictionary[indexPath.row], allowedSearchFieldValues.contains(sourceValue)

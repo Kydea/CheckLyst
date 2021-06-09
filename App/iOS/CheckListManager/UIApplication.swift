@@ -22,7 +22,6 @@ import CoreData
     var isTokenExpired = false
     var requestToOpenInstance = false
     var requestToOpenSearch = false
-    var needToUpdateTokens = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
@@ -67,68 +66,104 @@ import CoreData
     
     @objc func timerAction() {
         
+        UpdateUserTokenIfNeeded()
+        
+        
+    }
+    
+    func UpdateSignersTokenIfNeeded() {
         let logged = UserDefaults.standard.existKey("access_token")
-        let expireDate = UserDefaults.standard.date(forKey: "token_expires")
-        if(logged) {
-            self.refreshToken(expireDate!)
+        
+        guard logged else { return }
+        
+        for signer in SignersManager.shared.signers {
+            timeToExpire = Date(timeIntervalSince1970: signer.accessTokenExpiration).timeIntervalSinceNow;
+            
+            guard timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing else {
+                return
+            }
+            
+            self.refreshToken(signer.refreshToken) { json in
+                SignersManager.shared.updateSigner(json: json)
+                
+                if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+                    controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                }
+            }
         }
     }
     
-    func refreshToken(_ expireDate:Date) {
-    
+    func UpdateUserTokenIfNeeded() {
+        let logged = UserDefaults.standard.existKey("access_token")
+        
+        guard logged else { return }
+        
+        guard let expireDate = UserDefaults.standard.date(forKey: "token_expires") else {
+            return
+        }
+        
         timeToExpire = expireDate.timeIntervalSinceNow;
         
-        if(timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing) {
+        guard timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing else {
+            return
+        }
         
-            isRefreshing = true
+        self.refreshToken(UserDefaults.standard.value(forKey: "refresh_token") as! String) { json in
+            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
             
-            ServerConnection.loginOrRefreshToServer(["Refresh_Token" : UserDefaults.standard.value(forKey: "refresh_token") as! String]) { (serverResponse) -> Void in
-                do{
-                    if serverResponse.data != nil
+            UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
+            
+            
+            if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+            }
+            
+            if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
+                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+            }
+        }
+    }
+    
+    func refreshToken(_ refreshToken:String, refreshAction: @escaping (_ json: [String: Any]) -> Void) {
+        
+        #if DEBUG
+        print("Refreshing token at: \(Formatter.instance.stringFromTestDate(Date()))")
+        #endif
+        isRefreshing = true
+        
+        ServerConnection.loginOrRefreshToServer(["Refresh_Token" : refreshToken]) { (serverResponse) -> Void in
+            do{
+                if serverResponse.data != nil
+                {
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
+                    if(json["error"] == nil)
+                    
                     {
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                       
-                        if(json["error"] == nil)
-                            
-                        {
-                            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
-                            
-                            UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
-                            
-                            self.isRefreshing = false
-                            self.needToUpdateTokens = true
-                            
-                            if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
-                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
-                            }
-                            
-                            if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
-                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
-                            }
-                            
-                        } else {
-                            
-                            self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: \(String(describing: json["error"])).\n You'll be redirected to login section.") {
-                                () -> Void in
-                                self.logoutAndGoToLogin()
-                            }
-                            
-                            self.isRefreshing = false
-                        }
-                    } else if serverResponse.error != nil {
-                        self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Connection error to the server.\n You'll be redirected to login section.") {
+                        refreshAction(json)
+                        self.isRefreshing = false
+                        
+                    } else {
+                        
+                        self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: \(String(describing: json["error"])).\n You'll be redirected to login section.") {
                             () -> Void in
                             self.logoutAndGoToLogin()
                         }
+                        
+                        self.isRefreshing = false
                     }
-                } catch {
-                    print("Error deserializing JSON: \(error)")
-                    self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Cannot parse response.\n You'll be redirected to login section.") {
+                } else if serverResponse.error != nil {
+                    self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Connection error to the server.\n You'll be redirected to login section.") {
                         () -> Void in
                         self.logoutAndGoToLogin()
                     }
                 }
-                
+            } catch {
+                print("Error deserializing JSON: \(error)")
+                self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Cannot parse response.\n You'll be redirected to login section.") {
+                    () -> Void in
+                    self.logoutAndGoToLogin()
+                }
             }
             
         }
