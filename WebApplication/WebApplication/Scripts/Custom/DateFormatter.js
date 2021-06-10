@@ -43,8 +43,8 @@
     parse: function (yearOrDate, monthOrTime, day) {
         var m = 
             day != null ? moment(yearOrDate + "-" + monthOrTime + "-" + day, matematici.dateFormatter.dateFormat) : //year, month, day
-                monthOrTime != null ? moment(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat) : //date, time
-                    moment(yearOrDate, matematici.dateFormatter.dateFormat); //date
+            monthOrTime != null ? moment(yearOrDate + " " + monthOrTime, matematici.dateFormatter.dateFormat + " " + matematici.dateFormatter.timeFormat) : //date, time
+            moment(yearOrDate, matematici.dateFormatter.dateFormat); //date
         return m;
 	},
 

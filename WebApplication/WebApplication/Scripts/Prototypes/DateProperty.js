@@ -49,6 +49,9 @@
     }
 
     this.setValue = function (node) {
-        node.text(model[property]);
+        var
+            stringDate = model[property],
+            formattedDate = stringDate == null || stringDate == "" ? { date: "", time: "", offset: null } : matematici.dateFormatter.format(moment.parseZone(stringDate));
+        node.text(formattedDate.date + " " + formattedDate.time).attr("title", stringDate && stringDate.length == 10 ? null : formattedDate.offset);
     }
 }

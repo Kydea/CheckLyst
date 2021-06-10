@@ -77,7 +77,7 @@
     }
 
     this.setValue = function (node) {
-        node.text(model.signatureCode);
+        node.text(model.dumpExternalSourceName ? "..." : model.signatureCode);
     }
 
     this.setError = function (handler) {

@@ -29,7 +29,7 @@
                         if (!data && result.data) refresh(result.data);
 
                         matematici.blip.ok(function () {
-                            callback(result);
+                            callback && callback(result);
                         });
                     }
                 }, options.parametersPrepareHandler && options.parametersPrepareHandler());

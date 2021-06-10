@@ -53,7 +53,7 @@
         var name = model.typeName;
 
         matematici.popup.show({
-            title: "Properties - " + (name == "Prototype" ? "Checklist" : name) + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
+            title: "Properties - " + name + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
             content: element,
             buttons: [{
                 icon: "check",
@@ -266,11 +266,9 @@
                         }
 
                     if (!tableContent && !isHeader) {
-                        var instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration;
-                        properties.push(new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "iterator"), "Iterator",
-                            "Determines if the group is an iterator.",
-                            function () {
+                        var
+                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration,
+                            toggleIteratorControls = function () {
                                 var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
                                 showAsTable.getType().setReadOnly(!itaratorCommandsEnabled);
                                 instanceIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
@@ -292,11 +290,16 @@
                                     instanceIterationsNumber.setValue();
                                     prototypeIterationsNumber.setValue();
                                     showAsTable.setValue();
-                                    addIteration.setValue();
-                                    removeIteration.setValue();
-                                    moveIteration.setValue();
                                 }
-                            }
+
+                                addIteration.setValue();
+                                removeIteration.setValue();
+                                moveIteration.setValue();
+                            };
+
+                        properties.push(new prototypes.Property(
+                            this, new prototypes.BooleanProperty(model, "iterator"), "Iterator",
+                            "Determines if the group is an iterator.", toggleIteratorControls
                         ));
 
                         showAsTable = new prototypes.Property(
@@ -320,20 +323,37 @@
                         addIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "addIteration", "add-iteration", false, false, 1), "Add iteration",
                             "Defines if the buttons add and import of the iterator are present."
-                        );
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
                         properties.push(addIteration);
 
                         removeIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "removeIteration", "remove-iteration", false, false, 1), "Remove iteration",
                             "Defines if the remove button of the iterator is present."
-                        );
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
                         properties.push(removeIteration);
 
                         moveIteration = new prototypes.Property(
                             this, new prototypes.ExpressionProperty(model, "moveIteration", "move-iteration", false, false, 1), "Move iteration",
                             "Defines if the mover button of the iterator is present."
-                        );
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
                         properties.push(moveIteration);
+
+                        setTimeout(toggleIteratorControls, 0);
                     }
 
                     break;
@@ -512,8 +532,10 @@
                         "Actions",
                         "The actions available.",
                         function () {
-                            model.parameters = null;
-                            parametersProperty.setValue();
+                            if (model.actions == 2) {
+                                model.parameters = null;
+                                parametersProperty.setValue();
+                            }
                         }
                     ));
                     properties.push(parametersProperty = new prototypes.Property(

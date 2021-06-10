@@ -3,6 +3,11 @@
         base,
         input,
         check,
+        aliases,
+
+        replaceZero = function (value) {
+            return options.number && (!options.defaultValue || options.defaultValue == "0") && value == "0" ? "" : value;
+        },
 
         change = function () {
             var value = input.val();
@@ -31,17 +36,20 @@
         valuePanel.addClass("SimpleValue");
         options = options || {};
 		input = $(options.fullHeight ? "<textarea />" : "<input />")
-			.attr({ type: "text", maxlength: options.maxLength, readOnly: options.readOnly })
-			.val(model[property]);
+            .attr({ type: "text", maxlength: options.maxLength, readOnly: options.readOnly })
+            .val(replaceZero(model[property]));
         if (!options.readOnly)
             input.on("change", change);
 		if (options.number)
 			input.keyfilter(/[\d]/);
 		else if (options.code)
             input.keyfilter(/^[$A-Z_0-9]*$/i);
+        else if (options.code)
+            input.keyfilter(/^[$A-Z_0-9]*$/i);
 
         if (options.number && !options.defaultValue)
             options.defaultValue = "0";
+
         valuePanel.append(input);
     };
 
@@ -54,7 +62,7 @@
     };
 
     this.setValue = function (node) {
-        node.text(this.hasChanges() ? model[property] : "");
+        node.text(replaceZero(model[property]));
     };
 
     this.setError = function(handler) {
