@@ -75,7 +75,7 @@
 
         download = function () {
             hamburger.toggle(false);
-            createCSV(options.code + ".csv", model.columns, model.rows)
+            createCSV(model.code + ".csv", model.columns, model.rows)
         },
 
         print = function () {
@@ -122,7 +122,7 @@
             if (initialized)
                 tableBody.empty();
             else {
-                h1.html(h1.html() + " - " + result.description);
+                h1.html(h1.html() + result.code + " - " + result.description);
                 hamburger = new matematici.Hamburger(selector + " h1 button", showMenu)
 
                 var tr = $("<tr />").appendTo(tableHead);
@@ -158,7 +158,7 @@
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/GetReportData",
                 data: {
-                    code: options.code,
+                    id: options.id,
                     page: page,
                     parameters: parameters
                 }

@@ -192,7 +192,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             {
                 try
                 {
-                    if (AttachmentElement.Key == null && !string.IsNullOrEmpty(Description))
+                    var Key = AttachmentElement.GetTarget().Key;
+                    if (Key == null && !string.IsNullOrEmpty(Description))
                         DrawText(Description, PDFBase.BoldFont, 5);
                     else if (AttachmentElement.Key != null && AttachmentElement.FileType == "Image")
                     {
@@ -201,7 +202,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
                         Paragraph Paragraph = PDFBase.Container.AddParagraph();
                         Paragraph.Format.Alignment = ParagraphAlignment.Center;
-                        var StorageFile = await CheckListPDF.StorageService.GetAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key);
+                        var StorageFile = await CheckListPDF.StorageService.GetAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Key);
                         byte[] Data;
                         Bitmap Image;
                         using (MemoryStream ms = new MemoryStream())
@@ -223,9 +224,9 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         else
                             PDFImage.ScaleWidth = .4;
                     }
-                    else if (AttachmentElement.Key != null)
+                    else if (Key != null)
                     {
-                        var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, AttachmentElement.Key, AttachmentElement);
+                        var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Key, AttachmentElement);
 
                         if (!string.IsNullOrEmpty(Description))
                             DrawText(Description, PDFBase.BoldFont, 5);

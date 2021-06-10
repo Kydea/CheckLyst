@@ -28,7 +28,9 @@
 
                         if (!data && result.data) refresh(result.data);
 
-                        matematici.blip.ok(callback);
+                        matematici.blip.ok(function () {
+                            callback && callback(result);
+                        });
                     }
                 }, options.parametersPrepareHandler && options.parametersPrepareHandler());
             };

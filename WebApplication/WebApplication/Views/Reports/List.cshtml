@@ -24,6 +24,7 @@
         <table class="Grid">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Code</th>
                     <th>Description</th>
                     <th>Report source</th>
@@ -37,6 +38,7 @@
             </thead>
             <tbody>
                 <tr class="Handler">
+                    <td data-column="id"></td>
                     <td data-column="code"></td>
                     <td data-column="description"></td>
                     <td data-column="reportSource"></td>
@@ -70,10 +72,10 @@
             rowClickHandler: function (row) {
                 var
                     openEditor = function () {
-                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").code));
+                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id));
                     },
                     openViewer = function () {
-                        matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").code));
+                        matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").id));
                     };
 
                 if (editor) {

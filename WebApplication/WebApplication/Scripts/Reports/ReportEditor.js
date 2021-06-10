@@ -54,6 +54,7 @@
         parametersPrepare = function () {
             return {
                 data: {
+                    restricted: model.fields && model.fields.restricted && model.fields.restricted.value == "true",
                     query: reportSourceSelect.val() == null ? editor.getValue() : null,
                     columns: model.columns,
                     clauses: model.clauses,
@@ -63,9 +64,10 @@
         },
 
         save = function (callback) {
-            if (!callback && options.code == "")
-                callback = function () {
-                    matematici.navigator.open(options.detailUrl + "/" + $("input[name=code]", detailPage.getElement()).val());
+            if (!callback && options.id == -1)
+                callback = function (result) {
+                    //reloads the page with the correct url
+                    matematici.navigator.open(options.detailUrl + "/" + result.id);
                 };
 
             detailPage.clickHandler(null, "Save", callback);
@@ -158,9 +160,14 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
+                var
+                    code = model.fields.code.value,
+                    description = model.fields.description.value;
+                $("h2", element).text(description == null || description == "" ? code : description);
+
                 matematici.breadcrumbs.set([
                     { content: "report editor", label: "page" },
-                    { content: options.code || "(new report)", label: "code" }
+                    { content: code, label: "code" }
                 ]);
 
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.code == "");
@@ -216,13 +223,13 @@
                 completeHandler(reportSources);
             });
 
-            if (options.code)
+            if (options.id >= 0)
                 $.ajax({
                     type: "post",
                     url: matematici.urls.reports.api + "/List/Load",
                     data: {
                         data: {
-                            code: options.code
+                            id: options.id
                         }
                     }
                 }).done(function (result) {

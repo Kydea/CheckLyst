@@ -4,6 +4,7 @@
         selected = false,
         element,
         value,
+        valueParser,
         errors = [],
 
         updateInformation = function () {
@@ -91,12 +92,18 @@
         element.toggleClass("Changed", !!type.hasChanges())
 
         value.empty();
-        if (type.setValue)
-            type.setValue(value, property);
-        else if (type.hasChanges())
-            value.text("...");
-
+        if (!valueParser || !valueParser(value, property)) {
+            if (type.setValue)
+                type.setValue(value, property);
+            else if (type.hasChanges())
+                value.text("...");
+        }
         if (type.setError) type.setError(property.setError);
+    };
+
+    this.setValueParser = function (value) {
+        valueParser = value;
+        return this;
     };
 
     this.setError = function (errorList, properties, errorMessage) {

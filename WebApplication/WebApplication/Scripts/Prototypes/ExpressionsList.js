@@ -107,11 +107,13 @@
                         oldRow = list[index];
                         list[index] = row;
                     }
-                    verify(editor.setError);
-                    if (index == null)
-                        removeItem(newIndex);
-                    else
-                        list[index] = oldRow;
+                    verify(function (expressionsList) {
+                        editor.setError(expressionsList);
+                        if (index == null)
+                            removeItem(newIndex);
+                        else
+                            list[index] = oldRow;
+                    });
                 }, verify);
         },
 

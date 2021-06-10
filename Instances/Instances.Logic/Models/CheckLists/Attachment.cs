@@ -11,7 +11,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
 
-        public Attachment GetTarget() =>
+        public ICheckListAttachment GetTarget() =>
             this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -31,6 +31,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string Key { get; set; }
         public string FileType { get; set; }
         public string Target { get; set; }
+        public bool RestrictToCamera { get; set; }
 
         public class FileTypes
         {
@@ -49,6 +50,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override dynamic GetViewModel(bool ReportModel)
         {
             var ItemModel = base.GetViewModel(ReportModel);
+            if (RestrictToCamera) ItemModel.RestrictToCamera = true;
             if (!ReportModel)
             {
                 var Target = GetTarget();

@@ -23,7 +23,7 @@ namespace CheckListManager.Reports.Logic.List
         {
             var Result = await _reportsRepository.GetReportsAsync(
                 Identity.CompanyId,
-                Identity.HasPermission("Report", "Edit") ? string.Empty : Identity.Code,
+                Identity.HasPermission("Reports", "Edit") ? string.Empty : Identity.Code,
                 Form.Data.Code,
                 Form.Data.Description,
                 Form.CurrentPage,
@@ -37,9 +37,12 @@ namespace CheckListManager.Reports.Logic.List
                 ItemsPerPage = Result.ItemsPerPage,
                 Data = Result.Data.Select(r => new ListRow
                 {
+                    ID = r.ID,
                     Code = r.Code,
                     Description = r.Description,
                     ReportSource = r.ReportSource,
+                    Online = r.Online,
+                    Restricted = r.Restricted,
                     CreatedBy = r.CreatedBy,
                     CreatedOn = r.CreatedOn,
                     ModifiedBy = r.ModifiedBy,

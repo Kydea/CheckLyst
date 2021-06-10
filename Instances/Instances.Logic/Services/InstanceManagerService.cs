@@ -2171,7 +2171,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (file == null)
                 throw new InstanceException("No attachment has been uploaded");
 
-            attachment = attachment.GetTarget();
+            attachment = (Attachment)attachment.GetTarget();
 
             var extension = Path.GetExtension(file.FileName);
             if (attachment.FileType == Attachment.FileTypes.Images)

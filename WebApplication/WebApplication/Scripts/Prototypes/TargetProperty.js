@@ -55,4 +55,8 @@
     this.setError = function(handler) {
         handler(model.errors, "target");
     };
+
+    this.setValue = function (node) {
+        node.text(model.target);
+    };
 }

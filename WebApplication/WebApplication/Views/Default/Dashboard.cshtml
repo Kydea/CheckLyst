@@ -68,6 +68,11 @@
         else
             $("#InstancesDashboardItem").hide();
 
+        if (matematici.tokenManager.checkRole("Reports#View#"))
+            ++count;
+        else
+            $("#ReportsDashboardItem").hide();
+
         $("#PinDashBoardItem").on("click", function () {
             matematici.userPanel.profile();
         });

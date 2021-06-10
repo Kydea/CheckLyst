@@ -201,6 +201,8 @@
         icon.className = "Icon fa fa-check";
 
         span.innerHTML = model.descriptionValue || "(no description)";
+        if (model.descriptionValue)
+            span.setAttribute("title", model.descriptionValue);
         span.appendChild(exclamation);
 
         button.textContent = "";

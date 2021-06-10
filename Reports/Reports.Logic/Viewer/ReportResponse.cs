@@ -7,6 +7,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 {
     public class ReportResponse
     {
+        public string Code { get; set; }
         public string Description { get; set; }
         public List<string> Columns { get; set; }
         public IEnumerable<ReportRow> Rows { get; set; }

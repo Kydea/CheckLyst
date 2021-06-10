@@ -156,7 +156,7 @@ namespace CheckListManager.Reports.Logic.Detail
 
             try
             {
-                var report = await _reportsRepository.GetReportAsync(company, request.Code);
+                var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
                 response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
                 response.Fields["code"] = new Field { Value = report.Code, Editable = false };
                 response.Fields["description"] = new Field { Value = report.Description };
@@ -222,6 +222,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     var report = new Common.Data.Reports
                     {
+                        ID = request.ID.Value,
                         Code = request.Code,
                         Description = request.Description,
                         ReportSource = request.ReportSource,
@@ -262,7 +263,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     else
                     {
                         await _reportsRepository.AddReportAsync(identity, report, request.Groups);
-                        request.ID = request.ID;
+                        request.ID = response.ID = report.ID;
                         await AuditAsync(identity, TrailAction.ReportCreated, request);
                     }
                 }
@@ -284,7 +285,7 @@ namespace CheckListManager.Reports.Logic.Detail
             var response = new DetailResponse();
             try
             {
-                await _reportsRepository.DeleteReportAsync(identity, request.Code);
+                await _reportsRepository.DeleteReportAsync(identity, request.ID.Value);
                 await AuditAsync(identity, TrailAction.ReportDeleted, request.ID.Value, request.Reason);
             }
             catch (Exception Exception)

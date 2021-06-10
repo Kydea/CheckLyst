@@ -96,7 +96,7 @@
                     .appendTo(tableBody)
                     .addClass("Handler")
                     .append($("<td />").append($("<i />").addClass("fa fa-caret-right")))
-                    .append($("<td />").addClass("ItemTypeColumn").text(item.typeName == "Prototype" ? "Checklist" : item.typeName))
+                    .append($("<td />").addClass("ItemTypeColumn").text(item.typeName))
                     .append($("<td />").addClass("IdColumn").text(item.id || item.index != null && (item.index + 1) || ""))
                     .append($("<td />").addClass("CodeColumn").append($("<div />").text(item.code).attr("title", item.code)))
                     .append($("<td />").addClass("DescriptionColumn").append($("<div />").text(item.description).attr("title", item.description)))

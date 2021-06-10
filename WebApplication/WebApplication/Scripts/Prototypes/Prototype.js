@@ -985,6 +985,10 @@
         Array.removeElement(imagesToDelete, key);
     };
 
+    prototype.toString = function () {
+        return "Prototype"
+    };
+
     prototype.setModel = function (newModel) {
         newModel.name = model.name;
         newModel.department = model.department;

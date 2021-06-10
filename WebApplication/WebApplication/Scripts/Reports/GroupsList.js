@@ -6,28 +6,29 @@
         groupsAutoComplete,
         modified = false,
         form,
-        unrestrictedInput,
+        restrictedInput,
 
         toggleGroups = function () {
-            var locked = unrestrictedInput.prop("checked");
+            var locked = !restrictedInput.prop("checked");
             groupsAutoComplete.lock(locked);
             if (locked) groupsAutoComplete.setValue(null);
         },
 
         confirm = function () {
             if (modified) {
-                matematici.canClose = true;
-                model.fields.restricted = !unrestrictedInput.prop("checked");
+                matematici.canClose = false;
+                if (model.fields == null) model.fields = {};
+                model.fields.restricted = { value: restrictedInput.prop("checked") ? "true" : "false" };
                 model.groups = groupsSelect.val();
             }
         },
 
         fill = function (f) {
             form = f;
-            unrestrictedInput = $("input[name=unrestricted]").prop("checked", model.fields.restricted == "false");
+            console.log(model.fields.restricted.value);
+            restrictedInput = $("input[name=restricted]").prop("checked", model.fields && model.fields.restricted && model.fields.restricted.value == "true");
             form
                 .on("toggle", "select", function () {
-                    console.log("ok");
                     modified = true;
                 })
                 .on("change", "input", function () {

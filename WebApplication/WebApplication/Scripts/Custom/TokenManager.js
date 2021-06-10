@@ -216,8 +216,8 @@
         saveSigners(signers);
     };
 
-    tokenManager.setSigners = function (signers) {
-        saveSigners(signers);
+    tokenManager.setSigners = function (signersJSON) {
+        localStorage.signers = signersJSON;
     };
 
     tokenManager.removeSigner = function (code) {

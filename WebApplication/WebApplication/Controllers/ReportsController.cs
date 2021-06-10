@@ -16,23 +16,23 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Authorize(Roles = "Reports#Edit")]
-        [Route("Editor/{Code?}")]
-        public ActionResult Editor(string Code)
+        [Route("Editor/{ID?}")]
+        public ActionResult Editor(long? ID)
         {
-            return PartialView(new Report { Code = Code });
+            return PartialView(new Report { ID = ID });
         }
 
-        [Route("Viewer/{Code?}")]
-        public ActionResult Viewer(string Code)
+        [Route("Viewer/{ID?}")]
+        public ActionResult Viewer(long? ID)
         {
-            if (Code == null) throw new ArgumentException(); //we need to have it not mandatory for the base route in the view
-            return PartialView(new Report { Code = Code });
+            if (!ID.HasValue) throw new ArgumentException(); //we need to have it not mandatory for the base route in the views
+            return PartialView(new Report { ID = ID});
         }
 
-        [Route("Report/{Code}")]
-        public ActionResult Report(string Code)
+        [Route("Report/{ID}")]
+        public ActionResult Report(long ID)
         {
-            return PartialView(new Report { Code = Code });
+            return PartialView(new Report { ID = ID });
         }
 
         [Authorize(Roles = "Reports#Edit")]

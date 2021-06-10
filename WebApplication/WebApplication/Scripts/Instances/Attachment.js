@@ -5,6 +5,7 @@
         input,
         readOnly,
         key,
+        restrictToCamera,
 
         onChange = function () {
             var data = new FormData();
@@ -34,10 +35,12 @@
         },
 
         setup = function () {
+            restrictToCamera = model.fileType === "images" && model.restrictToCamera;
             var element = item.getElement();
             input = document.createElement("input");
             input.classList.add("Hidden");
             input.setAttribute("type", "file");
+            if (restrictToCamera) input.setAttribute("capture", "camera");
             input.addEventListener("change", onChange);
             element.appendChild(input);
 
@@ -46,6 +49,11 @@
             uploadButton.setAttribute("href", "#");
             uploadButton.addEventListener("click", function () {
                 if (readOnly) return;
+                if (restrictToCamera && !matematici.appMode) {
+                    matematici.dialog.error("error", "this image can be attached only using the camera from the mobile app");
+                    return;
+                }
+
                 input.click();
             });
             element.appendChild(uploadButton);

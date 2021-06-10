@@ -41,10 +41,10 @@
         completeHandler = function (result) {
             matematici.breadcrumbs.set([
                 { content: "report viewer", label: "page" },
-                { content: options.code, label: "code" }
+                { content: result.code, label: "code" }
             ]);
 
-            $("h2", element).text(result.description == null || result.description == "" ? options.code : result.description);
+            $("h2", element).text(result.description == null || result.description == "" ? result.code : result.description);
 
             if (result.clauses.length)
                 for (var index = 0; index < result.clauses.length; ++index) {
@@ -70,7 +70,7 @@
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/LoadParameters",
                 data: {
-                    code: options.code
+                    id: options.id
                 },
             }).done(function (result) {
                 completeHandler(result);

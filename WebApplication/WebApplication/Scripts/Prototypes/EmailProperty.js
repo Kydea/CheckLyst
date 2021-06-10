@@ -45,12 +45,14 @@
                 .attr({ type: "text" })
                 .val(!model.sendEmail ? "(disabled)" : model.sendEmailAddress ? "distribution list" : "instance editors")
                 .appendTo(valuePanel)
+                .addClass("ReadOnly")
                 .attr("disabled", "disabled");
             if (model.sendEmail && model.sendEmailAddress)
                 $("<input />")
                     .attr({ type: "text" })
                     .val(model.sendEmailAddress)
                     .appendTo(valuePanel)
+                    .addClass("ReadOnly")
                     .attr("disabled", "disabled");
         } else {
             conditionSelect = $("<select />")

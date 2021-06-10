@@ -11,7 +11,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 {
     public interface IViewerEditorService : IService
     {
-        Task<DetailResponse> LoadParameters(IDefaultIdentity identity, string code);
+        Task<DetailResponse> LoadParameters(IDefaultIdentity identity, long id);
         Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);
     }
 }

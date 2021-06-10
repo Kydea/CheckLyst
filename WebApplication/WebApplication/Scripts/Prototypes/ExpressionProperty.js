@@ -37,6 +37,13 @@
             if (!insteadRadio.is(":checked") && !andRadio.is(":checked") && !orRadio.is(":checked"))
                 insteadRadio.prop("checked", true);
             radioClicked();
+        },
+
+        getValue = function () {
+            return showDefault && model[condition] == 0 ? "(default)" :
+                model[condition] == 1 ? "(true)" :
+                model[condition] == 2 ? "(false)" :
+                model[expressionCode];
         };
 
     this.create = function (valuePanel, baseClass) {
@@ -63,12 +70,7 @@
         } else {
             $("<input />")
                 .attr({ type: "text", readOnly: true })
-                .val(
-                    showDefault && model[condition] == 0 ? "(default)" :
-                    model[condition] == 1 ? "(true)" :
-                    model[condition] == 2 ? "(false)" :
-                    model[expressionCode]
-                )
+                .val(getValue())
                 .appendTo(valuePanel);
 
             //for css consistency
@@ -100,5 +102,10 @@
     this.setReadOnly = function (value) {
         editable = !value;
     };
+
+    if (!showRadioButtons)
+        this.setValue = function (node) {
+            node.text(getValue());
+        };
 }
 

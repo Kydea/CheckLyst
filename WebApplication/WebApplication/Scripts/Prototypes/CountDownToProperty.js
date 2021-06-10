@@ -37,11 +37,11 @@
                     autoComplete.setError(value);
                 else
                     valueSelect.attr("data-error", value);
-            } else {
-                model.countDownCondition = condition;
-                model.countDownToCode = condition > 0 ? value : null;
-                model.countDownOffset = condition > 0 ? offset : 0;
             }
+
+            model.countDownCondition = condition;
+            model.countDownToCode = condition > 0 ? value : null;
+            model.countDownOffset = condition > 0 ? offset : 0;
 
             base.setError(model.errors, "countdown", error);
             base.updateModel(model);
