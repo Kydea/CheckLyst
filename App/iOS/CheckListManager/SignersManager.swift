@@ -34,9 +34,7 @@ class SignersManager {
         return signers.first(where: { $0.code == code})
     }
     
-    func addSigner(json:[String:Any]) throws {
-        let code = json["code"] as! String
-        try checkSigner(code: code)
+    func addSigner(json:[String:Any]) {
         _signers.append(Signer(json: json))
         saveSigners()
     }
@@ -50,7 +48,13 @@ class SignersManager {
         _signers[index].accessTokenExpiration = (Date() + (json["expires_in"] as! TimeInterval)).timeIntervalSince1970
     }
     
-    func clearFilters() {
+    func deleteSinger(_ signer: Signer) {
+        guard let index = _signers.firstIndex(where: { $0.code == signer.code}) else { return }
+        _signers.remove(at: index)
+        saveSigners()
+        
+    }
+    func clearSigners() {
         _signers = []
         UserDefaults.standard.set(nil, forKey: SignersManager.signersIdentifier)
     }
@@ -61,9 +65,10 @@ class SignersManager {
             return
         }
         UserDefaults.standard.set(data, forKey: SignersManager.signersIdentifier)
+        NotificationCenter.default.post(name: .SignersHaveBeenChanged, object: nil)
     }
     
-    private func checkSigner(code: String) throws {
+    func checkSigner(code: String) throws {
         if code.isEmpty { throw SignerError.InvalidSigner }
         guard let index = _signers.firstIndex(where: { $0.code == code}) else {
             return

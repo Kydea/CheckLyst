@@ -67,9 +67,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
-        
-        //print(fullUrl)
-        
+                
         let url = URL(string: fullUrl)
         
         let request = NSMutableURLRequest(url: url!)
@@ -300,6 +298,12 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
         webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
         self.currentAccessToken = accessToken
+    }
+    
+    func setOrRefreshSigners(_ signers:[Signer]) {
+        guard let signersJSON = try? JSONEncoder().encode(signers) else { return }
+        let signersString = String(decoding: signersJSON, as: UTF8.self)
+        webView.evaluateJavaScript("matematici.tokenManager.setSigners(\"\(signersString)\")")
     }
     
     func setValueForInputField(_ value : String) {

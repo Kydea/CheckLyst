@@ -53,7 +53,6 @@ class SharedControllersProperty: NSObject {
         return infoBarButtonItem
     }
     
-    
     @objc func getInfoAction(){
         
         ServerConnection.getAppInfo(){ (result) -> Void in

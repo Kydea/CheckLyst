@@ -112,7 +112,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         accessoryButton.setTitle("\u{f104}", for: UIControlState())
         accessoryButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         accessoryButton.contentMode = .scaleAspectFit
-        accessoryButton.tag = indexPath.row
         accessoryButton.addTarget(self, action: #selector(InstancesSearchViewController.accessoryButtonTapped(_:)), for: .touchUpInside)
         cell!.accessoryView = accessoryButton as UIView
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel

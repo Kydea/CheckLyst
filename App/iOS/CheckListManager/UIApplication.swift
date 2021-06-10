@@ -56,7 +56,6 @@ import CoreData
             }
         }
         
-        
         if restartTimer {
             inactivityStartingTime = Date()
             CountDownViewController.shared.reset()
@@ -65,10 +64,8 @@ import CoreData
     }
     
     @objc func timerAction() {
-        
         UpdateUserTokenIfNeeded()
-        
-        
+        UpdateSignersTokenIfNeeded()
     }
     
     func UpdateSignersTokenIfNeeded() {
@@ -79,15 +76,14 @@ import CoreData
         for signer in SignersManager.shared.signers {
             timeToExpire = Date(timeIntervalSince1970: signer.accessTokenExpiration).timeIntervalSinceNow;
             
-            guard timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing else {
-                return
-            }
+            if timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing {
             
-            self.refreshToken(signer.refreshToken) { json in
-                SignersManager.shared.updateSigner(json: json)
-                
-                if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
-                    controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                self.refreshToken(signer.refreshToken) { json in
+                    SignersManager.shared.updateSigner(json: json)
+                    
+                    if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+                        controller.setOrRefreshSigners(SignersManager.shared.signers)
+                    }
                 }
             }
         }
@@ -109,17 +105,20 @@ import CoreData
         }
         
         self.refreshToken(UserDefaults.standard.value(forKey: "refresh_token") as! String) { json in
-            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
             
-            UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
-            
+            let accessToken = json["access_token"] as! String
+            let tokenExpires = Date() + (json["expires_in"] as! TimeInterval)
+            let refreshToken = UserDefaults.standard.string(forKey: "refresh_token")!
+
+            UserDefaults.standard.setValue(accessToken, forKey: "access_token")
+            UserDefaults.standard.setValue(tokenExpires, forKey: "token_expires")
             
             if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
-                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken )
             }
             
             if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
-                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
+                controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken)
             }
         }
     }
@@ -324,6 +323,7 @@ import CoreData
         UserDefaults.standard.setValue(nil, forKey: "refresh_token")
         UserDefaults.standard.setValue(nil, forKey: "roles")
         FilterManager.shared.clearFilters()
+        SignersManager.shared.clearSigners()
         
         if let timer = timer {
             timer.invalidate()
