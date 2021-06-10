@@ -4,5 +4,6 @@
     {
 		string FileType { get; set; }
         bool RestrictToCamera { get; set; }
+        ICheckListAttachment GetTarget();
     }
 }

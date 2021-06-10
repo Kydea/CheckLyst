@@ -225,9 +225,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
-                DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedDefaultValue);
+                if (ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedDefaultValue);
+                    Value = FormattedDefaultValue;
+                }
+                else
+                    Value = DefaultValue;
                 DefaultValue = null;
-                Value = FormattedDefaultValue;
             }
             return Result;
         }

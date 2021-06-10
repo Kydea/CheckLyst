@@ -80,7 +80,10 @@ namespace CheckListManager.Infrastructure.Logic.Email
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.EmailFailed,
+                    User = message.Message.TrailMessage?.User,
                     Company = message.Message.Company,
+                    CheckListCode = message.Message.TrailMessage?.CheckListCode,
+                    CheckListID = message.Message.TrailMessage?.CheckListID,
                     Information = exception.Message,
                 }, cancellationToken);
 

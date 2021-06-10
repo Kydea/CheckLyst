@@ -312,13 +312,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             break;
                         case "Attachment":
                             var Attachment = (ICheckListAttachment)Item;
-                            if (Attachment.Key == null || Item.Hidden)
+                            var Key = Attachment.GetTarget().Key;
+                            if (Key == null || Item.Hidden)
                                 Cell = NewCell(string.Empty);
-                            else if (Attachment.Key != null)
+                            else if (Key != null)
                             {
                                 try
                                 {
-                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Attachment.Key, Attachment);
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Key, Attachment);
                                     Cell = NewCell($"(see attachment {Index})");
                                 }
                                 catch (Exception Exception)

@@ -183,5 +183,9 @@
 
     this.addElement = addElement;
 
+    this.toString = function () {
+        return typeName + (index != null && " - Index: " + (parseInt(index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+    };
+
     setup();
 }

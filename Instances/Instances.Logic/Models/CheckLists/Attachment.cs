@@ -11,7 +11,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
 
-        public Attachment GetTarget() =>
+        public ICheckListAttachment GetTarget() =>
             this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
