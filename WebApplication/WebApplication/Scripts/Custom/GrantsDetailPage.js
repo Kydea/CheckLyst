@@ -513,30 +513,30 @@
         },
 
         validateHandler = function (event, callback) {
-            if (page != "Users" || event != "Edit")
+            if (page != "Users" || event != "Edit") 
                 callback();
-
-            $.ajax({
-                type: "post",
-                url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
-                data: {
-                    groups: groupsSelect.val()
-                }
-            }).done(function (result) {
-                if (result.length == 0)
-                    callback();
-                else {
-                    var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
-                    matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
-                        {
-                            text: "Ignore conflicts", icon: "check", handler: function () {
-                                setTimeout(callback, 0);
-                            }
-                        },
-                        { text: "Cancel", icon: "times" }
-                    ]);
-                }
-            });
+            else
+                $.ajax({
+                    type: "post",
+                    url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
+                    data: {
+                        groups: groupsSelect.val()
+                    }
+                }).done(function (result) {
+                    if (result.length == 0)
+                        callback();
+                    else {
+                        var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
+                        matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
+                            {
+                                text: "Ignore conflicts", icon: "check", handler: function () {
+                                    setTimeout(callback, 0);
+                                }
+                            },
+                            { text: "Cancel", icon: "times" }
+                        ]);
+                    }
+                });
         },
 
         setup = function () {

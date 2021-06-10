@@ -159,42 +159,45 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private void BuildFunctions(DefaultIdentity identity, RoleRequest record, Roles Role)
         {
-            foreach (var function in record.GeneralFunctions)
-                Role.RoleFunctions.Add(new RoleFunctions
-                {
-                    Company = identity.CompanyId,
-                    Role = record.Code,
-                    FunctionGroup = function.FunctionGroup,
-                    Function = function.Function,
-                    CreatedOn = DateTimeOffset.UtcNow,
-                    CreatedBy = identity.Code
-                });
+            if (record.FunctionGroup == null)
+                foreach (var function in record.GeneralFunctions)
+                    Role.RoleFunctions.Add(new RoleFunctions
+                    {
+                        Company = identity.CompanyId,
+                        Role = record.Code,
+                        FunctionGroup = function.FunctionGroup,
+                        Function = function.Function,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
 
-            foreach (var row in record.PrototypeFunctions)
-                if (row.Functions != null)
-                    foreach (var function in row.Functions)
-                        Role.RoleFunctions.Add(new RoleFunctions
-                        {
-                            Company = identity.CompanyId,
-                            Role = record.Code,
-                            FunctionGroup = "Prototypes",
-                            Function = function,
-                            CreatedOn = DateTimeOffset.UtcNow,
-                            CreatedBy = identity.Code
-                        });
+            if (record.FunctionGroup == "Prototypes")
+                foreach (var row in record.PrototypeFunctions)
+                    if (row.Functions != null)
+                        foreach (var function in row.Functions)
+                            Role.RoleFunctions.Add(new RoleFunctions
+                            {
+                                Company = identity.CompanyId,
+                                Role = record.Code,
+                                FunctionGroup = "Prototypes",
+                                Function = function,
+                                CreatedOn = DateTimeOffset.UtcNow,
+                                CreatedBy = identity.Code
+                            });
 
-            foreach (var row in record.InstanceFunctions)
-                if (row.Functions != null)
-                    foreach (var function in row.Functions)
-                        Role.RoleFunctions.Add(new RoleFunctions
-                        {
-                            Company = identity.CompanyId,
-                            Role = record.Code,
-                            FunctionGroup = "Instances",
-                            Function = function,
-                            CreatedOn = DateTimeOffset.UtcNow,
-                            CreatedBy = identity.Code
-                        });
+            if (record.FunctionGroup == "Instances")
+                foreach (var row in record.InstanceFunctions)
+                    if (row.Functions != null)
+                        foreach (var function in row.Functions)
+                            Role.RoleFunctions.Add(new RoleFunctions
+                            {
+                                Company = identity.CompanyId,
+                                Role = record.Code,
+                                FunctionGroup = "Instances",
+                                Function = function,
+                                CreatedOn = DateTimeOffset.UtcNow,
+                                CreatedBy = identity.Code
+                            });
         }
 
         private static string SerializeRoleInformation(RoleRequest role, IEnumerable<RoleFunctions> roleFunctions)
