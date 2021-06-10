@@ -222,6 +222,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     var report = new Common.Data.Reports
                     {
+                        ID = request.ID.Value,
                         Code = request.Code,
                         Description = request.Description,
                         ReportSource = request.ReportSource,
