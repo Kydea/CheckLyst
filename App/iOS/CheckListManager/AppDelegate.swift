@@ -55,9 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().tintColor = UIColor.white
 
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
         
         //URLProtocol.registerClass(CustomUrlprotocol.self)

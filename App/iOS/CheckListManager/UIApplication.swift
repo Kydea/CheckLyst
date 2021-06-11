@@ -77,11 +77,15 @@ import CoreData
             timeToExpire = Date(timeIntervalSince1970: signer.accessTokenExpiration).timeIntervalSinceNow;
             
             if timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing {
+                
+                #if DEBUG
+                print("Refreshing \(signer.code) access token at: \(Formatter.instance.stringFromTestDate(Date()))")
+                #endif
             
                 self.refreshToken(signer.refreshToken) { json in
                     SignersManager.shared.updateSigner(json: json)
                     
-                    if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+                    if let controller = self.getViewController(ofKind: InstanceViewController.self) as? InstanceViewController {
                         controller.setOrRefreshSigners(SignersManager.shared.signers)
                     }
                 }
@@ -104,6 +108,10 @@ import CoreData
             return
         }
         
+        #if DEBUG
+        print("Refreshing \(UserDefaults.standard.string(forKey: "userCode") ?? "") access token at: \(Formatter.instance.stringFromTestDate(Date()))")
+        #endif
+        
         self.refreshToken(UserDefaults.standard.value(forKey: "refresh_token") as! String) { json in
             
             let accessToken = json["access_token"] as! String
@@ -113,11 +121,11 @@ import CoreData
             UserDefaults.standard.setValue(accessToken, forKey: "access_token")
             UserDefaults.standard.setValue(tokenExpires, forKey: "token_expires")
             
-            if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
+            if let controller = self.getViewController(ofKind: InstanceViewController.self) as? InstanceViewController {
                 controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken )
             }
             
-            if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
+            if let controller = self.getViewController(ofKind: UserManualViewController.self) as? UserManualViewController {
                 controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken)
             }
         }
@@ -125,9 +133,6 @@ import CoreData
     
     func refreshToken(_ refreshToken:String, refreshAction: @escaping (_ json: [String: Any]) -> Void) {
         
-        #if DEBUG
-        print("Refreshing token at: \(Formatter.instance.stringFromTestDate(Date()))")
-        #endif
         isRefreshing = true
         
         ServerConnection.loginOrRefreshToServer(["Refresh_Token" : refreshToken]) { (serverResponse) -> Void in
@@ -169,7 +174,7 @@ import CoreData
         
     }
     
-    private func getWebViewInstance<T: UIViewController>(ofKind kind:AnyClass) -> T? {
+    private func getViewController<T: UIViewController>(ofKind kind:AnyClass) -> T? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
@@ -454,9 +459,9 @@ import CoreData
     }
     
     func goBackGround(){
-        if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController  {
-            controller.viewWillDisappear(false);
-        }
+        self.getViewController(ofKind: InstanceViewController.self)?.viewWillDisappear(false);
+        
+        self.getViewController(ofKind: SignersViewController.self)?.viewWillDisappear(false)
         
         UserDefaults.standard.set(Date(), forKey: "backgroundTime")
         if let timer = timer {

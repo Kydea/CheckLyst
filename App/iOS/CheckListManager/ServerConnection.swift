@@ -17,48 +17,54 @@ open class ServerConnection {
     
     static func bindListWithParams(_ params : Dictionary<String, Dictionary<String, Any?>>, completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/Bind", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getListInstancesWithParams(_ params : Dictionary<String, Any>, completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/GetData", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Instances/List/GetData", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getCompaniesRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetSyntheticData", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/Infrastructure/Companies/GetSyntheticData", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getCompanieSettingsRequest(server serverUrl:String = baseUrl,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPGetRequest(serverUrl+"/Infrastructure/Companies/GetSettings", isAuthenticated: true){ (result) -> Void in
+        ServerConnection.sendHTTPGetRequest(serverUrl+"/Infrastructure/Companies/GetSettings", isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getApiServerRequest(server serverUrl:String = baseUrl, _ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(serverUrl+"/settings", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(serverUrl+"/settings", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: false, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getAppInfo(_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Information/Get", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
+        ServerConnection.sendHTTPRequest(baseUrl+"/Infrastructure/Information/Get", parameters: [:] as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func loginOrRefreshToServer(server serverUrl:String = baseUrl,_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: false){ (result) -> Void in
+        sendHTTPRequest(serverUrl+"/AccessControl/Access/Token", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: false, accessToken: nil){ (result) -> Void in
+            completion(result)
+        }
+    }
+    
+    static func setPin(_ params : Dictionary<String, String>, accessToken: String, completion: ((_ result:ServerResponse) -> Void)!){
+        sendHTTPRequest(baseUrl+"/AccessControl/Access/SetPIN", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: accessToken){ (result) -> Void in
             completion(result)
         }
     }
@@ -66,27 +72,27 @@ open class ServerConnection {
     
     static func logoutFromServer(_ params : Dictionary<String, Dictionary<String, String>>,_ completion: ((_ result:ServerResponse) -> Void)!){
         
-        sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/AccessControl/Access/Logout", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     
     static func closeInstance(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
-        sendHTTPRequest(baseUrl+"/CheckList/Close", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/CheckList/Close", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func sendClockRequest(_ params : Dictionary<String, AnyObject>, completion: ((_ result:ServerResponse) -> Void)!) {
         
-        sendHTTPRequest(baseUrl+"/Server/Clock", parameters: params, isAuthenticated: true){ (result) -> Void in
+        sendHTTPRequest(baseUrl+"/Server/Clock", parameters: params, isAuthenticated: true, accessToken: nil){ (result) -> Void in
             completion(result)
         }
     }
     
     static func getFile(_ fileUrl : String, completion: ((_ result:ServerResponse) -> Void)!) {
-        sendHTTPGetRequest(fileUrl, isAuthenticated: false) { (result) -> Void in
+        sendHTTPGetRequest(fileUrl, isAuthenticated: false, accessToken: nil) { (result) -> Void in
             completion(result)
         }
     }
@@ -114,7 +120,7 @@ open class ServerConnection {
         return dict
     }
     
-    static func sendHTTPRequest(_ urlPath: String,parameters : Dictionary<String, AnyObject>,  isAuthenticated : Bool, completion: ((_ result:ServerResponse) -> Void)!){
+    static func sendHTTPRequest(_ urlPath: String,parameters : Dictionary<String, AnyObject>,  isAuthenticated : Bool, accessToken: String?, completion: ((_ result:ServerResponse) -> Void)!){
         
         do {
 
@@ -136,7 +142,7 @@ open class ServerConnection {
             }
             
             if isAuthenticated, let tokenType = UserDefaults.standard.string(forKey: "token_type"), let token = UserDefaults.standard.string(forKey: "access_token") {
-                request.addValue(tokenType.capitalized + " " + token, forHTTPHeaderField: "Authorization")
+                request.addValue(tokenType.capitalized + " " + (accessToken ?? token), forHTTPHeaderField: "Authorization")
             }
             
             if (!parameters.isEmpty)
@@ -145,8 +151,15 @@ open class ServerConnection {
                     request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     
                     let params = encodeParams(parameters)
+                    var bodyString = ""
                     
-                    let bodyString = "grant_type=password" + "&companyId=" + (params["Company"] as! String) + "&username=" + (params["Code"] as! String) + "&password=" + (params["Password"] as! String)
+                    if (urlPath.contains("AccessControl/Access/Token")) {
+                        bodyString = "grant_type=password" + "&companyId=" + (params["Company"] as! String) + "&username=" + (params["Code"] as! String) + "&password=" + (params["Password"] as! String)
+                    }
+                    
+                    if (urlPath.contains("AccessControl/Access/SetPIN")) {
+                        bodyString = "pin=" + (params["Pin"] as! String) + "&password=" + (params["Password"] as! String)
+                    }
                     
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
@@ -206,7 +219,7 @@ open class ServerConnection {
     
     
     
-    static func sendHTTPGetRequest(_ urlPath: String, isAuthenticated : Bool, completion: ((_ result:ServerResponse) -> Void)!){
+    static func sendHTTPGetRequest(_ urlPath: String, isAuthenticated : Bool, accessToken: String?, completion: ((_ result:ServerResponse) -> Void)!){
         
         do{
             let request = NSMutableURLRequest(url: URL(string: urlPath)!)

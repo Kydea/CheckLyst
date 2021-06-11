@@ -13,6 +13,7 @@ class SignerLoginViewController: UIViewController {
     @IBOutlet var loginView: UIView!
     @IBOutlet var userCodeTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    @IBOutlet var closeButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     let appDelegate = (UIApplication.shared as! MyApplication)
@@ -25,6 +26,7 @@ class SignerLoginViewController: UIViewController {
     private func setupUI() {
         activityIndicator.hidesWhenStopped = true
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+        
     }
     
     @IBAction func closeButtonAction(_ sender: UIButton) {
@@ -37,16 +39,13 @@ class SignerLoginViewController: UIViewController {
     
     func performSign() {
         
-        activityIndicator.startAnimating()
-        self.view.isUserInteractionEnabled = false
-        
-        guard let usercode = self.userCodeTextField.text else {
+        guard let usercode = self.userCodeTextField.text, !usercode.isEmpty else {
             self.appDelegate.displayMessage(Title: "Error", Message: "Insert a user code")
             return
         }
         
-        guard let password = self.passwordTextField.text else {
-            self.appDelegate.displayMessage(Title: "Error", Message: "Insert a password")
+        guard let password = self.passwordTextField.text, !password.isEmpty else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Missing password")
             return
         }
         
@@ -59,10 +58,11 @@ class SignerLoginViewController: UIViewController {
             try SignersManager.shared.checkSigner(code: usercode)
         } catch {
             self.appDelegate.displayMessage(Title: "Error", Message: error.localizedDescription)
-            self.activityIndicator.stopAnimating()
-            self.view.isUserInteractionEnabled = true
             return
         }
+        
+        activityIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
         
         ServerConnection.loginOrRefreshToServer(["Company" : company,"Code":usercode,"Password":password]) { (serverResponse) -> Void in
     

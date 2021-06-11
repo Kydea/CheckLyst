@@ -43,6 +43,9 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
     
     let searchController = UISearchController()
     
+    let appDelegate = UIApplication.shared as! MyApplication
+
+    
     @IBOutlet var fieldNameLabel: UILabel!
     
     
@@ -186,7 +189,13 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
 
     
     @IBAction func saveEditing(_ sender: AnyObject) {
-        
+        if searchViewController?.indexFieldDictionary[rowIndex!] == "id", let value = inputTextField?.text, !value.isEmpty {
+            guard let _ = Int(value) else {
+                appDelegate.displayMessage(Title: "Error", Message:" Value for \(searchViewController?.indexTextDictionary[rowIndex!] ?? "") is not valid" )
+                return
+            }
+            
+        }
         self.navigationController?.popViewController(animated: true)
     }
 

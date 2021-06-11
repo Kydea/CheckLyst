@@ -70,11 +70,8 @@ class SignersManager {
     
     func checkSigner(code: String) throws {
         if code.isEmpty { throw SignerError.InvalidSigner }
-        guard let index = _signers.firstIndex(where: { $0.code == code}) else {
-            return
-        }
-        if code == UserDefaults.standard.string(forKey: "userCode") { throw SignerError.MainUser(code: code) }
-        else { throw SignerError.DuplicatedSigner(code: code) }
+        if code == UserDefaults.standard.string(forKey: "userCode")?.lowercased() { throw SignerError.MainUser(code: code) }
+        if _signers.contains(where: { $0.code == code}){ throw SignerError.DuplicatedSigner(code: code) }
     }
     
     private func loadSigners() -> [Signer] {

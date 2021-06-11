@@ -22,6 +22,13 @@ class SignersViewController: UIViewController, UITableViewDataSource, UITableVie
         setupUI()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if(self.presentedViewController is SignerLoginViewController || self.presentedViewController is SignerPinViewController) {
+            self.presentedViewController?.dismiss(animated: false, completion: nil)
+        }
+    }
+    
     func setupUI() {
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor(red: 153.0/255, green: 153.0/255, blue: 153.0/255, alpha: 1.0)
         updateUI()
@@ -51,7 +58,15 @@ class SignersViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SignerCell.identifier) as? SignerCell else { return UITableViewCell() }
         cell.configure(signer: SignersManager.shared.signers[indexPath.row], indexPath: indexPath)
+        cell.accessoryButton.addTarget(self, action: #selector(SignersViewController.accessoryButtonTapped(_:)), for: .touchUpInside)
+        cell.setLayout()
         return cell;
+    }
+    
+    @objc func accessoryButtonTapped(_ sender : AnyObject) {
+        
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        tableView(tableView, didSelectRowAt: indexPath)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

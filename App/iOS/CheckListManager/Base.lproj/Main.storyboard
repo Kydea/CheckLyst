@@ -400,7 +400,7 @@
         <!--Signers View Controller-->
         <scene sceneID="djO-NF-0YP">
             <objects>
-                <viewController id="Q6c-rl-Ijv" customClass="SignersViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController definesPresentationContext="YES" id="Q6c-rl-Ijv" customClass="SignersViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FtT-wJ-bGo"/>
                         <viewControllerLayoutGuide type="bottom" id="BOq-cr-qIN"/>
@@ -434,7 +434,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZW7-2h-pwv" userLabel="firstLine">
-                                            <rect key="frame" x="40" y="14" width="688" height="1"/>
+                                            <rect key="frame" x="40" y="50" width="688" height="1"/>
                                             <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="1" id="Eda-QL-tk8"/>
@@ -444,8 +444,8 @@
                                             <rect key="frame" x="0.0" y="-650" width="768" height="564"/>
                                             <color key="backgroundColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kuV-vY-XMy">
-                                            <rect key="frame" x="40" y="4" width="0.0" height="0.0"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Signers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kuV-vY-XMy">
+                                            <rect key="frame" x="40" y="4" width="98" height="36"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                             <color key="textColor" red="0.32156862749999998" green="0.54901960780000003" blue="0.63529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
@@ -542,13 +542,13 @@
                     <navigationItem key="navigationItem" id="dfm-l2-zsF">
                         <barButtonItem key="leftBarButtonItem" systemItem="add" id="Qy7-Dm-L2F">
                             <connections>
-                                <segue destination="wUv-X1-lFs" kind="presentation" modalPresentationStyle="overCurrentContext" id="6ba-IK-XYc"/>
+                                <segue destination="wUv-X1-lFs" kind="presentation" modalTransitionStyle="crossDissolve" id="6ba-IK-XYc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="S4l-MT-xFs" id="1Z1-vO-cRf"/>
-                        <segue destination="jni-eh-hXA" kind="presentation" identifier="signerSetPinSegue" modalPresentationStyle="overCurrentContext" id="aFd-R7-qbX"/>
+                        <segue destination="jni-eh-hXA" kind="presentation" identifier="signerSetPinSegue" modalTransitionStyle="crossDissolve" id="aFd-R7-qbX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="krq-bG-6X8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1036,6 +1036,7 @@
                                 </constraints>
                             </view>
                         </subviews>
+                        <color key="backgroundColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="0.79746361300000002" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="IuP-QF-R2L" firstAttribute="centerX" secondItem="INy-Zd-tWK" secondAttribute="centerX" id="8xD-Ya-Smv"/>
                             <constraint firstItem="IuP-QF-R2L" firstAttribute="centerY" secondItem="INy-Zd-tWK" secondAttribute="centerY" id="YTh-TR-7Cx"/>
@@ -1696,11 +1697,11 @@
             </objects>
             <point key="canvasLocation" x="-877" y="-1507"/>
         </scene>
-        <!--Signers-->
+        <!--signers-->
         <scene sceneID="9bX-7K-w6c">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="BTB-fE-Fn3" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Signers" id="04L-Zx-vAv"/>
+                    <tabBarItem key="tabBarItem" title="signers" id="04L-Zx-vAv"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="k6h-SU-oO4">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="50"/>
@@ -1890,6 +1891,7 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="ago-9M-buZ" id="b2v-Oy-hdn"/>
+                        <outlet property="closeButton" destination="mdC-xe-PUy" id="KJe-aE-3lm"/>
                         <outlet property="loginView" destination="ZJt-19-trX" id="41g-jK-SEL"/>
                         <outlet property="passwordTextField" destination="KhN-Ms-EZ8" id="boq-Gy-QkO"/>
                         <outlet property="userCodeTextField" destination="rUb-9w-kMB" id="oqi-Lx-TwS"/>
@@ -1938,7 +1940,7 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" red="0.0" green="0.59030663969999997" blue="0.53443413969999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="backgroundColor" red="0.0" green="0.59429919720000002" blue="0.53430336710000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstItem="62O-av-1H6" firstAttribute="centerY" secondItem="bJH-0q-Sjn" secondAttribute="centerY" id="5rb-nY-yce"/>
                                             <constraint firstItem="vg5-wK-oZS" firstAttribute="centerY" secondItem="bJH-0q-Sjn" secondAttribute="centerY" id="Qj6-MC-6TF"/>
@@ -1991,7 +1993,7 @@
                                                                     <constraint firstAttribute="height" constant="30" id="p8I-fo-8u1"/>
                                                                 </constraints>
                                                                 <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
-                                                                <textInputTraits key="textInputTraits"/>
+                                                                <textInputTraits key="textInputTraits" textContentType="one-time-code"/>
                                                             </textField>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="set pin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mGK-Qw-bCW" userLabel="usercode label">
                                                                 <rect key="frame" x="0.0" y="0.0" width="45.5" height="40"/>
@@ -2020,7 +2022,7 @@
                                                                     <constraint firstAttribute="height" constant="30" id="1ZW-CV-Q27"/>
                                                                 </constraints>
                                                                 <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
-                                                                <textInputTraits key="textInputTraits"/>
+                                                                <textInputTraits key="textInputTraits" textContentType="one-time-code"/>
                                                             </textField>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="confirm pin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9BW-tx-ku3" userLabel="usercode label">
                                                                 <rect key="frame" x="0.0" y="0.0" width="76.5" height="40"/>
@@ -2154,6 +2156,7 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="rgo-nz-7fo" id="Sjm-wu-9dU"/>
+                        <outlet property="closeButton" destination="62O-av-1H6" id="5Bn-E3-ruz"/>
                         <outlet property="confirmPinTextField" destination="mhK-eF-TIZ" id="Emh-5i-tBg"/>
                         <outlet property="loginView" destination="bCd-S2-0u4" id="s5e-7x-uiE"/>
                         <outlet property="passwordTextField" destination="wey-9Q-cxO" id="DI2-Lu-JgQ"/>

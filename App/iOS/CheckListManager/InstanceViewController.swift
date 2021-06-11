@@ -94,7 +94,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardDidHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.signersHaveBeenChanged(_:)), name: .SignersHaveBeenChanged, object: nil)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(InstanceViewController.dismissKeyboard))
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
@@ -249,9 +249,47 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                     #else
                         self.appDelegate.logoutAndGoToLogin()
                     #endif
+                } else {
+                    self.setOrRefreshSigners(SignersManager.shared.signers)
                 }
             }
         }
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor
+           navigationAction: WKNavigationAction,
+           decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
+
+        if navigationAction.sourceFrame == nil {
+            decisionHandler(.allow)
+            return
+        }
+        
+        guard let url = navigationAction.request.url, let scheme = url.scheme else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
+            decisionHandler(.cancel)
+            return
+        }
+        
+        if !supportedProtocols.contains(scheme) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
+            decisionHandler(.cancel)
+            return
+        }
+                
+        if url.schemeHost == ServerConnection.baseFrontEndUrl &&
+        (url.getCallType == .Create ||
+        url.getCallType == .Detail) {
+            appDelegate.requestToOpenInstance = true
+            appDelegate.requestedUrlInfo = url.getParametersForInstance
+            self.goBackToSearchInstances(self)
+            decisionHandler(.cancel)
+            return
+        }
+        
+        UIApplication.shared.open(navigationAction.request.url!, options: [:])
+        decisionHandler(.allow)
+
     }
     
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
@@ -303,7 +341,13 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func setOrRefreshSigners(_ signers:[Signer]) {
         guard let signersJSON = try? JSONEncoder().encode(signers) else { return }
         let signersString = String(decoding: signersJSON, as: UTF8.self)
-        webView.evaluateJavaScript("matematici.tokenManager.setSigners(\"\(signersString)\")")
+        print("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+        webView.evaluateJavaScript("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+    }
+    
+    @objc func signersHaveBeenChanged(_ notification:Notification) {
+        setOrRefreshSigners(SignersManager.shared.signers)
+        webView.reload()
     }
     
     func setValueForInputField(_ value : String) {
@@ -377,6 +421,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         webView.uiDelegate = nil
         webView.navigationDelegate = nil
         documentInteractionController.delegate = nil
+        NotificationCenter.default.removeObserver(self)
         webView.load(URLRequest(url: URL(string: "about:blank")!))
     }
     
