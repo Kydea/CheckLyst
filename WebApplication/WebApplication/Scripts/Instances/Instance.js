@@ -686,7 +686,7 @@
     };
 
     instance.initialize = function () {
-        instanceElementInformation = new instances.ElementInformation(element[0]);
+        new instances.ElementInformation(element[0]);
         tab = new matematici.Tab($("div.TabContainer", element)).addHandler(function (item) {
             var
                 scroll = matematici.elements.document.scrollTop(),

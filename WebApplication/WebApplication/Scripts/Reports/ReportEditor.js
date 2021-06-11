@@ -160,17 +160,17 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
-                var
-                    code = model.fields.code.value,
-                    description = model.fields.description.value;
-                $("h2", element).text(description == null || description == "" ? code : description);
+                var code = model.fields && model.fields.code && model.fields.code.value;
+                if (code) {
+                    $("h2", element).text(code);
 
-                matematici.breadcrumbs.set([
-                    { content: "report editor", label: "page" },
-                    { content: code, label: "code" }
-                ]);
+                    matematici.breadcrumbs.set([
+                        { content: "report editor", label: "page" },
+                        { content: code, label: "code" }
+                    ]);
+                }
 
-                $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.code == "");
+                $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
 
                 detailPage = new matematici.DetailPage({
                     readOnly: false,
