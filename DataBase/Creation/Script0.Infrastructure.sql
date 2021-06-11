@@ -27,7 +27,7 @@ create table "Infrastructure"."Companies"
 insert into "Infrastructure"."Companies"("ID", "Name", "TimeZone") values (1, '(CheckListManager)', 'W. Europe Standard Time');
 select setval ('"Infrastructure"."Companies_ID_seq"' , 1);
 
-create unique index "Companies_Name" on "Infrastructure"."Companies" ("Company", upper("Name"));
+create unique index "Companies_Name" on "Infrastructure"."Companies" (upper("Name"));
 
 create table "Infrastructure"."Departments"
 (
