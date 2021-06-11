@@ -27,7 +27,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
         {
             return
                 base.GetValue(ArgumentValues, IterationIndexes, TimeZone) ??
-                new TypedValue(DataType.DateTime, DateTimeOffsetHelper.Parse($"{ArgumentValues[0].NumberValue:0000}-{ArgumentValues[1].NumberValue:00}-{ArgumentValues[2].NumberValue:00} {ArgumentValues[3].NumberValue:00}:{ArgumentValues[4].NumberValue:00}", TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormats[0]}"));
+                new TypedValue(DataType.DateTime, DateTimeOffsetHelper.Parse($"{ArgumentValues[0].NumberValue:0000}-{ArgumentValues[1].NumberValue:00}-{ArgumentValues[2].NumberValue:00} {ArgumentValues[3].NumberValue:00}:{ArgumentValues[4].NumberValue:00}", TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}"));
         }
 
         protected override DataType GetDataType() => DataType.DateTime;

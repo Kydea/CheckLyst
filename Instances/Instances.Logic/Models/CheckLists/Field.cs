@@ -144,6 +144,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
 
             object ConvertedValue = null;
+
             if (ValueFormula.IsSet)
             {
                 var FormulaValue = ValueFormula.Value;

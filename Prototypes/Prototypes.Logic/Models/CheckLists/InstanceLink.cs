@@ -33,7 +33,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public override bool BuildDependencies()
         {
             var Result = base.BuildDependencies();
-            if (PrototypeName == null)
+            if (string.IsNullOrEmpty(PrototypeName))
             {
                 Errors.Add(new ConfigurationError("prototype", $"Specify a prototype"));
                 Result = false;

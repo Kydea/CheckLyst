@@ -191,7 +191,7 @@
                     select($(this).parent().prevAll().size());
                 });
 
-            noRecord = $("<tr />").addClass("NoRecord").append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no expression)"));
+            noRecord = $("<tr />").addClass("NoRecord").append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no items)"));
 
             var
                 buttons =

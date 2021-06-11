@@ -72,7 +72,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             comment: "returns a date with the provided year, month and day"
         },
         {
-            content: "DateTime(${1:year}, ${2:month}, ${3:day}, ${4:hour}, ${3:minute})",
+            content: "DateTime(${1:year}, ${2:month}, ${3:day}, ${4:hour}, ${5:minute})",
             name: "DateTime",
             scope: "expression",
             meta: "function",
