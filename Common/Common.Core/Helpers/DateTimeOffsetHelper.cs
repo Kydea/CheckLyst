@@ -6,7 +6,7 @@ namespace CheckListManager.Common.Core.Helpers
     public static class DateTimeOffsetHelper
     {
         public static readonly string DateFormat = "yyyy-MM-dd";
-        public static readonly string TimeFormat = "HH:mm";
+        public static readonly string[] TimeFormats = { "HH:mm", "HH:mm:ss" };
         public static readonly string[] DateTimeFormats = { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" };
 
         public static DateTimeOffset ToLocalTime(this DateTimeOffset DateTimeOffset, string TimeZone)
@@ -17,8 +17,8 @@ namespace CheckListManager.Common.Core.Helpers
 
         public static string Format(this DateTimeOffset DateTimeOffset, string TimeZone, string Format = null) =>
             TimeZone == null ?
-                DateTimeOffset.ToUniversalTime().ToString(Format ?? $"{DateFormat} {TimeFormat} UTC") :
-                DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? $"{DateFormat} {TimeFormat} UTC zzz");
+                DateTimeOffset.ToUniversalTime().ToString(Format ?? $"{DateFormat} {TimeFormats[0]} UTC") :
+                DateTimeOffset.ToLocalTime(TimeZone).ToString(Format ?? $"{DateFormat} {TimeFormats[0]} UTC zzz");
 
         public static string FormatOffset(int OffsetInMinutes)
         {
@@ -35,7 +35,7 @@ namespace CheckListManager.Common.Core.Helpers
                 return null;
             }
 
-            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormat}", $"{DateFormat} {TimeFormat}" };
+            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormats[0]}", $"{DateFormat} {TimeFormats[0]}" };
 
             var DateTime = System.DateTime.SpecifyKind(System.DateTime.ParseExact(Value, Format, null, DateTimeStyles.None), DateTimeKind.Unspecified);
             var TimeZoneInfo = System.TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
