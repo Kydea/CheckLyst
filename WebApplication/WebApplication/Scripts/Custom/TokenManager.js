@@ -9,9 +9,8 @@
         getCompanySettings = function () {
             try {
                 return companySettings || localStorage.companySettings && (companySettings = JSON.parse(localStorage.companySettings));
-            }
-            catch
-            {
+            } catch (error) {
+                console.log(error);
                 return null;
             }
         },
