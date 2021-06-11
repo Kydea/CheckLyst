@@ -160,7 +160,7 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
-                var code = model.fields && model.fields.code ?? model.fields.code.value;
+                var code = model.fields && model.fields.code && model.fields.code.value;
                 if (code) $("h2", element).text(code);
 
                 matematici.breadcrumbs.set([
