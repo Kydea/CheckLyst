@@ -477,7 +477,7 @@ div.Instance {
             right: auto;
         }
 
-        &.Text {
+        &.Text:not(.Field) {
             div.Information {
                 display: none;
             }

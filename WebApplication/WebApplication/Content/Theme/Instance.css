@@ -292,16 +292,16 @@ div.Instance .Item div.Information {
   left: 0;
   right: auto; }
 
-div.Instance .Item.Text div.Information {
+div.Instance .Item.Text:not(.Field) div.Information {
   display: none; }
 
-div.Instance .Item.Text a.Ellipsis {
+div.Instance .Item.Text:not(.Field) a.Ellipsis {
   background: white;
   position: absolute;
   bottom: 0;
   right: 0;
   cursor: pointer; }
-  div.Instance .Item.Text a.Ellipsis i {
+  div.Instance .Item.Text:not(.Field) a.Ellipsis i {
     font-size: 12px !important;
     padding: 2px; }
 
