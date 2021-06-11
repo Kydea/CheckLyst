@@ -55,9 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().tintColor = UIColor.white
 
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
 
         
         //URLProtocol.registerClass(CustomUrlprotocol.self)
@@ -181,6 +181,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let server = "\(params["schema"]!)://\(url.host!)"
                 mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
             }
+        }
+        
+        if (url.getCallType == .Filters) {
+            mApp.requestToOpenSearch = true
+            mApp.backFromBackGround()
+            
+            if let params = url.queryParameters {
+                FilterManager.shared.clearFilters()
+                for param in params {
+                    FilterManager.shared.setFilter(name: param.key, value: param.value)
+                }
+            }
+            
+            if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
+                mApp.openSearch()
+            }
+            
         }
         
         return true

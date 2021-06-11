@@ -90,7 +90,7 @@
                 for (var index in signers) {
                     var signer = signers[index];
                     if (signer.refreshToken && new Date().getTime() > signer.accessTokenExpiration - cautionTimeOffset)
-                        refreshAccessToken(signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
+                        (signer.code, signer.accessToken, signer.refreshToken, function (result, index) {
                             updateSigner(index, result);
                         }, function (index) {
                             console.log("Access token refresh failed.");

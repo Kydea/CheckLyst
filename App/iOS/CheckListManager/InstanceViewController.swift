@@ -10,7 +10,7 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let appDelegate = UIApplication.shared as! MyApplication
     var instance:Instance!
@@ -30,6 +30,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var scanButton : UIBarButtonItem?
     var creationTime: Date?
     var currentAccessToken: String?
+    var oldImagePickerDelegate: UIImagePickerControllerDelegate?
+    var imagePickerController: UIImagePickerController = UIImagePickerController()
     
     
     @IBOutlet weak var webView: WKWebView!
@@ -65,9 +67,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
             ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
-        
-        //print(fullUrl)
-        
+                
         let url = URL(string: fullUrl)
         
         let request = NSMutableURLRequest(url: url!)
@@ -94,7 +94,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardDidHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.signersHaveBeenChanged(_:)), name: .SignersHaveBeenChanged, object: nil)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(InstanceViewController.dismissKeyboard))
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
@@ -145,12 +145,40 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-        
+                
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
             requestForScanning = false
         }
+        
+        if let imagePicker = self.presentedViewController as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .camera {
+            setupWatermarkImagePicker(imagePicker)
+        }
 
+    }
+    
+    private func setupWatermarkImagePicker(_ controller: UIImagePickerController) {
+            oldImagePickerDelegate = controller.delegate
+            imagePickerController = controller
+            imagePickerController.delegate = self
+    }
+        
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerControllerDidCancel!(picker)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var newInfo = info
+        if let pickedImage = newInfo[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+            let imageWithWatermark = pickedImage.addWatermark(position: .RightBottom, watermark: WatermarkGenerator.getWatermark(size: CGSize(width: 400, height: 100)) ?? UIImage(), margin: 10)
+            
+            newInfo[UIImagePickerControllerOriginalImage] = imageWithWatermark
+        }
+
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerController!(picker, didFinishPickingMediaWithInfo: newInfo)
     }
     
     func closeInstance() {
@@ -169,7 +197,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-                FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
+                    FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
                     self.activityIndicator.stopAnimating()
                     if url != nil {
                         if self.checkFile(file: data, url: fileURL) {
@@ -221,9 +249,47 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                     #else
                         self.appDelegate.logoutAndGoToLogin()
                     #endif
+                } else {
+                    self.setOrRefreshSigners(SignersManager.shared.signers)
                 }
             }
         }
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor
+           navigationAction: WKNavigationAction,
+           decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
+
+        if navigationAction.sourceFrame == nil {
+            decisionHandler(.allow)
+            return
+        }
+        
+        guard let url = navigationAction.request.url, let scheme = url.scheme else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
+            decisionHandler(.cancel)
+            return
+        }
+        
+        if !supportedProtocols.contains(scheme) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
+            decisionHandler(.cancel)
+            return
+        }
+                
+        if url.schemeHost == ServerConnection.baseFrontEndUrl &&
+        (url.getCallType == .Create ||
+        url.getCallType == .Detail) {
+            appDelegate.requestToOpenInstance = true
+            appDelegate.requestedUrlInfo = url.getParametersForInstance
+            self.goBackToSearchInstances(self)
+            decisionHandler(.cancel)
+            return
+        }
+        
+        UIApplication.shared.open(navigationAction.request.url!, options: [:])
+        decisionHandler(.allow)
+
     }
     
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
@@ -270,6 +336,18 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
         webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
         self.currentAccessToken = accessToken
+    }
+    
+    func setOrRefreshSigners(_ signers:[Signer]) {
+        guard let signersJSON = try? JSONEncoder().encode(signers) else { return }
+        let signersString = String(decoding: signersJSON, as: UTF8.self)
+        print("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+        webView.evaluateJavaScript("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+    }
+    
+    @objc func signersHaveBeenChanged(_ notification:Notification) {
+        setOrRefreshSigners(SignersManager.shared.signers)
+        webView.reload()
     }
     
     func setValueForInputField(_ value : String) {
@@ -343,6 +421,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         webView.uiDelegate = nil
         webView.navigationDelegate = nil
         documentInteractionController.delegate = nil
+        NotificationCenter.default.removeObserver(self)
         webView.load(URLRequest(url: URL(string: "about:blank")!))
     }
     

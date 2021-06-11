@@ -12,5 +12,6 @@ extension Notification.Name {
     
     static let NewServerConfiguration = Notification.Name("newServerConfiguration")
     static let ServerHasBeenConfigured = Notification.Name("serverHasBeenConfigured")
+    static let SignersHaveBeenChanged = Notification.Name("signersHaveBeenChanged")
 
 }

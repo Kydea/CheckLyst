@@ -17,11 +17,9 @@ class UpdateManager: NSObject {
     
     static var shared : UpdateManager {
         
-        if (instance != nil) {
-            return instance!
+        if (instance == nil) {
+            instance = UpdateManager()
         }
-        
-        instance = UpdateManager()
         return instance!
     }
     

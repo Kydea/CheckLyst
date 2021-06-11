@@ -11,8 +11,7 @@ import Foundation
 extension URL {
     
     enum ChecklystURLTypes : String {
-        case Create, Detail, Setup, Undefined
-    
+        case Create, Detail, Setup, Filters, Undefined
     }
     
     var schemeHost: String? {
@@ -63,6 +62,8 @@ extension URL {
                 return .Detail
             case let values where values.contains("setup"):
                 return .Setup
+            case let values where values.contains("List"):
+                return .Filters
             default:
                 return .Undefined
         }

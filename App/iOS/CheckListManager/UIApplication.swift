@@ -21,13 +21,14 @@ import CoreData
     var isInactivityCatched = false
     var isTokenExpired = false
     var requestToOpenInstance = false
-    var needToUpdateTokens = false
+    var requestToOpenSearch = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
-    var inactivityStartingTime : Date?
+    var inactivityStartingTime = Date()
     
     let defaultInactivityTime = 900.0 /* 15 minutes */
+    let showCountdownThreshold = 60.0
     
     var requestedUrlInfo : Dictionary<String, String>?
     
@@ -55,84 +56,125 @@ import CoreData
             }
         }
         
-        
         if restartTimer {
-            self.refreshInactivityTimer(timeToExpireActivity: inactivityInterval)
+            inactivityStartingTime = Date()
+            CountDownViewController.shared.reset()
         }
         super.sendEvent(event)
     }
     
     @objc func timerAction() {
-        
+        UpdateUserTokenIfNeeded()
+        UpdateSignersTokenIfNeeded()
+    }
+    
+    func UpdateSignersTokenIfNeeded() {
         let logged = UserDefaults.standard.existKey("access_token")
-        let expireDate = UserDefaults.standard.date(forKey: "token_expires")
-        if(logged) {
-            self.refreshToken(expireDate!)
+        
+        guard logged else { return }
+        
+        for signer in SignersManager.shared.signers {
+            timeToExpire = Date(timeIntervalSince1970: signer.accessTokenExpiration).timeIntervalSinceNow;
+            
+            if timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing {
+                
+                #if DEBUG
+                print("Refreshing \(signer.code) access token at: \(Formatter.instance.stringFromTestDate(Date()))")
+                #endif
+            
+                self.refreshToken(signer.refreshToken) { json in
+                    SignersManager.shared.updateSigner(json: json)
+                    
+                    if let controller = self.getViewController(ofKind: InstanceViewController.self) as? InstanceViewController {
+                        controller.setOrRefreshSigners(SignersManager.shared.signers)
+                    }
+                }
+            }
         }
     }
     
-    func refreshToken(_ expireDate:Date) {
-    
+    func UpdateUserTokenIfNeeded() {
+        let logged = UserDefaults.standard.existKey("access_token")
+        
+        guard logged else { return }
+        
+        guard let expireDate = UserDefaults.standard.date(forKey: "token_expires") else {
+            return
+        }
+        
         timeToExpire = expireDate.timeIntervalSinceNow;
         
-        if(timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing) {
+        guard timeToExpire <= timeBeforeTokenExpires && !self.isWarningPresented && !isRefreshing else {
+            return
+        }
         
-            isRefreshing = true
+        #if DEBUG
+        print("Refreshing \(UserDefaults.standard.string(forKey: "userCode") ?? "") access token at: \(Formatter.instance.stringFromTestDate(Date()))")
+        #endif
+        
+        self.refreshToken(UserDefaults.standard.value(forKey: "refresh_token") as! String) { json in
             
-            ServerConnection.loginOrRefreshToServer(["Refresh_Token" : UserDefaults.standard.value(forKey: "refresh_token") as! String]) { (serverResponse) -> Void in
-                do{
-                    if serverResponse.data != nil
+            let accessToken = json["access_token"] as! String
+            let tokenExpires = Date() + (json["expires_in"] as! TimeInterval)
+            let refreshToken = UserDefaults.standard.string(forKey: "refresh_token")!
+
+            UserDefaults.standard.setValue(accessToken, forKey: "access_token")
+            UserDefaults.standard.setValue(tokenExpires, forKey: "token_expires")
+            
+            if let controller = self.getViewController(ofKind: InstanceViewController.self) as? InstanceViewController {
+                controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken )
+            }
+            
+            if let controller = self.getViewController(ofKind: UserManualViewController.self) as? UserManualViewController {
+                controller.refreshTokensByJSInjection(accessToken: accessToken, refreshToken: refreshToken)
+            }
+        }
+    }
+    
+    func refreshToken(_ refreshToken:String, refreshAction: @escaping (_ json: [String: Any]) -> Void) {
+        
+        isRefreshing = true
+        
+        ServerConnection.loginOrRefreshToServer(["Refresh_Token" : refreshToken]) { (serverResponse) -> Void in
+            do{
+                if serverResponse.data != nil
+                {
+                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    
+                    if(json["error"] == nil)
+                    
                     {
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                       
-                        if(json["error"] == nil)
-                            
-                        {
-                            UserDefaults.standard.setValue(json["access_token"], forKey: "access_token")
-                            
-                            UserDefaults.standard.setValue(Date() + (json["expires_in"] as! TimeInterval), forKey: "token_expires")
-                            
-                            self.isRefreshing = false
-                            self.needToUpdateTokens = true
-                            
-                            if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController {
-                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
-                            }
-                            
-                            if let controller = self.getWebViewInstance(ofKind: UserManualViewController.self) as? UserManualViewController {
-                                controller.refreshTokensByJSInjection(accessToken: UserDefaults.standard.value(forKey: "access_token") as! String, refreshToken: UserDefaults.standard.value(forKey: "refresh_token") as! String)
-                            }
-                            
-                        } else {
-                            
-                            self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: \(String(describing: json["error"])).\n You'll be redirected to login section.") {
-                                () -> Void in
-                                self.logoutAndGoToLogin()
-                            }
-                            
-                            self.isRefreshing = false
-                        }
-                    } else if serverResponse.error != nil {
-                        self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Connection error to the server.\n You'll be redirected to login section.") {
+                        refreshAction(json)
+                        self.isRefreshing = false
+                        
+                    } else {
+                        
+                        self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: \(String(describing: json["error"])).\n You'll be redirected to login section.") {
                             () -> Void in
                             self.logoutAndGoToLogin()
                         }
+                        
+                        self.isRefreshing = false
                     }
-                } catch {
-                    print("Error deserializing JSON: \(error)")
-                    self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Cannot parse response.\n You'll be redirected to login section.") {
+                } else if serverResponse.error != nil {
+                    self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Connection error to the server.\n You'll be redirected to login section.") {
                         () -> Void in
                         self.logoutAndGoToLogin()
                     }
                 }
-                
+            } catch {
+                print("Error deserializing JSON: \(error)")
+                self.displayMessage(Title: "Error", Message: "Something has gone wrong while refreshing token: Cannot parse response.\n You'll be redirected to login section.") {
+                    () -> Void in
+                    self.logoutAndGoToLogin()
+                }
             }
             
         }
         
     }
     
-    private func getWebViewInstance<T: UIViewController>(ofKind kind:AnyClass) -> T? {
+    private func getViewController<T: UIViewController>(ofKind kind:AnyClass) -> T? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
@@ -173,13 +215,50 @@ import CoreData
                 
                 let tabBarController = (topController as! TabViewController)
                 
+                if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
+                    instanceController.closeInstance()
+                }
+                
+                if let navController = tabBarController.viewControllers?[1] as? UINavigationController, navController.childViewControllers.count > 1 {
+                    navController.popToRootViewController(animated: false)
+                }
+                
                 if let controller = tabBarController.viewControllers![tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController {
+                    
                     requestToOpenInstance = false
+                     
                     controller.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
                 }
             }
         }
     }
+    
+    func openSearch() {
+        if let tabBarController = searchPresentedController(controllerClass: TabViewController.self) as? TabViewController {
+            var isPresented = true
+            if tabBarController.selectedIndex != 1 {
+                tabBarController.selectedIndex = 1
+                isPresented = false
+            }
+            
+            if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
+                instanceController.closeInstance()
+            }
+            
+            if let navController = tabBarController.viewControllers?[1] as? UINavigationController, navController.childViewControllers.count > 1 {
+                navController.popToRootViewController(animated: false)
+            }
+            
+            if let instancesSearcController = tabBarController.viewControllers![1].childViewControllers[0] as? InstancesSearchViewController {
+                instancesSearcController.loadFilters()
+                
+                if isPresented { instancesSearcController.viewDidAppear(false) }
+            }
+            
+            requestToOpenSearch = false
+        }
+    }
+    
     
     func setupNewServer(_ server:String, managedObjectContext: NSManagedObjectContext) {
         
@@ -223,7 +302,7 @@ import CoreData
         }
     }
     
-    func searchPresentedController(controllerClass: AnyClass?) -> UIViewController? {
+    func searchPresentedController(controllerClass: AnyClass? = nil) -> UIViewController? {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
         
             while let presentedViewController = topController.presentedViewController {
@@ -234,8 +313,10 @@ import CoreData
                 if topController.isKind(of: searchClass) {
                     return topController
                 }
+                return nil
             }
-           
+            
+            return topController
         }
         
         return nil
@@ -246,6 +327,8 @@ import CoreData
         UserDefaults.standard.setValue(nil, forKey: "access_token")
         UserDefaults.standard.setValue(nil, forKey: "refresh_token")
         UserDefaults.standard.setValue(nil, forKey: "roles")
+        FilterManager.shared.clearFilters()
+        SignersManager.shared.clearSigners()
         
         if let timer = timer {
             timer.invalidate()
@@ -325,50 +408,60 @@ import CoreData
         
     }
     
-    func refreshInactivityTimer(timeToExpireActivity: Double) {
+    func startInactivityTimer() {
         let logged = UserDefaults.standard.existKey("access_token")
         
         if(logged && !isInactivityCatched){
-            if let timer = inactivityTimer {
-                timer.invalidate()
-            }
-            inactivityTimer = Timer.scheduledTimer(timeInterval: timeToExpireActivity, target: UIApplication.shared, selector: #selector(MyApplication.inactivityHasDetected), userInfo: nil, repeats: true)
+            inactivityTimer?.invalidate()
+            
             inactivityStartingTime = Date()
+            
+            inactivityTimer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.inactivityDetection), userInfo: nil, repeats: true)
         }
     }
     
     func startTokenTimer() {
         let logged = UserDefaults.standard.existKey("access_token")
         
-        if(logged && !isTokenExpired){
-            if let timer = timer {
-                timer.invalidate()
-            }
+        if(logged && !isTokenExpired) {
+            
+            timer?.invalidate()
+            
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: UIApplication.shared, selector: #selector(MyApplication.timerAction), userInfo: nil, repeats: true)
         }
     }
     
-    @objc func inactivityHasDetected() {
-        if let timer = inactivityTimer {
-            timer.invalidate()
+    @objc func inactivityDetection() {
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) > Date()) {
+            return
         }
-        isInactivityCatched = true
-        #if DEBUG
-            let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime!, timeOnly: true))
-            self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+        
+        if (inactivityStartingTime.addingTimeInterval(inactivityInterval - showCountdownThreshold) < Date() && !CountDownViewController.shared.isPresented) {
+            CountDownViewController.shared.completition = { [weak self] in
+                self?.inactivityTimer?.invalidate()
+                self?.isInactivityCatched = true
+                #if DEBUG
+                let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(self?.inactivityStartingTime ?? Date(), timeOnly: true))
+                self?.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                    self?.logoutAndGoToLogin()
+                    self?.isInactivityCatched = false
+                }
+                #else
                 self?.logoutAndGoToLogin()
                 self?.isInactivityCatched = false
+                #endif
+                
             }
-        #else
-            self.logoutAndGoToLogin()
-            self.isInactivityCatched = false
-        #endif
+            searchPresentedController()?.present(CountDownViewController.shared, animated: false)
+        }
+        
+        CountDownViewController.shared.updateCountDown(time: inactivityStartingTime.addingTimeInterval(inactivityInterval).timeIntervalSinceNow)
     }
     
     func goBackGround(){
-        if let controller = self.getWebViewInstance(ofKind: InstanceViewController.self) as? InstanceViewController  {
-            controller.viewWillDisappear(false);
-        }
+        self.getViewController(ofKind: InstanceViewController.self)?.viewWillDisappear(false);
+        
+        self.getViewController(ofKind: SignersViewController.self)?.viewWillDisappear(false)
         
         UserDefaults.standard.set(Date(), forKey: "backgroundTime")
         if let timer = timer {
@@ -388,18 +481,21 @@ import CoreData
                 
                 if(lastActiveTime.addingTimeInterval(inactivityInterval) < Date()) {
                     self.isInactivityCatched = true
-                    #if DEBUG
-                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(inactivityStartingTime ?? Date(), timeOnly: true))
-                        self.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                    CountDownViewController.shared.completition = { [weak self] in
+                        #if DEBUG
+                        let message = String(format: "No activity detected since %@", Formatter.instance.stringFromTestDate(self?.inactivityStartingTime ?? Date(), timeOnly: true))
+                            self?.displayMessage(Title: "Inactivity", Message: message) { [weak self] in
+                                self?.logoutAndGoToLogin()
+                                self?.isInactivityCatched = false
+                            }
+                        #else
                             self?.logoutAndGoToLogin()
                             self?.isInactivityCatched = false
-                        }
-                    #else
-                        self.logoutAndGoToLogin()
-                        self.isInactivityCatched = false
-                    #endif
+                        #endif
+                    }
+                    CountDownViewController.shared.updateCountDown(time: inactivityStartingTime.timeIntervalSinceNow)
                 } else {
-                    self.refreshInactivityTimer(timeToExpireActivity: lastActiveTime.addingTimeInterval(inactivityInterval).timeIntervalSince(Date()))
+                    self.startInactivityTimer()
                 }
             }
             
