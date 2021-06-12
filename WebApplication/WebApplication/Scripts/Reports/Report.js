@@ -153,13 +153,12 @@
             console.log("Elapsed time: " + (new Date() - startedOn) + "ms");
         },
 
-        load = function (page) {
+        load = function () {
             var request = $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/GetReportData",
                 data: {
                     id: options.id,
-                    page: page,
                     parameters: parameters
                 }
             }).done(function (result) {

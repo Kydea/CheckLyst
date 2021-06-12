@@ -48,5 +48,23 @@ namespace CheckListManager.Reports.Api.Controllers
                 return new ErrorResult(Request, Response);
             }
         }
+        
+        [HttpPost]
+        [Route("GetReportQuery")]
+        [Authorize(Roles = "Reports#Edit")]
+        public async Task<IHttpActionResult> GetReportQuery(ReportRequest request)
+        {
+            try
+            {
+                var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+                return Ok(await _reportViewerService.GetReportQuery(Identity, request, cancellationToken));
+            }
+            catch (Exception Exception)
+            {
+                var Response = new ResponseMessage<Exception> { Data = Exception };
+                Response.Messages.AddRange(BuildErrorMessage(Exception));
+                return new ErrorResult(Request, Response);
+            }
+        }
     }
 }

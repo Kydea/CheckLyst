@@ -23,23 +23,18 @@
             if (parameters.length)
                 url += "?" + parameters.join("&");
 
-            matematici.dialog.show({
-                title: "Click to copy",
-                buttons: [{
-                    textarea: true,
-                    val: url,
-                    readOnly: true,
-                    height: 36,
-                    handler: function () {
-                        $(this).select();
-                        document.execCommand("copy");
-                        matematici.blip.ok(matematici.dialog.close());
-                    }
-                }, {
+            matematici.dialog.show("link builder", url, [{
                     hidden: true,
                     cancelButton: true
+                }, {
+                    text: "copy",
+                    icon: "copy",
+                    defaultButton: true,
+                    handler: function () {
+                        matematici.clipboard.copy(url);
+                    }
                 }]
-            });
+            );
 
             matematici.dialog.setWidth("1000px");
         },

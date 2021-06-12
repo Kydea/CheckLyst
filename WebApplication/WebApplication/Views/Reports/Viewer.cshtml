@@ -38,6 +38,11 @@
                     reportViewer.run();
                 }, "Run");
 
+        if (matematici.tokenManager.checkRole("Reports#Edit#"))
+            buttonGroup.add("Query", function () {
+                reportViewer.query();
+            }, "Query")
+
         new matematici.Page({
             name: "ReportViewer",
             cssClass: "ReportViewer",

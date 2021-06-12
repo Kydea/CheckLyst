@@ -98,7 +98,13 @@ namespace CheckListManager.Reports.Logic.Detail
                 };
             }
 
-            if (record.Columns != null)
+            if (record.Columns == null || !record.Columns.Any())
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = "The report has no column"
+                });
+            else
                 for (var Index = 0; Index < record.Columns.Count; ++Index)
                 {
                     var Column = record.Columns[Index];
@@ -131,7 +137,7 @@ namespace CheckListManager.Reports.Logic.Detail
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
 
-            response.Valid = !response.Fields.Any() && response.ColumnErrors == null && response.ClauseErrors == null;
+            response.Valid = !response.ValidationMessages.Any() && !response.Fields.Any() && response.ColumnErrors == null && response.ClauseErrors == null;
 
             if (record.ReportSource == null)
                 try
