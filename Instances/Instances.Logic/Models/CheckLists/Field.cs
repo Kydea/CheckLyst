@@ -139,7 +139,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         private void UpdateValue()
         {
             if (IterationItem)
-                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, ((Field)FindIteratorModelItem()).ValueFormula);
+            {
+                var BaseFormula = ((Field)FindIteratorModelItem()).ValueFormula;
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, BaseFormula);
+                ValueFormula.IsSet = BaseFormula.IsSet;
+            }
             else
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
 

@@ -198,9 +198,9 @@
                 setupReportSources(reportSources);
                 var autoComplete = matematici.AutoComplete.get(reportSourceSelect[0]);
                 autoComplete.refreshValues();
-                autoComplete.setValue(model.fields.reportSource.value);
+                autoComplete.setValue(model.fields && model.fields.reportSource && model.fields.reportSource.value);
                 reportSourceChanged();
-                if (reportSourceSelect.val() == null) editor.setValue(model.fields.query.value || "", -1);
+                if (reportSourceSelect.val() == null) editor.setValue(model.fields && model.fields.query && model.fields.query.value || "", -1);
                 editor.setChangeHandler(function () {
                     matematici.canClose = false;
                 });

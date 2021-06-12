@@ -54,6 +54,7 @@
     };
 
     this.hasChanges = function () {
+        if (options.number && !options.defaultValue) options.defaultValue = "0";
         return !options.defaultValue && !!model[property] || !!options.defaultValue && model[property] != options.defaultValue;
     };
 
