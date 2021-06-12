@@ -24,6 +24,7 @@ namespace CheckListManager.Reports.Logic.List
             var Result = await _reportsRepository.GetReportsAsync(
                 Identity.CompanyId,
                 Identity.HasPermission("Reports", "Edit") ? string.Empty : Identity.Code,
+                Form.Data.ID,
                 Form.Data.Code,
                 Form.Data.Description,
                 Form.CurrentPage,

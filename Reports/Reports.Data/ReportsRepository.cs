@@ -26,6 +26,7 @@ namespace CheckListManager.Reports.Data
         public async Task<PagingResponse<List<Common.Data.Reports>>> GetReportsAsync(
             long company,
             string user,
+            int? id,
             string code,
             string description,
             int currentPage, 
@@ -36,8 +37,9 @@ namespace CheckListManager.Reports.Data
             var Query = Entities.Reports
                 .Where(r =>
                     r.Company == company
-                    && (code == string.Empty || r.Code.ToUpper().Contains(code))
-                    && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description))
+                    && (id == null || r.ID == id)
+                    && (code == string.Empty || r.Code.ToUpper().Contains(code.ToUpper()))
+                    && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description.ToUpper()))
                 );
 
             if (!string.IsNullOrEmpty(user))
