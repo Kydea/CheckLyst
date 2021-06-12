@@ -222,7 +222,6 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     var report = new Common.Data.Reports
                     {
-                        ID = request.ID.Value,
                         Code = request.Code,
                         Description = request.Description,
                         ReportSource = request.ReportSource,
@@ -257,6 +256,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     };
                     if (request.ID.HasValue)
                     {
+                        report.ID = request.ID.Value;
                         await _reportsRepository.EditReportAsync(identity, report, request.Groups);
                         await AuditAsync(identity, TrailAction.ReportUpdated, request);
                     }
