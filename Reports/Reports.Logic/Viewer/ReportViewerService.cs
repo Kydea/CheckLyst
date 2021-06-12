@@ -117,7 +117,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             {
                 Code = report.Code,
                 Description = report.Description,
-                Columns = report.ReportColumns.Select(c => c.Label).ToList(),
+                Columns = report.ReportColumns.Where(c => c.Visible).Select(c => c.Label).ToList(),
                 Rows = rows
             };
         }
