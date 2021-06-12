@@ -32,6 +32,8 @@ div.Popup {
             color: white;
             text-transform: uppercase;
             font-weight: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         div.Buttons {

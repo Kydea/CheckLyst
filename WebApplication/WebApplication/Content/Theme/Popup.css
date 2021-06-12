@@ -24,7 +24,9 @@ div.Popup {
       padding: 20px;
       color: white;
       text-transform: uppercase;
-      font-weight: normal; }
+      font-weight: normal;
+      overflow: hidden;
+      text-overflow: ellipsis; }
     div.Popup div.Container div.Buttons {
       margin-top: 20px; }
       div.Popup div.Container div.Buttons a {

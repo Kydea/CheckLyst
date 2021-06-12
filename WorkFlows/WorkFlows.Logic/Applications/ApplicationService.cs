@@ -252,13 +252,13 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 {
                     var Granted = false;
                     if (
-                        identity.HasPermission("Instances", "Confirm", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
-                        || identity.HasPermission("Instances", "Confirm", PrototypeVersion.Prototypes.Department)
+                        identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
+                        || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department)
                     )
                         foreach (var Tag in Step.WorkFlowApplicationStepTags)
                             if (
-                                identity.HasPermission("InstanceWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
-                                || identity.HasPermission("InstanceWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, null, Tag.Tag)
+                                identity.HasPermission("InstanceWorkFlowLevel", null, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag)
+                                || identity.HasPermission("InstanceWorkFlowLevel", null, Instance.Prototypes.Department, null, Tag.Tag)
                                 || identity.HasPermission("InstanceWorkFlowLevel", null, null, null, Tag.Tag)
                             )
                             {

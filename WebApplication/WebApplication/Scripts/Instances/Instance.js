@@ -330,14 +330,14 @@
                 tags = row.tags.split(", ");
 
             if (
-                matematici.tokenManager.checkRole("Instances#Approve#" + model.department + "##")
-                || matematici.tokenManager.checkRole("Instances#Approve#" + model.department + "#" + model.prototypeType + "#")
+                matematici.tokenManager.checkRole("Instances#Confirm#" + department + "##")
+                || matematici.tokenManager.checkRole("Instances#Confirm#" + department + "#" + prototypeType + "#")
             )
                 for (var role in tags)
                     if (
                         matematici.tokenManager.checkRole("InstanceWorkFlowLevel####" + tags[role])
-                        || matematici.tokenManager.checkRole("InstanceWorkFlowLevel##" + model.department + "##" + tags[role])
-                        || matematici.tokenManager.checkRole("InstanceWorkFlowLevel##" + model.department + "#" + model.prototypeType + "#" + tags[role])
+                        || matematici.tokenManager.checkRole("InstanceWorkFlowLevel##" + department + "##" + tags[role])
+                        || matematici.tokenManager.checkRole("InstanceWorkFlowLevel##" + department + "#" + prototypeType + "#" + tags[role])
                     ) {
                         allowed = true;
                         break;

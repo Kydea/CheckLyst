@@ -792,8 +792,8 @@ namespace CheckListManager.Instances.Logic.Services
                     )
                 || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
                 && (
-                    identity.HasPermission("Instances", function, Department, tag: Tag)
-                    || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
+                    identity.HasPermission("Instances", function, Department) && (Tag == null || identity.HasPermission("SignatureLevel", null, Department, tag: Tag))
+                    || identity.HasPermission("Instances", function, Department, PrototypeType) && (Tag == null || identity.HasPermission("SignatureLevel", null, Department, PrototypeType, tag: Tag))
                 );
         }
 
