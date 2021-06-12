@@ -257,7 +257,9 @@ namespace CheckListManager.Reports.Logic.Detail
                     if (request.ID.HasValue)
                     {
                         report.ID = request.ID.Value;
-                        await _reportsRepository.EditReportAsync(identity, report, request.Groups);
+                        report = await _reportsRepository.EditReportAsync(identity, report, request.Groups);
+                        response.ModifiedOn = report.ModifiedOn;
+                        response.ModifiedBy = report.ModifiedBy;
                         await AuditAsync(identity, TrailAction.ReportUpdated, request);
                     }
                     else

@@ -64,12 +64,18 @@
         },
 
         save = function (callback) {
-            if (!callback && options.id == -1)
-                callback = function (result) {
-                    //reloads the page with the correct url
-                    matematici.navigator.open(options.detailUrl + "/" + result.id);
-                };
-
+            if (!callback) 
+                callback = options.id >= 0 ?
+                    function (result) {
+                        var format = matematici.dateFormatter.format(moment(result.modifiedOn));
+                        $("input[name=modifiedOn]", element).val(format.date + " " + format.time).attr("title", format.offset);
+                        $("input[name=modifiedBy]", element).val(result.modifiedBy);
+                    } :
+                    function (result) {
+                        //reloads the page with the correct url
+                        matematici.navigator.open(options.detailUrl + "/" + result.id);
+                    };
+            
             detailPage.clickHandler(null, "Save", callback);
         },
 
