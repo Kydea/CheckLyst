@@ -39,6 +39,8 @@ update "Security"."Users" set "Enabled" = true where "Company" = 1 and "Code" = 
 insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 
 	(1, 'CheckListManager', 'Companies', 'Edit'),
 	(1, 'CheckListManager', 'Companies', 'View'),
+	(1, 'CheckListManager', 'Users', 'Edit'),
+	(1, 'CheckListManager', 'Users', 'View'),
 	(1, 'CheckListManager', 'Trail', 'View');
 
 insert into "Trail"."Actions"

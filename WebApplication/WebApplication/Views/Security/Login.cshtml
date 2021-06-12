@@ -126,7 +126,7 @@
         }).done(function (result) {
             for (var index in result) {
                 var company = result[index];
-                if (administration && company.id == 1 || !administration && company.id > 1)
+                if (administration && company.id == 1 || !administration)
                     companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
             callback.call();

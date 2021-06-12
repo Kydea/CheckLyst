@@ -35,7 +35,8 @@ namespace CheckListManager.Reports.Data
             if (description == null) description = string.Empty;
             var Query = Entities.Reports
                 .Where(r =>
-                    (code == string.Empty || r.Code.ToUpper().Contains(code))
+                    r.Company == company
+                    && (code == string.Empty || r.Code.ToUpper().Contains(code))
                     && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description))
                 );
 

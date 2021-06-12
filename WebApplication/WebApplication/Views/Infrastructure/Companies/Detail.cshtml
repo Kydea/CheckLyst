@@ -252,7 +252,7 @@
             input = createSettingField(content, code, value, detail);
             content.append($("<div />").addClass("Note").text(settingDetails[code].note));
 
-            if (currentCompany > 1)
+            if (currentCompany == data.id)
                 buttons = [
                     {
                         text: "confirm", icon: "check", defaultButton: true, handler: function () {
@@ -299,7 +299,7 @@
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
             disableDelete: true,
-            readOnly: currentCompany == 1 && !isNew,
+            readOnly: currentCompany == 1 && data.id != 1 && !isNew,
             initHandler: initHandler,
             completeHandler: completeHandler,
             parametersPrepareHandler: parametersPrepareHandler,
