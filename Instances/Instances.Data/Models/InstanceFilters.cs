@@ -1,9 +1,13 @@
 ﻿using CheckListManager.Common.Logic.DataEngine;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CheckListManager.Instances.Logic.List
+namespace CheckListManager.Instances.Data.Models
 {
-    public class ListRequest : Request
+    public class InstanceFilters : Request
     {
         public long? Department { get; set; }
         public long? PrototypeType { get; set; }
@@ -16,9 +20,8 @@ namespace CheckListManager.Instances.Logic.List
         public string TagCode { get; set; }
         public string TagValue { get; set; }
         public string State { get; set; }
-        public DateTimeOffset? From { get; set; }
-        public DateTimeOffset? To { get; set; }
-        public DateTimeOffset? WholeTo { get { return To?.AddDays(1); } }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
         public string ExceptionState { get; set; }
         public string ExceptionDescription { get; set; }
     }

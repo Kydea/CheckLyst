@@ -2,6 +2,7 @@
 using System.Web.Http;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Instances.Data.Models;
 using CheckListManager.Instances.Logic.List;
 
 namespace CheckListManager.Instances.Api.Controllers
@@ -19,7 +20,7 @@ namespace CheckListManager.Instances.Api.Controllers
         [HttpPost]
         [Route("Bind")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
-        public async Task<IHttpActionResult> Bind(Message<ListRequest> request)
+        public async Task<IHttpActionResult> Bind(Message<InstanceFilters> request)
         {
             return Ok(await _listService.BindAsync(Identity, request.Data));
         }
@@ -27,9 +28,9 @@ namespace CheckListManager.Instances.Api.Controllers
         [HttpPost]
         [Route("GetData")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
-        public async Task<IHttpActionResult> GetData(PagingRequest<ListRequest> request)
+        public async Task<IHttpActionResult> GetData(PagingRequest<InstanceFilters> request)
         {
-            return Ok(await _listService.GetDataAsync(Identity.CompanyId, request));
+            return Ok(await _listService.GetDataAsync(Identity, request));
         }
     }
 }

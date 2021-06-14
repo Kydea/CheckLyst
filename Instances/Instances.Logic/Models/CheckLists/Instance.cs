@@ -12,7 +12,7 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Models.ExternalSources;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {

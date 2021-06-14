@@ -37,7 +37,7 @@ using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.ExternalSources;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -120,7 +120,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var instance = await _instancesRepository.GetAsync(company, code);
                 if (instance == null)
-                    throw new InstanceException("Instance not found");
+                    throw new Exceptions.InstanceException("Instance not found");
 
                 cacheObject = await CreateInstanceFromDatabase(company, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
@@ -155,14 +155,14 @@ namespace CheckListManager.Instances.Logic.Services
             if (!version.HasValue)
                 version = await _instancesRepository.GetActivePrototypeVersion(prototype);
             if (!version.HasValue)
-                throw new InstanceException($"The prototype {prototype} has no active version");
+                throw new Exceptions.InstanceException($"The prototype {prototype} has no active version");
 
             var source = await GetPrototype(prototype, version.Value);
             if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
-                throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
+                throw new Exceptions.InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
 
             if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
-                throw new InstanceException("Access denied");
+                throw new Exceptions.InstanceException("Access denied");
 
             return source;
         }
@@ -238,14 +238,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
+                throw new Exceptions.InstanceException("Unable to create the instance", e);
             }
         }
 
@@ -275,16 +275,16 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
 
                 if (cacheObject.ID.HasValue)
-                    throw new InstanceException("Instance already saved");
+                    throw new Exceptions.InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 var InvalidItems = new List<string>();
                 CheckInvalidItems(cacheObject.Instance.Header, InvalidItems);
                 if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
+                    throw new Exceptions.InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
 
                 cacheObject.InstanceState = InstanceState.Progress;
                 cacheObject.Instance.InProgressOn = DateTime.UtcNow;
@@ -338,7 +338,7 @@ namespace CheckListManager.Instances.Logic.Services
                     }
                     catch (AggregateException Exception)
                     {
-                        throw new InstanceException(string.Join(" - ", Exception.InnerExceptions.Select(e => e.Message)));
+                        throw new Exceptions.InstanceException(string.Join(" - ", Exception.InnerExceptions.Select(e => e.Message)));
                     }
 
                     _instancesRepository.EndCreateInstanceAsync(row);
@@ -364,14 +364,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to open the instance");
-                throw new InstanceException("Unable to open the instance", e);
+                throw new Exceptions.InstanceException("Unable to open the instance", e);
             }
         }
 
@@ -381,9 +381,9 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 if (cacheObject.NeedToSave)
                 {
@@ -393,14 +393,14 @@ namespace CheckListManager.Instances.Logic.Services
                     await SaveCacheObjectAsync(cacheObject);
                 }
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to save the instance");
-                throw new InstanceException("Unable to save the instance", e);
+                throw new Exceptions.InstanceException("Unable to save the instance", e);
             }
         }
 
@@ -410,17 +410,17 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Invalid instance state");
+                    throw new Exceptions.InstanceException("Invalid instance state");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
                 if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
+                    throw new Exceptions.InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
 
                 var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
                 if (InvalidPage != null)
-                    throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
+                    throw new Exceptions.InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);

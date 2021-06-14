@@ -8,7 +8,7 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 using System.Collections.Generic;
 using CheckListManager.Common.Logic.Api.Instances;
 using CheckListManager.Common.Logic.Models;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.Services
 {
