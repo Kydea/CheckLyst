@@ -46,7 +46,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
                 var Text = ArgumentValues[0].TextValue;
                 var Length = (int)ArgumentValues[1].NumberValue;
                 var Pattern = ArgumentValues[2].IsNull ? " " : ArgumentValues[2].TextValue;
-                while (Text.Length < Length)
+                while (Text.Length < Length && Pattern.Length > 0)
                     Text = (Direction == Directions.Left ? Pattern : string.Empty) + Text + (Direction == Directions.Right ? Pattern : string.Empty);
                 Result = new TypedValue(DataType.Text, Text);
             }
