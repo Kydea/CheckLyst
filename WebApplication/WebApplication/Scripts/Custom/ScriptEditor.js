@@ -176,7 +176,7 @@
                                     newModel.externalSources = oldModel.externalSources;
 
                                 if (flagValues[0]) {
-                                    if (!newModel.header) throw new Error("The json provided has not the header. Exclude and properties the items or provide a model with the header.")
+                                    if (!newModel.header) throw new Error("The json provided has not the header. Exclude the items and properties or provide a model with the header.")
                                     traverseForImport(newModel.header);
                                     if (!newModel.pages || !newModel.pages.length) throw new Error("The json provided has no page. Exclude the items and properties or provide a model with at least one page.")
                                     for (var page in newModel.pages) {
