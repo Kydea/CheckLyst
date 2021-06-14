@@ -2,11 +2,6 @@
     Title = "Workflows",
     RecordsName = "workflows",
 
-    Buttons = new Field[]
-    {
-        new Field("Export", "Download the filtered records in CVS format")
-    },
-
     Filters = new Field[] {
         new Field("Workflow description", "The description of the workflow or part of it.")
     },
@@ -27,9 +22,9 @@
             IncludeLogFields = true
         },
         new Tab("Steps")
-        {
+        {   
             Description = @"
-                Each step of a workflow must have all the signature issued to be accepted.<br />
+                Each step of a workflow must have all the signatures issued to be accepted.<br />
                 Each signature can be issued by a user of one of the foreseen levels.<br /> 
                 <br />
                 Click on <strong>ADD STEP</strong> to add a step to the workflow.<br />

@@ -13,5 +13,6 @@ namespace CheckListManager.Reports.Logic.Viewer
     {
         Task<DetailResponse> LoadParameters(IDefaultIdentity identity, long id);
         Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);
+        Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);
     }
 }

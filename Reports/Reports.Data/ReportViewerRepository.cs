@@ -91,10 +91,14 @@ namespace CheckListManager.Reports.Data
             var ReportRow = new ReportRow { Total = true, Record = new List<string>() };
             for (var Index = 0; Index < columnsCount; ++Index)
             {
-                ReportRow.Record.Add(stringTotals[Index] ?? numberTotals[Index]?.ToString() ?? string.Empty);
-                numberTotals[Index] = null;
-                stringTotals[Index] = null;
-                distinctValues[Index] = null;
+                var column = columns[Index];
+                if (column.Visible)
+                {
+                    ReportRow.Record.Add(stringTotals[Index] ?? numberTotals[Index]?.ToString() ?? string.Empty);
+                    numberTotals[Index] = null;
+                    stringTotals[Index] = null;
+                    distinctValues[Index] = null;
+                }
             }
             return ReportRow;
         }
@@ -200,7 +204,8 @@ namespace CheckListManager.Reports.Data
                                     }
                                     stringRow[Index] = formattedValue;
 
-                                    ReportRow.Record.Add(formattedValue ?? string.Empty);
+                                    if (column.Visible)
+                                        ReportRow.Record.Add(formattedValue ?? string.Empty);
                                 }
 
                                 if (needToAddTotal)
@@ -229,7 +234,7 @@ namespace CheckListManager.Reports.Data
                                             if (numberRow[Index].HasValue)
                                                 numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
                                             else
-                                                stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringTotals[Index] : stringRow[Index];
+                                                stringTotals[Index] = stringTotals[Index] != null && string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringTotals[Index] : stringRow[Index];
                                             break;
                                         case "max":
                                             if (numberRow[Index].HasValue)

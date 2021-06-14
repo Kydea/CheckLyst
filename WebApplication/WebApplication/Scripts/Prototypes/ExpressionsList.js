@@ -367,5 +367,7 @@
             }
     };
 
+    this.close = close;
+
     setup();
 };

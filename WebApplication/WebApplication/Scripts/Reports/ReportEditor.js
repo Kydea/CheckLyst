@@ -64,12 +64,18 @@
         },
 
         save = function (callback) {
-            if (!callback && options.id == -1)
-                callback = function (result) {
-                    //reloads the page with the correct url
-                    matematici.navigator.open(options.detailUrl + "/" + result.id);
-                };
-
+            if (!callback) 
+                callback = options.id >= 0 ?
+                    function (result) {
+                        var format = matematici.dateFormatter.format(moment(result.modifiedOn));
+                        $("input[name=modifiedOn]", element).val(format.date + " " + format.time).attr("title", format.offset);
+                        $("input[name=modifiedBy]", element).val(result.modifiedBy);
+                    } :
+                    function (result) {
+                        //reloads the page with the correct url
+                        matematici.navigator.open(options.detailUrl + "/" + result.id);
+                    };
+            
             detailPage.clickHandler(null, "Save", callback);
         },
 
@@ -198,9 +204,9 @@
                 setupReportSources(reportSources);
                 var autoComplete = matematici.AutoComplete.get(reportSourceSelect[0]);
                 autoComplete.refreshValues();
-                autoComplete.setValue(model.fields.reportSource.value);
+                autoComplete.setValue(model.fields && model.fields.reportSource && model.fields.reportSource.value);
                 reportSourceChanged();
-                if (reportSourceSelect.val() == null) editor.setValue(model.fields.query.value || "", -1);
+                if (reportSourceSelect.val() == null) editor.setValue(model.fields && model.fields.query && model.fields.query.value || "", -1);
                 editor.setChangeHandler(function () {
                     matematici.canClose = false;
                 });

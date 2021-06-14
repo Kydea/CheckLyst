@@ -116,9 +116,14 @@
                 .add("Save", function () {
                     reportEditor.save();
                 }, "Save")
-                .add("View", function () {
-                    reportEditor.view();
-                }, "View")
+                @if (Model.ID.HasValue)
+                {
+                    <text>
+                        .add("View", function () {
+                            reportEditor.view();
+                        }, "View")
+                    </text>
+                }
                 .add("Verify", function () {
                     reportEditor.verify(false);
                 }, "Verify");
@@ -134,12 +139,12 @@
         matematici.save = reportEditor.save;
 
         matematici.events.onPageUnload = function (callback) {
-            reports.reportEditor = null;
-            matematici.canClose = true;
-            matematici.save = undefined;
-            callback();
-        };
+                        reports.reportEditor = null;
+                        matematici.canClose = true;
+                        matematici.save = undefined;
+                        callback();
+                    };
 
-        callback.call();
+                    callback.call();
     }
 </script>

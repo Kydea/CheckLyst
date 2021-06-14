@@ -1,7 +1,7 @@
 ﻿matematici.dateFormatter = {
 	format: function (dateTime) {
         var
-            momentDate = dateTime, //moment(dateTime); //.tz(local && localStorage.timeZone || 'UTC'),
+            momentDate = dateTime,
 			valid = momentDate.isValid(),
 
 			date = function () {

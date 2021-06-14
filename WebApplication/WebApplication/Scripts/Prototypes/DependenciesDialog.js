@@ -8,6 +8,8 @@
             e.preventDefault();
             var dependency = $(this).data("dependency");
             matematici.dialog.close();
+            matematici.sourcesList && matematici.sourcesList.close();
+            matematici.expressionsList && matematici.expressionsList.close();
             setTimeout(function () {
                 switch (dependency.className) {
                     case "expression":

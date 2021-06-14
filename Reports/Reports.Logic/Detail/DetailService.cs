@@ -98,7 +98,13 @@ namespace CheckListManager.Reports.Logic.Detail
                 };
             }
 
-            if (record.Columns != null)
+            if (record.Columns == null || !record.Columns.Any())
+                response.ValidationMessages.Add(new ValidationMessage
+                {
+                    Level = ValidationMessage.LevelError,
+                    Message = "The report has no column"
+                });
+            else
                 for (var Index = 0; Index < record.Columns.Count; ++Index)
                 {
                     var Column = record.Columns[Index];
@@ -131,7 +137,7 @@ namespace CheckListManager.Reports.Logic.Detail
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
 
-            response.Valid = !response.Fields.Any() && response.ColumnErrors == null && response.ClauseErrors == null;
+            response.Valid = !response.ValidationMessages.Any() && !response.Fields.Any() && response.ColumnErrors == null && response.ClauseErrors == null;
 
             if (record.ReportSource == null)
                 try
@@ -222,7 +228,6 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     var report = new Common.Data.Reports
                     {
-                        ID = request.ID.Value,
                         Code = request.Code,
                         Description = request.Description,
                         ReportSource = request.ReportSource,
@@ -257,7 +262,10 @@ namespace CheckListManager.Reports.Logic.Detail
                     };
                     if (request.ID.HasValue)
                     {
-                        await _reportsRepository.EditReportAsync(identity, report, request.Groups);
+                        report.ID = request.ID.Value;
+                        report = await _reportsRepository.EditReportAsync(identity, report, request.Groups);
+                        response.ModifiedOn = report.ModifiedOn;
+                        response.ModifiedBy = report.ModifiedBy;
                         await AuditAsync(identity, TrailAction.ReportUpdated, request);
                     }
                     else

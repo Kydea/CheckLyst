@@ -139,9 +139,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public virtual bool Check()
         {
+            if (Errors.Any()) return false;
+
             var Result = true;
             if (CountDownCondition == Conditions.Expression)
-                Result &= CheckExpression("countdown", CountDownToCode, DataType.DateTime, DataType.Date);
+                Result &= CheckExpression("countdown", CountDownToCode, DataType.DateTime);
             if (HiddenCondition == Conditions.Expression)
                 Result &= CheckExpression("hidden", HiddenExpressionCode, DataType.Boolean);
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)

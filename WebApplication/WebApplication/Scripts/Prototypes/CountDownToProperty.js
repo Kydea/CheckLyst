@@ -19,7 +19,7 @@
                 else if (expressions[value].error)
                     error = "the expression is not valid";
                 else if (!prototypes.propertyPanel.checkDataType(expressions[value], "DateTime"))
-                    error = "the expression result must be a date";
+                    error = "the expression result must be a date/time";
             } else if (condition == 6) {
                 if (!value)
                     error = "select a signature";
@@ -89,7 +89,7 @@
 
         valuePanel.addClass("CountDown");
         expressions = prototypes.prototype.getModel().expressions;
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel);
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel, base, "countdown");
 
         if (editable) {
             conditionSelect = $("<select />")

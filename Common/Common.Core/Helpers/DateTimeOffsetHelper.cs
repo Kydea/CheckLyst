@@ -35,7 +35,7 @@ namespace CheckListManager.Common.Core.Helpers
                 return null;
             }
 
-            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, $"{DateFormat} {TimeFormat}", $"{DateFormat} {TimeFormat}" };
+            if (Format == null || Format.Length == 0) Format = new string[] { DateFormat, DateTimeFormats[0], DateTimeFormats[1] };
 
             var DateTime = System.DateTime.SpecifyKind(System.DateTime.ParseExact(Value, Format, null, DateTimeStyles.None), DateTimeKind.Unspecified);
             var TimeZoneInfo = System.TimeZoneInfo.FindSystemTimeZoneById(TimeZone);
@@ -45,6 +45,22 @@ namespace CheckListManager.Common.Core.Helpers
             AmbiguousDateTimeOffsets = Ambiguous ? TimeZoneInfo.GetAmbiguousTimeOffsets(DateTime) : null;
 
             return DateTimeOffset;
+        }
+
+        public static bool TryParse(string Value, string TimeZone, out bool Ambiguous, out TimeSpan[] AmbiguousDateTimeOffsets, out DateTimeOffset? DateTimeOffset, params string[] Format)
+        {
+            try
+            {
+                DateTimeOffset = Parse(Value, TimeZone, out Ambiguous, out AmbiguousDateTimeOffsets, Format);
+                return true;
+            }
+            catch
+            {
+                Ambiguous = false;
+                AmbiguousDateTimeOffsets = null;
+                DateTimeOffset = null;
+                return false;
+            }
         }
     }
 }

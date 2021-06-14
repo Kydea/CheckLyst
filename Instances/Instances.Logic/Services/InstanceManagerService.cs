@@ -791,10 +791,8 @@ namespace CheckListManager.Instances.Logic.Services
                         || identity.HasPermission("Prototypes", "Preview", Department, PrototypeType)
                     )
                 || !PrototypeVersionState.In(VersionState.Draft, VersionState.InSimulation)
-                && (
-                    identity.HasPermission("Instances", function, Department, tag: Tag)
-                    || identity.HasPermission("Instances", function, Department, PrototypeType, Tag)
-                );
+                    && (identity.HasPermission("Instances", function, Department) || identity.HasPermission("Instances", function, Department, PrototypeType))
+                    && (Tag == null || identity.HasPermission("SignatureLevel", null, Department, tag: Tag) || identity.HasPermission("SignatureLevel", null, Department, PrototypeType, tag: Tag));
         }
 
         #endregion
@@ -1522,25 +1520,20 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (field.LocalTimeZone)
                 {
-                    DateTimeOffset? dateTimeOffset;
-                    try
-                    {
-                        dateTimeOffset = DateTimeOffsetHelper.Parse(oldFormattedValue, TimeZone, out _, out _);
-                        oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
-                    }
-                    catch { }
-                    dateTimeOffset = DateTimeOffsetHelper.Parse(formattedValue, TimeZone, out _, out _);
+                    DateTimeOffsetHelper.TryParse(oldFormattedValue, TimeZone, out _, out _, out var dateTimeOffset);
+                    oldFormattedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
+                    DateTimeOffsetHelper.TryParse(formattedValue, TimeZone, out _, out _, out dateTimeOffset);
                     loggedValue = dateTimeOffset?.Format(TimeZone) ?? string.Empty;
                     if (!dateTimeOffset.HasValue) formattedValue = string.Empty;
                 }
                 else
                 {
-                    if (DateTimeOffset.TryParseExact(oldFormattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
+                    if (DateTimeOffset.TryParseExact(oldFormattedValue, DateTimeOffsetHelper.DateTimeFormats, null, System.Globalization.DateTimeStyles.AssumeUniversal, out var Date))
                         oldFormattedValue = Date.Format(null);
                     else
                         oldFormattedValue = string.Empty;
 
-                    if (DateTimeOffset.TryParseExact(formattedValue, "yyyy-MM-dd HH:mm", null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
+                    if (DateTimeOffset.TryParseExact(formattedValue, DateTimeOffsetHelper.DateTimeFormats, null, System.Globalization.DateTimeStyles.AssumeUniversal, out Date))
                         loggedValue = Date.Format(null);
                     else
                         formattedValue = loggedValue = string.Empty;
@@ -1556,6 +1549,16 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 loggedValue = formattedValue;
+            }
+            else if (field.ValueType == DataType.Time)
+            {
+                if (!DataType.Time.TryParse(value, out var parsedValue))
+                {
+                    field.ConversionError = true;
+                    formattedValue = loggedValue = string.Empty;
+                }
+                else
+                    formattedValue = loggedValue = ((TimeSpan)parsedValue).ToString("hh\\:mm");
             }
             else if (!field.ValueType.TryParse(value, out var parsedValue))
                 field.ConversionError = true;

@@ -24,7 +24,7 @@
             select = currentProperty.getType().getExpressionsSelect();
         },
 
-        clickHandler= function (e) {
+        expressionsButtonClickHandler= function (e) {
             e.preventDefault();
             hidePropertyPanel();
 
@@ -39,7 +39,7 @@
 
         setup = function () {
             var buttonsPanel = $("<div />").addClass("ButtonsPanel").appendTo(valuePanel);
-            buttonsPanel.append(viewButton = $("<a />").addClass("Icon Button").attr({ href: "#" }).prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", clickHandler));
+            buttonsPanel.append(viewButton = $("<a />").addClass("Icon Button").attr({ href: "#" }).prepend($("<i />").addClass("Icon fal fa-calculator")).on("click", expressionsButtonClickHandler));
         };
 
     this.fill = function (value) {

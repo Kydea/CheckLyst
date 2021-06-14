@@ -62,7 +62,7 @@
                             (
                                 s.interface == "ValidityItem"
                                 || s.interface == "Field" && element.typeName == "Field"
-                                || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Group" || element.typeName == "Signature")
+                                || s.interface == "EditableItem" && (element.typeName == "Attachment" || element.typeName == "Field" || element.typeName == "Group" || element.typeName == "Signature" || element.typeName == "InstanceLink")
                                 || s.interface == "Iterator" && (element.typeName == "Group" && element.iterator)
                                 || s.interface == "Signature" && element.typeName == "Signature"
                                 || s.interface == "InstanceLink" && element.typeName == "InstanceLink"

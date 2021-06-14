@@ -252,7 +252,7 @@
             input = createSettingField(content, code, value, detail);
             content.append($("<div />").addClass("Note").text(settingDetails[code].note));
 
-            if (currentCompany > 1)
+            if (currentCompany == data.id)
                 buttons = [
                     {
                         text: "confirm", icon: "check", defaultButton: true, handler: function () {
@@ -299,7 +299,7 @@
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
             disableDelete: true,
-            readOnly: currentCompany == 1 && !isNew,
+            readOnly: currentCompany == 1 && data && data.id != 1 && !isNew,
             initHandler: initHandler,
             completeHandler: completeHandler,
             parametersPrepareHandler: parametersPrepareHandler,
@@ -332,7 +332,7 @@
             },
             RequireUserReason: {
                 label: "Require user reason",
-                note: "This option set a mandatory reasong request for each search page action (insert, update, delete).",
+                note: "This option set a mandatory reason request for each search page action (insert, update, delete).",
                 values: [{ value: "true", label: "Yes" }, { value: "false", label: "No" }],
                 group: "Environment",
                 default: false
@@ -341,7 +341,7 @@
             //Security
             InactivityTimeoutSeconds: {
                 label: "Inactivity timeout",
-                note: "Defines the number seconds of inactivity after which the user is logged out.",
+                note: "Defines the number seconds of inactivity after which the user is logged out. The value 0 disable the feature.",
                 mask: "pint",
                 group: "Security",
                 default: 0
@@ -395,7 +395,7 @@
             },
             SmtpHost: {
                 label: "SMTP host",
-                note: "The host of the LDAP server (e.g. 192.168.1.50 or smpt.company.com).",
+                note: "The host of the SMTP server (e.g. 192.168.1.50 or smpt.company.com).",
                 group: "Email"
             },
             SmtpPassword: {
@@ -419,13 +419,13 @@
             //MESSAGES
             InstanceMessage: {
                 label: "Instance signature message",
-                note: "This message is sent when a signature marked to sed emails is issued in a check list. The parameters [User] (the code of the user) and [CheckListCode] (the code of the checklist) can be used.",
+                note: "This message is sent when a signature marked to send emails is issued in a check list. The parameters [User] (the code of the user) and [CheckListCode] (the code of the checklist) can be used.",
                 textArea: true,
                 group: "Messages"
             },
             NotificationMessage: {
                 label: "Instance notification message",
-                note: "This message is sent when a notification expression becomes true or reaches the schedulet data and time. The parameters [Code] (the code of the expression), [Description] (the description of the expression), [Value] (the value of the expression), [Note] (the note of the notification) and [Link] (the link to the instance) can be used.",
+                note: "This message is sent when a notification expression becomes true or reaches the scheduled data and time. The parameters [Code] (the code of the expression), [Description] (the description of the expression), [Value] (the value of the expression), [Note] (the note of the notification) and [Link] (the link to the instance) can be used.",
                 textArea: true,
                 group: "Messages"
             },
@@ -443,7 +443,7 @@
             },
             UserBlockWarningMessage: {
                 label: "User warning message",
-                note: "This message is sent when a user is warned about an possible block by the system for inactivity. The parameter [User] (the code of the user) can be used.",
+                note: "This message is sent when a user is warned about a possible block by the system for inactivity. The parameter [User] (the code of the user) can be used.",
                 textArea: true,
                 group: "Messages"
             }

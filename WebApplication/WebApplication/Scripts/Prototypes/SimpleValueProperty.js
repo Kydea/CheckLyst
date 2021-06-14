@@ -3,10 +3,9 @@
         base,
         input,
         check,
-        aliases,
 
         replaceZero = function (value) {
-            return options.number && (!options.defaultValue || options.defaultValue == "0") && value == "0" ? "" : value;
+            return options.number && value == "0" ? "" : value;
         },
 
         change = function () {
@@ -47,14 +46,18 @@
         else if (options.code)
             input.keyfilter(/^[$A-Z_0-9]*$/i);
 
-        if (options.number && !options.defaultValue)
-            options.defaultValue = "0";
-
         valuePanel.append(input);
     };
 
     this.hasChanges = function () {
-        return !options.defaultValue && !!model[property] || !!options.defaultValue && model[property] != options.defaultValue;
+        var result =
+            !(
+                options.number && (model[property] == "0" || model[property] == "" || model[property] == null) && (options.defaultValue == "0" || options.defaultValue == "" || options.defaultValue == null)
+            ) && (
+                options && !options.defaultValue && !!model[property]
+                || !!options.defaultValue && model[property] != options.defaultValue
+            );
+        return result;
     };
 
     this.setReadOnly = function (value) {

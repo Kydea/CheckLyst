@@ -16,6 +16,38 @@
             window.open(options.reportUrl + "?" + queryStrings.join("&"));
         },
 
+        query = function () {
+            var queryParameters = [];
+            for (var parameterIndex in parameters) {
+                var
+                    parameter = parameters[parameterIndex],
+                    value = parameter.getValue();
+                if (value != "" && !parameter.getOption("readOnly"))
+                    queryParameters.push({ code: parameter.getOption("parameterName"), value: value });
+            }
+
+            $.ajax({
+                type: "post",
+                url: matematici.urls.reports.api + "/Viewer/GetReportQuery",
+                data: {
+                    id: options.id,
+                    parameters: queryParameters
+                }
+            }).done(function (result) {
+                matematici.dialog.show("report query", result.split(" ").join("&nbsp;").split("\n").join("<br />"), [{
+                    hidden: true,
+                    cancelButton: true
+                }, {
+                    text: "copy",
+                    icon: "copy",
+                    defaultButton: true,
+                    handler: function () {
+                        matematici.clipboard.copy(result);
+                    }
+                }]);
+            });
+        },
+
         quit = function () {
             var editor = matematici.tokenManager.checkRole("Reports#Edit#");
 
@@ -60,7 +92,7 @@
                     parameters.push(input);
                 }
             else
-                label = $("<div />").addClass("NoParameter").appendTo(form).text("(this report has no parameter)");  
+                label = $("<div />").addClass("NoParameter").appendTo(form).text("(this report has no parameter)");
         },
 
         setup = function () {
@@ -79,6 +111,7 @@
 
     reportViewer.quit = quit;
     reportViewer.run = run;
+    reportViewer.query = query;
 
     setup();
 };

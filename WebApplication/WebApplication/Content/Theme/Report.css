@@ -16,7 +16,8 @@ body.Report table tbody tr:not(.NoRecord).Total {
     border-right: none !important; }
 
 body.Report table tbody tr:not(.NoRecord) td:first-child {
-  text-align: right !important; }
+  text-align: right !important;
+  width: 10px; }
 
 body.Report table tbody tr:not(.NoRecord):not(.Total:last-child) td:first-child {
   background: #f5f5f5; }

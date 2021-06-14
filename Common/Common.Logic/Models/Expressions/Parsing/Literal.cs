@@ -243,7 +243,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
                         var Pad = new StringFunctions.Pad(LowerValue) { Position = this.Position };
                         CheckArguments(2, 3);
                         Pad.Arguments.AddRange(Arguments.Select(a => a.Symbol));
-                        if (Arguments.Count == 2) Pad.Arguments.Add(new Constant(new TypedValue(DataType.Number, null)));
+                        if (Arguments.Count == 2) Pad.Arguments.Add(new Constant(new TypedValue(DataType.Text, null)));
                         Symbol = Pad;
                         Operator = OperatorType.No;
                         break;

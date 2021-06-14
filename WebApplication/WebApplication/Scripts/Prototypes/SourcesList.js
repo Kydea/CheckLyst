@@ -332,5 +332,7 @@
             }
     };
 
+    this.close = close;
+
     setup();
 }

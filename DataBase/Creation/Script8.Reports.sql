@@ -149,6 +149,25 @@ grant select on table "CheckLists"."InstanceData" to "ReportRole";
 grant usage on schema "Trail" to "ReportRole";
 grant select on table "Trail"."Records" to "ReportRole";
 
+create role "ReportRole1";
+create policy "Company2Companies" on "Infrastructure"."Companies" to "ReportRole1" using (true);
+create policy "Company1Departments" on "Infrastructure"."Departments" to "ReportRole1" using (true);
+create policy "Company1Users" on "Security"."Users" to "ReportRole1" using (true);
+create policy "Company1Roles" on "Security"."Roles" to "ReportRole1" using (true);
+create policy "Company1Groups" on "Security"."Groups" to "ReportRole1" using (true);
+create policy "Company1Prototypes" on "CheckLists"."PrototypeTypes" to "ReportRole1" using (true);
+create policy "Company1Prototypes" on "CheckLists"."Prototypes" to "ReportRole1" using (true);
+create policy "Company1PrototypeVersions" on "CheckLists"."PrototypeVersions" to "ReportRole1" using (true);
+create policy "Company1Instances" on "CheckLists"."Instances" to "ReportRole1" using (true);
+create policy "Company1InstanceTags" on "CheckLists"."InstanceTags" to "ReportRole1" using (true);
+create policy "Company1InstanceExpressionValues" on "CheckLists"."InstanceExpressionValues" to "ReportRole1" using (true);
+create policy "Company1InstanceRelations" on "CheckLists"."InstanceRelations" to "ReportRole1" using (true);
+create policy "Company1PrototypeVersionsHistory" on "CheckLists"."PrototypeVersionsHistory" to "ReportRole1" using (true);
+create policy "Company1InstancesHistory" on "CheckLists"."InstancesHistory" to "ReportRole1" using (true);
+create policy "Company1InstanceData" on "CheckLists"."InstanceData" to "ReportRole1" using (true);
+create policy "Company1Records" on "Trail"."Records" to "ReportRole1" using (true);
+create user "ReportUser1" in role "ReportRole", "ReportRole1";
+
 create or replace function "Security"."CreateReportUser" (company bigint) returns boolean as 
 $$
 begin
@@ -157,6 +176,8 @@ begin
   	$r$
 		create role "ReportRole$";
 
+		create policy "Company$Companies" on "Infrastructure"."Companies" to "ReportRole$" using 
+		("ID" = $);
 		create policy "Company$Departments" on "Infrastructure"."Departments" to "ReportRole$" using 
 		("Company" = $);
 		create policy "Company$Users" on "Security"."Users" to "ReportRole$" using 
