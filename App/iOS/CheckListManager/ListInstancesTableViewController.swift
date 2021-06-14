@@ -64,28 +64,29 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
         
         }
         
-        let descrLabelWidth = UIScreen.main.bounds.size.width - 140
+        let labelWidth = UIScreen.main.bounds.size.width - (UIDevice.current.userInterfaceIdiom == .pad ? 140 : 60)
         
         let instance = instancesList[indexPath.row]
         
         var descriptionSize : CGFloat = 0
         
         if let description = instance?.description?.classFormat {
-            descriptionSize = description.height(withConstrainedWidth: descrLabelWidth)
+            descriptionSize = description.height(withConstrainedWidth: labelWidth)
         }
         
+        let codeSize = instance?.codeLabel.height(withConstrainedWidth: labelWidth, font: UIFont(name: "Arial", size: 17.0) ?? UIFont.systemFont(ofSize: 17.0)) ?? 19.0
         
         if(buttonTappedRows![indexPath.row]) {
             
-            return instance!.description != nil ? 239.0 + descriptionSize :  239.0
+            return instance!.description != nil ? 220.0 + descriptionSize + codeSize :  220.0 + codeSize
         
         } else if(instance!.description != nil) {
         
-            return 95 + descriptionSize
+            return 76 + descriptionSize + codeSize
             
         } else {
             
-            return 95
+            return 76 + codeSize
         
         }
     
@@ -141,7 +142,7 @@ class ListInstancesTableViewController: UIViewController, UITableViewDataSource,
             
             let departmentPrototypeTypeLabel = cell?.contentView.viewWithTag(18) as? UILabel
             
-            codeLabel?.text = String(instance!.prototypeName) + "." + String(instance!.version) + "." + String(instance!.year) + "." + String(instance!.number)
+            codeLabel?.text = instance?.codeLabel
             
             departmentPrototypeTypeLabel?.text = instance!.departmentName + " / " + instance!.prototypeTypeName
             

@@ -29,11 +29,7 @@ class SignerCell: BaseTableViewCell {
         
         super.init(coder: aDecoder)
         
-        self.layoutMargins = UIEdgeInsetsMake(0.0, 0.0, 0.0, 40.0)
-                
-        self.preservesSuperviewLayoutMargins = false
-        
-        self.separatorInset = UIEdgeInsetsMake(0.0, 40.0, 0.0, 40.0)
+        setLayout()
         
         self.accessoryView = accessoryButton as UIView
         
@@ -43,11 +39,7 @@ class SignerCell: BaseTableViewCell {
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.layoutMargins = UIEdgeInsetsMake(0.0, 0.0, 0.0, 40.0)
-        
-        self.preservesSuperviewLayoutMargins = false
-                
-        self.separatorInset = UIEdgeInsetsMake(0.0, 40.0, 0.0, 40.0)
+        setLayout()
         
         self.accessoryView = accessoryButton as UIView
 
