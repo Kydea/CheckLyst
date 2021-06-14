@@ -45,9 +45,9 @@ namespace CheckListManager.Instances.Logic.PDF
         public override string GetItemDescription(ICheckListItem CheckListItem)
         {
             var Item = (Models.CheckLists.Item)CheckListItem;
-            return Item.IterationItem ? 
-                FormatFormula(Item.FindIteratorModelItem().DescriptionFormula.Value) :
-                FormatFormula(Item.DescriptionFormula.Value);
+            return Item.IterationItem ?
+                FormatFormula(Item.FindIteratorModelItem().DescriptionFormula?.Value ?? Item.DescriptionFormula?.Value) :
+                FormatFormula(Item.DescriptionFormula?.Value);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -67,7 +67,7 @@ namespace CheckListManager.Instances.Logic.PDF
             var Exceptions = new StringBuilder();
             foreach (var Expression in Instance.Instance.Expressions.Values)
                 if (
-                    Expression.Exception 
+                    Expression.Exception
                     && (
                         Expression.Value.Type == DataType.Boolean && Expression.Value.BooleanValue
                         || Expression.Value.Type == DataType.Date && Expression.Value.DateTimeValue <= DateTimeOffset.UtcNow

@@ -2,36 +2,34 @@
     Title = "Workflows",
     RecordsName = "workflows",
 
-    Filters = new Field[] {
+    Filters = new Field[] 
+    {
         new Field("Workflow description", "The description of the workflow or part of it.")
     },
-
     Columns = new Field[]
     {
         new Field("Workflow ID", Field.ID),
         new Field("Workflow description", "The description of the workflow.")
     },
-
     DetailTabs = new Tab[]
     {
-        new Tab("Details") {
-            Fields = new Field[] {
-                new Field("ID", Field.ID, Field.READ_ONLY),
-                new Field("Description", "The description of the workflow.", Field.MANDATORY)
-            },
-            IncludeLogFields = true
+    new Tab("Details") 
+    {
+        Fields = new Field[] 
+        {
+            new Field("ID", Field.ID, Field.READ_ONLY),
+            new Field("Description", "The description of the workflow.", Field.MANDATORY)
         },
-        new Tab("Steps")
-        {   
-            Description = @"
-                Each step of a workflow must have all the signatures issued to be accepted.<br />
-                Each signature can be issued by a user of one of the foreseen levels.<br /> 
-                <br />
+        IncludeLogFields = true
+    },
+    new Tab("Steps")
+    {   
+        Description = @"Each step of a workflow must have all the signatures issued to be accepted.<br />
+                Each signature can be issued by a user of one of the foreseen levels.<br /> <br />
                 Click on <strong>ADD STEP</strong> to add a step to the workflow.<br />
                 Click on the icon <i class=""fa fa-trash-alt""></i> near the step caption to delete it.<br />
                 Click on <i class=""fa fa-plus""></i> to add a signature.<br />
-                Click on the icon <i class=""fa fa-trash-alt""></i> can near the signature to delete it.
-            "
-        }
-    }
+                Click on the icon <i class=""fa fa-trash-alt""></i> can near the signature to delete it."
+    },
+    },
 })

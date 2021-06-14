@@ -9,12 +9,10 @@
         new Field("TEST", "Tests the FTP Server connection.",Field.DETAILS_PAGE),
         new Field("SAVE", "Saves the record.",Field.DETAILS_PAGE),
     },
-
     Filters = new Field[] {
         new Field("Name", "The name of the ftp server or part of it."),
         new Field("Host", "The host (URL or IP) of the ftp server part of it.")
     },
-
     Columns = new Field[]
     {
         new Field("ID", Field.ID),
@@ -25,11 +23,12 @@
         new Field("Instance default", "A flag that indicates if the server is used as default for the export of instances."),
         new Field("Description", "The description of the data source.")
     },
-
     DetailTabs = new Tab[]
     {
-        new Tab("Detail") {
-            Fields = new Field[] {
+        new Tab("Detail") 
+        {
+            Fields = new Field[]
+            {
                 new Field("ID", Field.ID, Field.FINAL),
                 new Field("Name", "The name of the FTP server.", Field.MANDATORY),
                 new Field("Protocol", "The communication protocol."),
@@ -47,9 +46,10 @@
         },
         new Tab("Key")
         {
-            Fields = new Field[] {
+            Fields = new Field[] 
+            {
                 new Field("Key","The authentication key."),
-                                 },   
+            },   
         },
     }
 })
