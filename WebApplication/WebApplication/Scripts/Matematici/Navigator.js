@@ -57,7 +57,10 @@
 
         navigate: function (path, relative) {
             var path = matematici.navigator.buildUrl(path, relative);
-            $.address.value(path);
+            if (matematici.appMode)
+                window.location = path;
+            else
+                $.address.value(path);
         },
 
         open: function (path, relative, nocache, data) {
