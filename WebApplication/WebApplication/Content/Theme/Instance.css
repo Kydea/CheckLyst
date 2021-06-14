@@ -467,8 +467,6 @@ div.Instance table.Grid {
         color: #ffba00; }
     div.Instance table.Grid tbody tr td.Image, div.Instance table.Grid tbody tr td.Attachment {
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       max-width: 100%;
       padding: 0; }
       div.Instance table.Grid tbody tr td.Image a + a, div.Instance table.Grid tbody tr td.Attachment a + a {
