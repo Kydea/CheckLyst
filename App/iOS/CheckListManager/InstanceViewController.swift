@@ -264,7 +264,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             decisionHandler(.allow)
             return
         }
-        
+
         guard let url = navigationAction.request.url, let scheme = url.scheme else {
             self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
             decisionHandler(.cancel)
