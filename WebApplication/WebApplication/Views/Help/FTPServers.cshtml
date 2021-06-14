@@ -1,6 +1,14 @@
 ﻿@Html.Partial("SearchPage", new HelpPage {
     Title = "FTP Servers",
     RecordsName = "ftp servers",
+    ReadOnly = true,
+
+    Buttons = new Field[]
+    {
+        new Field("ADD", "Creates a new FTP servers."),
+        new Field("TEST", "Tests the FTP Server connection.",Field.DETAILS_PAGE),
+        new Field("SAVE", "Saves the record.",Field.DETAILS_PAGE),
+    },
 
     Filters = new Field[] {
         new Field("Name", "The name of the ftp server or part of it."),
@@ -11,9 +19,9 @@
     {
         new Field("ID", Field.ID),
         new Field("Name", "The name of the FTP server."),
-        new Field("Protocol", "The comminication protocol."),
+        new Field("Protocol", "The communication protocol."),
         new Field("Host", "The host (URL or IP) of the FTP server."),
-        new Field("Prototype defauilt", "A flag that indicates if the server is used as default for the export of prototypes."),
+        new Field("Prototype default", "A flag that indicates if the server is used as default for the export of prototypes."),
         new Field("Instance default", "A flag that indicates if the server is used as default for the export of instances."),
         new Field("Description", "The description of the data source.")
     },
@@ -26,22 +34,22 @@
                 new Field("Name", "The name of the FTP server.", Field.MANDATORY),
                 new Field("Protocol", "The communication protocol."),
                 new Field("Host", "The host (URL or IP) of the FTP server."),
-                new Field("Port", "The TCP port number of the FTP server."),
-                new Field("Folder", "To initial folder."),
-                new Field("User name", "To user name to use to login."),
-                new Field("Password", "To password to use to login."),
+                new Field("Port", "The TCP port number of the FTP server."),     
+                new Field("Folder", "The folder where PDF files of instances or prototypes are exported."),
+                new Field("User name", "The username the system will use to authenticate to the FTP server."),
+                new Field("Password", "The password the system will use to authenticate to the FTP server."),
                 new Field("Passive", "If checked a passive connection is established, otherwise the connection will be active (this value depends on the settings of the server, the firewalls, the network, etc.)."),
                 new Field("SSL", "If checked a secure connection is established."),
                 new Field("Prototype default", "If checked the server is used as default for the export of prototypes."),
-                new Field("Instance default", "if checked the server is used as default for the export of instances."),
+                new Field("Instance default", "If checked the server is used as default for the export of instances."),
             },
             IncludeLogFields = true
         },
         new Tab("Key")
         {
-            Description = @"
-                The authentication key.
-            "
-        }
+            Fields = new Field[] {
+                new Field("Key","The authentication key."),
+                                 },   
+        },
     }
 })

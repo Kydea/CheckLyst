@@ -3,7 +3,7 @@
 <h3>@Model.Title</h3>
 
 <p>
-    Shows a list of @Model.RecordsName matching the filters provided. Fill the needed filter fields and click on <strong>Search</strong> to see the list of matching records.
+    Shows a list of @Model.RecordsName matching the filters provided. Fill the needed filter fields and click on <strong>SEARCH</strong> to see the list of matching records.
 </p>
 
 @if (!Model.ReadOnly)
@@ -23,7 +23,7 @@
 <h4>Actions</h4>
 
 <table>
-    <tr><td>Search</td><td>Applies the filters and show the result.</td></tr>
+    <tr><td>SEARCH</td><td>Applies the filters and shows the result.</td></tr>
     @if (Model.Buttons != null)
     {
         foreach (var Filter in Model.Buttons)
@@ -101,7 +101,7 @@
 
         @if (Model.IncludeLogDetailFields)
         {
-            <tr><td>Creation</td><td>The user, data and time of creation of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
+            <tr><td>Creation</td><td>The user, date and time of creation of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
             <tr><td>Last edit</td><td>The user, date and time of the last modification of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
         }
     </table>
@@ -137,7 +137,7 @@
 
                 @if (Tab.IncludeLogFields)
                 {
-                    <tr><td>Creation</td><td>The user, data and time of creation of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
+                    <tr><td>Creation</td><td>The user, date and time of creation of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
                     <tr><td>Last edit</td><td>The user, date and time of the last modification of the record. <span class="Note">@Field.READ_ONLY</span></td></tr>
                 }
             </table>

@@ -1,10 +1,22 @@
 ﻿@Html.Partial("SearchPage", new HelpPage {
     Title = "Users",
     RecordsName = "users",
+    ReadOnly = true,
+
+    Buttons = new Field[]
+    {
+        new Field("ADD", "Creates a new record."),
+        new Field("SAVE", "Saves the record.",Field.DETAILS_PAGE),
+        new Field("DELETE", "Deletes the record.",Field.DETAILS_PAGE),
+        new Field("EXPORT", "Exports in csv file the result of the search."),
+    },
 
     Filters = new Field[] {
         new Field("User code", "The code of the user or part of it."),
-        new Field("Name and surname", "The name and surname of the user or part of it.")
+        new Field("Name and surname", "The name and surname of the user or part of it."),
+        new Field("Corporate ID", "The corporate ID of the user or part of it."),
+        new Field("Group", " The group associated to the user."),
+        new Field("Role", "The role associated to the user."),
     },
 
     Columns = new Field[]
@@ -12,51 +24,74 @@
         new Field("User code", Field.ID),
         new Field("Name and surname", "The name and surname of the user."),
         new Field("Email", "The email of the user."),
-        new Field("Enabled", "<i class=\"fal fa-check\"></i> if the user is enabled, <i class=\"fal fa-check\"></i> otherwise."),
-        new Field("Last login", "the date and time of the last login of the user.")
+        new Field("Corporate ID", "The corporate ID of the user or part of it."),
+        new Field("Enabled", "It is checked is the user is enable , it is empty otherwise."),
+        new Field("Last login", "The date and time of the last login of the user."),
     },
 
     DetailTabs = new Tab[]
     {
-        new Tab("Details") {
+        new Tab("Details")
+        {
             Fields = new Field[] {
                 new Field("Code", Field.ID, Field.FINAL),
                 new Field("Name and surname", "The name and surname of the user.", Field.MANDATORY),
                 new Field("Email", "The email of the user."),
-                new Field("Enabled", "Only enabled users can log in the application."),
-                new Field("Password/Confirm password", "To change a user's password, type the new password in the field <strong>password</strong> and <strong>confirm password</strong>."),
-                new Field("Authentication code", "To authentication user code in the company domain or LDAP system.")
+                new Field("Corporate ID", "The corporate ID of the user or part of it."),
+                new Field("Enabled", "Only enabled user can login."),
+                new Field("Password/Confirm password", "To change a user's password, type the new password in the field password and confirm password."),
+                new Field("Authentication code", "To authentication user code in the company domain or LDAP system."),
             },
             IncludeLogFields = true
         },
         new Tab("General grants")
         {
-            Description = @"
-                Check a <strong>view</strong> grant to give access in read only mode for a function to the user.<br />
-                Check also <strong>edit</strong> grant to give full access for that function to the user.
-            "
+            Fields = new Field[] {
+                new Field("View", "This grant gives access in read only mode to a function to the user."),
+                new Field("Edit", "This grant  gives full access for that function to the user."),
+                                 },
+        },
+        new Tab("Groups")
+        {
+            Fields = new Field[] {
+                new Field("Available groups", "The list of groups configured in the system.The first row allows the research."),
+                new Field("Check", "The groups the user belongs to."),
+                                },
         },
         new Tab("Prototype grants")
         {
-            Description = @"
-                Click on <strong>ADD FUNCTION</strong> to add one or more functions to a whole department or a specific prototype type.<br />
-                Check a <strong>view</strong> grant to give access in read only mode to the user.<br />
-                Check also <strong>edit</strong> grant to give access in edit mode to the user.<br />
-                Check also <strong>approve</strong> grant to enable the user for the signature of the approval or obsolescence workflow for a specific level.<br />
-                Click on <i class=""fa fa-minus""></i> to delete a function.<br />
-            "
+            Fields = new Field[] {
+                new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
+                new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
+                new Field("Role", "The role assigned to the group or the list of roles that can be assigned to the user. Only roles containing prototype grants are available."),
+                new Field("View","Grant to give access in read only mode to the user."),
+                new Field("Preview","Grant to give access to test and simulation mode to the user."),
+                new Field("Edit","Grant to give access in edit mode to the user."),
+                new Field("Approve","Grant to enable the user for the signature of the approval or obsolescence workflow for a specific level."),
+                                  },
         },
         new Tab("Instances grants")
         {
-            Description = @"
-                Click on <strong>ADD FUNCTION</strong> to add one or more functions to a whole department or a specific prototype type.<br />
-                Check a <strong>view</strong> grant to give access in read only mode to the user.<br />
-                Check also <strong>edit</strong> grant to give access in edit mode to the user for in pregress instances.<br />
-                Check also <strong>create</strong> grant to enable the user to create new instances.<br />
-                Check also <strong>unsign</strong> grant to enable the user to unsign a cancelable signature in an instances, possibly for a specific level.<br />
-                Check also <strong>confirm</strong> grant to enable the user a confirmation directly instances without a confirmation workflow or to enable the user for the signature of the confirmation workflow for a specific level.<br />
-                Click on <i class=""fa fa-minus""></i> to delete a function.<br />
-            "
-        }
+            Fields = new Field[] {
+                new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
+                new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
+                new Field("Roles", "The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing instances grants are available."),
+                new Field("Create","Grant to enable the user to create new instances."),
+                new Field("Confirm","Grant to enable the user to confirm instances without a confirmation workflow or to issue the signature of the confirmation workflow for a specific level."),
+                new Field("Delete","Grant to allow the user to delete instances."),
+                new Field("Edit","Grant to give access in edit mode to the user."),
+                new Field("Unsign","Grant to enable the user to unsign a cancelable signature in an instance, possibly for a specific level."),
+                new Field("View","Grant to give access in read only mode to the user."),
+                                  },
+        },
+        new Tab("Levels")
+        {
+            Fields = new Field[] {
+                new Field("ADD", "Function to add to a user the level(s) to approve a prototype workflow , instance workflow or signature of the whole department or of a specific prototype type."),
+                new Field("Prototype workflow level", "To allow the user to approve/obsolete a prototype of the defined Department/PrototypeType."),
+                new Field("Instance workflow level","To allow the user to approve/reject an instance with confirmation workflow for the defined Department/PrototypeType."),
+                new Field("Signature level","To allow the user to sign signatures with a configured Signature level."),
+                                 },
+        },
     }
 })
