@@ -56,4 +56,6 @@ public struct Instance: Decodable
     
     public var modifiedOn: String?
     
+    public var codeLabel: String { return prototypeName + "." + String(version) + "." + year + "." + String(number) }
+    
 }

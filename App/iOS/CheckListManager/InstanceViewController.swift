@@ -260,11 +260,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
            navigationAction: WKNavigationAction,
            decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
 
-        if navigationAction.sourceFrame == nil {
+       if navigationAction.sourceFrame == nil {
             decisionHandler(.allow)
             return
         }
-        
+
         guard let url = navigationAction.request.url, let scheme = url.scheme else {
             self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
             decisionHandler(.cancel)
@@ -280,6 +280,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         if url.schemeHost == ServerConnection.baseFrontEndUrl &&
         (url.getCallType == .Create ||
         url.getCallType == .Detail) {
+            #if DEBUG
+            print("Redirect to \(url.absoluteString)")
+            #endif
             appDelegate.requestToOpenInstance = true
             appDelegate.requestedUrlInfo = url.getParametersForInstance
             self.goBackToSearchInstances(self)
@@ -287,6 +290,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             return
         }
         
+        #if DEBUG
+        print("Redirect to \(url.absoluteString)")
+        #endif
         UIApplication.shared.open(navigationAction.request.url!, options: [:])
         decisionHandler(.allow)
 
@@ -299,11 +305,17 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                     if url.schemeHost == ServerConnection.baseFrontEndUrl {
                         if (url.getCallType == .Create ||
                             url.getCallType == .Detail) {
+                            #if DEBUG
+                            print("Redirect to \(url.absoluteString)")
+                            #endif
                             appDelegate.requestToOpenInstance = true
                             appDelegate.requestedUrlInfo = url.getParametersForInstance
                             self.goBackToSearchInstances(self)
                         }
                     } else {
+                        #if DEBUG
+                        print("Redirect to \(url.absoluteString)")
+                        #endif
                         UIApplication.shared.open(navigationAction.request.url!, options: [:])
                     }
                 } else {
