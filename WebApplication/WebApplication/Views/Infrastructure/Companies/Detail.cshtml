@@ -299,7 +299,7 @@
         detailPage = new matematici.DetailPage({
             formSelector: formSelector,
             disableDelete: true,
-            readOnly: currentCompany == 1 && data.id != 1 && !isNew,
+            readOnly: currentCompany == 1 && data && data.id != 1 && !isNew,
             initHandler: initHandler,
             completeHandler: completeHandler,
             parametersPrepareHandler: parametersPrepareHandler,
