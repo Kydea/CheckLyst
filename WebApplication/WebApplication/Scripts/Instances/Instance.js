@@ -768,7 +768,11 @@
 
     instance.openInstance = function (code) {
         var action = function () {
-            matematici.navigator.open(matematici.urls.instances.detail + "/" + code);
+            var path = matematici.urls.instances.detail + "/" + code;
+            if (matematici.appMode)
+                window.location = path;
+            else
+                matematici.navigator.open(path);
         };
         if (instances.instance.getState() == instances.Instance.states.draft) {
             setTimeout(function () {
