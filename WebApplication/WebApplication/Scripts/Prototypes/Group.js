@@ -20,7 +20,7 @@
 
             if (!model.items) model.items = [];
             if (itemModel == null) {
-                itemModel = { typeName: typeName };
+                itemModel = { typeName: typeName, hiddenCondition: 2 };
                 //default values
                 if (typeName == "Text") {
                     itemModel.newLine = true;
@@ -35,7 +35,7 @@
             matematici.canClose = false;
 
             if (!model.groups) model.groups = [];
-            var newGroup = groupModel || { typeName: "Group", id: prototypes.prototype.getNewItemsId() };
+            var newGroup = groupModel || { typeName: "Group", id: prototypes.prototype.getNewItemsId(), hiddenCondition: 2 };
             model.groups.push(newGroup);
             prototypes.prototype.update();
         },
