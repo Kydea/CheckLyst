@@ -769,6 +769,7 @@
     instance.openInstance = function (code) {
         var action = function () {
             var path = matematici.urls.instances.detail + "/" + code;
+            console.log(path);
             if (matematici.appMode)
                 window.location = path;
             else
