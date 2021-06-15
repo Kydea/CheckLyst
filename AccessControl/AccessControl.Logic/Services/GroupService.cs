@@ -264,12 +264,16 @@ namespace CheckListManager.AccessControl.Logic.Services
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
+        }
 
-            foreach (var conflictingGroup in record.ConflictingGroups)
-                Group.GroupConflicts.Add(new GroupConflicts
-                {
-                    Group2 = conflictingGroup
-                });
+        private void BuildConflicts(DefaultIdentity identity, GroupRequest record, Groups Group)
+        {
+            if (record.ConflictingGroups != null)
+                foreach (var conflictingGroup in record.ConflictingGroups)
+                    Group.GroupConflicts.Add(new GroupConflicts
+                    {
+                        Group2 = conflictingGroup
+                    });
         }
 
         private static string SerializeGroupInformation(GroupRequest group, IEnumerable<GroupFunctions> groupFunctions, IEnumerable<GroupRoles> groupRoles)
@@ -309,8 +313,9 @@ namespace CheckListManager.AccessControl.Logic.Services
                     };
 
                     BuildFunctions(identity, record, Group);
-
                     await _userRepository.AddGroupAsync(identity, Group);
+                    BuildConflicts(identity, record, Group);
+                    await _userRepository.SaveChangesAsync();
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -347,7 +352,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     };
 
                     BuildFunctions(identity, record, Group);
-
+                    BuildConflicts(identity, record, Group);
                     await _userRepository.EditGroupAsync(identity, Group);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

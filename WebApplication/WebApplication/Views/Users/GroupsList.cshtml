@@ -62,7 +62,17 @@
 </div>
 
 <script type="text/javascript">
-    var formSelector = "form#Filters";
+    var
+        formSelector = "form#Filters",
+
+        loadGroups = function () {
+            $.ajax({
+                type: "post",
+                url: "@BaseUrl/AccessControl/Groups/GetSyntheticData"
+            }).done(function (result) {
+                $(formSelector).data("groups", result);
+            });
+        };
 
     matematici.events.onPageLoad = function (callback) {
         var searchPage = new matematici.SearchPage({
@@ -71,6 +81,7 @@
             detailUrl: "@Url.Action("GroupsDetail")",
             filterFormSelector: formSelector,
             resultGridSelector: "div#Content table.Grid",
+            filterHandler: loadGroups,
             breadCrumbs: [
                 { content: "groups" }
             ]
@@ -105,19 +116,14 @@
             $(formSelector).data("roles", roles);
         });
 
-        $.ajax({
-            type: "post",
-            url: "@BaseUrl/AccessControl/Groups/GetSyntheticData"
-        }).done(function (result) {
-            $(formSelector).data("groups", result);
-        });
-
         $("a#ExportButton").on("click", function () {
             var form = searchPage.getForm();
             form.trigger("Export", function (result) {
                 location = form.getElement().attr("action") + "/Export?Token=" + result.token;
             })
         });
+
+        loadGroups();
 
         callback.call();
     };
