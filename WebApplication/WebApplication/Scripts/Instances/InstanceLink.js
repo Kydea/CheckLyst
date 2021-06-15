@@ -88,7 +88,13 @@
                         query += "item." + encodeURIComponent(parameter.name) + "=" + (parameter.value == null ? "" : encodeURIComponent(parameter.value));
                     }
                 if (query != "") query = "?" + query;
-                matematici.navigator.open(matematici.urls.instances.create + "/" + model.prototypeID + query);
+
+                var path = matematici.urls.instances.create + "/" + model.prototypeID + query;
+                if (matematici.appMode)
+                    window.location = path;
+                else
+                    matematici.navigator.open(path);
+
             });
         },
 
