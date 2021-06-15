@@ -127,19 +127,19 @@ namespace CheckListManager.Common.Data
                     "\"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u " +
                     (
                         levels.Any() ?
-                            string.Empty :
-                            " and (" +
+                            "where (" +
                                 $"select \"{levelName}\" " +
                                 "from \"Security\".\"UserLevels\" ul " +
                                 "where " +
                                     "ul.\"Company\" = u.\"Company\" " +
-                                    "and ul.\"Code\" = u.\"Code\" " +
-                                    "and (ul.\"Department\" is null || ul.\"Department\" = :department) " +
-                                    "and (ul.\"PrototypeType\" is null || ul.\"PrototypeType\" = :prototypeType) " +
+                                    "and ul.\"User\" = u.\"Code\" " +
+                                    "and (ul.\"Department\" is null or ul.\"Department\" = :department) " +
+                                    "and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = :prototypeType) " +
                                     $"and not \"{levelName}\" is null " +
                                 "order by ul.\"PrototypeType\" " + //prototype type = null is considered only if the specific prototype type is not found
                                 "limit 1" +
-                            $") in ({string.Join(", ", levels.Select(l => l.Replace("\'", "\'\'")))}) "
+                            $") in ({string.Join(", ", levels.Select(l => "'" + l.Replace("'", "''") + "'"))}) " :
+                            string.Empty
                     ) +
                 "order by u.\"Code\"";
 

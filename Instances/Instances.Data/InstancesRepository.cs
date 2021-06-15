@@ -5,9 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Data
 {
@@ -17,39 +18,97 @@ namespace CheckListManager.Instances.Data
         {
         }
 
-        public async Task<PagingResponse<List<TResult>>> GetInstancesAsync<TResult, TKey>(
-            long companyId,
-            Expression<Func<Common.Data.Instances, TResult>> select,
-            Expression<Func<Common.Data.Instances, bool>> filters,
-            Expression<Func<Common.Data.Instances, TKey>> order = null,
-            int? currentPage = null,
-            int? itemsPerPage = null)
+        private const string INSTANCES_BASE_QUERY =
+            "from " +
+                "\"CheckLists\".\"Instances\" i " +
+                "inner join \"CheckLists\".\"Prototypes\" p on i.\"Prototype\" = p.\"ID\" " +
+                "inner join \"CheckLists\".\"PrototypeVersions\" pv on p.\"ID\" = pv.\"Prototype\" and i.\"Version\" = pv.\"Version\" " +
+                "inner join \"Infrastructure\".\"Departments\" d on p.\"Department\" = d.\"ID\" " +
+                "inner join \"CheckLists\".\"PrototypeTypes\" pt on p.\"PrototypeType\" = pt.\"ID\" " +
+            "where " +
+                "i.\"Company\" = :company " +
+                "and (:id = -1 or i.\"ID\" = :id) " +
+                "and (:description = '' or upper(i.\"Description\") like '%' || :description || '%') " +
+                "and (:department = -1 or p.\"Department\" = :department) " +
+                "and (:prototypetype = -1 or p.\"PrototypeType\" = :prototypetype) " +
+                "and (:prototype = -1 or p.\"ID\" = :prototype) " +
+                "and (:version = -1 or pv.\"Version\" = :version) " +
+                "and (:year = -1 or i.\"Year\" = :year) " +
+                "and (:number = -1 or i.\"Number\" = :number) " +
+                "and (:state = '' or i.\"InstanceState\" = :state) " +
+                "and (:from = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') >= :from) " +
+                "and (:to = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') <= :to) " +
+                "and (:tagValue = '' or exists(select 1 from \"CheckLists\".\"InstanceTags\" it where it.\"Instance\" = i.\"ID\" and (:tagCode = '' or it.\"Tag\" = :tagCode) and upper(it.\"Value\") like '%' || :tagValue || '%')) " +
+                "and (" +
+                    ":exceptionState = '' " +
+                    "or :exceptionState = 'include' and exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\") " +
+                    "or :exceptionState = 'exclude' and not exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\")" +
+                ")" +
+                "and (" +
+                    ":exceptionDescription = '' " +
+                    "or exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\" and upper(iev.\"Description\") like '%' || :exceptionDescription || '%')" +
+                ")" +
+                "and (" +
+                    "i.\"Year\" = 0 and exists (" +
+                        "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'Preview') g " +
+                        "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                    ") " +
+                    "or i.\"Year\" > 0 and exists (" +
+                        "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Instances', 'View') g " +
+                        "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                    ")" +
+                ")";
+        private const string INSTANCES_LIST_QUERY =
+            "select " +
+                "i.\"ID\", i.\"Code\", " +
+                "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", i.\"Description\", d.\"Name\" \"DepartmentName\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
+            INSTANCES_BASE_QUERY +
+            "order by i.\"ID\" desc " +
+            "limit :limit offset :offset";
+        private const string INSTANCES_COUNT_QUERY = "select count(*) " + INSTANCES_BASE_QUERY;
+        
+        public async Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(
+            IDefaultIdentity identity,
+            InstanceFilters filters,
+            int currentPage,
+            int itemsPerPage)
         {
-            var query = Entities.Instances
-                .Where(filters)
-                .Where(i => i.Prototypes.Company == companyId);
-
-            if (order != null)
-                query = query.OrderByDescending(order);
-            if (currentPage.HasValue && itemsPerPage.HasValue)
-                query = query.Skip((currentPage.Value - 1) * itemsPerPage.Value).Take(itemsPerPage.Value);
-
-            var data = await
-                query
-                .Select(select)
-                .ToListAsync();
-
-            var count = await Entities.Instances
-                .Where(filters)
-                .Where(i => i.Prototypes.Company == companyId)
-                .CountAsync();
-
-            return new PagingResponse<List<TResult>>
+            var Filters = new
             {
-                Data = data,
-                Count = count,
-                ItemsPerPage = itemsPerPage ?? 1,
-                CurrentPage = currentPage ?? -1
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                limit = itemsPerPage,
+                offset = (currentPage - 1) * itemsPerPage
+            };
+
+            var Count = await Read<int>(INSTANCES_COUNT_QUERY, Filters);
+            var List = await Read<InstanceRecord>(INSTANCES_LIST_QUERY, Filters);
+            foreach (var Record in List)
+                Record.Exceptions = await Entities.InstanceExpressionValues.Where(iev => iev.Instance == Record.Id && iev.Exception).Select(iev => new InstanceExceptionRecord { Code = iev.Code, Description = iev.Description }).ToListAsync();
+
+            return new PagingResponse<List<InstanceRecord>>
+            {
+                Data = List.ToList(),
+                Count = Count.Single(),
+                CurrentPage = currentPage,
+                ItemsPerPage = itemsPerPage
             };
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Instances.Data.ListItems
+namespace CheckListManager.Instances.Data.Models
 {
     public class InstanceRelation
     {

@@ -10,63 +10,66 @@
         new Field("DELETE", "Deletes the record.",Field.DETAILS_PAGE),
         new Field("EXPORT", "Exports in csv file the result of the search."),
     },
-    Filters = new Field[] {
+    Filters = new Field[] 
+    {
         new Field("Group code", "The code of the group or part of it."),
         new Field("Description", "The description of the group or part of it."),
         new Field("User", "The user code or part of it of the user to whom the group is assigned."),
         new Field("Role","The role code or part of it assigned to the group."),
     },
-
     Columns = new Field[]
     {
         new Field("Group code", Field.ID),
         new Field("Description","The group description.")
     },
-
     DetailTabs = new Tab[]
     {
-        new Tab("Details") 
+    new Tab("Details") 
+    {
+        Fields = new Field[] 
         {
-            Fields = new Field[] {
-                new Field("Group Code", Field.ID, Field.FINAL),
-                new Field("Description", "The group description.", Field.MANDATORY),
-                new Field("Creation", "The user who created the record. The date and time of creation of the record."),
-                new Field("Last edit","The user who modified the record last time. The date and time of the last modification.")
+        new Field("Group Code", Field.ID, Field.FINAL),
+        new Field("Description", "The group description.", Field.MANDATORY),
+        new Field("Creation", "The user who created the record. The date and time of creation of the record."),
+        new Field("Last edit","The user who modified the record last time. The date and time of the last modification.")
         },
     },
-        new Tab("General grants")
+    new Tab("General grants")
+    {
+        Fields = new Field[] 
         {
-            Fields = new Field[] {
-                new Field("Role","The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing general grants are available."),
-                new Field("View", "This grant gives access in read only mode to a function to the user."),
-                new Field("Edit", "This grant  gives full access for that function to the user."),
-                                  },
+        new Field("Role","The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing general grants are available."),
+        new Field("View", "This grant gives access in read only mode to a function to the user."),
+        new Field("Edit", "This grant  gives full access for that function to the user."),
         },
-        new Tab("Prototype grants")
+    },
+    new Tab("Prototype grants")
+    {
+        Fields = new Field[] 
         {
-            Fields = new Field[] {
-                new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
-                new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
-                new Field("Role", "The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing prototype grants are available."),
-                new Field("View","Grant to give access in read only mode to the user."),
-                new Field("Preview","Grant to give access to test and simulation mode to the user"),
-                new Field("Edit","Grant to give access in edit mode to the user."),
-                new Field("Approve","Grant to enable the user for the signature of the approval or obsolescence workflow for a specific level."),
-                                  },
+            new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
+            new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
+            new Field("Role", "The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing prototype grants are available."),
+            new Field("View","Grant to give access in read only mode to the user."),
+            new Field("Preview","Grant to give access to test and simulation mode to the user"),
+            new Field("Edit","Grant to give access in edit mode to the user."),
+            new Field("Approve","Grant to enable the user for the signature of the approval or obsolescence workflow for a specific level."),
         },
-        new Tab("Instances grants")
+        },
+    new Tab("Instances grants")
+    {
+        Fields = new Field[] 
         {
-            Fields = new Field[] {
-                new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
-                new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
-                new Field("Roles", "The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing instances grants are available."),
-                new Field("Create","Grant to enable the user to create new instances."),
-                new Field("Confirm","Grant to enable the user to confirm instances without a confirmation workflow or to issue the signature of the confirmation workflow for a specific level."),
-                new Field("Delete","Grant to allow the user to delete instances."),
-                new Field("Edit","Grant to give access in edit mode to the user."),
-                new Field("Unsign","Grant to enable the user to unsign a cancelable signature in an instance, possibly for a specific level."),
-                new Field("View","Grant to give access in read only mode to the user."),
-                                  },
-        }
-    }
+            new Field("ADD", "Function to add one or more grants to a whole department or a specific prototype type."),
+            new Field("(-)", "Function to delete one row of grants related to a department and prototype type ."),
+            new Field("Roles", "The role assigned to the group or the list of roles that can be assigned to the group. Only roles containing instances grants are available."),
+            new Field("Create","Grant to enable the user to create new instances."),
+            new Field("Confirm","Grant to enable the user to confirm instances without a confirmation workflow or to issue the signature of the confirmation workflow for a specific level."),
+            new Field("Delete","Grant to allow the user to delete instances."),
+            new Field("Edit","Grant to give access in edit mode to the user."),
+            new Field("Unsign","Grant to enable the user to unsign a cancelable signature in an instance, possibly for a specific level."),
+            new Field("View","Grant to give access in read only mode to the user."),
+        },
+    },
+    },
 })

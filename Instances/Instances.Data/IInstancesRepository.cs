@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Data
 {
     public interface IInstancesRepository : IRepository
     {
-        Task<PagingResponse<List<TResult>>> GetInstancesAsync<TResult, TKey>(long companyId, Expression<Func<Common.Data.Instances, TResult>> select, Expression<Func<Common.Data.Instances, bool>> filters, Expression<Func<Common.Data.Instances, TKey>> order = null, int? currentPage = null, int? itemsPerPage = null);
+        Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(IDefaultIdentity identity, InstanceFilters filters, int currentPage, int itemsPerPage);
 	    Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance);
 	    void EndCreateInstanceAsync(Common.Data.Instances instance);
 	    void CancelCreateInstanceAsync();

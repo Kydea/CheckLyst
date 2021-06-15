@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.List
 {
     public interface IListService: IService
     {
-        Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form);
+        Task<ListResponse> BindAsync(IDefaultIdentity identity, InstanceFilters form);
 
-        Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form);
+        Task<PagingResponse<List<InstanceRecord>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<InstanceFilters> form);
     }
 }

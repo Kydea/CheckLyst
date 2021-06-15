@@ -7,7 +7,6 @@
     {
         new Field("EXPORT", "Export in csv file the result of the search."),
     },
-
     Filters = new Field[] 
     {
         new Field("Date range", "Filters records inside the range, including the first and final date."),
@@ -17,7 +16,6 @@
         new Field("CheckList ID","Unique identifier for Prototype and Instances."),
         new Field("Detail", "The detail or part of it."),
     },
-
     Columns = new Field[]
     {
         new Field("ID", Field.ID),
@@ -28,26 +26,27 @@
         new Field("CheckList ID","Possibly, the ID of the prototype or the instance on which the action has been taken."),
         new Field("Detail", "The detail of the record. Complex details are visible only in the details page."),
     },
-
     DetailTabs = new Tab[]
     {
-        new Tab("Data") {
-            Fields = new Field[]
-            {
-                new Field("ID", Field.ID, Field.READ_ONLY),
-                new Field("Date", "The data and time of the event.", Field.READ_ONLY),
-                new Field("User", "The user that generated the event.", Field.READ_ONLY),
-                new Field("Action", "The action taken.", Field.READ_ONLY),
-                new Field("CheckList code", "Possibly, the checklist on which the action has been taken.", Field.READ_ONLY),
-                new Field("CheckList ID","Possibly, the ID of the prototype or the instance on which the action has been taken.", Field.READ_ONLY),
-            },
-                        },
-        new Tab("Detail") {
-            Fields = new Field[]
-            {
-                new Field("Detail","The details of the record."),
-            },
+    new Tab("Data") 
+    {
+        Fields = new Field[]
+        {
+            new Field("ID", Field.ID, Field.READ_ONLY),
+            new Field("Date", "The data and time of the event.", Field.READ_ONLY),
+            new Field("User", "The user that generated the event.", Field.READ_ONLY),
+            new Field("Action", "The action taken.", Field.READ_ONLY),
+            new Field("CheckList code", "Possibly, the checklist on which the action has been taken.", Field.READ_ONLY),
+            new Field("CheckList ID","Possibly, the ID of the prototype or the instance on which the action has been taken.", Field.READ_ONLY),
+        },
+    },
+    new Tab("Detail") 
+    {
+        Fields = new Field[]
+        {
+            new Field("Detail","The details of the record."),
+        },
 
-                            },
+    },
     },
 })

@@ -31,6 +31,7 @@ namespace CheckListManager.Prototypes.Logic.List
                 //initial load
 
                 response.Fields["Name"] = new Field { Value = form.Name };
+                response.Fields["ID"] = new Field { Value = form.ID.ToString() };
 
                 var departments = await _commonRepository.GetDepartmentsAsync(identity, "Prototypes", "View");
                 response.Fields["Department"] = new Field

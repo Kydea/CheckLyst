@@ -7,6 +7,7 @@ using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Instances.Data;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.List
 {
@@ -46,7 +47,7 @@ namespace CheckListManager.Instances.Logic.List
             public int GetHashCode(PrototypeVersion x) => x.Version;
         }
 
-        public async Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest form)
+        public async Task<ListResponse> BindAsync(IDefaultIdentity identity, InstanceFilters form)
         {
             var response = new ListResponse();
             var department = form.Department;
@@ -67,6 +68,7 @@ namespace CheckListManager.Instances.Logic.List
                     Value = department?.ToString()
                 };
 
+                response.Fields["ID"] = new Field { Value = form.ID.ToString() };
                 response.Fields["Description"] = new Field { Value = form.Description };
                 response.Fields["TagValue"] = new Field { Value = form.TagValue };
 
@@ -145,59 +147,7 @@ namespace CheckListManager.Instances.Logic.List
             return response;
         }
 
-        public async Task<PagingResponse<List<ListRow>>> GetDataAsync(long company, PagingRequest<ListRequest> form)
-        {
-            form.Data.Description = form.Data.Description ?? string.Empty;
-            form.Data.State = form.Data.State ?? string.Empty;
-            form.Data.TagCode = form.Data.TagCode ?? string.Empty;
-            form.Data.TagValue = form.Data.TagValue ?? string.Empty;
-            form.Data.ExceptionState = form.Data.ExceptionState ?? string.Empty;
-            form.Data.ExceptionDescription = form.Data.ExceptionDescription ?? string.Empty;
-
-            return await _instancesRepository.GetInstancesAsync(
-                company,
-                i => new ListRow
-                {
-                    Id = i.ID,
-                    Code = i.Code,
-                    Year = i.Year > 0 ? i.Year.ToString() : i.PrototypeVersions.VersionState == VersionState.Draft ? "Test" : "SE",
-                    Number = i.Number,
-                    State = i.InstanceState,
-                    Description = i.Description,
-                    DepartmentName = i.Prototypes.Departments.Name,
-                    PrototypeTypeName = i.Prototypes.PrototypeTypes.Name,
-                    PrototypeName = i.Prototypes.Name,
-                    Version = i.Version,
-                    Exceptions = i.InstanceExpressionValues.Where(ev => ev.Exception).Select(ev => new InstanceException { Code = ev.Code, Description = ev.Description }).ToList(),
-
-                    CreatedBy = i.CreatedBy,
-                    CreatedOn = i.CreatedOn,
-                    ModifiedBy = i.ModifiedBy,
-                    ModifiedOn = i.ModifiedOn
-                },
-                i =>
-                    (form.Data.ID == null || i.ID == form.Data.ID)
-                    && (form.Data.Description == string.Empty || i.Description != null && i.Description.ToUpper().Contains(form.Data.Description.ToUpper()))
-                    && (form.Data.Department == null || i.Prototypes.Department == form.Data.Department)
-                    && (form.Data.PrototypeType == null || i.Prototypes.PrototypeType == form.Data.PrototypeType)
-                    && (form.Data.Prototype == null || i.Prototype == form.Data.Prototype)
-                    && (form.Data.Version == null || i.Version == form.Data.Version)
-                    && (form.Data.Year == null || i.Year == form.Data.Year)
-                    && (form.Data.Number == null || i.Year == form.Data.Number)
-                    && (form.Data.TagValue == string.Empty || i.InstanceTags.Any(it => (form.Data.TagCode == string.Empty || it.Tag == form.Data.TagCode) && it.Value.ToUpper().Contains(form.Data.TagValue.ToUpper())))
-                    && (form.Data.State == string.Empty || i.InstanceState == form.Data.State)
-                    && (!form.Data.From.HasValue || i.ModifiedOn >= form.Data.From.Value)
-                    && (!form.Data.To.HasValue || i.ModifiedOn <= form.Data.WholeTo.Value)
-                    && (
-                        form.Data.ExceptionState == string.Empty
-                        || form.Data.ExceptionState == "include" && i.InstanceExpressionValues.Any(ev => ev.Exception)
-                        || form.Data.ExceptionState == "exclude" && !i.InstanceExpressionValues.Any(ev => ev.Exception)
-                    )
-                    && (form.Data.ExceptionDescription == string.Empty || i.InstanceExpressionValues.Any(ev => ev.Exception && ev.Description.ToUpper().Contains(form.Data.ExceptionDescription.ToUpper()))),
-                i => i.ID,
-                form.CurrentPage,
-                form.ItemsPerPage
-            );
-        }
+        public async Task<PagingResponse<List<InstanceRecord>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<InstanceFilters> form) =>
+            await _instancesRepository.GetInstancesAsync(identity, form.Data, form.CurrentPage, form.ItemsPerPage);
     }
 }

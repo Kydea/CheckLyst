@@ -37,7 +37,7 @@ using CheckListManager.Instances.Logic.ImageUtilities;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using CheckListManager.Common.Logic.Models.ExternalSources;
-using CheckListManager.Instances.Data.ListItems;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.Services
 {
@@ -120,7 +120,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var instance = await _instancesRepository.GetAsync(company, code);
                 if (instance == null)
-                    throw new InstanceException("Instance not found");
+                    throw new Exceptions.InstanceException("Instance not found");
 
                 cacheObject = await CreateInstanceFromDatabase(company, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
@@ -155,14 +155,14 @@ namespace CheckListManager.Instances.Logic.Services
             if (!version.HasValue)
                 version = await _instancesRepository.GetActivePrototypeVersion(prototype);
             if (!version.HasValue)
-                throw new InstanceException($"The prototype {prototype} has no active version");
+                throw new Exceptions.InstanceException($"The prototype {prototype} has no active version");
 
             var source = await GetPrototype(prototype, version.Value);
             if (!source.State.In(VersionState.Draft, VersionState.InSimulation, VersionState.Active))
-                throw new InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
+                throw new Exceptions.InstanceException($"Invalid state of the prototype version {prototype}.{version}: {source.State}");
 
             if (!HasPermission(identity, "Create", source.State, source.Department, source.PrototypeType))
-                throw new InstanceException("Access denied");
+                throw new Exceptions.InstanceException("Access denied");
 
             return source;
         }
@@ -238,14 +238,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to create the instance");
-                throw new InstanceException("Unable to create the instance", e);
+                throw new Exceptions.InstanceException("Unable to create the instance", e);
             }
         }
 
@@ -275,16 +275,16 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
 
                 if (cacheObject.ID.HasValue)
-                    throw new InstanceException("Instance already saved");
+                    throw new Exceptions.InstanceException("Instance already saved");
                 if (cacheObject.InstanceState != InstanceState.Draft)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Create", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 var InvalidItems = new List<string>();
                 CheckInvalidItems(cacheObject.Instance.Header, InvalidItems);
                 if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
+                    throw new Exceptions.InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems)}");
 
                 cacheObject.InstanceState = InstanceState.Progress;
                 cacheObject.Instance.InProgressOn = DateTime.UtcNow;
@@ -338,7 +338,7 @@ namespace CheckListManager.Instances.Logic.Services
                     }
                     catch (AggregateException Exception)
                     {
-                        throw new InstanceException(string.Join(" - ", Exception.InnerExceptions.Select(e => e.Message)));
+                        throw new Exceptions.InstanceException(string.Join(" - ", Exception.InnerExceptions.Select(e => e.Message)));
                     }
 
                     _instancesRepository.EndCreateInstanceAsync(row);
@@ -364,14 +364,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to open the instance");
-                throw new InstanceException("Unable to open the instance", e);
+                throw new Exceptions.InstanceException("Unable to open the instance", e);
             }
         }
 
@@ -381,9 +381,9 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 if (cacheObject.NeedToSave)
                 {
@@ -393,14 +393,14 @@ namespace CheckListManager.Instances.Logic.Services
                     await SaveCacheObjectAsync(cacheObject);
                 }
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to save the instance");
-                throw new InstanceException("Unable to save the instance", e);
+                throw new Exceptions.InstanceException("Unable to save the instance", e);
             }
         }
 
@@ -410,17 +410,17 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Invalid instance state");
+                    throw new Exceptions.InstanceException("Invalid instance state");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
                 if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
+                    throw new Exceptions.InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
 
                 var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
                 if (InvalidPage != null)
-                    throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
+                    throw new Exceptions.InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
 
                 cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
@@ -438,14 +438,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to save the instance");
-                throw new InstanceException("Unable to save the instance", e);
+                throw new Exceptions.InstanceException("Unable to save the instance", e);
             }
         }
 
@@ -455,14 +455,14 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject == null)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
-                    throw new InstanceException("Provide a note for the deletion");
+                    throw new Exceptions.InstanceException("Provide a note for the deletion");
                 if (
                     !(cacheObject.InstanceState == InstanceState.Draft && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     && !HasPermission(identity, "Delete", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                 )
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 await DeleteInstanceAsync(cacheObject, identity, note);
 
@@ -478,14 +478,14 @@ namespace CheckListManager.Instances.Logic.Services
                 });
 
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to delete the instance");
-                throw new InstanceException("Unable to delete the instance", e);
+                throw new Exceptions.InstanceException("Unable to delete the instance", e);
             }
         }
 
@@ -576,7 +576,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     lockObject = await _instanceCache.LockAsync(cacheObject.Code);
                     if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is currently being updated by another user");
+                        throw new Exceptions.InstanceException("Instance is currently being updated by another user");
                     cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
                 }
 
@@ -584,7 +584,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (row == null)
                 {
                     await _instanceCache.RemoveAsync(cacheObject.Code);
-                    throw new InstanceException("Instance not found");
+                    throw new Exceptions.InstanceException("Instance not found");
                 }
 
                 if (!cacheObject.Instance.CheckVersion(2, true)) //version 2 introduces persistency
@@ -628,7 +628,7 @@ namespace CheckListManager.Instances.Logic.Services
                     else
                     {
                         if (!HasPermission(identity, "Confirm", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                            throw new InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
+                            throw new Exceptions.InstanceException("There is not a confirmation workflow for this instance, the function Confirm is needed to complete.");
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
                         if (!row.PrototypeVersions.VersionState.In(VersionState.Draft, VersionState.InSimulation) && !string.IsNullOrEmpty(row.FileName))
@@ -676,7 +676,7 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code);
                 if (row == null)
-                    throw new InstanceException("Instance not found");
+                    throw new Exceptions.InstanceException("Instance not found");
 
                 if (cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
                 {
@@ -723,13 +723,13 @@ namespace CheckListManager.Instances.Logic.Services
                 if (httpResponse.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     var message = JsonConvert.DeserializeObject<ResponseMessage>(responseData);
-                    throw new InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
+                    throw new Exceptions.InstanceException(message.Messages.FirstOrDefault() ?? "Unable to retrieve the prototype");
                 }
                 var response = JsonConvert.DeserializeObject<GetPrototypeResponse>(responseData, _converters);
                 response.Version = version;
                 return response;
             }
-            catch (InstanceException e)
+            catch (Exceptions.InstanceException e)
             {
                 Logger.Error(e);
                 throw;
@@ -737,7 +737,7 @@ namespace CheckListManager.Instances.Logic.Services
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to retrieve the prototype");
-                throw new InstanceException("Unable to retrieve the prototype", e);
+                throw new Exceptions.InstanceException("Unable to retrieve the prototype", e);
             }
         }
 
@@ -778,7 +778,7 @@ namespace CheckListManager.Instances.Logic.Services
         public void CheckViewPermission(IDefaultIdentity identity, InstanceCacheObject cacheObject)
         {
             if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
+                throw new Exceptions.InstanceException("Access denied");
         }
 
 
@@ -864,11 +864,11 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
                 if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item) || !(item is InstanceLink instanceLink))
-                    throw new InstanceException($"InstanceLink {itemId} not found");
+                    throw new Exceptions.InstanceException($"InstanceLink {itemId} not found");
 
                 await _instanceCache.TouchAsync(code);
 
@@ -912,14 +912,14 @@ namespace CheckListManager.Instances.Logic.Services
                     }).ToList()
                 };
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to retrieve the external source data");
-                throw new InstanceException("Unable to retrieve the external source data", e);
+                throw new Exceptions.InstanceException("Unable to retrieve the external source data", e);
             }
         }
 
@@ -929,13 +929,13 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.TryGetValue(externalSourceCode, out var externalSource))
-                    throw new InstanceException("Invalid external source");
+                    throw new Exceptions.InstanceException("Invalid external source");
                 if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
-                    throw new InstanceException($"Item {itemId} not found");
+                    throw new Exceptions.InstanceException($"Item {itemId} not found");
 
                 await _instanceCache.TouchAsync(code);
 
@@ -948,14 +948,14 @@ namespace CheckListManager.Instances.Logic.Services
                     Parameters = parameters
                 };
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to retrieve the external source data");
-                throw new InstanceException("Unable to retrieve the external source data", e);
+                throw new Exceptions.InstanceException("Unable to retrieve the external source data", e);
             }
         }
 
@@ -965,13 +965,13 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
                 if (!cacheObject.Instance.ExternalSources.TryGetValue(externalSourceCode, out var externalSource))
-                    throw new InstanceException("Invalid external source");
+                    throw new Exceptions.InstanceException("Invalid external source");
                 if (!cacheObject.Instance.Items.TryGetValue(itemId, out var item))
-                    throw new InstanceException($"Item {itemId} not found");
+                    throw new Exceptions.InstanceException($"Item {itemId} not found");
 
                 await _instanceCache.TouchAsync(code);
 
@@ -995,14 +995,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return JsonConvert.DeserializeObject<string>(responseData);
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to retrieve the external source rows");
-                throw new InstanceException("Unable to retrieve the external source rows", e);
+                throw new Exceptions.InstanceException("Unable to retrieve the external source rows", e);
             }
         }
 
@@ -1010,7 +1010,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
             if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                throw new InstanceException("Access denied");
+                throw new Exceptions.InstanceException("Access denied");
 
             var list = new List<InstanceRelation>();
             if (cacheObject.ID.HasValue)
@@ -1068,7 +1068,7 @@ namespace CheckListManager.Instances.Logic.Services
                     catch (Exception Exception)
                     {
                         Logger.Error(Exception, $"Error while exporting the content of {Element}");
-                        throw new InstanceException($"Error while exporting the content of {Element}", Exception);
+                        throw new Exceptions.InstanceException($"Error while exporting the content of {Element}", Exception);
                     }
         }
 
@@ -1078,9 +1078,9 @@ namespace CheckListManager.Instances.Logic.Services
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (cacheObject.InstanceState != InstanceState.Draft && cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
+                    throw new Exceptions.InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    throw new InstanceException("Access denied");
+                    throw new Exceptions.InstanceException("Access denied");
 
                 await _instanceCache.TouchAsync(code);
 
@@ -1091,21 +1091,21 @@ namespace CheckListManager.Instances.Logic.Services
                     Address = u.Email
                 }).OrderBy(u => u.Code).ToList();
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Unable to retrieve the instance editors");
-                throw new InstanceException("Unable to retrieve the instance editors", e);
+                throw new Exceptions.InstanceException("Unable to retrieve the instance editors", e);
             }
         }
 
         public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key)
         {
             if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObjectCode)))
-                throw new InstanceException("Attachment key not valid");
+                throw new Exceptions.InstanceException("Attachment key not valid");
 
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
@@ -1132,7 +1132,7 @@ namespace CheckListManager.Instances.Logic.Services
                                 await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
                                 break;
                             default:
-                                throw new InstanceException($"Invalid state: {instance.InstanceState}");
+                                throw new Exceptions.InstanceException($"Invalid state: {instance.InstanceState}");
                         }
                     else
                         await _instanceCache.RemoveAsync(code);
@@ -1148,7 +1148,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id);
             if (Instance == null)
-                throw new InstanceException("Instance not found");
+                throw new Exceptions.InstanceException("Instance not found");
             if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
                 throw new UnauthorizedAccessException();
 
@@ -1199,7 +1199,7 @@ namespace CheckListManager.Instances.Logic.Services
                             );
                     }
                 }
-                catch (InstanceException)
+                catch (Exceptions.InstanceException)
                 {
                     // Ignored
                 }
@@ -1319,7 +1319,7 @@ namespace CheckListManager.Instances.Logic.Services
                 initialGetTime = stopWatch.Elapsed.TotalMilliseconds;
 
                 if (cacheObject == null)
-                    throw new InstanceException("Instance not found");
+                    throw new Exceptions.InstanceException("Instance not found");
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
@@ -1329,7 +1329,7 @@ namespace CheckListManager.Instances.Logic.Services
                     stopWatch.Stop();
                     lockTime = stopWatch.Elapsed.TotalMilliseconds;
                     if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is currently being updated by another user");
+                        throw new Exceptions.InstanceException("Instance is currently being updated by another user");
                 }
 
                 stopWatch = Stopwatch.StartNew();
@@ -1427,7 +1427,7 @@ namespace CheckListManager.Instances.Logic.Services
                         Property = DependencyRelation.Properties.Value;
                         break;
                     default:
-                        throw new InstanceException($"Event type {request.Type} not handled.");
+                        throw new Exceptions.InstanceException($"Event type {request.Type} not handled.");
                 }
 
                 var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
@@ -1463,14 +1463,14 @@ namespace CheckListManager.Instances.Logic.Services
 
                 return cacheObject;
             }
-            catch (InstanceException)
+            catch (Exceptions.InstanceException)
             {
                 throw;
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Error on handle event");
-                throw new InstanceException("Error on handle event", e);
+                throw new Exceptions.InstanceException("Error on handle event", e);
             }
             finally
             {

@@ -527,7 +527,9 @@
                 matematici.navigator.open(options.listUrl);
         }
 
-        if (model.parentInstanceCode || model.childInstances && model.childInstances.length)
+        if (!model)
+            handler(false);
+        else if (model && model.parentInstanceCode || model.childInstances && model.childInstances.length)
             handler(true);
         else
             getParentInstances(function (result) {
