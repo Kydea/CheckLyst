@@ -294,38 +294,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         print("Redirect to \(url.absoluteString)")
         #endif
         UIApplication.shared.open(navigationAction.request.url!, options: [:])
-        decisionHandler(.allow)
-
-    }
-    
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.targetFrame == nil {
-            if let url = navigationAction.request.url, let scheme = url.scheme {
-                if supportedProtocols.contains(scheme) {
-                    if url.schemeHost == ServerConnection.baseFrontEndUrl {
-                        if (url.getCallType == .Create ||
-                            url.getCallType == .Detail) {
-                            #if DEBUG
-                            print("Redirect to \(url.absoluteString)")
-                            #endif
-                            appDelegate.requestToOpenInstance = true
-                            appDelegate.requestedUrlInfo = url.getParametersForInstance
-                            self.goBackToSearchInstances(self)
-                        }
-                    } else {
-                        #if DEBUG
-                        print("Redirect to \(url.absoluteString)")
-                        #endif
-                        UIApplication.shared.open(navigationAction.request.url!, options: [:])
-                    }
-                } else {
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
-                }
-            } else {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
-            }
-        }
-        return nil
+        decisionHandler(.cancel)
     }
     
     func shouldShowScanButton() {
