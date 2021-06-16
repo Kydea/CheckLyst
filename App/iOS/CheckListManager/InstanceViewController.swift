@@ -63,9 +63,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             }
         }
         
+        let newInstanceVersionSegment = (newInstanceVersion != nil ? "/" + newInstanceVersion! : "")
+        
         let fullUrl = !newInstance ?
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
-            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + newInstanceVersionSegment + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
                 
         let url = URL(string: fullUrl)
@@ -136,6 +138,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.tabBarController?.tabBar.isUserInteractionEnabled = true
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        toggleNavigatioBarTint(true)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         requestForScanning = false
@@ -145,7 +151,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-                
+        
+        toggleNavigatioBarTint(false)
+
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
             requestForScanning = false
@@ -155,6 +163,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             setupWatermarkImagePicker(imagePicker)
         }
 
+    }
+    
+    //This is a workaround because UINavigationBar.appearance(whenContainedInInstancesOf: [UIImagePickerController.self]) seems not working
+    private func toggleNavigatioBarTint(_ value: Bool) {
+        UINavigationBar.appearance().tintColor = value ? UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0) : .white
     }
     
     private func setupWatermarkImagePicker(_ controller: UIImagePickerController) {

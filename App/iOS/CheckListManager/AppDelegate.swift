@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        
         let navigationBarAppearace = UINavigationBar.appearance()
         
         UIApplication.shared.statusBarStyle = .lightContent
@@ -46,10 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
         }
+                
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UIDocumentBrowserViewController.self]).tintColor = UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)
         
         navigationBarAppearace.tintColor = UIColor.white
-        
-        UINavigationBar.appearance(whenContainedInInstancesOf: [UIDocumentBrowserViewController.self]).tintColor = UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)
         
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
