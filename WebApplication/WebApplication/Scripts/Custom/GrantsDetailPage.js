@@ -543,7 +543,7 @@
                 });
 
                 if (errors.length) {
-                    matematici.dialog.error("Error", "The following grants have a duplicated department or department + prototype type: " + errors.join("<br>"));
+                    matematici.dialog.error("Error", "The following grants have a duplicated department or department + prototype type:<br />" + errors.join("<br />"));
                     return;
                 }
             }
