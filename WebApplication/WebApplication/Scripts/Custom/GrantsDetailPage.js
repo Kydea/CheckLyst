@@ -524,7 +524,7 @@
                         key = department + "#" + prototypeType;
 
                     if (duplications.has(key))
-                        errors.push("row " + index + " of prototypes tab");
+                        errors.push("row " + (index + 1)  + " of prototypes tab");
                     else
                         duplications.add(key);
                 });
@@ -537,21 +537,21 @@
                         key = department + "#" + prototypeType;
 
                     if (duplications.has(key))
-                        errors.push("row " + index + " of instances tab");
+                        errors.push("row " + (index + 1)  + " of instances tab");
                     else
                         duplications.add(key);
                 });
 
                 duplications = new Set();
                 if (page == "Users")
-                    $("div.Function", tab.getItem(levelsTab).tab).each(function () {
+                    $("div.Function", tab.getItem(levelsTab).tab).each(function (index) {
                         var
                             department = $("select.Department", this).val(),
                             prototypeType = $("select.PrototypeType", this).val() || "",
                             key = department + "#" + prototypeType;
 
                         if (duplications.has(key))
-                            errors.push("row " + index + " of level tab");
+                            errors.push("row " + (index + 1) + " of levels tab");
                         else
                             duplications.add(key);
                     });
