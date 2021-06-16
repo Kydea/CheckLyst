@@ -1030,7 +1030,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7J8-cH-x0F" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2322" y="78"/>
+            <point key="canvasLocation" x="1649" y="8"/>
         </scene>
         <!--Instance View Controller-->
         <scene sceneID="HQq-pW-NyX">
@@ -1367,7 +1367,7 @@
                     <navigationItem key="navigationItem" id="DPa-4B-5Md">
                         <barButtonItem key="rightBarButtonItem" id="t19-Au-y41">
                             <connections>
-                                <segue destination="zcb-Wv-5O8" kind="show" identifier="newInstanceSegue" id="NKc-6S-8bD"/>
+                                <action selector="newInstanceButtonTapped:" destination="vDh-uK-ako" id="mEn-m3-o3A"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1382,6 +1382,7 @@
                         <segue destination="p6U-4t-1pC" kind="show" identifier="editFieldSegue" id="gqm-RD-5Zn"/>
                         <segue destination="iYy-bq-ngU" kind="show" identifier="instanceDetailsSegue" id="bnp-28-bxz"/>
                         <segue destination="zcb-Wv-5O8" kind="show" identifier="openInstanceDirectly" id="wq3-Yy-xYd"/>
+                        <segue destination="zcb-Wv-5O8" kind="show" identifier="newInstanceSegue" id="MWm-Aa-OmC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDp-6F-0mS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2463,7 +2464,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="NKc-6S-8bD"/>
+        <segue reference="MWm-Aa-OmC"/>
         <segue reference="qFk-ul-dl4"/>
     </inferredMetricsTieBreakers>
     <resources>

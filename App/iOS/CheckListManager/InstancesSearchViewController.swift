@@ -53,7 +53,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         activityIndicator.hidesWhenStopped = true
         newInstanceButton.title = "\u{f103} New Instance "
-        newInstanceButton.isEnabled = false
+        
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
         for i in 0...8 {
@@ -134,12 +134,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         if (indexPath.row == fieldIndexDictionary["id"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
             }
         }
         
         if (indexPath.row == fieldIndexDictionary["description"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
             }
         }
   
@@ -199,6 +201,16 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         performSegue(withIdentifier: "editFieldSegue", sender: indexPath)
 
     }
+    
+    @IBAction func newInstanceButtonTapped(_ sender: Any) {
+        guard let prototype = searchDictionary["prototype"] as? String,
+              !prototype.isEmpty else {
+            appDelegate.displayMessage(Title: "Error", Message: "Select a prototype")
+            return
+        }
+        performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+    }
+   
     
     func fillSearchFields() {
         
@@ -428,11 +440,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             }
         }
-        self.newInstanceButton.isEnabled = (self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active")
-            && (self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))
-            && (self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))) ?
-                true : false
-        
+    
         self.tableView.reloadData()
     }
     
@@ -553,7 +561,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 if let parameters = app.requestedUrlInfo {
                     
                     if selectedItemsDictionary.count == 0  {
-                        for i in 0...7 {
+                        for i in 0...8 {
                             selectedItemsDictionary[i] = Option(text: "",value: "")
                         }
                     }
@@ -575,9 +583,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             } else {
                 
+                let prototype = searchDictionary["prototype"]! as! String
+                let version = searchDictionary["version"]! as! String
                 controller.newInstance = true
-                controller.newInstancePrototype = searchDictionary["prototype"]! as! String
-                controller.newInstanceVersion = searchDictionary["version"]! as! String
+                controller.newInstancePrototype = prototype
+                controller.newInstanceVersion = version.isEmpty ? nil : version
                 controller.newInstanceFieldsValues = ""
                 controller.selectedItemsDictionary = selectedItemsDictionary;
             
