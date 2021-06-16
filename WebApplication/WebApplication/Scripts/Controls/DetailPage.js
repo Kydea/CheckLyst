@@ -9,31 +9,30 @@
         title,
 
         submit = function (event, callback, takeOpen) {
-            var settings = matematici.tokenManager.getCompanySettings();
-            var input;
+            var settings = matematici.tokenManager.getCompanySettings(),
+                input,
+                trigger = function () {
+                    form.trigger(event, function (result) {
+                        form.handleResult(result);
 
-            var trigger = function () {
-                form.trigger(event, function (result) {
-                    form.handleResult(result);
+                        if (settings && settings.requireUserReason) {
+                            lastReason = !result.valid ? input.val() : "";
+                            matematici.dialog.close();
+                        }
 
-                    if (settings && settings.requireUserReason) {
-                        lastReason = !result.valid ? input.val() : "";
-                        matematici.dialog.close();
-                    }
+                        if (result.valid) {
+                            matematici.canClose = true;
+                            matematici.popup.getResult().saved = true;
+                            if (!options.wholePage && !takeOpen) matematici.popup.close();
 
-                    if (result.valid) {
-                        matematici.canClose = true;
-                        matematici.popup.getResult().saved = true;
-                        if (!options.wholePage && !takeOpen) matematici.popup.close();
+                            if (!data && result.data) refresh(result.data);
 
-                        if (!data && result.data) refresh(result.data);
-
-                        matematici.blip.ok(function () {
-                            callback && callback(result);
-                        });
-                    }
-                }, options.parametersPrepareHandler && options.parametersPrepareHandler());
-            };
+                            matematici.blip.ok(function () {
+                                callback && callback(result);
+                            });
+                        }
+                    }, options.parametersPrepareHandler && options.parametersPrepareHandler());
+                };
 
             if (settings && settings.requireUserReason) {
                 matematici.dialog.show({
@@ -102,7 +101,7 @@
             ]);
         },
 
-		setup = function () {
+        setup = function () {
             options.readOnly = options.readOnly != null ? options.readOnly : sender.getOptions().searchPage.isReadOnly();
             if (!options.wholePage) {
                 buttons.push({
@@ -151,49 +150,49 @@
                 }, 0);
             }
 
-			form = new matematici.Form(options.formSelector, {
-				applyButton: "#SaveButton",
-				bindEvent: options.bindEvent,
+            form = new matematici.Form(options.formSelector, {
+                applyButton: "#SaveButton",
+                bindEvent: options.bindEvent,
                 readOnly: options.readOnly,
                 resultHandler: options.resultHandler
-			});
-			form.initialize();
+            });
+            form.initialize();
             if (!options.readOnly) {
                 form.addChangeHandler(function () { matematici.canClose = false; });
                 matematici.save = function (callback, takeOpen) {
                     return clickHandler($("#SaveButton"), data == null ? options.addEvent || "Add" : options.editEvent || "Edit", callback, takeOpen);
                 };
             }
-		},
+        },
 
-		refresh = function (d, avoidSetValues) {
-			data = d;
-			if (data && !avoidSetValues) form.setValues(data);
-			matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
-		};
+        refresh = function (d, avoidSetValues) {
+            data = d;
+            if (data && !avoidSetValues) form.setValues(data);
+            matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
+        };
 
-	this.getElement = function () {
-		return matematici.popup.getElement();
-	};
+    this.getElement = function () {
+        return matematici.popup.getElement();
+    };
 
-	this.getSender = function () {
-		return sender;
-	};
+    this.getSender = function () {
+        return sender;
+    };
 
-	this.getForm = function () {
-		return form;
-	};
+    this.getForm = function () {
+        return form;
+    };
 
-	this.isNew = function () {
-		return data == null;
-	};
+    this.isNew = function () {
+        return data == null;
+    };
 
-	this.isReadOnly = function () {
-		return options.readOnly;
+    this.isReadOnly = function () {
+        return options.readOnly;
     };
 
     this.clickHandler = clickHandler;
     this.deleteRecord = deleteRecord;
 
-	setup();
+    setup();
 }

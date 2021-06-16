@@ -513,6 +513,41 @@
         },
 
         validateHandler = function (event, callback) {
+            if ((page == "Users" || page == "Groups") && event == "Edit") {
+                var
+                    prototypesTabDuplications = new Set(),
+                    errors = [];
+                $("div.Function", tab.getItem(prototypesTab).tab).each(function (index) {
+                    var
+                        department = $("select.Department", this).val(),
+                        prototypeType = $("select.PrototypeType", this).val() || "",
+                        key = department + "#" + prototypeType;
+
+                    if (prototypesTabDuplications.has(key))
+                        errors.push("row " + index + " of prototypes tab");
+                    else
+                        prototypesTabDuplications.add(key);
+                });
+
+                prototypesTabDuplications = new Set();
+                $("div.Function", tab.getItem(instancesTab).tab).each(function (index) {
+                    var
+                        department = $("select.Department", this).val(),
+                        prototypeType = $("select.PrototypeType", this).val() || "",
+                        key = department + "#" + prototypeType;
+
+                    if (prototypesTabDuplications.has(key))
+                        errors.push("row " + index + " of instances tab");
+                    else
+                        prototypesTabDuplications.add(key);
+                });
+
+                if (errors.length) {
+                    matematici.dialog.error("Error", "The following grants have a duplicated department or department + prototype type: " + errors.join("<br>"));
+                    return;
+                }
+            }
+
             if (page != "Users" || event != "Edit") 
                 setTimeout(callback, 0);
             else
