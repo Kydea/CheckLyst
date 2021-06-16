@@ -515,7 +515,7 @@
         validateHandler = function (event, callback) {
             if ((page == "Users" || page == "Groups") && event == "Edit") {
                 var
-                    prototypesTabDuplications = new Set(),
+                    duplications = new Set(),
                     errors = [];
                 $("div.Function", tab.getItem(prototypesTab).tab).each(function (index) {
                     var
@@ -523,27 +523,42 @@
                         prototypeType = $("select.PrototypeType", this).val() || "",
                         key = department + "#" + prototypeType;
 
-                    if (prototypesTabDuplications.has(key))
+                    if (duplications.has(key))
                         errors.push("row " + index + " of prototypes tab");
                     else
-                        prototypesTabDuplications.add(key);
+                        duplications.add(key);
                 });
 
-                prototypesTabDuplications = new Set();
+                duplications = new Set();
                 $("div.Function", tab.getItem(instancesTab).tab).each(function (index) {
                     var
                         department = $("select.Department", this).val(),
                         prototypeType = $("select.PrototypeType", this).val() || "",
                         key = department + "#" + prototypeType;
 
-                    if (prototypesTabDuplications.has(key))
+                    if (duplications.has(key))
                         errors.push("row " + index + " of instances tab");
                     else
-                        prototypesTabDuplications.add(key);
+                        duplications.add(key);
                 });
 
+                duplications = new Set();
+                if (page == "Users")
+                    $("div.Function", tab.getItem(levelsTab).tab).each(function () {
+                        var
+                            department = $("select.Department", this).val(),
+                            prototypeType = $("select.PrototypeType", this).val() || "",
+                            key = department + "#" + prototypeType;
+
+                        if (duplications.has(key))
+                            errors.push("row " + index + " of level tab");
+                        else
+                            duplications.add(key);
+                    });
+
+
                 if (errors.length) {
-                    matematici.dialog.error("Error", "The following grants have a duplicated department or department + prototype type:<br />" + errors.join("<br />"));
+                    matematici.dialog.error("Error", "The following rows have a duplicated department or department + prototype type:<br />" + errors.join("<br />"));
                     return;
                 }
             }
