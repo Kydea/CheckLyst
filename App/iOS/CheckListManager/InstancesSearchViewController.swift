@@ -134,12 +134,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         if (indexPath.row == fieldIndexDictionary["id"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
             }
         }
         
         if (indexPath.row == fieldIndexDictionary["description"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
             }
         }
   
@@ -559,7 +561,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 if let parameters = app.requestedUrlInfo {
                     
                     if selectedItemsDictionary.count == 0  {
-                        for i in 0...7 {
+                        for i in 0...8 {
                             selectedItemsDictionary[i] = Option(text: "",value: "")
                         }
                     }
