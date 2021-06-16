@@ -13,6 +13,7 @@
             grid.update(result.data, options.updateHandler);
             paginator.setPage(result.currentPage, result.pagesCount);
             filtered = true;
+            options.filterHandler && options.filterHandler(result);
         },
 
         closeHandler = function () {

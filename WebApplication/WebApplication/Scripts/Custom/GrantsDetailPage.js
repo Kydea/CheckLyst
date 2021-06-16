@@ -514,7 +514,7 @@
 
         validateHandler = function (event, callback) {
             if (page != "Users" || event != "Edit") 
-                callback();
+                setTimeout(callback, 0);
             else
                 $.ajax({
                     type: "post",
