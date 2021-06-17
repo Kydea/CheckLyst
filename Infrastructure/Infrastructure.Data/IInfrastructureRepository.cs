@@ -44,9 +44,8 @@ namespace CheckListManager.Infrastructure.Data
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<PrototypeTypes, TResult>> select,
-            long? department, string name, string functionGroup, 
-            int currentPage, int itemsPerPage,
-            string Function = "View");
+            long? department, string name, 
+            int currentPage, int itemsPerPage);
 
         Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(
             IDefaultIdentity identity,
