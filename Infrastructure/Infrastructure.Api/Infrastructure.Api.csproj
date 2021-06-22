@@ -220,6 +220,10 @@
       <Project>{351c3388-67b1-46ee-8fd1-5a63277b3c0c}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Infrastructure.Data\Infrastructure.Data.csproj">
+      <Project>{b1773e1a-fde3-4d1c-bde0-3c5a6b2b3514}</Project>
+      <Name>Infrastructure.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure.Logic\Infrastructure.Logic.csproj">
       <Project>{5f03eba2-7ff0-4fe0-9945-58fa5f084563}</Project>
       <Name>Infrastructure.Logic</Name>

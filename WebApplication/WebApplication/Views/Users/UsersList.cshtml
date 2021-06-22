@@ -92,14 +92,15 @@
         $.ajax({
             type: "post",
             url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
-            data: {
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
                 data: {
-                    name: ""
-                },
-                itemsPerPage: 5000
-            }
+                    functionGroup: "",
+                    function: ""
+                }
+            })
         }).done(function (result) {
-            $(formSelector).data("prototypeTypes", result.data);
+            $(formSelector).data("prototypeTypes", result);
         });
 
         $.ajax({

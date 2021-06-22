@@ -85,7 +85,6 @@
     <Compile Include="PrototypeTypes\IPrototypeTypesService.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesRequest.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesResponse.cs" />
-    <Compile Include="PrototypeTypes\PrototypeTypesSyntheticRow.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesRow.cs" />
     <Compile Include="PrototypeTypes\PrototypeTypesService.cs" />
     <Compile Include="Tools\DateTimeOffsetConversionRequest.cs" />

@@ -15,14 +15,12 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     data: {
-                        name: "",
                         functionGroup: "Prototypes",
                         function: "Edit"
-                    },
-                    itemsPerPage: 1000
+                    }
                 })
             }).done(function (result) {
-                prototypeTypes = result.data;
+                prototypeTypes = result;
                 setup();
             });
         },
