@@ -556,4 +556,7 @@ create table "Security"."GroupConflicts"
 
 create unique index "Index_GroupFunctions_Groups2" on "Security"."GroupConflicts" ("Company", "Group2", "Group1");
 
+insert into "Configuration"."Settings" ("Code") values ('LDAPPort');
+insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'LDAPPort', '636' from "Infrastructure"."Companies" order by "ID";
+
 --Script8.Reports.sql

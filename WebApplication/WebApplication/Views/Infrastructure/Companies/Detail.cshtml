@@ -351,6 +351,12 @@
                 note: "The host of the LDAP server (e.g. 192.168.1.50 or ldap.company.com).",
                 group: "Security"
             },
+            LDAPPort: {
+                label: "LDAP port",
+                note: "The port of the LDAP server.",
+                mask: "pint",
+                group: "Security"
+            },
             MaximumNumberOfPasswordFailure: {
                 label: "Maximum password failures",
                 note: "The number of password failures after which a user is blocked (works only for users that are not authenticated with a LDAP server). The value 0 disable the feature.",

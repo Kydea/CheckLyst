@@ -77,9 +77,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new AuthenticationException(103, $"User {code} disabled");
 
                 var LDAPHost = await _settingService.LDAPHostAsync(companyId.Value);
+                var LDAPPort = await _settingService.LDAPPortAsync(companyId.Value);
 
                 if (!string.IsNullOrEmpty(LDAPHost) && !string.IsNullOrEmpty(user.AuthenticationCode))
-                    VerifyLDAPPassword(LDAPHost, user.AuthenticationCode, password);
+                    VerifyLDAPPassword(LDAPHost, LDAPPort, user.AuthenticationCode, password);
                 else if (!_hashService.ValidateHash(password, user.Password))
                     throw new AuthenticationException(105, "Password not valid");
 
@@ -113,12 +114,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             return user;
         }
 
-        private static void VerifyLDAPPassword(string LDAPHost, string Code, string Password)
+        private static void VerifyLDAPPassword(string LDAPHost, int LDAPPort, string Code, string Password)
         {
             try
             {
-                var LdapDirectoryIdentifier =
-                    new LdapDirectoryIdentifier(LDAPHost, 636, true, false); //ldap: 389, ldaps: 636
+                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(LDAPHost, LDAPPort, true, false);
                 var NetworkCredential = new NetworkCredential(Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 

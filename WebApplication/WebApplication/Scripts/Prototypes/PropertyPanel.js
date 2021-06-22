@@ -601,7 +601,7 @@
                                 model.restrictToCamera = false;
                                 restrictToCameraProperty.setValue();
                             }
-                            restrictToCameraProperty.getType().setReadOnly(model.fileType != "images");
+                            restrictToCameraProperty.getType().setReadOnly(model.fileType == "pdf");
                         }
                     ));
                     properties.push(new prototypes.Property(
@@ -610,7 +610,7 @@
                         "If the target is specified, the attachment will be linked to the specified item."
                     ));
                     properties.push(restrictToCameraProperty = new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "restrictToCamera", model.fileType != "images"),
+                        this, new prototypes.BooleanProperty(model, "restrictToCamera", model.fileType == "pdf"),
                         "Restrict to camera",
                         "If the flag is set, the attachment will be taken exclusively by camera of the mobile device on the app."
                     ));

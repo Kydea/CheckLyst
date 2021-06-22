@@ -54,7 +54,7 @@ namespace CheckListManager.Common.Data
                     "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, :functionGroup, :function) g " +
                     "where g.\"Department\" = pt.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = pt.\"ID\")" +
                 "))" +
-            "order by pt.\"Name\"";
+            "order by d.\"Name\", pt.\"Name\"";
         public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
             var PrototypeTypes = await Read<PrototypeTypes>(PROTOTYPE_TYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department});
