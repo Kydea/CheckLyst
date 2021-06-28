@@ -560,3 +560,5 @@ insert into "Configuration"."Settings" ("Code") values ('LDAPPort');
 insert into "Configuration"."SettingValues" ("Company", "Setting", "Value") select "ID", 'LDAPPort', '636' from "Infrastructure"."Companies" order by "ID";
 
 --Script8.Reports.sql
+
+select "Security"."CreateReportUser"("ID") from "Infrastructure"."Companies" where "ID" > 1

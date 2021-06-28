@@ -150,7 +150,7 @@ grant usage on schema "Trail" to "ReportRole";
 grant select on table "Trail"."Records" to "ReportRole";
 
 create role "ReportRole1";
-create policy "Company2Companies" on "Infrastructure"."Companies" to "ReportRole1" using (true);
+create policy "Company1Companies" on "Infrastructure"."Companies" to "ReportRole1" using (true);
 create policy "Company1Departments" on "Infrastructure"."Departments" to "ReportRole1" using (true);
 create policy "Company1Users" on "Security"."Users" to "ReportRole1" using (true);
 create policy "Company1Roles" on "Security"."Roles" to "ReportRole1" using (true);
