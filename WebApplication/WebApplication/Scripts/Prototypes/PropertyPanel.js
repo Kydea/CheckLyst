@@ -50,25 +50,32 @@
 
         copyModel(model, oldModel);
 
-        var name = model.typeName;
+        var
+            name = model.typeName,
+            buttons = [];
+
+        if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+            buttons.push({
+                icon: "check",
+                text: "apply",
+                handler: confirm
+            });
+        
+        buttons.push({
+            cancelButton: true,
+            hidden: true,
+            handler: function () {
+                if (model.typeName == "Image" && !oldModel.key && model.key)
+                    prototypes.prototype.deleteImage(model.key);
+                copyModel(oldModel, model);
+                prototypes.prototype.update();
+            }
+        });
 
         matematici.popup.show({
             title: "Properties - " + name + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
             content: element,
-            buttons: [{
-                icon: "check",
-                text: "apply",
-                handler: confirm
-            }, {
-                cancelButton: true,
-                hidden: true,
-                handler: function () {
-                    if (model.typeName == "Image" && !oldModel.key && model.key)
-                        prototypes.prototype.deleteImage(model.key);
-                    copyModel(oldModel, model);
-                    prototypes.prototype.update();
-                }
-            }]
+            buttons: buttons
         });
 
         matematici.popup.setWidth("760px");
