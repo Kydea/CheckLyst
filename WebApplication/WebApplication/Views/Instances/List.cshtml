@@ -116,6 +116,8 @@
         var
             formSelector = "form#Filters",
             formElement = $(formSelector),
+            linkButton = $("#LinkButton"),
+            addButton = $("#AddButton"),
 
             searchPage = new matematici.SearchPage({
                 pageName: "Instances",
@@ -161,24 +163,30 @@
                 }]);
         });
 
-        $("#AddButton").on("click", function () {
-            var
-                prototype = $("select[name=prototype]", formElement).val(),
-                prototypeName = $("select[name=prototype]", formElement).next().val();
+        if (matematici.tokenManager.checkRole("Instances#Create#"))
+            addButton.on("click", function () {
+                var
+                    prototype = $("select[name=prototype]", formElement).val(),
+                    prototypeName = $("select[name=prototype]", formElement).next().val();
 
-            searchPage.getForm().saveForm();
+                searchPage.getForm().saveForm();
 
-            if (!prototypeName)
-                matematici.dialog.error("Error", "Select a prototype to create a new instance.");
-            else
-                $.ajax({
-                    url: matematici.urls.instances.api + "/CheckCreationGrants",
-                    type: "post",
-                    data: { prototype: prototype }
-                }).done(function () {
-                    matematici.navigator.open("@Url.Action("Create")/" + prototype);
-                });
-        });
+                if (!prototypeName)
+                    matematici.dialog.error("Error", "Select a prototype to create a new instance.");
+                else
+                    $.ajax({
+                        url: matematici.urls.instances.api + "/CheckCreationGrants",
+                        type: "post",
+                        data: { prototype: prototype }
+                    }).done(function () {
+                        matematici.navigator.open("@Url.Action("Create")/" + prototype);
+                    });
+            });
+        else {
+            linkButton.hide();
+            addButton.hide();
+        }
+
         callback.call();
     };
 </script>
