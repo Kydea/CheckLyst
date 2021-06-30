@@ -14,7 +14,7 @@
             var
                 data = {},
                 parameters = [],
-                url = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname;
+                url = window.location.protocol + "//" + window.location.host + window.location.pathname;
 
             prepareRequestData(data, false);
 
@@ -155,12 +155,13 @@
                         else {
                             var field = fields.filter("[name=" + parameter[0] + "]");
                             if (field.length) {
-                                urlParameters[parameter[0]] = parameter[1];
+                                urlParameters[parameter[0]] = decodeURIComponent(parameter[1]);
                                 hasParameters = true;
                             }
                         }
                     }
                 });
+                matematici.navigator.setUrl(window.location.href.split("?")[0]);
             }
             if (hasParameters) return stringified ? JSON.stringify({ data: urlParameters }) : { data: urlParameters };
 

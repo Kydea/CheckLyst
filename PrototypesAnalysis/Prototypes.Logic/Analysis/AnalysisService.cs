@@ -99,7 +99,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                 }
                 catch (Exception e)
                 {
-                    var Key = $"{prototypeVersion.Company}.{prototypeVersion.Prototypes.Name}.{prototypeVersion.Version}.{prototypeVersion.VersionState}";
+                    var Key = $"{prototypeVersion.Prototypes.Company}.{prototypeVersion.Prototypes.Name}.{prototypeVersion.Version}.{prototypeVersion.VersionState}";
                     if (!response.Errors.TryGetValue(Key, out var error))
                         response.Errors[Key] = error = new List<string>();
                     error.Add(e.Message);

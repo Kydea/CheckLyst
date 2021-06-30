@@ -76,7 +76,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     Options = FTPServers
                 };
 
-                response.Fields["PrototypeType"] = new Field { Value = Form.Name };
+                response.Fields["Name"] = new Field { Value = Form.Name };
             }
 
             return response;

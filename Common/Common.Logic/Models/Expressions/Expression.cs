@@ -47,7 +47,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             this.Code = Code;
 
             if (string.IsNullOrWhiteSpace(Description) && (Unique != Uniqueness.no || Exception || Notification))
-                throw new Exception($"Unique, exception and notification expressions must have a description");
+            {
+                if (checkList.InstanceCreation)
+                    Description = "-";
+                else
+                    throw new Exception($"Unique, exception and notification expressions must have a description");
+            }
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Exception($"Expressions length must not exceed {MAXIMUM_LENGTH - 1} characters");
             if (Code.Length > 50)

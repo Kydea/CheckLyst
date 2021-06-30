@@ -152,6 +152,10 @@
       <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Instances.Data\Instances.Data.csproj">
+      <Project>{2B8DACE9-8001-4CCE-86EB-815E4330D7EC}</Project>
+      <Name>Instances.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Instances.Logic\Instances.Logic.csproj">
       <Project>{5af1d8ea-8392-4d42-a517-67c2b0182bf0}</Project>
       <Name>Instances.Logic</Name>
