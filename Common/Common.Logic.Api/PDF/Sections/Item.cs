@@ -155,13 +155,14 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                         Paragraph.Format.Alignment = ParagraphAlignment.Center;
                     }
 
-                    if (ImageElement.Key == null) return;
+                    var Key = ImageElement.GetTarget().Key;
+                    if (Key == null) return;
 
                     Paragraph = PDFBase.Container.AddParagraph();
                     Paragraph.Format.Alignment = ParagraphAlignment.Center;
                     var StorageFile =
                         await CheckListPDF.StorageService.GetAsync(
-                            CheckListPDF.ConfigurationService.PrototypesStorageBucket, ImageElement.Key);
+                            CheckListPDF.ConfigurationService.PrototypesStorageBucket, Key);
                     byte[] Data;
                     Bitmap Image;
                     using (MemoryStream ms = new MemoryStream())

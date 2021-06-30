@@ -31,6 +31,7 @@
             new prototypes.ExpressionsList({
                 closeHandler: resumePropertyPanel,
                 useHandler: function (expression) {
+                    expressions = prototypes.prototype.getModel().expressions;
                     currentProperty.getType().setExpressionCode(expression.code);
                     expressionPropertyBase.check(expression.code);
                 }

@@ -11,7 +11,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
 
-        public ICheckListAttachment GetTarget() =>
+        public ICheckListAttachmentBase GetTarget() =>
             this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -55,7 +55,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 var Target = GetTarget();
                 ItemModel.Key = Target.Key;
-                ItemModel.FileType = Target.FileType;
+                ItemModel.FileType = ((Attachment)Target).FileType;
             }
             return ItemModel;
         }
