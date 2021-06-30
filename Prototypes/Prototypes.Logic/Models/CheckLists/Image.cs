@@ -11,7 +11,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public bool Cloned { get; set; }
 
-        public ICheckListAttachmentBase GetTarget() => throw new NotImplementedException();
+        public ICheckListAttachmentBase GetTarget() =>
+            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Image Image) ? this : Image;
 
         public override bool BuildDependencies()
         {

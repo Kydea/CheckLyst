@@ -28,7 +28,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return text;
         }
 
-        public ICheckListAttachmentBase GetTarget() => throw new NotImplementedException();
+        public ICheckListAttachmentBase GetTarget() =>
+            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public string Key { get; set; }
         public string FileType { get; set; } = "images";
