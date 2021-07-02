@@ -2,14 +2,14 @@
     var
         base,
         conditionSelect, valueSelect, offsetInput,
-        expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
         expressionPropertyBase,
 
         check = function (value, ignoreNull) {
             var
                 condition = conditionSelect.val(),
-                error = null;
+                error = null,
+                expressions = expressionPropertyBase.getExpressions();
 
             if (condition == 3) {
                 if (!value)
@@ -48,7 +48,9 @@
         },
 
         toggleControls = function (checkValues) {
-            var condition = conditionSelect.val();
+            var
+                condition = conditionSelect.val(),
+                expressions = expressionPropertyBase.getExpressions();
 
             valueSelect.empty();
             if (condition == 3)
@@ -78,6 +80,8 @@
             model.countDownOffset = 0;
 
             toggleControls(false);
+
+            base.setError();
         },
 
         valueChanged = function () {
@@ -88,8 +92,7 @@
         base = baseClass;
 
         valuePanel.addClass("CountDown");
-        expressions = prototypes.prototype.getModel().expressions;
-        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel, base, "countdown");
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel, base, "countdown", true);
 
         if (editable) {
             conditionSelect = $("<select />")
@@ -150,7 +153,7 @@
     };
 
     this.getExpressionsSelect = function () {
-        return valuePanel;
+        return valueSelect;
     };
 
     this.setExpressionCode = function (value) {

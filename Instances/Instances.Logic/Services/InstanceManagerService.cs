@@ -1552,13 +1552,13 @@ namespace CheckListManager.Instances.Logic.Services
             }
             else if (field.ValueType == DataType.Time)
             {
-                if (!DataType.Time.TryParse(value, out var parsedValue))
+                if (DataType.Time.TryParse(value, out var parsedValue))
+                    formattedValue = loggedValue = ((TimeSpan)parsedValue).ToString("hh\\:mm");
+                else
                 {
                     field.ConversionError = true;
                     formattedValue = loggedValue = string.Empty;
                 }
-                else
-                    formattedValue = loggedValue = ((TimeSpan)parsedValue).ToString("hh\\:mm");
             }
             else if (!field.ValueType.TryParse(value, out var parsedValue))
                 field.ConversionError = true;

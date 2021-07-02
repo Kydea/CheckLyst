@@ -1,4 +1,4 @@
-﻿prototypes.ExpressionPropertyBase = function (model, property, valuePanel, base, errorCode) {
+﻿prototypes.ExpressionPropertyBase = function (model, property, valuePanel, base, errorCode, ignoreType) {
     var
         expressionPropertyBase = this,
         expressions = prototypes.prototype.getModel().expressions,
@@ -24,7 +24,7 @@
             select = currentProperty.getType().getExpressionsSelect();
         },
 
-        expressionsButtonClickHandler= function (e) {
+        expressionsButtonClickHandler = function (e) {
             e.preventDefault();
             hidePropertyPanel();
 
@@ -58,7 +58,7 @@
             error = "expression not found";
         else if (expressions[value].error)
             error = "the expression is not valid";
-        else if (!prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
+        else if (!ignoreType && !prototypes.propertyPanel.checkDataType(expressions[value], "Boolean"))
             error = "the expression result must be a boolean";
 
         if (error) {
@@ -82,6 +82,10 @@
 
     this.setSelect = function (value) {
         select = value;
+    };
+
+    this.getExpressions = function () {
+        return expressions;
     };
 
     setup();
