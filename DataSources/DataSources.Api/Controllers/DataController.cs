@@ -24,7 +24,7 @@ namespace CheckListManager.DataSources.Api.Controllers
             _redisCache = redisCache;
         }
 
-        [Authorize(Roles = "Instances#Edit, Prototypes#View")]
+        [Authorize(Roles = "Instances#Edit, Prototypes#View, DataSources#Edit")]
         [HttpPost]
         [Route("GetDataSource")]
         public async Task<IHttpActionResult> GetDataSource(Logic.Data.DataRequest request)
