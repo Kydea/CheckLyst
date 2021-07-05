@@ -132,12 +132,12 @@
 
         handleAjaxError: function (e) {
             if (e.status == 401 || e.status == 498) { //we use the status 498 for invalid token (as arcgis)
-                var error = "Access denied (status " + e.status + ") to the following resource: " + location.href;
                 if (matematici.appMode)
-                    alert(error);
-                else if (localStorage.accessToken && window.location)
-                    matematici.dialog.error("error", error);
-                else 
+                    alert("Access denied to the following resource: " + location.href);
+                else if (localStorage.accessToken && window.location && window.location.href.toLowerCase().indexOf("/dashboard") == -1) {
+                    console.log("Access denied to the following resource: " + location.href);
+                    window.location = matematici.urls.dashboard;
+                } else
                     window.location = matematici.urls.accessControl.login;
 
                 return true;
