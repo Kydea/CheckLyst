@@ -42,7 +42,7 @@ namespace CheckListManager.AccessControl.Data
         Task<List<Groups>> GetGroupsAsync(long companyId, string code, string description, string user, string role, int skip, int take);
         Task<int> CountGroupsAsync(long companyId, string code, string description, string user, string role);
         Task<Groups> AddGroupAsync(DefaultIdentity identity, Groups group);
-        Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group);
+        Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group, List<string> existingConflicts);
         Task DeleteGroupAsync(long companyId, string code);
         Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups);
     }
