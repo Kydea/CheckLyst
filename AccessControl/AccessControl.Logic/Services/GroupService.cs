@@ -412,6 +412,8 @@ namespace CheckListManager.AccessControl.Logic.Services
             var response = new GroupResponse();
             try
             {
+                var group = await _userRepository.GetGroupAsync(identity.CompanyId, record.Code);
+                var conflicts = group.GroupConflicts.Select(c => c.Group2).ToList();
                 await _userRepository.DeleteGroupAsync(identity.CompanyId, record.Code);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -425,6 +427,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         ReasonForChange = record.Reason
                     })
                 });
+
+                await TraceConflicts(identity, conflicts, record.Reason);
             }
             catch (Exception exception)
             {
