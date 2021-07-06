@@ -162,6 +162,7 @@
         var company = localStorage.company;
         localStorage.clear();
         localStorage.company = company;
+        companySettings = null;
     };
 
     tokenManager.getCompany = function () {
