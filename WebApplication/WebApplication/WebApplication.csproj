@@ -582,7 +582,7 @@
     <Content Include="Views\Reports\GroupsList.cshtml" />
     <Content Include="Views\Reports\Viewer.cshtml" />
     <Content Include="Views\Reports\Report.cshtml" />
-    <Content Include="Views\Help\Report.cshtml" />
+    <Content Include="Views\Help\Reports.cshtml" />
     <Content Include="Views\Help\ReportEditor.cshtml" />
     <Content Include="Views\Help\ReportViewer.cshtml" />
   </ItemGroup>
