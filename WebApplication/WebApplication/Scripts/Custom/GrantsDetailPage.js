@@ -514,7 +514,7 @@
         },
 
         validateHandler = function (event, callback) {
-            if ((page == "Users" || page == "Groups") && event == "Edit") {
+            if ((page == "Users" || page == "Groups") && (event == "Edit" || event == "Add")) {
                 var
                     duplications = new Set(),
                     errors = [];
