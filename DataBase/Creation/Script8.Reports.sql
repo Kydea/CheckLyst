@@ -80,36 +80,19 @@ create table "Reports"."ReportClauses"
 
 create index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");
 
---delete from "Reports"."ReportSources";
-insert into "Reports"."ReportSources" values
-(
-	'Audit trail',
-	'select * from "Trail"."Records"'
-);
-
-insert into "Reports"."ReportSources" values
-(
-	'Prototypes',
-	'select * from "CheckLists"."Prototypes"'
-);
-
-insert into "Reports"."ReportSources" values
-(
-	'Instances',
-	'select * from "CheckLists"."Instances"'
-);
-
-insert into "Reports"."ReportSources" values
-(
-	'Users',
-	'select * from "Security"."Users"'
-);
-
 alter table "Infrastructure"."Companies" enable row level security;
 alter table "Infrastructure"."Departments" enable row level security;
 alter table "Security"."Users" enable row level security;
+alter table "Security"."UserLevels" enable row level security;
+alter table "Security"."UserFunctions" enable row level security;
+alter table "Security"."UserRoles" enable row level security;
+alter table "Security"."UserGroups" enable row level security;
 alter table "Security"."Roles" enable row level security;
+alter table "Security"."RoleFunctions" enable row level security;
 alter table "Security"."Groups" enable row level security;
+alter table "Security"."GroupFunctions" enable row level security;
+alter table "Security"."GroupRoles" enable row level security;
+alter table "Security"."GroupConflicts" enable row level security;
 alter table "CheckLists"."PrototypeTypes" enable row level security;
 alter table "CheckLists"."Prototypes" enable row level security;
 alter table "CheckLists"."PrototypeVersions" enable row level security;
@@ -130,9 +113,21 @@ grant select on table "Infrastructure"."Companies" to "ReportRole";
 grant select on table "Infrastructure"."Departments" to "ReportRole";
 
 grant usage on schema "Security" to "ReportRole";
-grant select on table "Security"."Users" to "ReportRole";
+grant select (
+	"Company", "Code", "Description", "AuthenticationCode", "Email", "CorporateID", "Enabled", "PasswordChangeDate", "NumberOfPasswordAttempts", 
+	"PINChangeDate", "NumberOfPINAttempts", "LastLoginOn", "LastLoginFailedOn", "CreatedBy", "CreatedOn", "ModifiedBy", "ModifiedOn"
+) on table "Security"."Users" to "ReportRole";
+grant select on table "Security"."UserLevels" to "ReportRole";
+grant select on table "Security"."UserFunctions" to "ReportRole";
+grant select on table "Security"."UserRoles" to "ReportRole";
+grant select on table "Security"."UserGroups" to "ReportRole";
 grant select on table "Security"."Roles" to "ReportRole";
+grant select on table "Security"."RoleFunctions" to "ReportRole";
 grant select on table "Security"."Groups" to "ReportRole";
+grant select on table "Security"."GroupFunctions" to "ReportRole";
+grant select on table "Security"."GroupRoles" to "ReportRole";
+grant select on table "Security"."GroupConflicts" to "ReportRole";
+grant execute on function "Security"."GetAllUserGrants" (_Company bigint, _Code varchar(60)) to "ReportRole";
 
 grant usage on schema "CheckLists" to "ReportRole";
 grant select on table "CheckLists"."PrototypeTypes" to "ReportRole";
@@ -153,8 +148,16 @@ create role "ReportRole1";
 create policy "Company1Companies" on "Infrastructure"."Companies" to "ReportRole1" using (true);
 create policy "Company1Departments" on "Infrastructure"."Departments" to "ReportRole1" using (true);
 create policy "Company1Users" on "Security"."Users" to "ReportRole1" using (true);
+create policy "Company1UserLevels" on "Security"."UserLevels" to "ReportRole1" using (true);
+create policy "Company1UserFunctions" on "Security"."UserFunctions" to "ReportRole1" using (true);
+create policy "Company1UserRoles" on "Security"."UserRoles" to "ReportRole1" using (true);
+create policy "Company1UserGroups" on "Security"."UserGroups" to "ReportRole1" using (true);
 create policy "Company1Roles" on "Security"."Roles" to "ReportRole1" using (true);
+create policy "Company1RoleFunctions" on "Security"."RoleFunctions" to "ReportRole1" using (true);
 create policy "Company1Groups" on "Security"."Groups" to "ReportRole1" using (true);
+create policy "Company1GroupFunctions" on "Security"."GroupFunctions" to "ReportRole1" using (true);
+create policy "Company1GroupRoles" on "Security"."GroupRoles" to "ReportRole1" using (true);
+create policy "Company1GroupConflicts" on "Security"."GroupConflicts" to "ReportRole1" using (true);
 create policy "Company1Prototypes" on "CheckLists"."PrototypeTypes" to "ReportRole1" using (true);
 create policy "Company1Prototypes" on "CheckLists"."Prototypes" to "ReportRole1" using (true);
 create policy "Company1PrototypeVersions" on "CheckLists"."PrototypeVersions" to "ReportRole1" using (true);
@@ -182,9 +185,25 @@ begin
 		("Company" = $);
 		create policy "Company$Users" on "Security"."Users" to "ReportRole$" using 
 		("Company" = $);
+		create policy "Company$UserLevels" on "Security"."UserLevels" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$UserFunctions" on "Security"."UserFunctions" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$UserRoles" on "Security"."UserRoles" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$UserGroups" on "Security"."UserGroups" to "ReportRole$" using 
+		("Company" = $);
 		create policy "Company$Roles" on "Security"."Roles" to "ReportRole$" using 
 		("Company" = $);
+		create policy "Company$RoleFunctions" on "Security"."RoleFunctions" to "ReportRole$" using 
+		("Company" = $);
 		create policy "Company$Groups" on "Security"."Groups" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$GroupFunctions" on "Security"."GroupFunctions" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$GroupRoles" on "Security"."GroupRoles" to "ReportRole$" using 
+		("Company" = $);
+		create policy "Company$GroupConflicts" on "Security"."GroupConflicts" to "ReportRole$" using 
 		("Company" = $);
 		create policy "Company$Prototypes" on "CheckLists"."PrototypeTypes" to "ReportRole$" using 
 		("Company" = $);
