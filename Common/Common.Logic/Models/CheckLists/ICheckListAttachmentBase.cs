@@ -4,5 +4,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
     {
         string Key { get; set; }
         string Target { get; set; }
+        ICheckListAttachmentBase GetTarget();
     }
 }

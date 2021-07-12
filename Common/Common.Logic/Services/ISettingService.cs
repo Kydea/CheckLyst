@@ -8,6 +8,7 @@ namespace CheckListManager.Common.Logic.Services
 	{
         void Clear(long companyId);
         Task<string> LDAPHostAsync(long companyId);
+        Task<int> LDAPPortAsync(long companyId);
         Task<string> SmtpHostAsync(long companyId);
 		Task<int> SmtpPortAsync(long companyId);
 		Task<string> SmtpUsernameAsync(long companyId);

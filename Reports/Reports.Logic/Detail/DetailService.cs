@@ -78,7 +78,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     ValidationMessages = new List<ValidationMessage> {
                         new ValidationMessage {
                             Level = ValidationMessage.LevelError,
-                            Message = "Invalid code"
+                            Message = "Invalid code."
                         }
                     }
                 };
@@ -92,7 +92,8 @@ namespace CheckListManager.Reports.Logic.Detail
                         new ValidationMessage
                         {
                             Level = ValidationMessage.LevelError,
-                            Message = "Reason is a required field"
+                            Message = "Reason is a required field." +
+                            ""
                         }
                     }
                 };
@@ -102,17 +103,17 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.ValidationMessages.Add(new ValidationMessage
                 {
                     Level = ValidationMessage.LevelError,
-                    Message = "The report has no column"
+                    Message = "The report has no column."
                 });
             else
                 for (var Index = 0; Index < record.Columns.Count; ++Index)
                 {
                     var Column = record.Columns[Index];
                     if (string.IsNullOrWhiteSpace(Column.Label))
-                        AddListError(response.ColumnErrors, Index, "Label", "Invalid label");
+                        AddListError(response.ColumnErrors, Index, "Label", "Invalid label.");
 
                     if (string.IsNullOrWhiteSpace(Column.Column))
-                        AddListError(response.ColumnErrors, Index, "Column", "Invalid column");
+                        AddListError(response.ColumnErrors, Index, "Column", "Invalid column.");
                 }
 
             if (!response.ColumnErrors.Any()) response.ColumnErrors = null;
@@ -122,17 +123,17 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     var Clause = record.Clauses[Index];
                     if (string.IsNullOrWhiteSpace(Clause.Label))
-                        AddListError(response.ClauseErrors, Index, "Label", "Invalid label");
+                        AddListError(response.ClauseErrors, Index, "Label", "Invalid label.");
 
                     if (string.IsNullOrWhiteSpace(Clause.ParameterName))
-                        AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name");
+                        AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name.");
 
                     if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
-                        AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause");
+                        AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause.");
 
                     //rimuovere prototypes
                     if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
-                        AddListError(response.ClauseErrors, Index, "Column", "Invalid column");
+                        AddListError(response.ClauseErrors, Index, "Column", "Invalid column.");
                 }
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;

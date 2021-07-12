@@ -230,16 +230,36 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
+                string FormattedDefaultValue = DefaultValue;
                 if (ValueType == DataType.Number)
                 {
-                    DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedDefaultValue);
+                    DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out FormattedDefaultValue);
                     Value = FormattedDefaultValue;
                 }
-                else
-                    Value = DefaultValue;
+                else if (ValueType == DataType.Time)
+                {
+                    if (DataType.Time.TryParse(DefaultValue, out var parsedValue))
+                        FormattedDefaultValue = ((TimeSpan)parsedValue).ToString("hh\\:mm");
+                    else
+                        FormattedDefaultValue = null;
+                }
+                else if (ValueType == DataType.Boolean)
+                {
+                    if (DataType.Boolean.TryParse(DefaultValue, out var parsedValue))
+                        FormattedDefaultValue = (bool)parsedValue ? "true" : "false";
+                    else
+                        FormattedDefaultValue = null;
+                }
+                //data and date time are handled in UpdateValue
+
+                if (FormattedDefaultValue == null)
+                    ConversionError = true;
+
+                Value = FormattedDefaultValue;
                 DefaultValue = null;
             }
             return Result;
         }
     }
 }
+ 

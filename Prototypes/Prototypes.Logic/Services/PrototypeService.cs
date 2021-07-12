@@ -68,6 +68,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             var Prototype = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
+            Prototype.InstanceCreation = request.InstanceCreation;
             Prototype.Setup(false);
 
             return await Task.FromResult(new PrototypeResponse

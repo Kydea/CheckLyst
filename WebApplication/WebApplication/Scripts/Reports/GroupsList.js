@@ -25,7 +25,6 @@
 
         fill = function (f) {
             form = f;
-            console.log(model.fields.restricted.value);
             restrictedInput = $("input[name=restricted]").prop("checked", model.fields && model.fields.restricted && model.fields.restricted.value == "true");
             form
                 .on("toggle", "select", function () {

@@ -45,7 +45,7 @@
 
     this.getCaption = function () {
         return caption;
-    }
+    };
 
     this.resize = function () {
         prototypes.prototype.getElement().css("padding-bottom", element.height());

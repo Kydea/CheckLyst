@@ -26,6 +26,8 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 
         [JsonIgnore]
         bool NeedToSaveExpressionValues { get; set; }
+        [JsonIgnore]
+        bool InstanceCreation { get; }
 
         TypedValue GetExpressionValue(string ExpressionCode, ICheckListElement Element);
         TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes);

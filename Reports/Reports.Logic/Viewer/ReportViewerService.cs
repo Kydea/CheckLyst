@@ -55,8 +55,8 @@ namespace CheckListManager.Reports.Logic.Viewer
         }
 
         private string ParseFilter(ReportClause.ClauseRecord Clause, string ParameterName) =>
-            Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%@{ParameterName}%'" :
-            Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%@{ParameterName}%'" :
+            Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
+            Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
             Clause.Sign == "0" ? $"q.\"{Clause.Column}\" is null" :
             Clause.Sign == "!0" ? $"not q.\"{Clause.Column}\" is null" :
             $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";

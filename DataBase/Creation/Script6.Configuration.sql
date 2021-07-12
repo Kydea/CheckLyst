@@ -28,6 +28,7 @@ create table "Configuration"."Settings"
 
 insert into "Configuration"."Settings" ("Code") values
 	('LDAPHost'),
+	('LDAPPort'),
 	('SmtpHost'),
 	('SmtpPort'),
 	('SmtpUsername'),

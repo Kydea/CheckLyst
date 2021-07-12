@@ -1,6 +1,7 @@
 ﻿using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using Newtonsoft.Json;
+using System;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -9,6 +10,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public override string TypeName => "Image";
 
         public bool Cloned { get; set; }
+
+        public ICheckListAttachmentBase GetTarget() =>
+            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Image Image) ? this : Image;
 
         public override bool BuildDependencies()
         {

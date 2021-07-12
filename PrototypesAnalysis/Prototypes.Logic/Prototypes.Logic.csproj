@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5F03EBA2-7FF0-4FE0-9945-58FA5F084563}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CheckListManager.Prototypes.Logic</RootNamespace>
+    <AssemblyName>CheckListManager.Prototypes.Logic</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>SecurityRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Prototypes.Logic.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.DocumentObjectModel-gdi, Version=1.50.4820.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PDFsharp-MigraDoc-gdi.1.50.4820-RC1\lib\net20\MigraDoc.DocumentObjectModel-gdi.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.Rendering-gdi, Version=1.50.4820.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PDFsharp-MigraDoc-gdi.1.50.4820-RC1\lib\net20\MigraDoc.Rendering-gdi.dll</HintPath>
+    </Reference>
+    <Reference Include="MigraDoc.RtfRendering-gdi, Version=1.50.4820.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PDFsharp-MigraDoc-gdi.1.50.4820-RC1\lib\net20\MigraDoc.RtfRendering-gdi.dll</HintPath>
+    </Reference>
+    <Reference Include="MultipartDataMediaFormatter, Version=2.0.2.0, Culture=neutral, PublicKeyToken=67148dd0761d95a0">
+      <HintPath>..\..\packages\MultipartDataMediaFormatter.V2.2.0.2\lib\net45\MultipartDataMediaFormatter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
+      <HintPath>..\..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PdfSharp-gdi, Version=1.50.4820.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PDFsharp-MigraDoc-gdi.1.50.4820-RC1\lib\net20\PdfSharp-gdi.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting-gdi, Version=1.50.4820.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PDFsharp-MigraDoc-gdi.1.50.4820-RC1\lib\net20\PdfSharp.Charting-gdi.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analysis\AnalysisRequest.cs" />
+    <Compile Include="Analysis\IAnalysisService.cs" />
+    <Compile Include="Analysis\AnalysisResponse.cs" />
+    <Compile Include="Analysis\AnalysisService.cs" />
+    <Compile Include="List\ListService.cs" />
+    <Compile Include="List\IListService.cs" />
+    <Compile Include="List\ListResponse.cs" />
+    <Compile Include="Messages\AttachmentRequestBase.cs" />
+    <Compile Include="Messages\ProcessAttachmentRequest.cs" />
+    <Compile Include="Messages\HistoryStep.cs" />
+    <Compile Include="Messages\PrototypeRequest.cs" />
+    <Compile Include="Messages\HistoryRow.cs" />
+    <Compile Include="Messages\UploadAttachmentRequest.cs" />
+    <Compile Include="Messages\UploadAttachmentResponse.cs" />
+    <Compile Include="Messages\PrototypeResponse.cs" />
+    <Compile Include="Models\CheckLists\Element.cs" />
+    <Compile Include="Models\CheckLists\Field.cs" />
+    <Compile Include="Models\CheckLists\Group.cs" />
+    <Compile Include="Models\CheckLists\InstanceLink.cs" />
+    <Compile Include="Models\CheckLists\Item.cs" />
+    <Compile Include="Models\CheckLists\Iteration.cs" />
+    <Compile Include="Models\CheckLists\Page.cs" />
+    <Compile Include="Models\CheckLists\Prototype.cs" />
+    <Compile Include="Models\CheckLists\Signature.cs" />
+    <Compile Include="Models\CheckLists\Link.cs" />
+    <Compile Include="Models\CheckLists\Image.cs" />
+    <Compile Include="Models\CheckLists\Attachment.cs" />
+    <Compile Include="Models\CheckLists\Text.cs" />
+    <Compile Include="PDF\PrototypePDF.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IPrototypeService.cs" />
+    <Compile Include="Services\PrototypeService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Prototypes.Logic.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2fafff00-d5eb-4bb0-b70b-38290d88c871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
+      <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
+      <Name>Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Data\Common.Data.csproj">
+      <Project>{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}</Project>
+      <Name>Common.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic.Api\Common.Logic.Api.csproj">
+      <Project>{be658746-48a9-4af2-b2b6-a13a7d6de439}</Project>
+      <Name>Common.Logic.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.Logic\Common.Logic.csproj">
+      <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
+      <Name>Common.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Instances.Data\Instances.Data.csproj">
+      <Project>{2B8DACE9-8001-4CCE-86EB-815E4330D7EC}</Project>
+      <Name>Instances.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Instances.Logic\Instances.Logic.csproj">
+      <Project>{5af1d8ea-8392-4d42-a517-67c2b0182bf0}</Project>
+      <Name>Instances.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prototypes.Data\Prototypes.Data.csproj">
+      <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
+      <Name>Prototypes.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\CheckLists\Configuration\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

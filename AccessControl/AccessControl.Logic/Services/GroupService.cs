@@ -300,6 +300,28 @@ namespace CheckListManager.AccessControl.Logic.Services
             });
         }
 
+        private async Task TraceConflicts(DefaultIdentity identity, IEnumerable<string> conflicts, string reason)
+        {
+            foreach (var conflict in conflicts)
+            {
+                var group = await _userRepository.GetGroupAsync(identity.CompanyId, conflict);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.GroupEdited,
+                    Date = DateTimeOffset.UtcNow,
+                    Information = SerializeGroupInformation(new GroupRequest
+                    {
+                        Code = group.Code,
+                        Description = group.Description,
+                        ConflictingGroups = group.GroupConflicts.Select(gc => gc.Group2).Union(group.GroupConflicts1.Select(gc => gc.Group1)).Distinct().ToList(),
+                        Reason = reason
+                    }, group.GroupFunctions, group.GroupRoles)
+                });
+            }
+        }
+
         public async Task<GroupResponse> AddGroupAsync(DefaultIdentity identity, GroupRequest record)
         {
             var response = await ValidateAsync(identity, record);
@@ -325,6 +347,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Date = DateTimeOffset.UtcNow,
                         Information = SerializeGroupInformation(record, Group.GroupFunctions, Group.GroupRoles)
                     });
+
+                    await TraceConflicts(identity, Group.GroupConflicts.Select(c => c.Group2).ToList(), record.Reason);
                 }
                 catch (Exception exception)
                 {
@@ -353,7 +377,8 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     BuildFunctions(identity, record, Group);
                     BuildConflicts(identity, record, Group);
-                    await _userRepository.EditGroupAsync(identity, Group);
+                    var ExistingConflicts = new List<string>();
+                    var ExistingGroup = await _userRepository.EditGroupAsync(identity, Group, ExistingConflicts);
 
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
@@ -363,6 +388,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Date = DateTimeOffset.UtcNow,
                         Information = SerializeGroupInformation(record, Group.GroupFunctions, Group.GroupRoles)
                     });
+
+                    var CurrentConflicts = new HashSet<string>(ExistingGroup.GroupConflicts.Select(c => c.Group2).ToList());
+                    var ChangedConflicts = new HashSet<string>(ExistingConflicts).Except(CurrentConflicts).Union(CurrentConflicts.Except(ExistingConflicts));
+
+                    await TraceConflicts(identity, ChangedConflicts, record.Reason);
                 }
                 catch (Exception exception)
                 {
@@ -382,6 +412,8 @@ namespace CheckListManager.AccessControl.Logic.Services
             var response = new GroupResponse();
             try
             {
+                var group = await _userRepository.GetGroupAsync(identity.CompanyId, record.Code);
+                var conflicts = group.GroupConflicts.Select(c => c.Group2).ToList();
                 await _userRepository.DeleteGroupAsync(identity.CompanyId, record.Code);
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -395,6 +427,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         ReasonForChange = record.Reason
                     })
                 });
+
+                await TraceConflicts(identity, conflicts, record.Reason);
             }
             catch (Exception exception)
             {

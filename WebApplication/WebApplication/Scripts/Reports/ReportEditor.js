@@ -80,7 +80,9 @@
         },
 
         verify = function (soft, callBack) {
-            detailPage.getForm().trigger("Verify", function (data) {
+            var form = detailPage.getForm();
+            form.trigger("Verify", function (data) {
+                form.handleResult(data);
                 var valid = validate(!soft, data);
                 if (valid)
                     matematici.blip.ok();

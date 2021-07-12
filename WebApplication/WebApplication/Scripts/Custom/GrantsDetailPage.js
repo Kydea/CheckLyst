@@ -14,6 +14,7 @@
         generalTab = page == "Users" ? 2 : 1,
         prototypesTab = page == "Users" ? 3 : 2,
         instancesTab = page == "Users" ? 4 : 3,
+        conflictsTab = 4, 
         levelsTab = 5,
 
         fixQueryParameters = function (tabIndex) {
@@ -513,7 +514,7 @@
         },
 
         validateHandler = function (event, callback) {
-            if ((page == "Users" || page == "Groups") && event == "Edit") {
+            if ((page == "Users" || page == "Groups") && (event == "Edit" || event == "Add")) {
                 var
                     duplications = new Set(),
                     errors = [];
@@ -607,12 +608,16 @@
                     hidden: true,
                     id: "Add",
                     handler: function () {
-                        var tabIndex = tab.getCurrentItem().index;
-                        if (tabIndex == levelsTab)
-                            addLevel();
-                        else
-                            addFunction(tabIndex);
-                        fixQueryParameters(tabIndex);
+                        if (departments.length == 0)
+                            matematici.dialog.error("error", "No department found for this company");
+                        else {  
+                            var tabIndex = tab.getCurrentItem().index;
+                            if (tabIndex == levelsTab)
+                                addLevel();
+                            else
+                                addFunction(tabIndex);
+                            fixQueryParameters(tabIndex);
+                        }
                         return true;
                     }
                 }]
@@ -631,7 +636,7 @@
                 $("input[type=checkbox]", detailPage.getElement()).prop("disabled", true);
             } else
                 tab.addHandler(function (item) {
-                    $("a#Add", matematici.popup.getElement()).toggle(item.index > generalTab && page != "Roles");
+                    $("a#Add", matematici.popup.getElement()).toggle(item.index > generalTab && (item.index != conflictsTab || page == "Users") && page != "Roles");
                 });
         };
 

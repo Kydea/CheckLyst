@@ -27,6 +27,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool FTPExport { get; set; }
         public List<ConfigurationError> Errors { get; } = new List<ConfigurationError>();
         public bool Valid { get; set; }
+        public bool InstanceCreation { get; set; }
 
         public bool NeedToSaveExpressionValues { get; set; }
 

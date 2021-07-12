@@ -131,13 +131,13 @@
         },
 
         handleAjaxError: function (e) {
-            if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
+            if (e.status == 401 || e.status == 498) { //we use the status 498 for invalid token (as arcgis)
                 if (matematici.appMode)
                     alert("Access denied to the following resource: " + location.href);
                 else if (localStorage.accessToken && window.location && window.location.href.toLowerCase().indexOf("/dashboard") == -1) {
                     console.log("Access denied to the following resource: " + location.href);
                     window.location = matematici.urls.dashboard;
-                } else 
+                } else
                     window.location = matematici.urls.accessControl.login;
 
                 return true;

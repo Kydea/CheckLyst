@@ -370,7 +370,7 @@ namespace CheckListManager.AccessControl.Data
             return group;
         }
 
-        public async Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group)
+        public async Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group, List<string> existingConflicts)
         {
             var existingGroup = await GetGroupAsync(identity.CompanyId, group.Code);
             if (existingGroup == null) throw new DatabaseException($"Group {group.Code} not found");
@@ -379,6 +379,8 @@ namespace CheckListManager.AccessControl.Data
             existingGroup.ModifiedBy = identity.Code;
             Entities.GroupRoles.RemoveRange(existingGroup.GroupRoles);
             Entities.GroupFunctions.RemoveRange(existingGroup.GroupFunctions);
+            existingConflicts.AddRange(existingGroup.GroupConflicts.Select(c => c.Group2));
+            existingConflicts.AddRange(existingGroup.GroupConflicts1.Select(c => c.Group1));
             Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts);
             Entities.GroupConflicts.RemoveRange(existingGroup.GroupConflicts1);
             existingGroup.GroupRoles = group.GroupRoles;

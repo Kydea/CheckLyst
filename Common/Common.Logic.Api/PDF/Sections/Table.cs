@@ -295,28 +295,26 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                             break;
                         case "Image":
                             var Image = (ICheckListImage)Item;
-                            if (Image.Key == null || Item.Hidden)
+                            var Key = Image.GetTarget().Key;
+                            if (Key == null || Item.Hidden)
                                 Cell = NewCell(Item.Hidden ? string.Empty :"(# no key)");
-                            else if (Image.Key != null)
-                            {
+                            else if (Key != null)
                                 try
                                 {
-                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Image.Key, Image);
+                                    var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.PrototypesStorageBucket, Key, Image);
                                     Cell = NewCell($"(see attachment {Index})");
                                 }
                                 catch(Exception Exception)
                                 {
                                     Cell = NewCell($"Image error: {Exception.Message})");
                                 }
-                            }
                             break;
                         case "Attachment":
                             var Attachment = (ICheckListAttachment)Item;
-                            var Key = Attachment.GetTarget().Key;
+                            Key = Attachment.GetTarget().Key;
                             if (Key == null || Item.Hidden)
                                 Cell = NewCell(string.Empty);
                             else if (Key != null)
-                            {
                                 try
                                 {
                                     var Index = await CheckListPDF.AddAttachmentAsync(CheckListPDF.ConfigurationService.InstancesStorageBucket, Key, Attachment);
@@ -326,7 +324,6 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                                 {
                                     Cell = NewCell($"Attachment error: {Exception.Message})");
                                 }
-                            }
                             break;
                         default:
                             Cell = NewCell(Item.Hidden ? string.Empty : Item.TypeName);

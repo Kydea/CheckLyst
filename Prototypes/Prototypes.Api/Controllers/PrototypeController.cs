@@ -236,6 +236,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(Data.CompanyId.Value, Data.ID, Data.Version);
             var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
+            CheckList.Setup(false);
 
             var PDF = new PrototypePDF(
                 Data.CompanyId.Value,

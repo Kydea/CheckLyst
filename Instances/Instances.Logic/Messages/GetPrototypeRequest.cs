@@ -4,5 +4,6 @@
 	{
 		public long Id { get; set; }
 		public int Version { get; set; }
+        public bool InstanceCreation { get; } = true;
 	}
 }
