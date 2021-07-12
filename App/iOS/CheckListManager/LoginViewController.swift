@@ -462,6 +462,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if !(textField.isEqual(userCodeTextField) ||  textField.isEqual(passwordTextField))  { return true }
+        
+        guard let textFieldText = textField.text,
+            let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+                return false
+        }
+        
+        let substringToReplace = textFieldText[rangeOfTextToReplace]
+        let count = textFieldText.count - substringToReplace.count + string.count
+        return count <= 60
+    }
+    
     func toggleLogin(_ value:Bool, withAnimation animation:Bool) {
         
         if(animation) {

@@ -139,7 +139,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        toggleNavigatioBarTint(true)
+        toggleNavigatioBarTint(false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -148,11 +148,19 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         requestForDocument = false
         isInstanceClosed = false
     }
-    
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        
+        if let imagePicker = viewControllerToPresent as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .photoLibrary {
+
+            toggleNavigatioBarTint(false)
+        }
+        
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
         
-        toggleNavigatioBarTint(false)
+        toggleNavigatioBarTint(true)
 
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
@@ -179,6 +187,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
         oldImagePickerDelegate?.imagePickerControllerDidCancel!(picker)
+        toggleNavigatioBarTint(false)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -192,6 +201,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
 
         picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
         oldImagePickerDelegate?.imagePickerController!(picker, didFinishPickingMediaWithInfo: newInfo)
+        toggleNavigatioBarTint(false)
     }
     
     func closeInstance() {
