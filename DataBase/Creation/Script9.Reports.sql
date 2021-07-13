@@ -75,19 +75,71 @@ drop function "Security"."AlterReportUser" (company bigint);
 insert into "Reports"."ReportSources" values
 (
     'Audit trail',
-    'select * from "Trail"."Records"'
+'
+select
+    c."ID" "Company ID", c."Name" "Company Name",
+    r."ID" "ID", r."Date" "Date",
+    r."User" "User", u."Description" "Name and Surname",
+    r."Action" "Action", r."Information" "Information", 
+    r."CheckListCode" "CheckList Code", r."CheckListID" "CheckList ID"
+from
+    "Trail"."Records" r
+    inner join "Infrastructure"."Companies" c on r."Company" = c."ID"
+    left join "Security"."Users" u on r."Company" = u."Company" and r."User" = u."Code"
+order by 
+    c."ID", r."ID"
+'
 );
 
 insert into "Reports"."ReportSources" values
 (
     'Prototypes',
-    'select * from "CheckLists"."Prototypes"'
+'
+select
+    c."ID" "Company ID", c."Name" "Company Name",  
+    d."ID" "Department ID", d."Name" "Department Name", 
+    pt."ID" "PrototypeType ID", pt."Name" "PrototypeType Name", 
+    p."ID" "Prototype ID", p."Name" "Prototype Name", p."Description" "Prototype Description",
+    pv."Version" "Prototype Version", pv."VersionState" "Prototype Version State",
+    pv."CreatedBy" "Prototype Created By", pv."CreatedOn" "Prototype Created On",
+    pv."ModifiedBy" "Prototype Modified By", pv."ModifiedOn" "Prototype Modified On",
+    pv."ValidFrom" "Valid From", pv."ValidUntil" "Valid Until"
+from
+    "CheckLists"."Prototypes" p
+    inner join "Infrastructure"."Companies" c on p."Company" = c."ID"
+    inner join "Infrastructure"."Departments" d on p."Department" = d."ID"
+    inner join "CheckLists"."PrototypeTypes" pt on p."PrototypeType" = pt."ID"
+    inner join "CheckLists"."PrototypeVersions" pv on p."ID" = pv."Prototype"
+order by 
+    c."ID", d."Name", pt."Name", p."Name", pv."Version"
+'
 );
 
 insert into "Reports"."ReportSources" values
 (
     'Instances',
-    'select * from "CheckLists"."Instances"'
+'
+select 
+    c."ID" "Company ID", c."Name" "Company Name",  
+    d."ID" "Department ID", d."Name" "Department Name", 
+    pt."ID" "PrototypeType ID", pt."Name" "PrototypeType Name", 
+    p."ID" "Prototype ID", p."Name" "Prototype Name", p."Description" "Prototype Description",
+    i."PrototypeName" || ''.'' || i."Version" || ''.'' || i."Year" || ''.'' || i."Number" as "Instance Code",
+    i."ID" "Instance ID", i."InstanceState" "Instance State", 
+    i."Description" "Instance Description", i."FileName" "Instance File Name",
+    i."CreatedBy" "Instance Created By", i."CreatedOn" "Instance Created On",
+    i."ModifiedBy" "Instance Modified By", i."ModifiedOn" "Instance Modified On",
+    id."ItemsByLabel", id."ItemsByCode", id."Expressions"
+from 
+    "CheckLists"."Instances" i
+    inner join "Infrastructure"."Companies" c on i."Company" = c."ID"
+    inner join "CheckLists"."Prototypes" p on i."Prototype" = p."ID"
+    inner join "Infrastructure"."Departments" d on p."Department" = d."ID"
+    inner join "CheckLists"."PrototypeTypes" pt on p."PrototypeType" = pt."ID"
+    left join "CheckLists"."InstanceData" id on i."ID" = id."Instance"
+order by 
+    c."ID", d."Name", pt."Name", i."Prototype", i."Version", i."ID"
+'
 );
 
 insert into "Reports"."ReportSources" values
@@ -111,7 +163,7 @@ insert into "Reports"."ReportSources" values
 '
 select 
     u."Company" "Company ID", c."Name" "Company Name",
-    u."Code", u."Description" "Name And Surname", u."Email", u."CorporateID" "Corporate ID", u."Enabled", u."LastLoginOn" "Last Login On", 
+    u."Code" "User Code", u."Description" "Name And Surname", u."Email", u."CorporateID" "Corporate ID", u."Enabled", u."LastLoginOn" "Last Login On", 
     g."Group", g."Department" "Department ID", d."Name" "Department Name", g."PrototypeType" "Prototype Type ID", pt."Name" "Prototype Type Name", 
     g."Role", g."FunctionGroup" "Function Group", g."Function", (
         select "SignatureLevel" 
@@ -179,7 +231,7 @@ insert into "Reports"."ReportSources" values
 '
 select 
     g."Company" "Company ID", c."Name" "Company Name",
-    g."Code", 
+    g."Code" "Group Code", g."Description" "Group Description",
     gf."Department" "Department ID", d."Name" "Department Name", gf."PrototypeType" "Prototype Type ID", pt."Name" "Prototype Type Name", 
     null "Role", gf."FunctionGroup" "Function Group", gf."Function"
 from 
@@ -191,7 +243,7 @@ from
 union 
 select 
     g."Company" "Company ID", c."Name" "Company Name",
-    g."Code", 
+    g."Code" "Group Code", g."Description" "Group Description",
     gr."Department" "Department ID", d."Name" "Department Name", gr."PrototypeType" "Prototype Type ID", pt."Name" "Prototype Type Name", 
     gr."Role", null "Function Group", null "Function"
 from 
@@ -200,7 +252,7 @@ from
     left join "Security"."GroupRoles" gr on g."Company" = gr."Company" and g."Code" = gr."Group"
     left join "Infrastructure"."Departments" d on gr."Department" = d."ID" 
     left join "CheckLists"."PrototypeTypes" pt on gr."PrototypeType" = pt."ID" 
-order by "Company ID", "Code", "Department ID", "Prototype Type ID", "Role", "Function Group", "Function"
+order by "Company ID", "Group Code", "Department ID", "Prototype Type ID", "Role", "Function Group", "Function"
 '
 );
 
@@ -210,7 +262,7 @@ insert into "Reports"."ReportSources" values
 '
 select 
     u."Company" "Company ID", c."Name" "Company Name",
-    u."Code", u."Description" "Name And Surname",
+    u."Code" "User Code", u."Description" "Name And Surname", u."CorporateID" "Corporate ID", u."Enabled",
     case when gc."Group1" < gc."Group2" then gc."Group1" else gc."Group2" end "Group 1",
     case when gc."Group1" < gc."Group2" then gc."Group2" else gc."Group1" end "Group 2"
 from 
@@ -231,7 +283,7 @@ insert into "Reports"."ReportSources" values
 '
 select 
     g."Company" "Company ID", c."Name" "Company Name",
-    g."Code", gc."Group2" "Conflicting Group"
+    g."Code" "Group Code", gc."Group2" "Conflicting Group"
 from 
     "Security"."Groups" g
     inner join "Infrastructure"."Companies" c on g."Company" = c."ID"

@@ -202,6 +202,13 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
     
         //math functions
         {
+            content: "Abs(${1:argument})",
+            name: "Abs",
+            scope: "expression",
+            meta: "math function",
+            comment: "returns the absolute value of the argument"
+        },
+        {
             content: "Atan(${1:argument})",
             name: "Atan",
             scope: "expression",
