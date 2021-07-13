@@ -19,12 +19,27 @@ final class WatermarkGenerator {
             paragraphStyle.alignment = .center
             
             let attrs: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 22),
+                .font: UIFont.systemFont(ofSize: 22, weight: .bold),
                 .paragraphStyle: paragraphStyle
             ]
             
+            let whiteAttrs: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 22, weight: .bold),
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: UIColor.white
+            ]
+            
             let attributedString = NSAttributedString(string: Formatter.instance.dateToDateTimeString(Date()), attributes: attrs)
+            let whiteAttributedString = NSAttributedString(string: Formatter.instance.dateToDateTimeString(Date()), attributes: whiteAttrs)
             let stringSize = attributedString.size()
+            
+            whiteAttributedString.draw(with: CGRect(x: -2, y: size.height - stringSize.height, width: size.width, height: stringSize.height), options: .usesLineFragmentOrigin, context: nil)
+            
+            whiteAttributedString.draw(with: CGRect(x: 2, y: size.height - stringSize.height, width: size.width, height: stringSize.height), options: .usesLineFragmentOrigin, context: nil)
+            
+            whiteAttributedString.draw(with: CGRect(x: 0, y: size.height - stringSize.height - 2, width: size.width, height: stringSize.height), options: .usesLineFragmentOrigin, context: nil)
+            
+            whiteAttributedString.draw(with: CGRect(x: 0, y: size.height - stringSize.height + 2, width: size.width, height: stringSize.height), options: .usesLineFragmentOrigin, context: nil)
             
             attributedString.draw(with: CGRect(x: 0, y: size.height - stringSize.height, width: size.width, height: stringSize.height), options: .usesLineFragmentOrigin, context: nil)
             

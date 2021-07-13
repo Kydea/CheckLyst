@@ -91,7 +91,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return fieldIndexDictionary.count
     }
     
     

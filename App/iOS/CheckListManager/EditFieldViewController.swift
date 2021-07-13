@@ -55,7 +55,13 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         
         searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.tintColor = .white
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.backgroundColor = .white
+            searchController.searchBar.searchTextField.tintColor = .black
+        } else {
+            searchController.searchBar.barTintColor = .white
+            searchController.searchBar.tintColor = .black
+        }
         self.navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
         searchController.obscuresBackgroundDuringPresentation = false
