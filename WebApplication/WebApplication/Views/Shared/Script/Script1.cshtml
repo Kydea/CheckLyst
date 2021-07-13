@@ -130,7 +130,12 @@
                 }
 
                 if (container.size() == 0) {
-                    container = $("div.Popup, div.CheckListGrid");
+                    container = $("div.Popup");
+                    button = $(selector, container);
+                }
+
+                if (container.size() == 0) {
+                    container = $("div.CheckListGrid");
                     button = $(selector, container);
                 }
 
