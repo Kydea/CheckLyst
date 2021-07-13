@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
@@ -61,13 +62,18 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 throw new Exception($"Expression descriptions must not exceed 100 characters");
         }
 
-        public dynamic GetViewModel() =>
-            new
+        public dynamic GetViewModel(string DecimalSeparator)
+        {
+            var FormattedValue =
+                Value?.Type == DataType.Number ? DecimalHelper.Format(Value?.NumberValue, DecimalSeparator) :
+                Value?.Value;
+            return new
             {
                 Description,
                 Value?.Type.TypeName,
-                Value?.Value
+                Value = FormattedValue
             };
+        }
 
         public void Parse(ICheckList checkList)
         {
