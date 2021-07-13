@@ -11,6 +11,7 @@ import UIKit
 
 class UserViewController: UIViewController {
     
+    private let userSetPinSegueIdentifier = "userSetPinSegue"
     
     @IBOutlet var userCodeTextField: UITextField!
     
@@ -71,5 +72,24 @@ class UserViewController: UIViewController {
         
         }
     }
-
+    
+    @IBAction func setPinButtonAction(_ sender: Any) {
+        performSegue(withIdentifier: userSetPinSegueIdentifier, sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let controller = segue.destination as? SignerPinViewController {
+            let user = Signer(
+                usercode: UserDefaults.standard.string(forKey: "userCode")!,
+                accessToken: UserDefaults.standard.string(forKey: "access_token")!,
+                refreshToken: UserDefaults.standard.string(forKey: "refresh_token")!,
+                roles: UserDefaults.standard.string(forKey: "roles")!,
+                name: UserDefaults.standard.string(forKey: "name")!,
+                accessTokenExpiration: UserDefaults.standard.date(forKey: "token_expires")?.timeIntervalSinceNow ?? 0
+            )
+            controller.signer = user
+        }
+    }
+    
 }

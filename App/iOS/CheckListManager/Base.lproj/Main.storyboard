@@ -698,6 +698,21 @@
                                                 <color key="textColor" red="0.0" green="0.58823529409999997" blue="0.53333333329999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WSR-Zj-nuJ">
+                                                <rect key="frame" x="1060" y="308" width="110" height="34"/>
+                                                <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="110" id="bK7-eX-WOO"/>
+                                                    <constraint firstAttribute="height" constant="34" id="g26-of-g7M"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                <state key="normal" title="change pin">
+                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="setPinButtonAction:" destination="DBL-nC-Fpb" eventType="touchUpInside" id="kgL-HN-M6H"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -714,6 +729,7 @@
                                             <constraint firstAttribute="trailing" secondItem="OHZ-cr-Fky" secondAttribute="trailing" constant="90" id="InM-cC-SoS">
                                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                                             </constraint>
+                                            <constraint firstItem="WSR-Zj-nuJ" firstAttribute="top" secondItem="hPM-FR-8PV" secondAttribute="bottom" constant="40" id="Kae-fa-WhY"/>
                                             <constraint firstItem="JkJ-eE-7tK" firstAttribute="top" secondItem="LtN-iJ-pZd" secondAttribute="bottom" constant="20" id="MdH-2c-ydW"/>
                                             <constraint firstItem="K22-hO-6hb" firstAttribute="top" secondItem="TU7-X6-efQ" secondAttribute="bottom" constant="10" id="SmU-Zw-2j4"/>
                                             <constraint firstAttribute="trailing" secondItem="K22-hO-6hb" secondAttribute="trailing" constant="90" id="VZp-LF-fyA">
@@ -722,6 +738,7 @@
                                             <constraint firstItem="hPM-FR-8PV" firstAttribute="leading" secondItem="i6t-iW-o1V" secondAttribute="leading" constant="90" id="Yn8-d4-Tsg">
                                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                                             </constraint>
+                                            <constraint firstItem="OHZ-cr-Fky" firstAttribute="leading" secondItem="WSR-Zj-nuJ" secondAttribute="trailing" constant="16" id="Yos-1b-V5R"/>
                                             <constraint firstItem="fOs-gr-389" firstAttribute="leading" secondItem="i6t-iW-o1V" secondAttribute="leading" id="ZAb-XG-6Kc"/>
                                             <constraint firstAttribute="trailing" secondItem="fOs-gr-389" secondAttribute="trailing" id="ZO2-0G-xft"/>
                                             <constraint firstItem="fOs-gr-389" firstAttribute="top" secondItem="i6t-iW-o1V" secondAttribute="top" constant="-590" id="aOv-Sz-KOq"/>
@@ -780,6 +797,7 @@
                     <connections>
                         <outlet property="activityIndicator" destination="r1S-7l-G7E" id="1uY-bO-h2A"/>
                         <outlet property="userCodeTextField" destination="K22-hO-6hb" id="BsH-Nz-ZYS"/>
+                        <segue destination="jni-eh-hXA" kind="presentation" identifier="userSetPinSegue" modalTransitionStyle="crossDissolve" id="FTi-8I-CWJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Lwd-ZU-ilS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2220,7 +2238,7 @@
                                                                                     <constraint firstAttribute="height" constant="30" id="p8I-fo-8u1"/>
                                                                                 </constraints>
                                                                                 <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
-                                                                                <textInputTraits key="textInputTraits" textContentType="one-time-code"/>
+                                                                                <textInputTraits key="textInputTraits" keyboardType="numberPad" secureTextEntry="YES" textContentType="one-time-code"/>
                                                                             </textField>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="set pin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mGK-Qw-bCW" userLabel="usercode label">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="45.5" height="40"/>
@@ -2249,7 +2267,7 @@
                                                                                     <constraint firstAttribute="height" constant="30" id="1ZW-CV-Q27"/>
                                                                                 </constraints>
                                                                                 <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
-                                                                                <textInputTraits key="textInputTraits" textContentType="one-time-code"/>
+                                                                                <textInputTraits key="textInputTraits" keyboardType="numberPad" secureTextEntry="YES" textContentType="one-time-code"/>
                                                                             </textField>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="confirm pin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9BW-tx-ku3" userLabel="usercode label">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="76.5" height="40"/>
@@ -2310,62 +2328,68 @@
                                                             <constraint firstItem="Exc-v3-y0c" firstAttribute="leading" secondItem="eqX-ry-bxu" secondAttribute="leading" constant="16" id="j6L-JR-feh"/>
                                                         </constraints>
                                                     </view>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gn-kJ-XBw" userLabel="search">
-                                                        <rect key="frame" x="479" y="476" width="120" height="34"/>
-                                                        <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="9JS-St-Id5">
+                                                        <rect key="frame" x="343" y="476" width="256" height="34"/>
+                                                        <subviews>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OCK-Bm-XvZ" userLabel="search">
+                                                                <rect key="frame" x="0.0" y="0.0" width="120" height="34"/>
+                                                                <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="120" id="6sb-eb-v96"/>
+                                                                    <constraint firstAttribute="height" constant="34" id="UXB-pP-NOk"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                                <state key="normal" title="set pin">
+                                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                </state>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.zPosition">
+                                                                        <integer key="value" value="1"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
+                                                                <connections>
+                                                                    <action selector="setPinButtonAction:" destination="jni-eh-hXA" eventType="touchUpInside" id="POn-8l-p0F"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gn-kJ-XBw" userLabel="search">
+                                                                <rect key="frame" x="136" y="0.0" width="120" height="34"/>
+                                                                <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="120" id="9pE-zi-I6J"/>
+                                                                    <constraint firstAttribute="height" constant="34" id="zCZ-Sz-hFa"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                                <state key="normal" title="logout">
+                                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                </state>
+                                                                <userDefinedRuntimeAttributes>
+                                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.zPosition">
+                                                                        <integer key="value" value="1"/>
+                                                                    </userDefinedRuntimeAttribute>
+                                                                </userDefinedRuntimeAttributes>
+                                                                <connections>
+                                                                    <action selector="logoutButtonAcrion:" destination="jni-eh-hXA" eventType="touchUpInside" id="2Se-0c-RsV"/>
+                                                                </connections>
+                                                            </button>
+                                                        </subviews>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="120" id="9pE-zi-I6J"/>
-                                                            <constraint firstAttribute="height" constant="34" id="zCZ-Sz-hFa"/>
+                                                            <constraint firstAttribute="height" constant="34" id="3E7-MG-5Ok"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                        <state key="normal" title="logout">
-                                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        </state>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.zPosition">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="logoutButtonAcrion:" destination="jni-eh-hXA" eventType="touchUpInside" id="2Se-0c-RsV"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OCK-Bm-XvZ" userLabel="search">
-                                                        <rect key="frame" x="343" y="476" width="120" height="34"/>
-                                                        <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="120" id="6sb-eb-v96"/>
-                                                            <constraint firstAttribute="height" constant="34" id="UXB-pP-NOk"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                        <state key="normal" title="set pin">
-                                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        </state>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.zPosition">
-                                                                <integer key="value" value="1"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="setPinButtonAction:" destination="jni-eh-hXA" eventType="touchUpInside" id="POn-8l-p0F"/>
-                                                        </connections>
-                                                    </button>
+                                                    </stackView>
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <gestureRecognizers/>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="eqX-ry-bxu" secondAttribute="trailing" id="1sT-6z-C8m"/>
+                                                    <constraint firstItem="9JS-St-Id5" firstAttribute="top" secondItem="eqX-ry-bxu" secondAttribute="bottom" constant="16" id="2Fd-tw-he4"/>
                                                     <constraint firstItem="eqX-ry-bxu" firstAttribute="leading" secondItem="bCd-S2-0u4" secondAttribute="leading" id="35S-s1-vWl"/>
-                                                    <constraint firstItem="0gn-kJ-XBw" firstAttribute="top" secondItem="eqX-ry-bxu" secondAttribute="bottom" constant="16" id="D7a-Io-Gva"/>
+                                                    <constraint firstAttribute="bottom" secondItem="9JS-St-Id5" secondAttribute="bottom" constant="8" id="79g-bN-wYh"/>
                                                     <constraint firstItem="bJH-0q-Sjn" firstAttribute="top" secondItem="bCd-S2-0u4" secondAttribute="top" id="F5z-gp-s1k"/>
-                                                    <constraint firstAttribute="bottom" secondItem="OCK-Bm-XvZ" secondAttribute="bottom" constant="8" id="I08-zc-S0W"/>
-                                                    <constraint firstItem="0gn-kJ-XBw" firstAttribute="leading" secondItem="OCK-Bm-XvZ" secondAttribute="trailing" constant="16" id="PrG-KP-5Av"/>
                                                     <constraint firstItem="bJH-0q-Sjn" firstAttribute="leading" secondItem="bCd-S2-0u4" secondAttribute="leading" id="aj1-8m-qXI"/>
                                                     <constraint firstItem="eqX-ry-bxu" firstAttribute="top" secondItem="bJH-0q-Sjn" secondAttribute="bottom" id="dyu-Je-pfv"/>
-                                                    <constraint firstAttribute="trailing" secondItem="0gn-kJ-XBw" secondAttribute="trailing" constant="16" id="fV3-3D-RWt"/>
                                                     <constraint firstAttribute="height" constant="518" id="sG2-e2-Nq2"/>
                                                     <constraint firstAttribute="trailing" secondItem="bJH-0q-Sjn" secondAttribute="trailing" id="vfM-f5-9bW"/>
-                                                    <constraint firstAttribute="bottom" secondItem="0gn-kJ-XBw" secondAttribute="bottom" constant="8" id="yG1-pl-Jdg"/>
+                                                    <constraint firstAttribute="trailing" secondItem="9JS-St-Id5" secondAttribute="trailing" constant="16" id="vhJ-wT-pkk"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -2453,6 +2477,7 @@
                         <outlet property="closeButton" destination="62O-av-1H6" id="5Bn-E3-ruz"/>
                         <outlet property="confirmPinTextField" destination="mhK-eF-TIZ" id="Emh-5i-tBg"/>
                         <outlet property="loginView" destination="bCd-S2-0u4" id="s5e-7x-uiE"/>
+                        <outlet property="logoutButton" destination="0gn-kJ-XBw" id="xWn-e2-EkS"/>
                         <outlet property="passwordTextField" destination="wey-9Q-cxO" id="DI2-Lu-JgQ"/>
                         <outlet property="setPinTextField" destination="wM1-0k-gEW" id="rQn-pe-lPG"/>
                         <outlet property="userCodeTextField" destination="1XZ-4j-Egj" id="RR7-ba-C6f"/>
@@ -2464,6 +2489,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="FTi-8I-CWJ"/>
         <segue reference="MWm-Aa-OmC"/>
         <segue reference="qFk-ul-dl4"/>
     </inferredMetricsTieBreakers>

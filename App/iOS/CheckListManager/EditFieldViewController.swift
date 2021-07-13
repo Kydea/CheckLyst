@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
+class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UITextFieldDelegate {
 
     @IBOutlet var tableView: UITableView!
     
@@ -53,7 +53,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
-        
+                
         searchController.searchBar.autocapitalizationType = .none
         if #available(iOS 13.0, *) {
             searchController.searchBar.searchTextField.backgroundColor = .white
@@ -94,6 +94,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel
         
         inputTextField = cell!.contentView.viewWithTag(2) as? UITextField
+        inputTextField?.delegate = self
         
         if(isListField!)
         
@@ -205,7 +206,16 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         self.navigationController?.popViewController(animated: true)
     }
 
-
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if (searchViewController?.indexFieldDictionary[rowIndex!] == "id" && textField.isEqual(inputTextField)) {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
+        
+        return true
+    }
 
 
 }

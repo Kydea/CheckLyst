@@ -157,10 +157,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         
         super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
+    
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
         
-        toggleNavigatioBarTint(true)
+        toggleNavigatioBarTint(false)
 
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
@@ -168,6 +169,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
         
         if let imagePicker = self.presentedViewController as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .camera {
+            toggleNavigatioBarTint(true)
             setupWatermarkImagePicker(imagePicker)
         }
 
