@@ -21,6 +21,7 @@ class SignerLoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         userCodeTextField.delegate = self
+        passwordTextField.delegate = self
         setupUI()
     }
 

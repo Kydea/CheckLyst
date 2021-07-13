@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignerPinViewController: UIViewController {
+class SignerPinViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var loginView: UIView!
     @IBOutlet var userCodeTextField: UITextField!
@@ -16,6 +16,7 @@ class SignerPinViewController: UIViewController {
     @IBOutlet var confirmPinTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var closeButton: UIButton!
+    @IBOutlet var logoutButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
     let appDelegate = (UIApplication.shared as! MyApplication)
@@ -24,6 +25,11 @@ class SignerPinViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        passwordTextField.delegate = self
+        setPinTextField.delegate = self
+        confirmPinTextField.delegate = self
+
         setupUI()
     }
 
@@ -32,6 +38,10 @@ class SignerPinViewController: UIViewController {
     }
     
     private func setupUI() {
+    
+        let isMainUser = signer?.code == UserDefaults.standard.string(forKey: "userCode")
+        
+        logoutButton.isHidden = isMainUser
         
         userCodeTextField.isEnabled = false
         
@@ -115,5 +125,23 @@ class SignerPinViewController: UIViewController {
     
     @IBAction func closeButtonAction(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if (textField.isEqual(setPinTextField) || textField.isEqual(confirmPinTextField)) {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
+        
+        guard let textFieldText = textField.text,
+            let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+                return false
+        }
+        
+        let substringToReplace = textFieldText[rangeOfTextToReplace]
+        let count = textFieldText.count - substringToReplace.count + string.count
+        return count <= 60
     }
 }

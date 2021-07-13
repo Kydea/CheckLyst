@@ -19,6 +19,15 @@ public struct Signer: Codable {
         self.accessTokenExpiration = (Date() + (json["expires_in"] as! TimeInterval)).timeIntervalSince1970.rounded()
     }
     
+    init(usercode: String, accessToken: String, refreshToken: String, roles: String, name: String, accessTokenExpiration: TimeInterval) {
+        self.code = usercode
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+        self.roles = roles
+        self.name = name
+        self.accessTokenExpiration = accessTokenExpiration
+    }
+    
     public var code: String
     public var name: String
     public var roles: String
