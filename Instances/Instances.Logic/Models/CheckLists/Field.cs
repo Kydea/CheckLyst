@@ -51,6 +51,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             ItemModel.ValueFormulaString = ValueFormulaString;
             ItemModel.ValueTypeName = ValueTypeName;
             ItemModel.Value = Value;
+            ItemModel.ValidityMessage = ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage;
 
             if (LocalTimeZone)
             {
@@ -221,7 +222,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool ConversionError { get; set; }
 
-        public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
         protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet;
 

@@ -1514,7 +1514,9 @@ namespace CheckListManager.Instances.Logic.Services
                 loggedValue = value;
 
             field.ConversionError = false;
-            if (field.ValueType == DataType.DateTime)
+            if (string.IsNullOrEmpty(value))
+                formattedValue = loggedValue = null;
+            else if (field.ValueType == DataType.DateTime)
             {
                 string TimeZone = cacheObject.Instance.TimeZone;
 
