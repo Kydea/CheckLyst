@@ -1876,7 +1876,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
-                    throw new InstanceException($"The signature can be canceled by an user with function Unsign${(string.IsNullOrWhiteSpace(signature.SignatureLevel) ? string.Empty : $" and level {signature.SignatureLevel}")}");
+                    throw new InstanceException($"The signature can be canceled by an user with function Unsign{(string.IsNullOrWhiteSpace(signature.SignatureLevel) ? string.Empty : $" and level {signature.SignatureLevel}")}");
 
                 signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
                 TrackChanges(cacheObject, identity.Code);
