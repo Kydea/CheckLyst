@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Globalization;
 
 namespace CheckListManager.ExternalSources.Logic.SQL
 {
@@ -57,17 +58,29 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                     new SqlDataAdapter((SqlCommand)Command);
         }
 
-        private DbParameter GetDbParameter(string Name, object Value)
+        private DbParameter GetDbParameter(string Name, string Type, object Value)
         {
-            return
-                SQLParameters.DBMS == ORACLE ? new OracleParameter(Name, Value) :
-                SQLParameters.DBMS == POSTGRES ? (DbParameter)new NpgsqlParameter(Name, Value) :
-                    new SqlParameter(Name, Value);
+            DbParameter Parameter =
+                SQLParameters.DBMS == ORACLE ? Value == null ? new OracleParameter(Name, Type == "Boolean" ? OracleDbType.Boolean : Type == "Number" ? OracleDbType.Decimal : Type == "Date" ? OracleDbType.Date : Type == "DateTime" ? OracleDbType.TimeStamp : Type == "Time" ? OracleDbType.IntervalDS : OracleDbType.Varchar2) : new OracleParameter(Name, Value) :
+                SQLParameters.DBMS == POSTGRES ? Value == null ? new NpgsqlParameter(Name, Type == "Boolean" ? NpgsqlTypes.NpgsqlDbType.Boolean : Type == "Number" ? NpgsqlTypes.NpgsqlDbType.Numeric : Type == "Date" ? NpgsqlTypes.NpgsqlDbType.Date : Type == "DateTime" ? NpgsqlTypes.NpgsqlDbType.Timestamp : Type == "Time" ? NpgsqlTypes.NpgsqlDbType.Time : NpgsqlTypes.NpgsqlDbType.Varchar) : new NpgsqlParameter(Name, Value) :
+                    Value == null ? new SqlParameter(Name, Type == "Boolean" ? SqlDbType.Bit : Type == "Number" ? SqlDbType.Decimal : Type == "Date" ? SqlDbType.Date : Type == "DateTime" ? SqlDbType.DateTime2 : Type == "Time" ? SqlDbType.Time : SqlDbType.VarChar) : (DbParameter)new SqlParameter(Name, Value);
+
+            if (Value == null) Parameter.Value = DBNull.Value;
+
+            return Parameter;
         }
 
-        private string GetDefaultParameterValue(Parameter Parameter)
+        private object GetParameterValue(string ParameterValue, string ParameterType)
         {
-            return Parameter.ParameterType == "Text" ? "" : Parameter.ParameterType == "Number" ? "-1" : "01/01/1900";
+            object Value =
+                ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? true : "false".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? false : default(bool?) :
+                ParameterType == "Number" ? string.IsNullOrEmpty(ParameterValue) ? default(decimal?) : decimal.TryParse(ParameterValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?) :
+                ParameterType == "Date" ? DateTimeOffset.TryParseExact(ParameterValue, "yyyy-MM-dd", null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
+                ParameterType == "DateTime" ? DateTimeOffset.TryParseExact(ParameterValue, new string[] { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" }, null, DateTimeStyles.AssumeUniversal, out dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
+                ParameterType == "Time" ? TimeSpan.TryParseExact(ParameterValue, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?) :
+                (object)ParameterValue;
+
+            return Value;
         }
 
         private string Format(object Value, string DecimalSeparator, string TimeZone)
@@ -90,8 +103,9 @@ namespace CheckListManager.ExternalSources.Logic.SQL
 
                 foreach (var Parameter in Parameters)
                 {
-                    var Value = Values != null && (Values.TryGetValue(Parameter.Name, out var value) || Parameter.Name.StartsWith("@") && Values.TryGetValue(Parameter.Name.Substring(1), out value)) ? value : null;
-                    Command.Parameters.Add(GetDbParameter(Parameter.Name, Value ?? GetDefaultParameterValue(Parameter)));
+                    var ParameterValue = Values != null && (Values.TryGetValue(Parameter.Name, out var value) || Parameter.Name.StartsWith("@") && Values.TryGetValue(Parameter.Name.Substring(1), out value)) ? value : null;
+                    var Value = GetParameterValue(ParameterValue, Parameter.ParameterType);
+                    Command.Parameters.Add(GetDbParameter(Parameter.Name, Parameter.ParameterType, Value));
                 }
                 DataAdapter.Fill(DataSet, FirstRowIndex, MaxRowsCount, "Source");
 
