@@ -61,9 +61,14 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         private DbParameter GetDbParameter(string Name, string Type, object Value)
         {
             DbParameter Parameter =
-                SQLParameters.DBMS == ORACLE ? Value == null ? new OracleParameter(Name, Type == "Boolean" ? OracleDbType.Boolean : Type == "Number" ? OracleDbType.Decimal : Type == "Date" ? OracleDbType.Date : Type == "DateTime" ? OracleDbType.TimeStamp : Type == "Time" ? OracleDbType.IntervalDS : OracleDbType.Varchar2) : new OracleParameter(Name, Value) :
-                SQLParameters.DBMS == POSTGRES ? Value == null ? new NpgsqlParameter(Name, Type == "Boolean" ? NpgsqlTypes.NpgsqlDbType.Boolean : Type == "Number" ? NpgsqlTypes.NpgsqlDbType.Numeric : Type == "Date" ? NpgsqlTypes.NpgsqlDbType.Date : Type == "DateTime" ? NpgsqlTypes.NpgsqlDbType.Timestamp : Type == "Time" ? NpgsqlTypes.NpgsqlDbType.Time : NpgsqlTypes.NpgsqlDbType.Varchar) : new NpgsqlParameter(Name, Value) :
-                    Value == null ? new SqlParameter(Name, Type == "Boolean" ? SqlDbType.Bit : Type == "Number" ? SqlDbType.Decimal : Type == "Date" ? SqlDbType.Date : Type == "DateTime" ? SqlDbType.DateTime2 : Type == "Time" ? SqlDbType.Time : SqlDbType.VarChar) : (DbParameter)new SqlParameter(Name, Value);
+                SQLParameters.DBMS == ORACLE ? 
+                    Value == null ? new OracleParameter(Name, Type == "Boolean" ? OracleDbType.Decimal : Type == "Number" ? OracleDbType.Decimal : Type == "Date" ? OracleDbType.TimeStamp : Type == "DateTime" ? OracleDbType.TimeStamp : Type == "Time" ? OracleDbType.IntervalDS : OracleDbType.Varchar2) : 
+                        new OracleParameter(Name, Value) :
+                SQLParameters.DBMS == POSTGRES ? 
+                    Value == null ? new NpgsqlParameter(Name, Type == "Boolean" ? NpgsqlTypes.NpgsqlDbType.Boolean : Type == "Number" ? NpgsqlTypes.NpgsqlDbType.Numeric : Type == "Date" ? NpgsqlTypes.NpgsqlDbType.Date : Type == "DateTime" ? NpgsqlTypes.NpgsqlDbType.Timestamp : Type == "Time" ? NpgsqlTypes.NpgsqlDbType.Time : NpgsqlTypes.NpgsqlDbType.Varchar) : 
+                    new NpgsqlParameter(Name, Value) :
+                Value == null ? new SqlParameter(Name, Type == "Boolean" ? SqlDbType.Bit : Type == "Number" ? SqlDbType.Decimal : Type == "Date" ? SqlDbType.Date : Type == "DateTime" ? SqlDbType.DateTime2 : Type == "Time" ? SqlDbType.Time : SqlDbType.VarChar) : 
+                (DbParameter)new SqlParameter(Name, Value);
 
             if (Value == null) Parameter.Value = DBNull.Value;
 
@@ -73,11 +78,18 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         private object GetParameterValue(string ParameterValue, string ParameterType)
         {
             object Value =
-                ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? true : "false".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? false : default(bool?) :
-                ParameterType == "Number" ? string.IsNullOrEmpty(ParameterValue) ? default(decimal?) : decimal.TryParse(ParameterValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?) :
+                SQLParameters.DBMS == ORACLE ?
+                    ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? "true" : "false" :
+                    ParameterType == "Number" ? string.IsNullOrEmpty(ParameterValue) ? default(decimal?) : decimal.TryParse(ParameterValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?) :
+                    ParameterType == "Date" ? DateTime.TryParseExact(ParameterValue, "yyyy-MM-dd", null, DateTimeStyles.AssumeUniversal, out var dateTimeResult) ? dateTimeResult : default(DateTime?) :
+                    ParameterType == "DateTime" ? DateTime.TryParseExact(ParameterValue, new string[] { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" }, null, DateTimeStyles.AssumeUniversal, out dateTimeResult) ? dateTimeResult : default(DateTime?) :
+                    ParameterType == "Time" ? TimeSpan.TryParseExact(ParameterValue, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?) :
+                    (object)ParameterValue :
+                ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? true : false :
+                ParameterType == "Number" ? string.IsNullOrEmpty(ParameterValue) ? default(decimal?) : decimal.TryParse(ParameterValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out decimalResult) ? decimalResult : default(decimal?) :
                 ParameterType == "Date" ? DateTimeOffset.TryParseExact(ParameterValue, "yyyy-MM-dd", null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
                 ParameterType == "DateTime" ? DateTimeOffset.TryParseExact(ParameterValue, new string[] { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" }, null, DateTimeStyles.AssumeUniversal, out dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
-                ParameterType == "Time" ? TimeSpan.TryParseExact(ParameterValue, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?) :
+                ParameterType == "Time" ? TimeSpan.TryParseExact(ParameterValue, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out timeSpanResult) ? timeSpanResult : default(TimeSpan?) :
                 (object)ParameterValue;
 
             return Value;
