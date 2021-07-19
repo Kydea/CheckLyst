@@ -222,6 +222,6 @@ from
     "Security"."Groups" g
     inner join "Infrastructure"."Companies" c on g."Company" = c."ID"
     inner join "Security"."GroupConflicts" gc on g."Company" = gc."Company" and g."Code" = gc."Group2"
-order by "Company ID", "Code", "Conflicting Group"
+order by "Company ID", "Group Code", "Conflicting Group"
 '
 );

@@ -54,19 +54,19 @@ namespace CheckListManager.Reports.Logic.Viewer
             return result;
         }
 
-        private string ParseFilter(ReportClause.ClauseRecord Clause, string ParameterName) =>
+        private string ParseFilter(ReportClause.ClauseRecord Clause, string ParameterName, object Value) =>
             Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
             Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
-            Clause.Sign == "0" ? $"q.\"{Clause.Column}\" is null" :
-            Clause.Sign == "!0" ? $"not q.\"{Clause.Column}\" is null" :
+            Clause.Sign == "0" ? Value as bool? == true ? $"q.\"{Clause.Column}\" is null" : null :
+            Clause.Sign == "!0" ? Value as bool? == true ? $"not q.\"{Clause.Column}\" is null" : null :
             $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
 
-        private string ParseClause(ReportClauses ReportClause, ReportClause.ClauseRecord Clause)
+        private string ParseClause(ReportClauses ReportClause, ReportClause.ClauseRecord Clause, object Value)
         {
             switch (ReportClause.ClauseType)
             {
                 case "filter":
-                    return ParseFilter(Clause, ReportClause.ParameterName);
+                    return ParseFilter(Clause, ReportClause.ParameterName, Value);
                 case "custom":
                     return $"({Clause.Custom})";
                 case "parameter":
@@ -95,7 +95,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 {
                     if (!DataType.FromName(ReportClause.ParameterType).TryParse(ParameterValue, out var TypedValue))
                         throw new ReportViewerException($"Ivalid value {ParameterValue} for type {ReportClause.ParameterType}");
-                    var clause = ParseClause(ReportClause, Clause);
+                    var clause = ParseClause(ReportClause, Clause, TypedValue);
                     if (clause != null)
                         StringBuilder.AppendLine($"    and {clause}");
                     parameters.Add(new Parameter(ReportClause.ParameterName, TypedValue));
