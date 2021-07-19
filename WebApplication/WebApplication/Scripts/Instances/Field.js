@@ -233,7 +233,7 @@
             select.value = model.value;
         else if (model.valueFormulaString)
             input.value = model.value;
-        else if (model.externalSourceName && model.externalSourceColumn)
+        else if (model.externalSourceName && model.externalSourceColumn && model.valueTypeName != "Boolean")
             input.value = model.value;
         else
             matematici.TypedInput.setValue(model.valueTypeName, input, select, select2, model.value);
@@ -251,7 +251,7 @@
                 value = model.localTimeZone ? "Company time zone" : "UTC";
             field.setAttribute("title", value);
             input.setAttribute("title", value);
-        } else 
+        } else
             field.setAttribute("title", field.textContent);
 
         if (model.valueTypeName == "Boolean")

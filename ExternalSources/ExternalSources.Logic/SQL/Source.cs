@@ -102,6 +102,8 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                 Value is decimal DecimalValue ? Format(DecimalValue, DecimalSeparator) :
                 Value is DateTime DateTimeValue ? Format(DateTimeValue) :
                 Value is DateTimeOffset DateTimeOffsetValue ? Format(DateTimeOffsetValue, TimeZone) :
+                Value is TimeSpan TimeSpanValue ? Format(TimeSpanValue) :
+                Value is bool BooleanValue ? BooleanValue ? "true" : "false" :
                 Value.ToString();
         }
 
