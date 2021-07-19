@@ -27,9 +27,9 @@ select
     pt."ID" "PrototypeType ID", pt."Name" "PrototypeType Name", 
     p."ID" "Prototype ID", p."Name" "Prototype Name", p."Description" "Prototype Description",
     pv."Version" "Prototype Version", pv."VersionState" "Prototype Version State",
+    pv."ValidFrom" "Valid From", pv."ValidUntil" "Valid Until",
     pv."CreatedBy" "Prototype Created By", pv."CreatedOn" "Prototype Created On",
-    pv."ModifiedBy" "Prototype Modified By", pv."ModifiedOn" "Prototype Modified On",
-    pv."ValidFrom" "Valid From", pv."ValidUntil" "Valid Until"
+    pv."ModifiedBy" "Prototype Modified By", pv."ModifiedOn" "Prototype Modified On"
 from
     "CheckLists"."Prototypes" p
     inner join "Infrastructure"."Companies" c on p."Company" = c."ID"
