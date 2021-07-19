@@ -65,7 +65,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public dynamic GetViewModel(string DecimalSeparator)
         {
             var FormattedValue =
-                Value?.Type == DataType.Number ? DecimalHelper.Format(Value?.NumberValue, DecimalSeparator) :
+                Value?.Type == DataType.Number ? Value.IsNull ? null : DecimalHelper.Format(Value?.NumberValue, DecimalSeparator) :
                 Value?.Value;
             return new
             {
