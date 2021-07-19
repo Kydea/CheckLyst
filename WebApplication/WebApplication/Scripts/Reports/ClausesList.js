@@ -235,8 +235,8 @@
                     visible = keyword == null;
                 if (!visible && flags[0]) visible = !!clause.label && clause.label.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (!visible && flags[1]) visible = !!clause.parameterName && clause.parameterName.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
-                if (visible && !flags[2]) visible = !model.clauseErrors || !model.clauseErrors[index];
-                if (visible && !flags[3]) visible = model.clauseErrors && !!model.clauseErrors[index];
+                if (visible && !flags[2]) visible = !model.clauseErrors || !model.clauseErrors["item" + index];
+                if (visible && !flags[3]) visible = model.clauseErrors && !!model.clauseErrors["item" + index];
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
