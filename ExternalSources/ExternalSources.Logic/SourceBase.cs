@@ -51,6 +51,11 @@ namespace CheckListManager.ExternalSources.Logic
             return DateTime.ToString("yyyy-MM-dd HH:mm");
         }
 
+        public static string Format(TimeSpan Time)
+        {
+            return Time.ToString("hh\\:mm");
+        }
+
         public static string Format(DateTimeOffset DateTimeOffset, string TimeZone)
         {
             if (TimeZone == null) throw new ArgumentNullException();

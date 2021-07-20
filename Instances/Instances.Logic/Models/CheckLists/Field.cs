@@ -51,6 +51,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             ItemModel.ValueFormulaString = ValueFormulaString;
             ItemModel.ValueTypeName = ValueTypeName;
             ItemModel.Value = Value;
+            ItemModel.ValidityMessage = ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage;
 
             if (LocalTimeZone)
             {
@@ -152,7 +153,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (ValueFormula.IsSet)
             {
                 var FormulaValue = ValueFormula.Value;
-                if (ValueType == DataType.Number)
+                if (!ValueFormula.HasValue)
+                    Value = FormulaValue;
+                else if (ValueType == DataType.Number)
                 {
                     DecimalHelper.Parse(FormulaValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedFormulaValue);
                     Value = FormattedFormulaValue;
@@ -160,7 +163,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
                 else
                 {
-                    ConversionError = ValueFormula.HasValue && !ValueType.TryParse(FormulaValue, out ConvertedValue);
+                    ConversionError = !ValueType.TryParse(FormulaValue, out ConvertedValue);
                     Value = ConversionError ? null : FormulaValue;
                 }
             }
@@ -170,7 +173,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (!ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
                     ExternalSourceValue = null;
 
-                if (ExternalSourceValue != null && ValueType == DataType.Number)
+                if (string.IsNullOrEmpty(ExternalSourceValue))
+                    Value = null;
+                else if (ExternalSourceValue != null && ValueType == DataType.Number)
                 {
                     DecimalHelper.Parse(ExternalSourceValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedExternalSourceValue);
                     Value = FormattedExternalSourceValue;
@@ -183,7 +188,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
             }
 
-            if (!ConversionError)
+            if (
+                !ConversionError 
+                && !(ValueFormula.IsSet && !ValueFormula.HasValue) //no conversion if formula is error or null
+            )
                 try
                 {
                     DateTimeOffset? dateTimeOffset = null;
@@ -221,7 +229,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public bool ConversionError { get; set; }
 
-        public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
         protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet;
 

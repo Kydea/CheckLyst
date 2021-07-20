@@ -8,21 +8,22 @@
         flags = [],
         keyword,
         timeout,
-        filtering = false,
+        keywordPresent = false,
+        flagPresent = false,
 
         toggleIcon = function () {
-            icon.toggleClass("fa", filtering).addClass("fal", !filtering);
+            icon.toggleClass("fa", keywordPresent).addClass("fal", !keywordPresent);
         },
 
         callHandler = function () {
-            handler(filtering, keyword, flags.map(function (input) { return input.prop("checked"); }));
+            handler(keywordPresent || flagPresent, keyword, flags.map(function (input) { return input.prop("checked"); }));
         },
         
         filter = function (value) {
             if (timeout) clearTimeout(timeout);
             timeout = null;
             if (input.val() == "") value = false;
-            filtering = value;
+            keywordPresent = value;
             toggleIcon();
             matematici.loader.show();
             keyword = value && input.val() != "" ? input.val() : null;
@@ -31,7 +32,7 @@
         },
 
         delayedFilter = function () {
-            filtering = true;
+            keywordPresent = true;
             toggleIcon();
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(function () {
@@ -43,6 +44,10 @@
         addFlag = function (label, value, alignToRight) {
             var flag = $("<input />").attr({ type: "checkbox" }).prop("checked", value).on("click", function () {
                 setTimeout(function () {
+                    flagPresent = false;
+                    for (var index = 0; !flagPresent && index < flags.length; ++index)
+                        if (!flags[index].prop("checked"))
+                            flagPresent = true;
                     callHandler();
                 }, 0);
             });
@@ -56,7 +61,7 @@
             container.append(rightDiv = $("<div />").addClass("Right"));
             container.append($("<a />").addClass("FilterIcon").attr("href", "#").append(icon = $("<i />").addClass("fal fa-filter")).on("click", function (e) {
                 e.preventDefault();
-                filter(!filtering);
+                filter(!keywordPresent);
             }));
             container.append(input = $("<input />").addClass("Keyword").attr({ type: "text" }).on("paste keyup", function () {
                 delayedFilter();
@@ -64,7 +69,7 @@
         };
 
     gridFiltersBar.isFiltering = function () {
-        return filtering;
+        return keywordPresent || flagPresent;
     };
 
     gridFiltersBar.addFlag = addFlag;

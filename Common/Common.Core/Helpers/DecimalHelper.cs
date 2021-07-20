@@ -8,6 +8,9 @@ namespace CheckListManager.Common.Core.Helpers
         public static decimal? Parse(string Value) =>
             Value == null ? default(decimal?) : decimal.TryParse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?);
 
+        public static string Format (decimal? Value, string DecimalSeparator) =>
+            Value?.ToString().Replace(",", DecimalSeparator).Replace(".", DecimalSeparator);
+
         public static void Parse(string Value, int? Precision, bool ScientificNotation, string DecimalSeparator, out decimal? Result, out string FormattedResult)
         {
             Result = Parse(Value);
@@ -23,12 +26,12 @@ namespace CheckListManager.Common.Core.Helpers
                     var Coefficent = (double)Result / Math.Pow(10, Exponent);
                     if (Precision.HasValue) Coefficent = Math.Round(Coefficent, Precision.Value);
                     Result = (decimal)(Coefficent * Math.Pow(10, Exponent));
-                    FormattedResult = Coefficent + "e" + (Exponent >= 0 ? "+" : string.Empty) + Exponent;
+                    FormattedResult = Format((decimal)Coefficent, DecimalSeparator) + "e" + (Exponent >= 0 ? "+" : string.Empty) + Exponent;
                 }
                 else
                 {
                     Result = Precision.HasValue ? Math.Round(Result.Value, Precision.Value) : Result;
-                    FormattedResult = Result.ToString().Replace(",", DecimalSeparator).Replace(".", DecimalSeparator);
+                    FormattedResult = Format(Result, DecimalSeparator);
                 }
             }
             catch

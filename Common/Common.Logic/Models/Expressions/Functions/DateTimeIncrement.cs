@@ -33,8 +33,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
                     .AddYears((int)ArgumentValues[1].NumberValue)
                     .AddMonths((int)ArgumentValues[2].NumberValue)
                     .AddDays((int)ArgumentValues[3].NumberValue)
-                    .AddHours((int)ArgumentValues[3].NumberValue)
-                    .AddMinutes((int)ArgumentValues[3].NumberValue)
+                    .AddHours((int)ArgumentValues[4].NumberValue)
+                    .AddMinutes((int)ArgumentValues[5].NumberValue)
             );
     }
 }

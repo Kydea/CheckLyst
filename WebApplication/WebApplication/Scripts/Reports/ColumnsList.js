@@ -291,8 +291,8 @@
                     visible = keyword == null;
                 if (!visible && flags[0]) visible = !!column.label && column.label.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (!visible && flags[1]) visible = !!column.column && column.column.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
-                if (visible && !flags[2]) visible = !model.columnErrors || !model.columnErrors[index];
-                if (visible && !flags[3]) visible = model.columnErrors && !!model.columnErrors[index];
+                if (visible && !flags[2]) visible = !model.columnErrors || !model.columnErrors["item" + index];
+                if (visible && !flags[3]) visible = model.columnErrors && !!model.columnErrors["item" + index];
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }

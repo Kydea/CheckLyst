@@ -130,7 +130,7 @@
                 }
 
                 if (container.size() == 0) {
-                    container = $("div.Popup, div.CheckListGrid");
+                    container = $("div.Popup, div.CheckListGrid").last();
                     button = $(selector, container);
                 }
 

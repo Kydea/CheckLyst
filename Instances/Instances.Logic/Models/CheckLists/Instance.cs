@@ -41,7 +41,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
             if (identity.HasPermission("Trail") || cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
                 foreach (var Expression in this.Expressions.Values)
-                    Expressions[Expression.Code] = Expression.GetViewModel();
+                    Expressions[Expression.Code] = Expression.GetViewModel(DecimalSeparator);
 
             var ChildInstances = this.ChildInstances.Keys.Select(i =>
             {

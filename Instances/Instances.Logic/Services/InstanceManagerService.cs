@@ -263,7 +263,7 @@ namespace CheckListManager.Instances.Logic.Services
             var itemValues = cacheObject.Instance.Items.Where(i => !i.Value.Removed && !i.Value.IterationItem && !i.Value.IteratorModelItem).ToDictionary(k => k.Key, v => ((Item)v.Value).GetViewModel(true));
             var itemsByLabel = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Description) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Description, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
             var itemsByCode = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Items.Where(i => !string.IsNullOrWhiteSpace(i.Value.Code) && itemValues.Keys.Contains(i.Key)).GroupBy(k => k.Value.Code, v => itemValues[v.Key]).ToDictionary(k => k.Key, v => v.Last()));
-            var expressions = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel()));
+            var expressions = new PascalCaseDictionary<string, dynamic>(cacheObject.Instance.Expressions.ToDictionary(k => k.Key, v => v.Value.GetViewModel(cacheObject.Instance.DecimalSeparator)));
             await _instancesRepository.UpdateJSONFieldsAsync(cacheObject.ID.Value, cacheObject.CompanyId, JsonConvert.SerializeObject(itemsByCode), JsonConvert.SerializeObject(itemsByLabel), JsonConvert.SerializeObject(expressions));
         }
 
@@ -1514,7 +1514,9 @@ namespace CheckListManager.Instances.Logic.Services
                 loggedValue = value;
 
             field.ConversionError = false;
-            if (field.ValueType == DataType.DateTime)
+            if (string.IsNullOrEmpty(value))
+                formattedValue = loggedValue = null;
+            else if (field.ValueType == DataType.DateTime)
             {
                 string TimeZone = cacheObject.Instance.TimeZone;
 
@@ -1874,7 +1876,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
-                    throw new InstanceException($"The signature can be canceled by an user with function Unsign and level {signature.SignatureLevel}");
+                    throw new InstanceException($"The signature can be canceled by an user with function Unsign{(string.IsNullOrWhiteSpace(signature.SignatureLevel) ? string.Empty : $" and level {signature.SignatureLevel}")}");
 
                 signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
                 TrackChanges(cacheObject, identity.Code);

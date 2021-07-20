@@ -119,6 +119,8 @@ namespace CheckListManager.Reports.Logic.Detail
             if (!response.ColumnErrors.Any()) response.ColumnErrors = null;
 
             if (record.Clauses != null)
+            {
+                var ParameterNames = new HashSet<string>();
                 for (var Index = 0; Index < record.Clauses.Count; ++Index)
                 {
                     var Clause = record.Clauses[Index];
@@ -127,6 +129,10 @@ namespace CheckListManager.Reports.Logic.Detail
 
                     if (string.IsNullOrWhiteSpace(Clause.ParameterName))
                         AddListError(response.ClauseErrors, Index, "ParameterName", "Invalid parameter name.");
+                    else if (ParameterNames.Contains(Clause.ParameterName))
+                        AddListError(response.ClauseErrors, Index, "ParameterName", $"Parameter name {Clause.ParameterName} is duplicated.");
+                    else
+                        ParameterNames.Add(Clause.ParameterName);
 
                     if (Clause.ClauseType == "Custom" && string.IsNullOrWhiteSpace(Clause.Clause.Custom))
                         AddListError(response.ClauseErrors, Index, "Custom", "Invalid clause.");
@@ -135,6 +141,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     if ((Clause.ParameterType == "Prototypes" || Clause.ClauseType == "Filter") && string.IsNullOrWhiteSpace(Clause.Clause.Column))
                         AddListError(response.ClauseErrors, Index, "Column", "Invalid column.");
                 }
+            }
 
             if (!response.ClauseErrors.Any()) response.ClauseErrors = null;
 

@@ -8,6 +8,8 @@
         form,
 
         parameterType,
+        parameterNameLabel,
+        parameterTypeLabel,
         parameterTypeSelect,
         clauseTypeLabel,
         clauseTypeSelect,
@@ -21,25 +23,32 @@
         customLabel,
 
         toggleControls = function () {
-            //remove prototypes
+            var
+                clauseType = clauseTypeSelect.val(),
+                sign = signSelect.val(),
+                nullabilityTest = clauseType == "filter" && (sign == "0" || sign == "!0"),
+                autoComplete;
+
+            if (nullabilityTest) parameterTypeSelect.val("Boolean");
+
             if (parameterType != parameterTypeSelect.val()) {
                 parameterType = parameterTypeSelect.val();
                 valueTypeInput && valueTypeInput.destroy();
-                if (parameterType == "Prototypes")
-                    valueTypeInput = null;
-                else
-                    valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
+                valueTypeInput = new matematici.TypedInput(valueLabel[0], parameterType, { maxLength: 50 })
             }
 
-            clauseTypeLabel.toggle(parameterType != "Prototypes");
-            columnLabel.toggle(clauseTypeSelect.val() == "filter" || parameterType == "Prototypes");
-            signLabel.toggle(clauseTypeSelect.val() == "filter" && parameterType != "Prototypes");
-            valueLabel.toggle(clauseTypeSelect.val() != "custom" && signSelect.val() != "0" && signSelect.val() != "!0" && parameterType != "Prototypes");
-            customLabel.toggle(clauseTypeSelect.val() == "custom" && parameterType != "Prototypes");
+            columnLabel.toggle(clauseType == "filter");
+            signLabel.toggle(clauseType == "filter");
+            valueLabel.toggle(clauseType != "custom");
+            customLabel.toggle(clauseType == "custom");
 
             matematici.popup.center();
 
-            var autoComplete = matematici.AutoComplete.get(columnSelect[0]);
+            autoComplete = matematici.AutoComplete.get(parameterTypeSelect[0]);
+            matematici.controls.setEditable(parameterTypeSelect, !nullabilityTest);
+            autoComplete && autoComplete.checkReadOnly();
+            autoComplete && autoComplete.setValue(parameterType);
+            autoComplete = matematici.AutoComplete.get(columnSelect[0]);
             autoComplete && autoComplete.refresh();
             autoComplete = matematici.AutoComplete.get(signSelect[0]);
             autoComplete && autoComplete.refresh();
@@ -124,6 +133,8 @@
             form = f;
             editor = new matematici.SQLEditor("CustomAceEditor");
 
+            parameterNameLabel = $("label#ParameterNameLabel", form);
+            parameterTypeLabel = $("label#ParameterTypeLabel", form);
             parameterTypeSelect = $("select[name=parameterType]", form).on("change", toggleControls);
             clauseTypeLabel = $("label#ClauseTypeLabel", form);
             clauseTypeSelect = $("select[name=clauseType]", form).on("change", toggleControls);
