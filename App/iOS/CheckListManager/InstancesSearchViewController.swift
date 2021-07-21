@@ -94,7 +94,17 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         return fieldIndexDictionary.count
     }
     
+    private func shouldUseSlimLayout() -> Bool {
+        let currentDevice = UIDevice.current
+        return currentDevice.userInterfaceIdiom == .phone &&
+            (currentDevice.orientation == .portrait || currentDevice.orientation == .portraitUpsideDown)
+        
+    }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+            super.viewWillTransition(to: size, with: coordinator)
+            tableView.reloadData()
+        }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -114,6 +124,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel
         fieldLabel?.text = indexTextDictionary[indexPath.row]
         let fieldValue = cell!.contentView.viewWithTag(2) as? UILabel
+        fieldValue?.textAlignment = shouldUseSlimLayout() ? .left : .right
+       
         fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
         cell?.isUserInteractionEnabled = true
         fieldValue!.isEnabled = true;
@@ -388,11 +400,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         for value in errorMessages {
                             error.append(value + "\n")
                         }
-                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                        self.appDelegate.displayMessage(Title: "Error", Message: error)
                     } else if let error = json["message"] as? String {
-                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                        self.appDelegate.displayMessage(Title: "Error", Message: error)
                     } else {
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred")
                     }
     
                 } catch {
@@ -492,7 +504,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                 } else {
                     
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                     self.stopActivityIndicator()
                 
                 }
@@ -511,11 +523,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             error.append(value + "\n")
                         }
                         
-                        self.appDelegate.displayMessage(Title: "Error", Message: error) { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                        self.appDelegate.displayMessage(Title: "Error", Message: error)
                     
                     } else {
                         
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred")
                     
                     }
                     

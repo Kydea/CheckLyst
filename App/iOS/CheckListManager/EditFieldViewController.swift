@@ -179,21 +179,6 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         tableView.reloadData()
     }
     
-    override func viewWillDisappear(_ animated : Bool) {
-        
-        super.viewWillDisappear(animated)
-        
-        if (self.isMovingFromParentViewController && !isListField!){
-            
-            searchViewController!.selectedItemsDictionary[rowIndex!]?.text = (inputTextField?.text == "" ? "Insert" : (inputTextField?.text)!)
-            
-            searchViewController!.selectedItemsDictionary[rowIndex!]?.value = (inputTextField?.text == "" ? "" : (inputTextField?.text)!)
-            
-        }
-    
-    }
-    
-
     
     @IBAction func saveEditing(_ sender: AnyObject) {
         if searchViewController?.indexFieldDictionary[rowIndex!] == "id", let value = inputTextField?.text, !value.isEmpty {
@@ -203,6 +188,15 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
             }
             
         }
+        
+        if (!isListField!){
+            
+            searchViewController!.selectedItemsDictionary[rowIndex!]?.text = (inputTextField?.text == "" ? "Insert" : (inputTextField?.text)!)
+            
+            searchViewController!.selectedItemsDictionary[rowIndex!]?.value = (inputTextField?.text == "" ? "" : (inputTextField?.text)!)
+            
+        }
+        
         self.navigationController?.popViewController(animated: true)
     }
 
