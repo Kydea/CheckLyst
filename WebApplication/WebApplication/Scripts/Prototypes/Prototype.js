@@ -170,6 +170,7 @@
                             expression = model.expressions[index],
                             newExpression = newModel.expressions[index];
                         expression.dataType = newExpression.dataType;
+                        expression.innerDataType = newExpression.innerDataType;
                         expression.error = newExpression.error;
                         expression.errorPosition = newExpression.errorPosition;
                         if (expression.error) invalid = true;
