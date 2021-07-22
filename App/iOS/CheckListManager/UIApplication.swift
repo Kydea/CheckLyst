@@ -281,6 +281,10 @@ import CoreData
             
             ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in
                 
+                defer {
+                    NotificationCenter.default.post(name: .ServerHasBeenConfigured, object: nil)
+                }
+                
                 if (serverResponse.error != nil) {
                     self.displayMessage(Title: "Error", Message: "Connection error to the server")
                 } else if (serverResponse.data != nil) {
@@ -291,8 +295,6 @@ import CoreData
                         
                         Server.addServerUrl(urlFrontEnd: server, managedObjectContext: managedObjectContext)
                         Server.setNewServer(urlFrontEnd: server, apiUrl: apiServer, managedObjectContext: managedObjectContext)
-                        
-                        NotificationCenter.default.post(name: .ServerHasBeenConfigured, object: nil)
                         
                     } catch {
                         self.displayMessage(Title: "Error", Message: "Cannot parse response")

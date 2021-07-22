@@ -47,7 +47,7 @@ extension URL {
             }
         } else if values.contains("setup") {
             if let index = values.index(of: "setup") {
-                urlItems["schema"] = values.count > 2 ? String(values[index + 1]) : "https"
+                urlItems["schema"] = values.count > 1 ? String(values[index + 1]) : "https"
             }
         }
         
