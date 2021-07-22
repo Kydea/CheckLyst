@@ -216,21 +216,22 @@ import CoreData
                 let tabBarController = (topController as! TabViewController)
                 
                 if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
-                    instanceController.closeInstance()
-                }
-                
-                if let navController = tabBarController.viewControllers?[1] as? UINavigationController, navController.childViewControllers.count > 1 {
-                    navController.popToRootViewController(animated: false)
-                }
-                
-                if let controller = tabBarController.viewControllers![tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController {
-                    
-                    requestToOpenInstance = false
-                     
-                    controller.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
+                    instanceController.closeInstance() { [weak self] in
+                        self?.popToSearch(tabBarController: tabBarController)
+                    }
+                } else {
+                    self.popToSearch(tabBarController: tabBarController)
                 }
             }
         }
+    }
+    
+    func popToSearch(tabBarController: UITabBarController) {
+        let navController = tabBarController.viewControllers?[1] as? UINavigationController
+        let instancesSearchController = tabBarController.viewControllers?[tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController
+        navController?.popToRootViewController(animated: false)
+        self.requestToOpenInstance = false;
+        instancesSearchController?.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
     }
     
     func openSearch() {

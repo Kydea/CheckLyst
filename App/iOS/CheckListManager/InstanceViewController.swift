@@ -32,6 +32,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var currentAccessToken: String?
     var oldImagePickerDelegate: UIImagePickerControllerDelegate?
     var imagePickerController: UIImagePickerController = UIImagePickerController()
+    var closeCompletition: (() -> Void)?
     
     
     @IBOutlet weak var webView: WKWebView!
@@ -106,6 +107,8 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
         
         FileManager.default.clearTemporaryDirectory()
+        
+        self.tabBarController?.tabBar.items?[1].badgeValue = "Open"
     }
     
     override func didReceiveMemoryWarning()
@@ -148,6 +151,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         requestForDocument = false
         isInstanceClosed = false
     }
+    
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         
         if let imagePicker = viewControllerToPresent as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .photoLibrary {
@@ -206,16 +210,25 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         toggleNavigatioBarTint(false)
     }
     
-    func closeInstance() {
-        self.webView.evaluateJavaScript("instances.instance.close(function(){})")
-        self.cleanWebViewController()
-        isInstanceClosed = true
+    func closeInstance(completion: (() -> Void)? = nil) {
+        #if DEBUG
+            print("Closing instance...")
+        #endif
+        self.closeCompletition = completion
+        self.webView.evaluateJavaScript("instances.instance.close(function(){window.webkit.messageHandlers.instances.postMessage(\"close\");})")
     }
-    
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
-            if messageBody.hasPrefix("quit") {
+            if messageBody.hasPrefix("close") {
+                #if DEBUG
+                    print("Closed instance...")
+                #endif
+                self.cleanWebViewController()
+                self.isInstanceClosed = true
+                self.tabBarController?.tabBar.items?[1].badgeValue = nil
+                self.closeCompletition?()
+            } else if messageBody.hasPrefix("quit") {
                 self.cleanWebViewController()
                 self.appDelegate.goBackToList()
             } else if messageBody.hasPrefix("file") {
@@ -392,8 +405,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
-        self.closeInstance()
-        self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+        self.closeInstance() { [weak self] in
+            self?.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+        }
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -428,7 +442,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         webView.navigationDelegate = nil
         documentInteractionController.delegate = nil
         NotificationCenter.default.removeObserver(self)
-        webView.load(URLRequest(url: URL(string: "about:blank")!))
     }
     
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {

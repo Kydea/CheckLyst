@@ -14,8 +14,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
     
     var userCode: String?
     
-    
-    
     override func viewDidLoad() {
  
         super.viewDidLoad()
@@ -47,8 +45,8 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         tabBarItems[3].selectedImage = UIImage(named: "signatureSelectedIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
     }
+    
 }
-
 
 
 extension UIImage {
