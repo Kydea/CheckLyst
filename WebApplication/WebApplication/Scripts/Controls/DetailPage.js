@@ -25,7 +25,7 @@
                             matematici.popup.getResult().saved = true;
                             if (!options.wholePage && !takeOpen) matematici.popup.close();
 
-                            if (!data && result.data) refresh(result.data);
+                            if (!data && result) refresh(result);
 
                             matematici.blip.ok(function () {
                                 callback && callback(result);
@@ -146,7 +146,8 @@
                     if (options.completeHandler) options.completeHandler(detailPage);
 
                     title = matematici.popup.getTitle().html();
-                    refresh(data, true);
+                    //refresh(data, true);
+                    refresh(data);
                 }, 0);
             }
 
@@ -167,8 +168,11 @@
 
         refresh = function (d, avoidSetValues) {
             data = d;
-            if (data && !avoidSetValues) form.setValues(data);
-            matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
+            //if (data && !avoidSetValues) form.setValues(data);
+            var
+                id = data.id || data.fields && data.fields.id && data.fields.id.value,
+                code = data.code || data.fields && data.fields.code && data.fields.code.value;
+            matematici.popup.getTitle().html(title + (!data ? " (new)" : id ? " (ID: " + id + ")" : code ? " (Code: " + code + ")" : ""));
         };
 
     this.getElement = function () {

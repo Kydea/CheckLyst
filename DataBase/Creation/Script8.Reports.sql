@@ -32,7 +32,7 @@ create table "Reports"."Reports"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Reports_Name" on "Reports"."Reports" ("Company", upper("Code"));
+create unique index "Reports_Code" on "Reports"."Reports" ("Company", upper("Code"));
 
 create table "Reports"."ReportGroups"
 (

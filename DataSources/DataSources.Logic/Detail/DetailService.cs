@@ -73,6 +73,14 @@ namespace CheckListManager.DataSources.Logic.Detail
             }
 
             response.Valid = response.Fields.Count == 0;
+
+            if (response.Valid)
+                response.Fields["Code"] = new Field
+                {
+                    Value = record.Code,
+                    Editable = false
+                };
+
             return response;
         }
 
