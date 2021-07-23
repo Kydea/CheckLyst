@@ -215,12 +215,47 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     }
     
     @IBAction func newInstanceButtonTapped(_ sender: Any) {
+        
         guard let prototype = searchDictionary["prototype"] as? String,
               !prototype.isEmpty else {
             appDelegate.displayMessage(Title: "Error", Message: "Select a prototype")
             return
         }
-        performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+        
+        self.startActivityIndicator()
+        
+        ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
+            (serverResponse) in
+            self?.stopActivityIndicator()
+           
+            if let error = serverResponse.error {
+                self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                return
+            }
+            
+            if let response = serverResponse.response as? HTTPURLResponse, response.statusCode != 200 {
+                
+                let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                var error = String()
+                
+                if let errorMessages = json?["messages"] as? [String] {
+                    for value in errorMessages {
+                        error.append(value + "\n")
+                    }
+                }
+                
+                if error.isEmpty {
+                    error = json?["message"] as? String ?? "Unexpected error has occurred"
+                }
+                  
+
+                self?.appDelegate.displayMessage(Title: "Error", Message: error)
+                
+                return
+            }
+            
+            self?.performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+        }
     }
    
     
@@ -385,34 +420,27 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                     }
                 } else {
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in self.tabBarController?.selectedIndex = 0 }
+                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                 }
             } catch {
                 
                 print(error)
                 
-                do {
-                    /*This handles the case in which the error is not about validation (ex. send a letter instead of number)*/
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    var error = String()
-                    
-                    if let errorMessages = json["messages"] as? [String] {
-                        for value in errorMessages {
-                            error.append(value + "\n")
-                        }
-                        self.appDelegate.displayMessage(Title: "Error", Message: error)
-                    } else if let error = json["message"] as? String {
-                        self.appDelegate.displayMessage(Title: "Error", Message: error)
-                    } else {
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred")
+                let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                var error = String()
+                
+                if let errorMessages = json?["messages"] as? [String] {
+                    for value in errorMessages {
+                        error.append(value + "\n")
                     }
-    
-                } catch {
-                    
-                    print(error)
-                    
                 }
                 
+                if error.isEmpty {
+                    error = json?["message"] as? String ?? "Unexpected error has occurred"
+                }
+                
+                
+                self.appDelegate.displayMessage(Title: "Error", Message: error)
             }
             self.stopActivityIndicator()
         }

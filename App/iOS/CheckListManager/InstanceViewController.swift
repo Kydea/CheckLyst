@@ -226,11 +226,12 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 #endif
                 self.cleanWebViewController()
                 self.isInstanceClosed = true
-                self.tabBarController?.tabBar.items?[1].badgeValue = nil
                 self.closeCompletition?()
+                self.tabBarController?.tabBar.items?[1].badgeValue = nil
             } else if messageBody.hasPrefix("quit") {
                 self.cleanWebViewController()
                 self.appDelegate.goBackToList()
+                self.tabBarController?.tabBar.items?[1].badgeValue = nil
             } else if messageBody.hasPrefix("file") {
                 activityIndicator.startAnimating()
                 let fileURL = String(messageBody.split(separator: " ")[1])
