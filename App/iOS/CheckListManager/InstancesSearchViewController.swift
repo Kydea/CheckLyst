@@ -53,6 +53,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         activityIndicator.hidesWhenStopped = true
         newInstanceButton.title = "\u{f103} New Instance "
+        newInstanceButton.isEnabled = checkRoles(role: "Instances#Create#")
         
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
@@ -215,20 +216,27 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     }
     
     @IBAction func newInstanceButtonTapped(_ sender: Any) {
-        
         guard let prototype = searchDictionary["prototype"] as? String,
               !prototype.isEmpty else {
             appDelegate.displayMessage(Title: "Error", Message: "Select a prototype")
             return
         }
         
+        checkCreate(prototype: prototype) { [weak self] in
+            self?.performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+        }
+        
+    }
+    
+    func checkCreate(prototype: String, completition: (() -> Void)? = nil) {
+    
         self.startActivityIndicator()
         
         ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
             (serverResponse) in
             self?.stopActivityIndicator()
            
-            if let error = serverResponse.error {
+            if serverResponse.error != nil {
                 self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                 return
             }
@@ -240,7 +248,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 
                 if let errorMessages = json?["messages"] as? [String] {
                     for value in errorMessages {
-                        error.append(value + "\n")
+                        error.append(value + (errorMessages.last == value ? "" : "\n"))
                     }
                 }
                 
@@ -254,7 +262,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 return
             }
             
-            self?.performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+            completition?()
         }
     }
    
@@ -606,11 +614,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         }
                     }
                     
-                    if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
+                    if parameters.keys.contains("prototype") {
                         
                         controller.newInstance = true
+                        controller.newInstanceVersion = parameters["version"]
                         controller.newInstancePrototype = parameters["prototype"]!
-                        controller.newInstanceVersion = parameters["version"]!
                         controller.newInstanceFieldsValues = parameters["fieldsValues"]!
                     
                     } else if (parameters.keys.contains("code")) {
@@ -627,7 +635,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 let version = searchDictionary["version"]! as! String
                 controller.newInstance = true
                 controller.newInstancePrototype = prototype
-                controller.newInstanceVersion = version.isEmpty ? nil : version
                 controller.newInstanceFieldsValues = ""
                 controller.selectedItemsDictionary = selectedItemsDictionary;
             
