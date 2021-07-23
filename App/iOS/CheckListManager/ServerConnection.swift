@@ -69,6 +69,12 @@ open class ServerConnection {
         }
     }
     
+    static func checkCreationGrants(_ params : Dictionary<String, String>, completion: ((_ result:ServerResponse) -> Void)!){
+        sendHTTPRequest(baseUrl+"/Instances/Instance/CheckCreationGrants", parameters: params as Dictionary<String, AnyObject>, isAuthenticated: true, accessToken: nil){ (result) -> Void in
+            completion(result)
+        }
+    }
+    
     
     static func logoutFromServer(_ params : Dictionary<String, Dictionary<String, String>>,_ completion: ((_ result:ServerResponse) -> Void)!){
         
@@ -170,6 +176,16 @@ open class ServerConnection {
                     let params = encodeParams(parameters)
                     
                     let bodyString = "grant_type=refresh_token&refresh_token=" + (params["Refresh_Token"] as! String)
+                    
+                    request.httpBody = bodyString.data(using: String.Encoding.utf8)
+                    
+                } else if (urlPath.contains("CheckCreationGrants")) {
+                    
+                    request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                    
+                    let params = encodeParams(parameters)
+                    
+                    let bodyString = "prototype=" + (params["prototype"] as! String)
                     
                     request.httpBody = bodyString.data(using: String.Encoding.utf8)
                     
