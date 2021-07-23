@@ -343,6 +343,7 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             var information = new
             {
+                record.ID,
                 record.Code,
                 record.Description,
                 record.ReportSource,
