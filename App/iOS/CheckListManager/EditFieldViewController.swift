@@ -15,7 +15,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
     @IBOutlet var tableView: UITableView!
     
     @IBOutlet var okButton: UIButton!
- 
+     
     var fieldsArray: [Option]?
     
     var filteredFieldsArray: [Option] {
@@ -114,7 +114,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         fieldLabel?.text = searchViewController?.indexTextDictionary[rowIndex!]
         
         inputTextField?.text = (searchViewController?.selectedItemsDictionary[rowIndex!]?.text != "Insert") ?  searchViewController?.selectedItemsDictionary[rowIndex!]?.text: ""
-            
+                        
         }
         
         cell!.preservesSuperviewLayoutMargins = false
