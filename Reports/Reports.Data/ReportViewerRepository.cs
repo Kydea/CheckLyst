@@ -174,6 +174,7 @@ namespace CheckListManager.Reports.Data
                                             case "int4":
                                             case "int8":
                                             case "decimal":
+                                            case "numeric":
                                                 var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 numberRow[Index] = numberValue;
                                                 formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
