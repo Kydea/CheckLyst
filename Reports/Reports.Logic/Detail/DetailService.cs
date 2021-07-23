@@ -343,14 +343,15 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             var information = new
             {
+                record.ID,
                 record.Code,
                 record.Description,
                 record.ReportSource,
                 record.Query,
-                record.InstancesRangeRestricted,
-                record.InstancesIDAlias,
-                record.PrototypesRangeRestricted,
-                record.PrototypesIDAlias,
+                //record.InstancesRangeRestricted,
+                //record.InstancesIDAlias,
+                //record.PrototypesRangeRestricted,
+                //record.PrototypesIDAlias,
                 record.Online,
                 record.Restricted,
                 ReportGroups = record.Groups,

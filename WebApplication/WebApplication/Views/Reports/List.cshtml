@@ -96,6 +96,8 @@
             }
         });
 
+        $("input[name=id]").keyfilter(/[\d]/);
+
         if (editor)
             $("#AddButton").on("click", function () {
                 matematici.navigator.open("@Url.Action("Editor")");

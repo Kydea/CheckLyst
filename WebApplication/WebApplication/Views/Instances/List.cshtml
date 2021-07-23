@@ -187,6 +187,8 @@
             addButton.hide();
         }
 
+        $("input[name=id]").keyfilter(/[\d]/);
+
         callback.call();
     };
 </script>
