@@ -103,7 +103,7 @@ namespace CheckListManager.Reports.Data
             return ReportRow;
         }
 
-        public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
+        public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string decimalSeparator, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -177,12 +177,12 @@ namespace CheckListManager.Reports.Data
                                             case "numeric":
                                                 var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 numberRow[Index] = numberValue;
-                                                formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
+                                                formattedValue = format == null ? numberValue.ToString() : DecimalHelper.Format(numberValue, format, decimalSeparator);
                                                 break;
                                             case "float8":
                                                 var floatValue = await DataReader.GetFieldValueAsync<double>(Index, cancellationToken);
                                                 numberRow[Index] = (decimal)floatValue;
-                                                formattedValue = format == null ? floatValue.ToString() : string.Format($"{{0:{format}}}", floatValue);
+                                                formattedValue = format == null ? floatValue.ToString() : DecimalHelper.Format(floatValue, format, decimalSeparator);
                                                 break;
                                             case "bool":
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);

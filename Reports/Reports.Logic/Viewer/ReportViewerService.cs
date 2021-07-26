@@ -112,7 +112,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
             var parameters = new List<Parameter>(report.ReportClauses.Count);
             var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
-            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
+            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
             return new ReportResponse
             {
                 Code = report.Code,
