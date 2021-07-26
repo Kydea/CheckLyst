@@ -231,10 +231,18 @@ import CoreData
         let instancesSearchController = tabBarController.viewControllers?[tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController
         navController?.popToRootViewController(animated: false)
         self.requestToOpenInstance = false;
-        guard let prototype = requestedUrlInfo?["prototype"] else { return }
-        instancesSearchController?.checkCreate(prototype: prototype) {
+        
+        if let prototype = requestedUrlInfo?["prototype"] {
+            instancesSearchController?.checkCreate(prototype: prototype) {
+                instancesSearchController?.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
+            }
+        }
+        
+        if requestedUrlInfo?["code"] != nil {
+            
             instancesSearchController?.performSegue(withIdentifier: "openInstanceDirectly", sender: self)
         }
+        
     }
     
     func openSearch() {
