@@ -233,27 +233,55 @@ namespace CheckListManager.Reports.Data
                                             break;
                                         case "min":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                numberFinalTotals[Index] = numberFinalTotals[Index] < numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = stringTotals[Index] != null && string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringTotals[Index] : stringRow[Index];
+                                                stringFinalTotals[Index] = stringFinalTotals[Index] != null && string.Compare(stringFinalTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringFinalTotals[Index] : stringRow[Index];
+                                            }
                                             break;
                                         case "max":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberTotals[Index] > numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                numberFinalTotals[Index] = numberFinalTotals[Index] > numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") > 0 ? stringTotals[Index] : stringRow[Index];
+                                                stringFinalTotals[Index] = string.Compare(stringFinalTotals[Index] ?? "", stringRow[Index] ?? "") > 0 ? stringFinalTotals[Index] : stringRow[Index];
+                                            }
                                             break;
                                         case "first":
-                                            if (numberRow[Index].HasValue && !numberTotals[Index].HasValue)
-                                                numberTotals[Index] = numberRow[Index];
-                                            else if (stringTotals[Index] == null)
-                                                stringTotals[Index] = stringRow[Index];
+                                            if (numberRow[Index].HasValue)
+                                            {
+                                                if (!numberTotals[Index].HasValue)
+                                                    numberTotals[Index] = numberRow[Index];
+                                                if (!numberFinalTotals[Index].HasValue)
+                                                    numberFinalTotals[Index] = numberRow[Index];
+                                            }
+                                            else
+                                            {
+                                                if (stringTotals[Index] == null)
+                                                    stringTotals[Index] = stringRow[Index];
+                                                if (stringFinalTotals[Index] == null)
+                                                    stringFinalTotals[Index] = stringRow[Index];
+                                            }
                                             break;
                                         case "last":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberRow[Index];
+                                                numberFinalTotals[Index] = numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = stringRow[Index];
+                                                stringFinalTotals[Index] = stringRow[Index];
+                                            }
                                             break;
                                     }
                                 }
