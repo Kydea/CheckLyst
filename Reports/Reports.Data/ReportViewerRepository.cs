@@ -71,7 +71,7 @@ namespace CheckListManager.Reports.Data
             }
         }
 
-        private ReportRow AddTotalRow(int columnsCount, int rowsCount, List<ReportColumns> columns, List<string> columnTypes, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
+        private ReportRow AddTotalRow(int columnsCount, int rowsCount, string decimalSeparator, List<ReportColumns> columns, List<string> columnTypes, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
         {
             for (var Index = 0; Index < columnsCount; ++Index)
             {
@@ -94,7 +94,7 @@ namespace CheckListManager.Reports.Data
                 var column = columns[Index];
                 if (column.Visible)
                 {
-                    ReportRow.Record.Add(stringTotals[Index] ?? numberTotals[Index]?.ToString() ?? string.Empty);
+                    ReportRow.Record.Add(stringTotals[Index] ?? DecimalHelper.Format(numberTotals[Index], string.IsNullOrEmpty(column.Format) ? null : column.Format, decimalSeparator) ?.ToString() ?? string.Empty);
                     numberTotals[Index] = null;
                     stringTotals[Index] = null;
                     distinctValues[Index] = null;
@@ -211,7 +211,7 @@ namespace CheckListManager.Reports.Data
 
                                 if (needToAddTotal)
                                 {
-                                    Result.Add(AddTotalRow(columnsCount, rowsCount - 1, columns, columnTypes, numberTotals, stringTotals, distinctValues));
+                                    Result.Add(AddTotalRow(columnsCount, rowsCount - 1, decimalSeparator, columns, columnTypes, numberTotals, stringTotals, distinctValues));
                                     rowsCount = 1;
                                 }
 
@@ -291,8 +291,8 @@ namespace CheckListManager.Reports.Data
 
                             if (anyGroupColumn)
                             {
-                                Result.Add(AddTotalRow(columnsCount, rowsCount, columns, columnTypes, numberTotals, stringTotals, distinctValues));
-                                Result.Add(AddTotalRow(columnsCount, Result.Count, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
+                                Result.Add(AddTotalRow(columnsCount, rowsCount, decimalSeparator, columns, columnTypes, numberTotals, stringTotals, distinctValues));
+                                Result.Add(AddTotalRow(columnsCount, Result.Count, decimalSeparator, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
                             }
                         }
                 }
