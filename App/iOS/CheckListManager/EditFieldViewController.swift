@@ -44,7 +44,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
     let searchController = UISearchController()
     
     let appDelegate = UIApplication.shared as! MyApplication
-
+    
     
     @IBOutlet var fieldNameLabel: UILabel!
     

@@ -33,12 +33,10 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     var oldImagePickerDelegate: UIImagePickerControllerDelegate?
     var imagePickerController: UIImagePickerController = UIImagePickerController()
     var closeCompletition: (() -> Void)?
-    
+    let loader: LoadingViewController = LoadingViewController.shared
     
     @IBOutlet weak var webView: WKWebView!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var customBackButton: UIBarButtonItem!
-    
     
     override func viewDidLoad()
     {
@@ -52,8 +50,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.configuration.userContentController.add(self, name: "instances")
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         self.definesPresentationContext = true
         
         scanButtonIsVisible = true
@@ -123,7 +119,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func lockView()
     {
-        activityIndicator.startAnimating()
+        loader.startLoading(controller: self)
         self.webView.isHidden = true
         webView.scrollView.isScrollEnabled = false
         self.navigationItem.setHidesBackButton(true, animated:false)
@@ -133,7 +129,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func unlockView()
     {
-        activityIndicator.stopAnimating()
+        loader.stopLoading()
         self.webView.isHidden = false
         webView.scrollView.isScrollEnabled = true
         self.navigationItem.setHidesBackButton(false, animated:false)
@@ -233,11 +229,11 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 self.appDelegate.goBackToList()
                 self.tabBarController?.tabBar.items?[1].badgeValue = nil
             } else if messageBody.hasPrefix("file") {
-                activityIndicator.startAnimating()
+                loader.startLoading(controller: self)
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
                     FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
-                    self.activityIndicator.stopAnimating()
+                        self.loader.stopLoading()
                     if url != nil {
                         if self.checkFile(file: data, url: fileURL) {
                             self.requestForDocument = true

@@ -14,15 +14,15 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     
     @IBOutlet var webView: WKWebView!
-    
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    
+        
     let appDelegate = UIApplication.shared as! MyApplication
     
     var helpLoaded : Bool = false
     
     var creationTime: Date?
     var currentAccessToken: String?
+    
+    let loader: LoadingViewController = LoadingViewController.shared
     
     override func viewDidLoad()
         
@@ -37,10 +37,6 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
         currentAccessToken = (UserDefaults.standard.value(forKey: "access_token") as! String)
         
         webView.navigationDelegate = self
-        
-        activityIndicator.hidesWhenStopped = true
-        
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         
         helpLoaded = false
         
@@ -115,7 +111,7 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     func lockView()
     {
-        activityIndicator.startAnimating()
+        loader.startLoading(controller: self)
         self.tabBarController!.tabBar.isUserInteractionEnabled = false
         webView.scrollView.isScrollEnabled = false
     }
@@ -123,7 +119,7 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     func unlockView()
     {
-        activityIndicator.stopAnimating()
+        loader.stopLoading()
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
         webView.scrollView.isScrollEnabled = true
     }

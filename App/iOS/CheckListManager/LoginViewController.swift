@@ -23,9 +23,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var ChooseServerButton: UIButton!
     
     @IBOutlet var EditServerButton: UIButton!
-    
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    
+        
     @IBOutlet var companyView: UIView!
     
     @IBOutlet var userCodeView: UIView!
@@ -70,6 +68,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let appDelegate = UIApplication.shared as! MyApplication
     
+    let loader: LoadingViewController = LoadingViewController.shared
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -88,9 +88,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LoginViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
         
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-        
     }
     
     @IBAction func verifyServer(_ sender: Any) {
@@ -101,10 +98,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             }
         } else {
             
-            activityIndicator.startAnimating()
-            self.view.isUserInteractionEnabled = false
+            loader.startLoading(controller: self)
             
             ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
+                
+                self.loader.stopLoading()
                 
                 if (serverResponse.error != nil) {
                     
@@ -129,10 +127,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                 
                 }
-                
-                self.activityIndicator.stopAnimating()
-                self.view.isUserInteractionEnabled = true
-            
+    
             }
         
         }
@@ -158,11 +153,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func chooseCompany(_ sender: Any) {
         
-        activityIndicator.startAnimating()
-        
-        self.view.isUserInteractionEnabled = false
-        
+        loader.startLoading(controller: self)
+                
         ServerConnection.getCompaniesRequest(server: selectedServerUrl){ (serverResponse) -> Void in
+            
+            self.loader.stopLoading()
             
             if(serverResponse.error != nil) {
                 
@@ -180,11 +175,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     for company in json {
                         self.companyChooseDictionary.append(company)
                     }
-                    
-                    self.activityIndicator.stopAnimating()
-                    
-                    self.view.isUserInteractionEnabled = true
-                    
+                                                            
                     self.performSegue(withIdentifier: "ChooseServer", sender: "company")
                     
                 }
@@ -193,11 +184,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 print("Error deserializing JSON: \(error)")
             }
-            
-            self.activityIndicator.stopAnimating()
-            
-            self.view.isUserInteractionEnabled = true
-            
         }
     }
     
@@ -283,11 +269,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func performLogin() {
         
-        activityIndicator.startAnimating()
-        
-        self.view.isUserInteractionEnabled = false
-        
+        loader.startLoading(controller: self)
+                
         ServerConnection.loginOrRefreshToServer(server: selectedServerUrl, ["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]) { (serverResponse) -> Void in
+            
+            self.loader.stopLoading()
             
             if(serverResponse.error != nil) {
                 
@@ -305,8 +291,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 
                 self.appDelegate.displayMessage(Title: title, Message: errorMessage)
                 
-                self.activityIndicator.stopAnimating()
-                self.view.isUserInteractionEnabled = true
             }
             
             do{
@@ -329,10 +313,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         let okMex = (json["error"] == nil)
                         let messageMex = !okMex ? json["error_description"] as! String : ""
                         self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
-                        
-                        self.activityIndicator.stopAnimating()
-                        self.view.isUserInteractionEnabled = true
-                    
+                                            
                     }
                     
                 }
@@ -340,8 +321,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             } catch {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 print("Error deserializing JSON: \(error)")
-                self.activityIndicator.stopAnimating()
-                self.view.isUserInteractionEnabled = true
             }
             
         }
@@ -350,13 +329,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func getCompanyData() {
         
-        self.activityIndicator.startAnimating()
-        self.view.isUserInteractionEnabled = false
+        self.loader.startLoading(controller: self)
         
         ServerConnection.getCompanieSettingsRequest { (serverResponse) -> Void in
             
-             self.activityIndicator.stopAnimating()
-            self.view.isUserInteractionEnabled = true
+            self.loader.stopLoading()
             
             if(serverResponse.error != nil) {
                 
@@ -380,8 +357,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             } catch {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 print("Error deserializing JSON: \(error)")
-                self.activityIndicator.stopAnimating()
-                self.view.isUserInteractionEnabled = true
+                
             }
             
         }
@@ -521,14 +497,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     @objc func newServerConfiguration(_ notification:Notification) {
 
-        self.activityIndicator.startAnimating()
+        loader.startLoading(controller: self)
         prepareServerForNewConfiguration()
 
     }
     
     @objc func serverHasBeenConfigured(_ notification:Notification) {
 
-        self.activityIndicator.stopAnimating()
+        self.loader.stopLoading()
         self.viewWillAppear(true)
 
     }

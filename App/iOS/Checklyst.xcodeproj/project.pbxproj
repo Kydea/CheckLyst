@@ -26,6 +26,7 @@
 		2BB83E1225E8E64700957987 /* UserDefaults+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB83E1125E8E64700957987 /* UserDefaults+Utility.swift */; };
 		2BEB6CB3265D35F30014BB4D /* CountDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB6CB2265D35F30014BB4D /* CountDownViewController.swift */; };
 		2BF8EFC62539A388005EA883 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF8EFC52539A388005EA883 /* BaseTableViewCell.swift */; };
+		2BFA3A3326AFF508003F1693 /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BFA3A3226AFF508003F1693 /* LoadingViewController.swift */; };
 		33247B291E6023E200FA07BF /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33247B281E6023E200FA07BF /* ServerResponse.swift */; };
 		33247B2B1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33247B2A1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift */; };
 		336AA7B11D3F59FA00BB8ADA /* CustomUrProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */; };
@@ -116,6 +117,7 @@
 		2BB83E1125E8E64700957987 /* UserDefaults+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Utility.swift"; sourceTree = "<group>"; };
 		2BEB6CB2265D35F30014BB4D /* CountDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountDownViewController.swift; sourceTree = "<group>"; };
 		2BF8EFC52539A388005EA883 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
+		2BFA3A3226AFF508003F1693 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		33247B281E6023E200FA07BF /* ServerResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
 		33247B2A1E6025EE00FA07BF /* ChooseServerAndCompanyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseServerAndCompanyViewController.swift; sourceTree = "<group>"; };
 		336AA7B01D3F59F900BB8ADA /* CustomUrProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUrProtocol.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				2B5ED1692672122B00CF5EDE /* SignersViewController.swift */,
 				2B5ED16E2672123B00CF5EDE /* SignerLoginViewController.swift */,
 				2B5ED1732672124A00CF5EDE /* SignerPinViewController.swift */,
+				2BFA3A3226AFF508003F1693 /* LoadingViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -557,6 +560,7 @@
 				33A4F4D21D25F036005FAED9 /* AppInfo.swift in Sources */,
 				336AA7B11D3F59FA00BB8ADA /* CustomUrProtocol.swift in Sources */,
 				686E4B5D1FF5250F00A8AE22 /* IstancesBindRequestJSON.swift in Sources */,
+				2BFA3A3326AFF508003F1693 /* LoadingViewController.swift in Sources */,
 				33D4994B1D2C4F1300B263D5 /* NavigationBar.swift in Sources */,
 				681BF9011FF40D51007F6824 /* CompanySettingsJSON.swift in Sources */,
 				33CF25931D383051004D7611 /* Server+CoreDataProperties.swift in Sources */,
@@ -781,7 +785,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = ZMGD2SE799;
 				INFOPLIST_FILE = CheckListManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -805,7 +809,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = ZMGD2SE799;
 				INFOPLIST_FILE = CheckListManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;

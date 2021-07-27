@@ -297,17 +297,12 @@
                                     <constraint firstAttribute="trailing" secondItem="rJB-ku-q53" secondAttribute="trailing" id="lZU-Xo-HTc"/>
                                 </constraints>
                             </scrollView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Bso-d8-QKU">
-                                <rect key="frame" x="502" y="673" width="20" height="20"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="ydo-pT-hlg" firstAttribute="top" secondItem="B01-fz-Whn" secondAttribute="top" id="ICu-Ez-UdH"/>
-                            <constraint firstItem="Bso-d8-QKU" firstAttribute="centerX" secondItem="B01-fz-Whn" secondAttribute="centerX" id="KZH-9T-uf7"/>
                             <constraint firstAttribute="bottom" secondItem="ydo-pT-hlg" secondAttribute="bottom" id="WqM-ks-OyM"/>
                             <constraint firstItem="rJB-ku-q53" firstAttribute="width" secondItem="B01-fz-Whn" secondAttribute="width" id="dtq-pt-beo"/>
-                            <constraint firstItem="Bso-d8-QKU" firstAttribute="centerY" secondItem="B01-fz-Whn" secondAttribute="centerY" id="eJa-Os-Q1C"/>
                             <constraint firstAttribute="trailing" secondItem="ydo-pT-hlg" secondAttribute="trailing" id="eQC-2w-zPr"/>
                             <constraint firstItem="ydo-pT-hlg" firstAttribute="leading" secondItem="B01-fz-Whn" secondAttribute="leading" id="o5Z-dx-21J"/>
                             <constraint firstItem="rJB-ku-q53" firstAttribute="height" secondItem="B01-fz-Whn" secondAttribute="height" constant="200" id="rnr-q2-yPe"/>
@@ -317,7 +312,6 @@
                     <connections>
                         <outlet property="ChooseServerButton" destination="eN4-GO-yGp" id="MYm-UT-7Hm"/>
                         <outlet property="EditServerButton" destination="yuF-Ml-s94" id="hbu-TB-S6C"/>
-                        <outlet property="activityIndicator" destination="Bso-d8-QKU" id="spx-xA-aJF"/>
                         <outlet property="companyTextField" destination="DPC-AF-K54" id="VNU-fd-f5I"/>
                         <outlet property="companyView" destination="sSM-XO-hgD" id="2ma-DI-SWM"/>
                         <outlet property="loginButton" destination="z3n-9U-08x" id="jst-qb-ISp"/>
@@ -773,13 +767,6 @@
                                     <constraint firstAttribute="trailing" secondItem="i6t-iW-o1V" secondAttribute="trailing" id="cDg-Z9-zyD"/>
                                 </constraints>
                             </scrollView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="r1S-7l-G7E">
-                                <rect key="frame" x="492" y="663" width="40" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="40" id="3u9-WM-zma"/>
-                                    <constraint firstAttribute="height" constant="40" id="QJo-cL-aWI"/>
-                                </constraints>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -787,15 +774,12 @@
                             <constraint firstAttribute="trailing" secondItem="g1T-aa-lSQ" secondAttribute="trailing" id="8Yq-M7-Ub5"/>
                             <constraint firstItem="i6t-iW-o1V" firstAttribute="height" secondItem="M0g-QB-TLE" secondAttribute="height" id="TqD-NY-xpl"/>
                             <constraint firstItem="g1T-aa-lSQ" firstAttribute="leading" secondItem="M0g-QB-TLE" secondAttribute="leading" id="XAY-7d-4Wy"/>
-                            <constraint firstItem="r1S-7l-G7E" firstAttribute="centerY" secondItem="M0g-QB-TLE" secondAttribute="centerY" id="boT-LQ-NIm"/>
                             <constraint firstAttribute="bottom" secondItem="g1T-aa-lSQ" secondAttribute="bottom" id="nMz-i8-1fM"/>
-                            <constraint firstItem="r1S-7l-G7E" firstAttribute="centerX" secondItem="M0g-QB-TLE" secondAttribute="centerX" id="qdu-Qz-d6R"/>
                             <constraint firstItem="g1T-aa-lSQ" firstAttribute="top" secondItem="M0g-QB-TLE" secondAttribute="top" id="ree-Du-swd"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="VXx-7Z-xHv"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="r1S-7l-G7E" id="1uY-bO-h2A"/>
                         <outlet property="userCodeTextField" destination="K22-hO-6hb" id="BsH-Nz-ZYS"/>
                         <segue destination="jni-eh-hXA" kind="presentation" identifier="userSetPinSegue" modalTransitionStyle="crossDissolve" id="FTi-8I-CWJ"/>
                     </connections>
@@ -1070,20 +1054,11 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="R3u-YP-wuO">
-                                <rect key="frame" x="502" y="665.5" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="AaR-4O-gfV"/>
-                                    <constraint firstAttribute="height" constant="20" id="EYL-13-jWV"/>
-                                </constraints>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="sDV-7B-eD1" secondAttribute="trailing" id="3ZY-h0-vpo"/>
-                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerY" secondItem="sDV-7B-eD1" secondAttribute="centerY" id="GPJ-BL-edP"/>
                             <constraint firstItem="fdL-VX-nyi" firstAttribute="top" secondItem="sDV-7B-eD1" secondAttribute="bottom" id="T9y-wN-jfu"/>
-                            <constraint firstItem="R3u-YP-wuO" firstAttribute="centerX" secondItem="sDV-7B-eD1" secondAttribute="centerX" id="Uid-ms-cg8"/>
                             <constraint firstItem="sDV-7B-eD1" firstAttribute="top" secondItem="F68-QZ-Uoa" secondAttribute="bottom" id="cAe-8j-8OW"/>
                             <constraint firstItem="sDV-7B-eD1" firstAttribute="leading" secondItem="B9F-Ne-GUH" secondAttribute="leading" id="kVq-oI-MFl"/>
                         </constraints>
@@ -1096,7 +1071,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="R3u-YP-wuO" id="7Ye-Ks-b2V"/>
                         <outlet property="customBackButton" destination="d8g-73-n1R" id="C86-0N-VGP"/>
                         <outlet property="webView" destination="sDV-7B-eD1" id="dLd-vW-1NY"/>
                         <segue destination="me8-qg-fhs" kind="unwind" identifier="goBackSearchInstances" unwindAction="unwindToSearchInstancesWithSender:" id="bIA-Us-Bky"/>
@@ -1193,13 +1167,6 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tt4-P5-N2S">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="1080"/>
                                         <subviews>
-                                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="1sB-x4-Tyf">
-                                                <rect key="frame" x="290" y="434" width="20" height="20"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="20" id="C56-wV-kWL"/>
-                                                    <constraint firstAttribute="height" constant="20" id="Pja-M1-bSo"/>
-                                                </constraints>
-                                            </activityIndicatorView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7wI-wa-XyI" userLabel="firstLine">
                                                 <rect key="frame" x="40" y="140" width="520" height="1"/>
                                                 <color key="backgroundColor" red="0.01176470588" green="0.76470588240000004" blue="0.69411764710000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1375,7 +1342,6 @@
                                             <constraint firstAttribute="trailing" secondItem="7wI-wa-XyI" secondAttribute="trailing" constant="40" id="Nel-3T-Ggv">
                                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                                             </constraint>
-                                            <constraint firstItem="1sB-x4-Tyf" firstAttribute="centerX" secondItem="hS5-t2-TWg" secondAttribute="centerX" id="OcT-Jg-v82"/>
                                             <constraint firstItem="2Rp-Nw-mh0" firstAttribute="width" secondItem="tt4-P5-N2S" secondAttribute="width" id="PhB-Mv-tVF"/>
                                             <constraint firstItem="7wI-wa-XyI" firstAttribute="leading" secondItem="tt4-P5-N2S" secondAttribute="leading" constant="40" id="Pku-Gl-0Dt">
                                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
@@ -1389,7 +1355,6 @@
                                             </constraint>
                                             <constraint firstAttribute="trailing" secondItem="2Rp-Nw-mh0" secondAttribute="trailing" id="kgl-yG-Qp6"/>
                                             <constraint firstItem="yTa-K9-shS" firstAttribute="top" secondItem="hS5-t2-TWg" secondAttribute="bottom" constant="-10" id="kw7-C1-Erd"/>
-                                            <constraint firstItem="1sB-x4-Tyf" firstAttribute="centerY" secondItem="hS5-t2-TWg" secondAttribute="centerY" id="m8H-QP-AgF"/>
                                             <constraint firstItem="2Rp-Nw-mh0" firstAttribute="leading" secondItem="tt4-P5-N2S" secondAttribute="leading" id="pp0-Pr-b6T"/>
                                             <constraint firstAttribute="trailing" secondItem="yTa-K9-shS" secondAttribute="trailing" constant="40" id="s5d-Nb-a0f">
                                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
@@ -1427,7 +1392,6 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="1000"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="1sB-x4-Tyf" id="oud-2C-hcW"/>
                         <outlet property="newInstanceButton" destination="t19-Au-y41" id="OXx-N5-Oez"/>
                         <outlet property="scrollView" destination="aMy-cf-WfW" id="Gws-V2-05E"/>
                         <outlet property="searchInstanceButton" destination="ZNN-rq-hjE" id="phn-J7-46d"/>
@@ -1697,27 +1661,17 @@
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7SY-gU-cPQ">
-                                <rect key="frame" x="502" y="695.5" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="5Gj-2d-sWb"/>
-                                    <constraint firstAttribute="height" constant="20" id="B5s-mX-naY"/>
-                                </constraints>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerX" secondItem="Z96-s9-jSy" secondAttribute="centerX" id="2VJ-IR-1TN"/>
                             <constraint firstItem="Z96-s9-jSy" firstAttribute="leading" secondItem="QaB-zB-p7u" secondAttribute="leading" id="5YR-Py-wJz"/>
                             <constraint firstItem="Z96-s9-jSy" firstAttribute="top" secondItem="Saa-4x-LZt" secondAttribute="bottom" constant="40" id="PfP-rl-p37"/>
                             <constraint firstAttribute="trailing" secondItem="Z96-s9-jSy" secondAttribute="trailing" id="RAl-iK-lFR"/>
                             <constraint firstItem="VyD-rS-TeA" firstAttribute="top" secondItem="Z96-s9-jSy" secondAttribute="bottom" constant="-20" id="Z9R-Iq-Dgh"/>
-                            <constraint firstItem="7SY-gU-cPQ" firstAttribute="centerY" secondItem="Z96-s9-jSy" secondAttribute="centerY" id="ndW-Oc-090"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="zZ3-48-vKb"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="7SY-gU-cPQ" id="oH8-ng-yjG"/>
                         <outlet property="webView" destination="Z96-s9-jSy" id="aBD-6l-d34"/>
                     </connections>
                 </viewController>
@@ -2120,9 +2074,6 @@
                                     </mask>
                                 </variation>
                             </scrollView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ago-9M-buZ">
-                                <rect key="frame" x="502" y="673" width="20" height="20"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="0.79746361301369861" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <constraints>
@@ -2132,11 +2083,9 @@
                             <constraint firstItem="ZJt-19-trX" firstAttribute="width" secondItem="vdj-b7-1A6" secondAttribute="width" multiplier="9:10" id="ZMe-1U-29L">
                                 <variation key="heightClass=regular-widthClass=compact" constant="0.0"/>
                             </constraint>
-                            <constraint firstItem="ago-9M-buZ" firstAttribute="centerY" secondItem="vdj-b7-1A6" secondAttribute="centerY" id="c4X-gt-YoH"/>
                             <constraint firstItem="ZJt-19-trX" firstAttribute="width" secondItem="vdj-b7-1A6" secondAttribute="width" multiplier="9:16" id="emw-Sp-Yo2"/>
                             <constraint firstItem="ZJt-19-trX" firstAttribute="width" secondItem="vdj-b7-1A6" secondAttribute="width" multiplier="9:20" id="jEC-a3-JZJ"/>
                             <constraint firstAttribute="bottom" secondItem="4PT-jN-xf9" secondAttribute="bottom" id="mCg-gN-apP"/>
-                            <constraint firstItem="ago-9M-buZ" firstAttribute="centerX" secondItem="vdj-b7-1A6" secondAttribute="centerX" id="vTB-PJ-xXM"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -2162,7 +2111,6 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="activityIndicator" destination="ago-9M-buZ" id="b2v-Oy-hdn"/>
                         <outlet property="closeButton" destination="mdC-xe-PUy" id="KJe-aE-3lm"/>
                         <outlet property="loginView" destination="ZJt-19-trX" id="41g-jK-SEL"/>
                         <outlet property="passwordTextField" destination="KhN-Ms-EZ8" id="boq-Gy-QkO"/>
@@ -2466,18 +2414,13 @@
                                     </mask>
                                 </variation>
                             </scrollView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="rgo-nz-7fo">
-                                <rect key="frame" x="502" y="673" width="20" height="20"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="0.79746361300000002" colorSpace="custom" customColorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="bCd-S2-0u4" firstAttribute="width" secondItem="nQL-CK-DIt" secondAttribute="width" multiplier="9:10" id="80F-qd-LTD"/>
-                            <constraint firstItem="rgo-nz-7fo" firstAttribute="centerY" secondItem="nQL-CK-DIt" secondAttribute="centerY" id="KlQ-7t-Fis"/>
                             <constraint firstItem="bCd-S2-0u4" firstAttribute="width" secondItem="nQL-CK-DIt" secondAttribute="width" multiplier="9:20" id="Rpm-FW-xfP"/>
                             <constraint firstItem="qpi-45-29y" firstAttribute="leading" secondItem="nQL-CK-DIt" secondAttribute="leading" id="XB5-T8-Gge"/>
                             <constraint firstItem="bCd-S2-0u4" firstAttribute="width" secondItem="nQL-CK-DIt" secondAttribute="width" multiplier="9:16" id="Y02-b8-Nh4"/>
-                            <constraint firstItem="rgo-nz-7fo" firstAttribute="centerX" secondItem="nQL-CK-DIt" secondAttribute="centerX" id="qab-bn-VWc"/>
                             <constraint firstAttribute="trailing" secondItem="qpi-45-29y" secondAttribute="trailing" id="sO0-EZ-O6W"/>
                             <constraint firstItem="qpi-45-29y" firstAttribute="top" secondItem="nQL-CK-DIt" secondAttribute="top" id="t51-cQ-p7M"/>
                             <constraint firstAttribute="bottom" secondItem="qpi-45-29y" secondAttribute="bottom" id="zWS-cr-PQL"/>
@@ -2506,7 +2449,6 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="activityIndicator" destination="rgo-nz-7fo" id="Sjm-wu-9dU"/>
                         <outlet property="closeButton" destination="62O-av-1H6" id="5Bn-E3-ruz"/>
                         <outlet property="confirmPinTextField" destination="mhK-eF-TIZ" id="Emh-5i-tBg"/>
                         <outlet property="loginView" destination="bCd-S2-0u4" id="s5e-7x-uiE"/>
@@ -2519,6 +2461,40 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eUw-Um-eti" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-100" y="3029.8578199052131"/>
+        </scene>
+        <!--Loading View Controller-->
+        <scene sceneID="CbU-IR-0fD">
+            <objects>
+                <viewController storyboardIdentifier="loading_id" id="dA1-Xv-myl" customClass="LoadingViewController" customModule="Checklyst" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Nfg-Gr-74D"/>
+                        <viewControllerLayoutGuide type="bottom" id="qmg-t3-ZFt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="bAq-Ey-5Ip">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="wvM-sS-aNl">
+                                <rect key="frame" x="502" y="673" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="9Ge-uV-By9"/>
+                                    <constraint firstAttribute="width" constant="20" id="Yaq-GW-NqM"/>
+                                </constraints>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wvM-sS-aNl" firstAttribute="centerX" secondItem="bAq-Ey-5Ip" secondAttribute="centerX" id="KaO-Ht-lwj"/>
+                            <constraint firstItem="wvM-sS-aNl" firstAttribute="centerY" secondItem="bAq-Ey-5Ip" secondAttribute="centerY" id="hCF-ry-0Nc"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="wvM-sS-aNl" id="g85-A9-Hud"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KLZ-ZQ-Frh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="964" y="3040"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>

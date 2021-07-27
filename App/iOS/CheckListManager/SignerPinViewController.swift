@@ -17,9 +17,10 @@ class SignerPinViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var passwordTextField: UITextField!
     @IBOutlet var closeButton: UIButton!
     @IBOutlet var logoutButton: UIButton!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
 
     let appDelegate = (UIApplication.shared as! MyApplication)
+    let loader: LoadingViewController = LoadingViewController.shared
+
     
     var signer: Signer?
     
@@ -45,8 +46,6 @@ class SignerPinViewController: UIViewController, UITextFieldDelegate {
         
         userCodeTextField.isEnabled = false
         
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
     }
     
     func changePin() {
@@ -76,16 +75,14 @@ class SignerPinViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        activityIndicator.startAnimating()
-        self.view.isUserInteractionEnabled = false
+        loader.startLoading(controller: self.parent ?? self)
         
         ServerConnection.setPin(["Pin" : pin,"Password":password], accessToken: signer!.accessToken) { (serverResponse) -> Void in
-    
+            self.loader.stopLoading()
+
             do{
                 if(serverResponse.error != nil) {
                     self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                    self.activityIndicator.stopAnimating()
-                    self.view.isUserInteractionEnabled = true
                 }
                 
                 if serverResponse.data != nil {
@@ -100,13 +97,9 @@ class SignerPinViewController: UIViewController, UITextFieldDelegate {
                         let messageMex = messages?[0] as? String ?? ""
                         self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
                     }
-                    self.activityIndicator.stopAnimating()
-                    self.view.isUserInteractionEnabled = true
                 }
             } catch {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
-                self.activityIndicator.stopAnimating()
-                self.view.isUserInteractionEnabled = true
             }
             
         }
