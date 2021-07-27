@@ -103,7 +103,7 @@ namespace CheckListManager.Reports.Data
             return ReportRow;
         }
 
-        public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
+        public async Task<List<ReportRow>> GetDataAsync(long company, string timeZone, string decimalSeparator, string query, List<ReportColumns> columns, IEnumerable<Parameter> parameters, CancellationToken cancellationToken)
         {
             try
             {
@@ -177,12 +177,12 @@ namespace CheckListManager.Reports.Data
                                             case "numeric":
                                                 var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
                                                 numberRow[Index] = numberValue;
-                                                formattedValue = format == null ? numberValue.ToString() : string.Format($"{{0:{format}}}", numberValue);
+                                                formattedValue = format == null ? numberValue.ToString() : DecimalHelper.Format(numberValue, format, decimalSeparator);
                                                 break;
                                             case "float8":
                                                 var floatValue = await DataReader.GetFieldValueAsync<double>(Index, cancellationToken);
                                                 numberRow[Index] = (decimal)floatValue;
-                                                formattedValue = format == null ? floatValue.ToString() : string.Format($"{{0:{format}}}", floatValue);
+                                                formattedValue = format == null ? floatValue.ToString() : DecimalHelper.Format(floatValue, format, decimalSeparator);
                                                 break;
                                             case "bool":
                                                 var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
@@ -233,27 +233,55 @@ namespace CheckListManager.Reports.Data
                                             break;
                                         case "min":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                numberFinalTotals[Index] = numberFinalTotals[Index] < numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = stringTotals[Index] != null && string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringTotals[Index] : stringRow[Index];
+                                                stringFinalTotals[Index] = stringFinalTotals[Index] != null && string.Compare(stringFinalTotals[Index] ?? "", stringRow[Index] ?? "") < 0 ? stringFinalTotals[Index] : stringRow[Index];
+                                            }
                                             break;
                                         case "max":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberTotals[Index] > numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                numberFinalTotals[Index] = numberFinalTotals[Index] > numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = string.Compare(stringTotals[Index] ?? "", stringRow[Index] ?? "") > 0 ? stringTotals[Index] : stringRow[Index];
+                                                stringFinalTotals[Index] = string.Compare(stringFinalTotals[Index] ?? "", stringRow[Index] ?? "") > 0 ? stringFinalTotals[Index] : stringRow[Index];
+                                            }
                                             break;
                                         case "first":
-                                            if (numberRow[Index].HasValue && !numberTotals[Index].HasValue)
-                                                numberTotals[Index] = numberRow[Index];
-                                            else if (stringTotals[Index] == null)
-                                                stringTotals[Index] = stringRow[Index];
+                                            if (numberRow[Index].HasValue)
+                                            {
+                                                if (!numberTotals[Index].HasValue)
+                                                    numberTotals[Index] = numberRow[Index];
+                                                if (!numberFinalTotals[Index].HasValue)
+                                                    numberFinalTotals[Index] = numberRow[Index];
+                                            }
+                                            else
+                                            {
+                                                if (stringTotals[Index] == null)
+                                                    stringTotals[Index] = stringRow[Index];
+                                                if (stringFinalTotals[Index] == null)
+                                                    stringFinalTotals[Index] = stringRow[Index];
+                                            }
                                             break;
                                         case "last":
                                             if (numberRow[Index].HasValue)
+                                            {
                                                 numberTotals[Index] = numberRow[Index];
+                                                numberFinalTotals[Index] = numberRow[Index];
+                                            }
                                             else
+                                            {
                                                 stringTotals[Index] = stringRow[Index];
+                                                stringFinalTotals[Index] = stringRow[Index];
+                                            }
                                             break;
                                     }
                                 }

@@ -5,11 +5,37 @@ namespace CheckListManager.Common.Core.Helpers
 {
     public static class DecimalHelper
     {
+        private static readonly NumberFormatInfo
+            CommaNumberFormatInformation = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ",",
+                NumberGroupSeparator = ".",
+                PercentDecimalSeparator = ",",
+                PercentGroupSeparator = ".",
+                CurrencyDecimalSeparator = ",",
+                CurrencyGroupSeparator = "."
+            },
+            DotNumberFormatInformation = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ".",
+                NumberGroupSeparator = ",",
+                PercentDecimalSeparator = ".",
+                PercentGroupSeparator = ",",
+                CurrencyDecimalSeparator = ".",
+                CurrencyGroupSeparator = ","
+            };
+
         public static decimal? Parse(string Value) =>
             Value == null ? default(decimal?) : decimal.TryParse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?);
 
         public static string Format (decimal? Value, string DecimalSeparator) =>
             Value?.ToString().Replace(",", DecimalSeparator).Replace(".", DecimalSeparator);
+
+        public static string Format(decimal? Value, string Format, string DecimalSeparator) =>
+            Value?.ToString(Format ?? string.Empty, DecimalSeparator == "," ? CommaNumberFormatInformation : DotNumberFormatInformation) ?? string.Empty;
+
+        public static string Format(double? Value, string Format, string DecimalSeparator) =>
+            Value?.ToString(Format ?? string.Empty, DecimalSeparator == "," ? CommaNumberFormatInformation : DotNumberFormatInformation) ?? string.Empty;
 
         public static void Parse(string Value, int? Precision, bool ScientificNotation, string DecimalSeparator, out decimal? Result, out string FormattedResult)
         {
