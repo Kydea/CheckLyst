@@ -12,8 +12,7 @@ import UIKit
 class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITextFieldDelegate, UITabBarDelegate, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet var tableView: UITableView!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var scrollView: UIScrollView?
     var listInstances : [Instance?] = []
     @IBOutlet var newInstanceButton: UIBarButtonItem!
     @IBOutlet var searchInstanceButton: UIButton!
@@ -36,6 +35,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     var indexArrayDictionary = [Int:[Option?]] ()
     var statesArray: [String] = []
     
+    let loader: LoadingViewController = LoadingViewController.shared
+    
     var numberOfPages = 0
     var itemsPerPage = 0
     var totalItems = 0
@@ -50,8 +51,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
 
         self.tableView.tableFooterView =  UIView()
         self.tableView.isScrollEnabled = false
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-        activityIndicator.hidesWhenStopped = true
         newInstanceButton.title = "\u{f103} New Instance "
         newInstanceButton.isEnabled = checkRoles(role: "Instances#Create#")
         
@@ -230,11 +229,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func checkCreate(prototype: String, completition: (() -> Void)? = nil) {
     
-        self.startActivityIndicator()
-        
+        loader.startLoading(controller: self)
+
         ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
             (serverResponse) in
-            self?.stopActivityIndicator()
+            self?.loader.stopLoading()
            
             if serverResponse.error != nil {
                 self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
@@ -269,9 +268,11 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func fillSearchFields() {
         
-        self.startActivityIndicator()
-        
+        loader.startLoading(controller: self)
+
         ServerConnection.bindListWithParams(["data" : searchDictionary]) { (serverResponse) -> Void in
+            
+            self.loader.stopLoading()
             
             do {
                 
@@ -285,7 +286,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 
                             guard let departments = searchFields.fields.department?.options else {
                                 print("No departments")
-                                self.stopActivityIndicator()
                                 return
                             }
                         
@@ -307,7 +307,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                            
                             guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
                                 print("No prototypeTypes")
-                                self.stopActivityIndicator()
                                 return
                             }
                             
@@ -329,7 +328,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             guard let prototype = searchFields.fields.prototype?.options else {
                                 print("No prototype")
-                                self.stopActivityIndicator()
                                 return
                             }
                             
@@ -351,7 +349,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         
                             guard let versions = searchFields.fields.version?.options else {
                                 print("No versions")
-                                self.stopActivityIndicator()
                                 return
                             }
                             
@@ -373,7 +370,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                         
                             guard let tags = searchFields.fields.tagCode?.options else {
                                 print("No tags")
-                                self.stopActivityIndicator()
                                 return
                             }
                             
@@ -395,7 +391,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                             
                             guard let states = searchFields.fields.state?.options else {
                                 print("No state")
-                                self.stopActivityIndicator()
                                 return
                             }
                             
@@ -447,10 +442,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     error = json?["message"] as? String ?? "Unexpected error has occurred"
                 }
                 
-                
                 self.appDelegate.displayMessage(Title: "Error", Message: error)
             }
-            self.stopActivityIndicator()
         }
     }
     
@@ -499,7 +492,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     @IBAction func searchInstances(_ sender: AnyObject) {
         
-        self.startActivityIndicator()
+        loader.startLoading(controller: self)
         
         self.saveFilters()
         self.listInstances = []
@@ -510,7 +503,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     func getResearchResultForFirstPage() {
         
         ServerConnection.getListInstancesWithParams(["CurrentPage" : "1", "data" : searchDictionary]) { (serverResponse) -> Void in
-            
+            self.loader.stopLoading()
             do {
                 
                 if(serverResponse.data != nil) {
@@ -525,11 +518,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                     
                     self.totalItems = listIstancesJSON.count
                     
-                    self.stopActivityIndicator()
-                    
                     if (self.listInstances.count == 0) {
                     
-                        self.stopActivityIndicator()
                         self.appDelegate.displayMessage(Title: "Error", Message: "No records found")
                     
                     } else {
@@ -541,13 +531,12 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 } else {
                     
                     self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                    self.stopActivityIndicator()
                 
                 }
             } catch {
                 
                 print(error)
-                
+
                 do {
                     
                     var error = String()
@@ -671,23 +660,6 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             selectedItemsDictionary = sourceViewController.selectedItemsDictionary
         }
         
-    }
-    
-    func startActivityIndicator() {
-        
-        activityIndicator.startAnimating()
-        activityIndicator.layer.zPosition = 1
-        scrollView.isUserInteractionEnabled = false
-    
-    }
-    
-    
-    func stopActivityIndicator() {
-        
-        self.activityIndicator.stopAnimating()
-        self.activityIndicator.layer.zPosition = 0
-        self.scrollView.isUserInteractionEnabled = true
-    
     }
     
 }

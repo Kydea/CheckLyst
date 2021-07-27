@@ -14,10 +14,10 @@ class UserViewController: UIViewController {
     private let userSetPinSegueIdentifier = "userSetPinSegue"
     
     @IBOutlet var userCodeTextField: UITextField!
-    
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    
+        
     let appDelegate = (UIApplication.shared as! MyApplication)
+    
+    let loader: LoadingViewController = LoadingViewController.shared
     
     override func viewDidLoad() {
         
@@ -26,8 +26,6 @@ class UserViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem)
         userCodeTextField.isEnabled = false
         userCodeTextField.text = UserDefaults.standard.string(forKey: "userCode")
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-        activityIndicator.hidesWhenStopped = true
     
     }
     
@@ -54,10 +52,11 @@ class UserViewController: UIViewController {
             return
         }
         
-        activityIndicator.startAnimating()
+        loader.startLoading(controller: self)
         
         ServerConnection.logoutFromServer(["data":["refreshToken":refreshToken]]){ (serverResponse) -> Void in
-        
+            self.loader.stopLoading()
+
             if(serverResponse.data != nil){
                 
                 self.appDelegate.logoutAndGoToLogin()
@@ -67,9 +66,6 @@ class UserViewController: UIViewController {
                 self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
             
             }
-        
-            self.activityIndicator.stopAnimating()
-        
         }
     }
     

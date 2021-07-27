@@ -410,6 +410,7 @@ import CoreData
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
+                if (presentedViewController is LoadingViewController) { break }
                 topController = presentedViewController
             }
             
