@@ -74,7 +74,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
 
         [HttpPost]
         [Route("GetSyntheticData")]
-        [Authorize(Roles = "Users#View")]
+        [Authorize(Roles = "Users#View, Reports#Edit")]
         public async Task<IHttpActionResult> GetSyntheticData()
         {
             return Ok(await _groupService.GetSyntheticDataAsync(Identity.CompanyId));
