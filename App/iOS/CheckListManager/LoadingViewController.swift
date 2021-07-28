@@ -22,20 +22,14 @@ class LoadingViewController: UIViewController {
         return instance!
     }
         
+    var isPresenting: Bool = false
     var isPresented: Bool = false
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
 
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        isPresented = true
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        isPresented = false
     }
     
     private func setupStyle() {
@@ -46,24 +40,30 @@ class LoadingViewController: UIViewController {
     }
     
     func startLoading(controller: UIViewController) {
-        if (!isPresented) {
+        if (!isPresenting && !isPresented) {
             #if DEBUG
             print("Loading started")
             #endif
-            controller.present(self, animated: false, completion: nil)
-            activityIndicator.startAnimating()
-            isPresented = true
+            isPresenting = true
+            controller.present(self, animated: false) { [weak self] in
+                self?.activityIndicator.startAnimating()
+                self?.isPresented = true
+                self?.isPresenting = false
+            }
+            
         }
     }
     
-    func stopLoading() {
+    func stopLoading(controller: UIViewController?, completition: (() -> Void)? = nil) {
         if (isPresented) {
             #if DEBUG
             print("Loading stopped")
             #endif
-            self.dismiss(animated: false, completion: nil)
-            activityIndicator.stopAnimating()
-            isPresented = false
+            controller?.dismiss(animated: false) { [weak self] in
+                self?.activityIndicator.stopAnimating()
+                self?.isPresented = false
+                completition?()
+            }
         }
     }
 }

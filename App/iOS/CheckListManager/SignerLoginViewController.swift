@@ -62,30 +62,30 @@ class SignerLoginViewController: UIViewController, UITextFieldDelegate {
         
         ServerConnection.loginOrRefreshToServer(["Company" : company,"Code":usercode,"Password":password]) { (serverResponse) -> Void in
     
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
 
-            do{
-                if(serverResponse.error != nil) {
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                    self.loader.stopLoading()
-                }
-                
-                if serverResponse.data != nil {
-                    
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    
-                    if(json["error"] == nil) {
-                        
-                        SignersManager.shared.addSigner(json: json)
-                        self.dismiss(animated: true, completion: nil)
-                        
-                    } else {
-                        let messageMex = json["error"] != nil ? json["error_description"] as! String : ""
-                        self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                do{
+                    if(serverResponse.error != nil) {
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                     }
+                    
+                    if serverResponse.data != nil {
+                        
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        
+                        if(json["error"] == nil) {
+                            
+                            SignersManager.shared.addSigner(json: json)
+                            self?.dismiss(animated: true, completion: nil)
+                            
+                        } else {
+                            let messageMex = json["error"] != nil ? json["error_description"] as! String : ""
+                            self?.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                        }
+                    }
+                } catch {
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 }
-            } catch {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
             }
             
         }

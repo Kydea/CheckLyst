@@ -119,7 +119,7 @@ class UserManualViewController: UIViewController, WKNavigationDelegate {
     
     func unlockView()
     {
-        loader.stopLoading()
+        loader.stopLoading(controller: self)
         self.tabBarController!.tabBar.isUserInteractionEnabled = true
         webView.scrollView.isScrollEnabled = true
     }

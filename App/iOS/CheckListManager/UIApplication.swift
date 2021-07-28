@@ -287,7 +287,7 @@ import CoreData
             if(logged) {
                 self.logoutAndGoToLogin()
             }
-        
+                    
             NotificationCenter.default.post(name: .NewServerConfiguration, object: nil)
             
             ServerConnection.getApiServerRequest(server: server) { (serverResponse) -> Void in

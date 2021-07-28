@@ -102,30 +102,31 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             ServerConnection.getApiServerRequest(server: serverTextField.text!) { (serverResponse) -> Void in
                 
-                self.loader.stopLoading()
+                self.loader.stopLoading(controller: self) { [weak self] in
                 
-                if (serverResponse.error != nil) {
+                    if (serverResponse.error != nil) {
+                        
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server \(self?.serverTextField.text! ?? "no server") .")
                     
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server \(self.serverTextField.text!) .")
-                
-                } else if (serverResponse.data != nil) {
-                   
-                    do {
+                    } else if (serverResponse.data != nil) {
+                       
+                        do {
+                            
+                            let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                            self?._typedServerFrontEndUrl = self?.serverTextField.text!
+                            self?._typedServerUrl = (json["API"] as! String)
+                            self?.toggleLogin(true, withAnimation: true)
+                            
+                        } catch {
+                            
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                            print("Error deserializing JSON: \(error)")
+                            self?.companyTextField.text = ""
+                            self?.selectedCompany = nil
                         
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                        self._typedServerFrontEndUrl = self.serverTextField.text!
-                        self._typedServerUrl = (json["API"] as! String)
-                        self.toggleLogin(true, withAnimation: true)
-                        
-                    } catch {
-                        
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
-                        print("Error deserializing JSON: \(error)")
-                        self.companyTextField.text = ""
-                        self.selectedCompany = nil
+                        }
                     
                     }
-                
                 }
     
             }
@@ -157,32 +158,33 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 
         ServerConnection.getCompaniesRequest(server: selectedServerUrl){ (serverResponse) -> Void in
             
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
             
-            if(serverResponse.error != nil) {
-                
-                self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-            }
-            
-            do{
-                
-                if serverResponse.data != nil
-                {
-                    let json = try JSONDecoder().decode([CompanyShortJSON].self, from: serverResponse.data!)
+                if(serverResponse.error != nil) {
                     
-                    self.companyChooseDictionary.removeAll()
-                    
-                    for company in json {
-                        self.companyChooseDictionary.append(company)
-                    }
-                                                            
-                    self.performSegue(withIdentifier: "ChooseServer", sender: "company")
-                    
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                 }
                 
-            } catch {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
-                print("Error deserializing JSON: \(error)")
+                do{
+                    
+                    if serverResponse.data != nil
+                    {
+                        let json = try JSONDecoder().decode([CompanyShortJSON].self, from: serverResponse.data!)
+                        
+                        self?.companyChooseDictionary.removeAll()
+                        
+                        for company in json {
+                            self?.companyChooseDictionary.append(company)
+                        }
+                                                                
+                        self?.performSegue(withIdentifier: "ChooseServer", sender: "company")
+                        
+                    }
+                    
+                } catch {
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                    print("Error deserializing JSON: \(error)")
+                }
             }
         }
     }
@@ -204,6 +206,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             self.serverTextField.text = selectedServerFrontEndUrl
         }
         self.toggleLogin(showServer, withAnimation: false)
+        if isEditingServer {
+            loader.stopLoading(controller: self) { [weak self] in
+                self?.isEditingServer = false
+            }
+        }
         
     }
     
@@ -265,62 +272,61 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    
-    
     func performLogin() {
         
         loader.startLoading(controller: self)
                 
         ServerConnection.loginOrRefreshToServer(server: selectedServerUrl, ["Company" : String(self.selectedCompany!.id),"Code":userCodeTextField.text!,"Password":passwordTextField.text!]) { (serverResponse) -> Void in
             
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
             
-            if(serverResponse.error != nil) {
-                
-                var errorMessage = "Connection error to the server"
-                var title = "Error"
-                
-                if(serverResponse.error!.code == -1009) {
-                    errorMessage = "Connection error to the server"
-                } else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true) {
+                if(serverResponse.error != nil) {
                     
-                    title = "Security Error"
-                    errorMessage = "Invalid SSL Certificate"
-                
-                }
-                
-                self.appDelegate.displayMessage(Title: title, Message: errorMessage)
-                
-            }
-            
-            do{
-                
-                if serverResponse.data != nil {
+                    var errorMessage = "Connection error to the server"
+                    var title = "Error"
                     
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    if(serverResponse.error!.code == -1009) {
+                        errorMessage = "Connection error to the server"
+                    } else if(NSString(string:UserDefaults.standard.string(forKey: "invalidCertificate")!).boolValue == true) {
+                        
+                        title = "Security Error"
+                        errorMessage = "Invalid SSL Certificate"
                     
-                    if(json["error"] == nil) {
-                        
-                        Server.addServerUrl(urlFrontEnd: self.selectedServerFrontEndUrl, managedObjectContext: self.context)
-                        Server.setNewServer(urlFrontEnd: self.selectedServerFrontEndUrl, apiUrl: self.selectedServerUrl, managedObjectContext: self.context)
-                        
-                        self.setUserInformation(userInfo: json)
-                        
-                        self.getCompanyData()
-                        
-                    } else {
-                        
-                        let okMex = (json["error"] == nil)
-                        let messageMex = !okMex ? json["error_description"] as! String : ""
-                        self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
-                                            
                     }
                     
+                    self?.appDelegate.displayMessage(Title: title, Message: errorMessage)
+                    
                 }
-            
-            } catch {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
-                print("Error deserializing JSON: \(error)")
+                
+                do{
+                    
+                    if serverResponse.data != nil {
+                        
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        
+                        if(json["error"] == nil) {
+                            
+                            Server.addServerUrl(urlFrontEnd: self!.selectedServerFrontEndUrl, managedObjectContext: self!.context)
+                            Server.setNewServer(urlFrontEnd: self!.selectedServerFrontEndUrl, apiUrl: self!.selectedServerUrl, managedObjectContext: self!.context)
+                            
+                            self?.setUserInformation(userInfo: json)
+                            
+                            self?.getCompanyData()
+                            
+                        } else {
+                            
+                            let okMex = (json["error"] == nil)
+                            let messageMex = !okMex ? json["error_description"] as! String : ""
+                            self?.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                                                
+                        }
+                        
+                    }
+                
+                } catch {
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                    print("Error deserializing JSON: \(error)")
+                }
             }
             
         }
@@ -333,31 +339,32 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         ServerConnection.getCompanieSettingsRequest { (serverResponse) -> Void in
             
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
             
-            if(serverResponse.error != nil) {
-                
-                self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-            }
-            
-            do {
-                
-                if serverResponse.data != nil {
-                    let json = try JSONDecoder().decode(CompanySettingsJSON.self, from: serverResponse.data!)
+                if(serverResponse.error != nil) {
                     
-                    self.setCompanySettings(companyInfo: json)
-                    
-                    (UIApplication.shared as! MyApplication).startInactivityTimer()
-                    
-                    (UIApplication.shared as! MyApplication).startTokenTimer()
-                    
-                    self.performSegue(withIdentifier: "loggedSegue", sender: self)
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                 }
                 
-            } catch {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
-                print("Error deserializing JSON: \(error)")
-                
+                do {
+                    
+                    if serverResponse.data != nil {
+                        let json = try JSONDecoder().decode(CompanySettingsJSON.self, from: serverResponse.data!)
+                        
+                        self?.setCompanySettings(companyInfo: json)
+                        
+                        (UIApplication.shared as! MyApplication).startInactivityTimer()
+                        
+                        (UIApplication.shared as! MyApplication).startTokenTimer()
+                        
+                        self?.performSegue(withIdentifier: "loggedSegue", sender: self)
+                    }
+                    
+                } catch {
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
+                    print("Error deserializing JSON: \(error)")
+                    
+                }
             }
             
         }
@@ -499,14 +506,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
         loader.startLoading(controller: self)
         prepareServerForNewConfiguration()
-
+        isEditingServer = true
     }
     
     @objc func serverHasBeenConfigured(_ notification:Notification) {
-
-        self.loader.stopLoading()
-        self.viewWillAppear(true)
-
+            self.viewWillAppear(true)
     }
     
 }
