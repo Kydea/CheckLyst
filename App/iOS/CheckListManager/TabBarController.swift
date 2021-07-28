@@ -46,7 +46,13 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         
     }
     
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return viewController != tabBarController.selectedViewController
+    }
+    
 }
+
+
 
 
 extension UIImage {

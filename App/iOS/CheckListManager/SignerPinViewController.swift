@@ -78,28 +78,29 @@ class SignerPinViewController: UIViewController, UITextFieldDelegate {
         loader.startLoading(controller: self.parent ?? self)
         
         ServerConnection.setPin(["Pin" : pin,"Password":password], accessToken: signer!.accessToken) { (serverResponse) -> Void in
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
 
-            do{
-                if(serverResponse.error != nil) {
-                    self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                }
-                
-                if serverResponse.data != nil {
-                    
-                    if(serverResponse.data?.count == 0) {
-                        self.dismiss(animated: true, completion: nil)
-                    } else {
-                    
-                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    
-                        let messages = json["messages"] as? [String]
-                        let messageMex = messages?[0] as? String ?? ""
-                        self.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                do{
+                    if(serverResponse.error != nil) {
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
                     }
+                    
+                    if serverResponse.data != nil {
+                        
+                        if(serverResponse.data?.count == 0) {
+                            self?.dismiss(animated: true, completion: nil)
+                        } else {
+                        
+                            let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        
+                            let messages = json["messages"] as? [String]
+                            let messageMex = messages?[0] as? String ?? ""
+                            self?.appDelegate.displayMessage(Title: "Error", Message: messageMex)
+                        }
+                    }
+                } catch {
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
                 }
-            } catch {
-                self.appDelegate.displayMessage(Title: "Error", Message: "Cannot parse response")
             }
             
         }

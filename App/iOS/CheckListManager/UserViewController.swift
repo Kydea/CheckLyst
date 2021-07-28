@@ -55,16 +55,17 @@ class UserViewController: UIViewController {
         loader.startLoading(controller: self)
         
         ServerConnection.logoutFromServer(["data":["refreshToken":refreshToken]]){ (serverResponse) -> Void in
-            self.loader.stopLoading()
+            self.loader.stopLoading(controller: self) { [weak self] in
 
-            if(serverResponse.data != nil){
+                if(serverResponse.data != nil){
+                    
+                    self?.appDelegate.logoutAndGoToLogin()
                 
-                self.appDelegate.logoutAndGoToLogin()
-            
-            } else {
-            
-                self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-            
+                } else {
+                
+                    self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                
+                }
             }
         }
     }

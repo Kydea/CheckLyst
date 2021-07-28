@@ -89,7 +89,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         
         webView.load(request as URLRequest)
         
-        self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardDidHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
@@ -129,7 +128,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func unlockView()
     {
-        loader.stopLoading()
+        loader.stopLoading(controller: self)
         self.webView.isHidden = false
         webView.scrollView.isScrollEnabled = true
         self.navigationItem.setHidesBackButton(false, animated:false)
@@ -146,6 +145,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         requestForScanning = false
         requestForDocument = false
         isInstanceClosed = false
+        if webView.isLoading { self.lockView() }
     }
     
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -233,19 +233,20 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
                     FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
-                        self.loader.stopLoading()
-                    if url != nil {
-                        if self.checkFile(file: data, url: fileURL) {
-                            self.requestForDocument = true
-                            self.documentInteractionController.url = url!
-                            self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
-                            self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
-                            self.documentInteractionController.presentPreview(animated: true)
+                        self.loader.stopLoading(controller: self) { [weak self] in
+                        if url != nil {
+                            if let result = self?.checkFile(file: data, url: fileURL), result {
+                                self?.requestForDocument = true
+                                self?.documentInteractionController.url = url!
+                                self?.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
+                                self?.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
+                                self?.documentInteractionController.presentPreview(animated: true)
+                            }
+                        } else if error != nil {
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                        } else {
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Unable to retrieve document")
                         }
-                    } else if error != nil {
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                    } else {
-                        self.appDelegate.displayMessage(Title: "Error", Message: "Unable to retrieve document")
                     }
                 }
             }
