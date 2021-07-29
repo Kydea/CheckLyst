@@ -219,6 +219,7 @@ import CoreData
                 
                 if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
                     instanceController.closeInstance() {
+                        isPresented = false
                         let navController = tabBarController.viewControllers?[1] as? UINavigationController
                         navController?.popToRootViewController(animated: false)
                     }

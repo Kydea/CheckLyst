@@ -64,8 +64,14 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     override func viewDidAppear(_ animated: Bool) {
-
+        super.viewDidAppear(animated)
+        #if DEBUG
+        print("InstanceSearchViewController: viewDidAppear")
+        #endif
         if appDelegate.requestToOpenInstance {
+            #if DEBUG
+            print("InstanceSearchViewController: openInstance")
+            #endif
             appDelegate.openInstance(instancesSearchController: self)
             return
         }
@@ -229,40 +235,41 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     func checkCreate(prototype: String, completition: (() -> Void)? = nil) {
     
-        loader.startLoading(controller: self)
+        loader.startLoading(controller: self) {
 
-        ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
-            (serverResponse) in
-            
-            self?.loader.stopLoading(controller: self) { [weak self] in
-           
-                if serverResponse.error != nil {
-                    self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
-                    return
-                }
+            ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
+                (serverResponse) in
                 
-                if let response = serverResponse.response as? HTTPURLResponse, response.statusCode != 200 {
+                self?.loader.stopLoading(controller: self) { [weak self] in
+               
+                    if serverResponse.error != nil {
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                        return
+                    }
                     
-                    let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    var error = String()
-                    
-                    if let errorMessages = json?["messages"] as? [String] {
-                        for value in errorMessages {
-                            error.append(value + (errorMessages.last == value ? "" : "\n"))
+                    if let response = serverResponse.response as? HTTPURLResponse, response.statusCode != 200 {
+                        
+                        let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        var error = String()
+                        
+                        if let errorMessages = json?["messages"] as? [String] {
+                            for value in errorMessages {
+                                error.append(value + (errorMessages.last == value ? "" : "\n"))
+                            }
                         }
-                    }
-                    
-                    if error.isEmpty {
-                        error = json?["message"] as? String ?? "Unexpected error has occurred"
-                    }
-                      
+                        
+                        if error.isEmpty {
+                            error = json?["message"] as? String ?? "Unexpected error has occurred"
+                        }
+                          
 
-                    self?.appDelegate.displayMessage(Title: "Error", Message: error)
+                        self?.appDelegate.displayMessage(Title: "Error", Message: error)
+                        
+                        return
+                    }
                     
-                    return
+                    completition?()
                 }
-                
-                completition?()
             }
         }
     }
