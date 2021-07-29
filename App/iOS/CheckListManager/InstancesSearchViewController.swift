@@ -66,7 +66,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     override func viewDidAppear(_ animated: Bool) {
 
         if appDelegate.requestToOpenInstance {
-            appDelegate.openInstance()
+            appDelegate.openInstance(instancesSearchController: self)
             return
         }
         

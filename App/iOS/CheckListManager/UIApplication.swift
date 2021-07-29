@@ -22,6 +22,7 @@ import CoreData
     var isTokenExpired = false
     var requestToOpenInstance = false
     var requestToOpenSearch = false
+    var requestToUpdateServer = false
     
     var timer : Timer?
     var inactivityTimer : Timer?
@@ -199,7 +200,7 @@ import CoreData
         return nil
     }
     
-    func openInstance() {
+    func goToSearch() {
         if var topController = UIApplication.shared.keyWindow?.rootViewController {
             
             while let presentedViewController = topController.presentedViewController {
@@ -208,29 +209,36 @@ import CoreData
             
             if topController.isKind(of: TabViewController.self)
             {
-                
+                var isPresented = true
                 if ((topController as! TabViewController).selectedIndex != 1) {
                     (topController as! TabViewController).selectedIndex = 1
+                    isPresented = false
                 }
                 
                 let tabBarController = (topController as! TabViewController)
                 
                 if let instanceController = tabBarController.viewControllers?[1].childViewControllers.last as? InstanceViewController {
-                    instanceController.closeInstance() { [weak self] in
-                        self?.popToSearch(tabBarController: tabBarController)
+                    instanceController.closeInstance() {
+                        let navController = tabBarController.viewControllers?[1] as? UINavigationController
+                        navController?.popToRootViewController(animated: false)
                     }
                 } else {
-                    self.popToSearch(tabBarController: tabBarController)
+                    let navController = tabBarController.viewControllers?[1] as? UINavigationController
+                    navController?.popToRootViewController(animated: false)
                 }
+                
+                if let instancesSearcController = tabBarController.viewControllers![1].childViewControllers[0] as? InstancesSearchViewController {
+                    
+                    if isPresented { instancesSearcController.viewDidAppear(false) }
+                }
+
             }
         }
     }
     
-    func popToSearch(tabBarController: UITabBarController) {
-        let navController = tabBarController.viewControllers?[1] as? UINavigationController
-        let instancesSearchController = tabBarController.viewControllers?[tabBarController.selectedIndex].childViewControllers[0] as? InstancesSearchViewController
-        navController?.popToRootViewController(animated: false)
-        self.requestToOpenInstance = false;
+    func openInstance(instancesSearchController: InstancesSearchViewController?) {
+       
+        self.requestToOpenInstance = false
         
         if let prototype = requestedUrlInfo?["prototype"] {
             instancesSearchController?.checkCreate(prototype: prototype) {

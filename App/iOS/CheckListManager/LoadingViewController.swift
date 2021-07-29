@@ -39,7 +39,7 @@ class LoadingViewController: UIViewController {
         self.view.isOpaque = false
     }
     
-    func startLoading(controller: UIViewController) {
+    func startLoading(controller: UIViewController, completition: (() -> Void)? = nil) {
         if (!isPresenting && !isPresented) {
             #if DEBUG
             print("Loading started")
@@ -49,6 +49,7 @@ class LoadingViewController: UIViewController {
                 self?.activityIndicator.startAnimating()
                 self?.isPresented = true
                 self?.isPresenting = false
+                completition?()
             }
             
         }

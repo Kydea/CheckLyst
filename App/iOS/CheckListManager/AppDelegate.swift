@@ -170,13 +170,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             mApp.requestedUrlInfo = url.getParametersForInstance
             mApp.backFromBackGround()
             if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
-                mApp.openInstance()
+                mApp.goToSearch()
             }
         }
 
         if (url.getCallType == .Setup) {
             if let params = url.getParametersForInstance {
                 let server = "\(params["schema"]!)://\(url.host!)"
+                mApp.requestedUrlInfo = ["server" : server]
                 mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
             }
         }

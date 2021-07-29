@@ -34,7 +34,7 @@ class UserViewController: UIViewController {
         super.viewDidAppear(animated)
 
         if (appDelegate.requestToOpenInstance) {
-            appDelegate.openInstance()
+            appDelegate.goToSearch()
         }
         
         if (appDelegate.requestToOpenSearch) {
