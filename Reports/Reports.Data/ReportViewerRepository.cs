@@ -71,7 +71,7 @@ namespace CheckListManager.Reports.Data
             }
         }
 
-        private ReportRow AddTotalRow(int columnsCount, int rowsCount, string decimalSeparator, List<ReportColumns> columns, List<string> columnTypes, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
+        private ReportRow AddTotalRow(int columnsCount, int rowsCount, string decimalSeparator, List<ReportColumns> columns, List<string> columnTypes, List<bool> numericColumns, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
         {
             for (var Index = 0; Index < columnsCount; ++Index)
             {
@@ -79,11 +79,11 @@ namespace CheckListManager.Reports.Data
                 switch (column.GroupAggregation)
                 {
                     case "average":
-                        if (numberTotals[Index].HasValue)
+                        if (numericColumns[Index])
                             numberTotals[Index] /= rowsCount;
                         break;
                     case "count":
-                        numberTotals[Index] = distinctValues[Index].Count();
+                        numberTotals[Index] = distinctValues[Index]?.Count();
                         break;
                 }
             }
@@ -94,7 +94,7 @@ namespace CheckListManager.Reports.Data
                 var column = columns[Index];
                 if (column.Visible)
                 {
-                    ReportRow.Record.Add(stringTotals[Index] ?? DecimalHelper.Format(numberTotals[Index], string.IsNullOrEmpty(column.Format) ? null : column.Format, decimalSeparator) ?.ToString() ?? string.Empty);
+                    ReportRow.Record.Add(stringTotals[Index] ?? DecimalHelper.Format(numberTotals[Index], string.IsNullOrEmpty(column.Format) ? null : column.Format, decimalSeparator)?.ToString() ?? string.Empty);
                     numberTotals[Index] = null;
                     stringTotals[Index] = null;
                     distinctValues[Index] = null;
@@ -119,6 +119,7 @@ namespace CheckListManager.Reports.Data
                             var firstRow = true;
                             int columnsCount = 0;
                             var columnTypes = new List<string>();
+                            var numericColumns = new List<bool>();
                             var numberRow = new List<decimal?>();
                             var stringRow = new List<string>();
                             var numberTotals = new List<decimal?>();
@@ -140,7 +141,10 @@ namespace CheckListManager.Reports.Data
                                     columnsCount = Math.Min(DataReader.FieldCount, columns.Count);
                                     for (var Index = 0; Index < columnsCount; ++Index)
                                     {
-                                        columnTypes.Add(DataReader.GetDataTypeName(Index));
+                                        var columnType = DataReader.GetDataTypeName(Index);
+                                        columnTypes.Add(columnType);
+                                        numericColumns.Add(columnType == "int2" || columnType == "int4" || columnType == "int8" || columnType == "decimal" || columnType == "numeric" || columnType == "float8");
+                                        if (columns[Index].GroupColumn) anyGroupColumn = true;
 
                                         numberRow.Add(null);
                                         stringRow.Add(null);
@@ -152,7 +156,6 @@ namespace CheckListManager.Reports.Data
                                         distinctFinalValues.Add(null);
                                         stringRow.Add(null);
                                     }
-                                    firstRow = false;
                                 }
 
                                 for (var Index = 0; Index < columnsCount; ++Index)
@@ -160,6 +163,7 @@ namespace CheckListManager.Reports.Data
                                     var column = columns[Index];
                                     var format = string.IsNullOrEmpty(column.Format) ? null : column.Format;
                                     string formattedValue = null;
+                                    numberRow[Index] = null;
                                     cancellationToken.ThrowIfCancellationRequested();
 
                                     if (!await DataReader.IsDBNullAsync(Index, cancellationToken))
@@ -198,11 +202,9 @@ namespace CheckListManager.Reports.Data
                                         }
                                     }
 
-                                    if (!needToAddTotal && column.GroupColumn && formattedValue != stringRow[Index])
-                                    {
-                                        anyGroupColumn = true;
-                                        needToAddTotal = stringRow[Index] != null;
-                                    }
+                                    if (column.GroupColumn && formattedValue != stringRow[Index] && !firstRow)
+                                        needToAddTotal = true;
+
                                     stringRow[Index] = formattedValue;
 
                                     if (column.Visible)
@@ -211,7 +213,7 @@ namespace CheckListManager.Reports.Data
 
                                 if (needToAddTotal)
                                 {
-                                    Result.Add(AddTotalRow(columnsCount, rowsCount - 1, decimalSeparator, columns, columnTypes, numberTotals, stringTotals, distinctValues));
+                                    Result.Add(AddTotalRow(columnsCount, rowsCount - 1, decimalSeparator, columns, columnTypes, numericColumns, numberTotals, stringTotals, distinctValues));
                                     rowsCount = 1;
                                 }
 
@@ -232,10 +234,13 @@ namespace CheckListManager.Reports.Data
                                             distinctFinalValues[Index].Add(stringRow[Index]);
                                             break;
                                         case "min":
-                                            if (numberRow[Index].HasValue)
+                                            if (numericColumns[Index])
                                             {
-                                                numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
-                                                numberFinalTotals[Index] = numberFinalTotals[Index] < numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                                if (numberRow[Index].HasValue)
+                                                {
+                                                    numberTotals[Index] = numberTotals[Index] < numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                    numberFinalTotals[Index] = numberFinalTotals[Index] < numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                                }
                                             }
                                             else
                                             {
@@ -244,10 +249,13 @@ namespace CheckListManager.Reports.Data
                                             }
                                             break;
                                         case "max":
-                                            if (numberRow[Index].HasValue)
+                                            if (numericColumns[Index])
                                             {
-                                                numberTotals[Index] = numberTotals[Index] > numberRow[Index] ? numberTotals[Index] : numberRow[Index];
-                                                numberFinalTotals[Index] = numberFinalTotals[Index] > numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                                if (numberRow[Index].HasValue)
+                                                {
+                                                    numberTotals[Index] = numberTotals[Index] > numberRow[Index] ? numberTotals[Index] : numberRow[Index];
+                                                    numberFinalTotals[Index] = numberFinalTotals[Index] > numberRow[Index] ? numberFinalTotals[Index] : numberRow[Index];
+                                                }
                                             }
                                             else
                                             {
@@ -256,7 +264,7 @@ namespace CheckListManager.Reports.Data
                                             }
                                             break;
                                         case "first":
-                                            if (numberRow[Index].HasValue)
+                                            if (numericColumns[Index])
                                             {
                                                 if (!numberTotals[Index].HasValue)
                                                     numberTotals[Index] = numberRow[Index];
@@ -272,7 +280,7 @@ namespace CheckListManager.Reports.Data
                                             }
                                             break;
                                         case "last":
-                                            if (numberRow[Index].HasValue)
+                                            if (numericColumns[Index])
                                             {
                                                 numberTotals[Index] = numberRow[Index];
                                                 numberFinalTotals[Index] = numberRow[Index];
@@ -287,12 +295,13 @@ namespace CheckListManager.Reports.Data
                                 }
 
                                 Result.Add(ReportRow);
+                                firstRow = false;
                             }
 
                             if (anyGroupColumn)
                             {
-                                Result.Add(AddTotalRow(columnsCount, rowsCount, decimalSeparator, columns, columnTypes, numberTotals, stringTotals, distinctValues));
-                                Result.Add(AddTotalRow(columnsCount, Result.Count, decimalSeparator, columns, columnTypes, numberFinalTotals, stringFinalTotals, distinctFinalValues));
+                                Result.Add(AddTotalRow(columnsCount, rowsCount, decimalSeparator, columns, columnTypes, numericColumns, numberTotals, stringTotals, distinctValues));
+                                Result.Add(AddTotalRow(columnsCount, Result.Count, decimalSeparator, columns, columnTypes, numericColumns, numberFinalTotals, stringFinalTotals, distinctFinalValues));
                             }
                         }
                 }
