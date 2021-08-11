@@ -16,8 +16,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var ItemModel = base.GetViewModel(ReportModel);
             if (!ReportModel)
             {
-                if (Height > 0) ItemModel.Height = Height;
-                if (Width > 0) ItemModel.Width = Width;
+                ItemModel.Height = Height;
+                ItemModel.Width = Width;
             }
             return ItemModel;
         }

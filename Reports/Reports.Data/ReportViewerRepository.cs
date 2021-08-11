@@ -129,11 +129,13 @@ namespace CheckListManager.Reports.Data
                             var distinctValues = new List<HashSet<string>>();
                             var distinctFinalValues = new List<HashSet<string>>();
                             int rowsCount = 0;
+                            int totalRowsCount = 0;
                             bool anyGroupColumn = false;
                             bool needToAddTotal = false;
                             while (DataReader.Read())
                             {
                                 ++rowsCount;
+                                ++totalRowsCount;
                                 needToAddTotal = false;
                                 var ReportRow = new ReportRow { Record = new List<string>() };
                                 if (firstRow)
@@ -301,7 +303,7 @@ namespace CheckListManager.Reports.Data
                             if (anyGroupColumn)
                             {
                                 Result.Add(AddTotalRow(columnsCount, rowsCount, decimalSeparator, columns, columnTypes, numericColumns, numberTotals, stringTotals, distinctValues));
-                                Result.Add(AddTotalRow(columnsCount, Result.Count, decimalSeparator, columns, columnTypes, numericColumns, numberFinalTotals, stringFinalTotals, distinctFinalValues));
+                                Result.Add(AddTotalRow(columnsCount, totalRowsCount, decimalSeparator, columns, columnTypes, numericColumns, numberFinalTotals, stringFinalTotals, distinctFinalValues));
                             }
                         }
                 }

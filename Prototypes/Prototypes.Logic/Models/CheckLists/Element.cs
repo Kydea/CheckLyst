@@ -37,9 +37,17 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool Valid { get; set; }
         public bool PageBreak { get; set; }
 
+        private void NormalizeModel()
+        {
+            /* for version 2.1.1 or older */
+            if (CountDownCondition == Conditions.Default && !string.IsNullOrEmpty(CountDownToCode)) CountDownCondition = Conditions.Expression;
+        }
+
         public virtual bool Setup()
         {
             var Result = true;
+
+            NormalizeModel();
             Code = string.IsNullOrEmpty(Code) ? null : Code;
             Errors.Clear();
             if (Code != null)
