@@ -1,18 +1,19 @@
-﻿using System;
-using Autofac;
-using CheckListManager.Common.Logic.Json;
-using CheckListManager.Common.Logic.Models.CheckLists;
+﻿using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
-namespace CheckListManager.Instances.Logic.Services
+namespace CheckListManager.Prototypes.Logic.Analysis
 {
     public class InstanceJsonConverter : JsonConverter
     {
-		public InstanceJsonConverter() : base()
-		{
-		}
+        public InstanceJsonConverter() : base()
+        {
+        }
 
         public override bool CanConvert(Type objectType) => typeof(ICheckListElement).IsAssignableFrom(objectType);
 
@@ -31,22 +32,22 @@ namespace CheckListManager.Instances.Logic.Services
         }
 
         protected Element Create(Type objectType, JObject jsonObject)
-		{
-			var type = (jsonObject["typeName"] ?? jsonObject["TypeName"])?.ToString();
-			switch (type)
-			{
-				case "Field":
-					return new Field();
-				case "Group":
-					return new Group();
-				case "Iteration":
-					return new Iteration();
-				case "Signature":
-					return new Signature();
+        {
+            var type = (jsonObject["typeName"] ?? jsonObject["TypeName"])?.ToString();
+            switch (type)
+            {
+                case "Field":
+                    return new Field();
+                case "Group":
+                    return new Group();
+                case "Iteration":
+                    return new Iteration();
+                case "Signature":
+                    return new Signature();
                 case "InstanceLink":
                     return new InstanceLink();
                 case "Text":
-					return new Text();
+                    return new Text();
                 case "Link":
                     return new Link();
                 case "Image":
@@ -57,5 +58,5 @@ namespace CheckListManager.Instances.Logic.Services
                     return new Page();
             }
         }
-	}
+    }
 }
