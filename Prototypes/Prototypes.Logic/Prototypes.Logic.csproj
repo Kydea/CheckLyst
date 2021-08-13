@@ -143,7 +143,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Prototypes.Data\Prototypes.Data.csproj">
       <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
-      <Name>Trail.Data</Name>
+      <Name>Prototypes.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
