@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5F03EBA2-7FF0-4FE0-9945-58FA5F084563}</ProjectGuid>
+    <ProjectGuid>{5AF1D8EA-8392-4D42-A517-67C2B0182BF0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheckListManager.Instances.Logic</RootNamespace>
