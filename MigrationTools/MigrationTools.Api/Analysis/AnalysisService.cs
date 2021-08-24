@@ -54,7 +54,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
         {
             var response = new AnalysisResponse();
             var query = _analysisRepository.GetPrototypeVersions()
-                .Take(20)
+                //.Take(20)
                 //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                 ;
 

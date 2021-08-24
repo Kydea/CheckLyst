@@ -10,6 +10,7 @@ using System.Web.Http;
 namespace CheckListManager.Prototypes.Api.Controllers
 {
     [AllowAnonymous]
+    [RoutePrefix("Analysis")]
     public class AnalysisController : BaseApiController
     {
         private readonly IAnalysisService _analysisService;
