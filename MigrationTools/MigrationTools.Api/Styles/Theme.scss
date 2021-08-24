@@ -1,0 +1,21 @@
+﻿* {
+    font-family: Arial, sans-serif;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+div#output {
+    border-left: solid 1px black;
+    margin-left: 20px;
+}
+
+.hidden {
+    display: none;
+}
