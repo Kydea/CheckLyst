@@ -60,7 +60,6 @@ namespace CheckListManager.Prototypes.Logic.Analysis
 
             cancellationToken.ThrowIfCancellationRequested();
             var list = await query
-                .Where(p => p.ProposedState != VersionState.Obsolete)
                 .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -70,7 +69,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _converters);
-                    prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors in sperific of prototype editing
+                    prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
                     prototype.Setup(false);
                     if (!prototype.Valid)
                     {
@@ -91,7 +90,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
 
                         foreach (var source in prototype.ExternalSources.Values)
                             if (source.Errors.Any())
-                                errors.Add($"Source {source.Code}: {string.Join(" - ", source.Errors.Select(e => $"Prototype property {e.Property}: {e.Message}"))}");
+                                errors.Add($"Source {source.Code}: {string.Join(" - ", source.Errors.Select(e => $"Parameter {e.Property}: {e.Message}"))}");
 
                         throw new Exception(string.Join(Environment.NewLine, errors));
                     }
