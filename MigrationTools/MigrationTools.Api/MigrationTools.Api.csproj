@@ -158,9 +158,8 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
-    <Content Include="JavaScript\jsonViewer.js" />
+    <Content Include="JavaScript\base.js" />
     <Content Include="JavaScript\prototypesAnalysis.js" />
-    <Content Include="Styles\JsonViewer.css" />
     <Content Include="Pages\PrototypeAnalysis\Index.html" />
     <Content Include="Parameters.xml" />
     <Content Include="ReadMe.txt" />
@@ -175,8 +174,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\ValidationException.cs" />
+    <Compile Include="Monitor.cs" />
     <Compile Include="Analysis\AnalysisRequest.cs" />
-    <Compile Include="Analysis\AnalysisResponse.cs" />
     <Compile Include="Analysis\AnalysisService.cs" />
     <Compile Include="Analysis\IAnalysisService.cs" />
     <Compile Include="Analysis\InstanceJsonConverter.cs" />

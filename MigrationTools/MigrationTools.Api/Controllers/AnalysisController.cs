@@ -1,8 +1,10 @@
 ﻿using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.MigrationTools.Api;
 using CheckListManager.Prototypes.Logic.Analysis;
 using CheckListManager.Prototypes.Logic.List;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -24,16 +26,23 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Route("Prototypes")]
         public async Task<IHttpActionResult> Prototypes()
         {
-            try
-            {
-                var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-                var response = await _analysisService.PrototypesAsync(Identity, null, cancellationToken);
-                return Json(response);
-            }
-            catch (Exception e)
-            {
-                return Ok(e?.Message + Environment.NewLine + e?.StackTrace);
-            }
+            await _analysisService.PrototypesAsync(Identity, null);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("Monitor")]
+        public IHttpActionResult Monitor()
+        {
+            return Json(MigrationTools.Api.Monitor.Dump());
+        }
+
+        [HttpGet]
+        [Route("Abort")]
+        public IHttpActionResult Abort()
+        {
+            MigrationTools.Api.Monitor.Abort();
+            return Ok();
         }
     }
 }

@@ -21,6 +21,7 @@ using CheckListManager.Prototypes.Data.Analysis;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.MigrationTools.Api.Analysis;
 
 namespace CheckListManager.Prototypes.Logic.Analysis
 {
@@ -33,7 +34,6 @@ namespace CheckListManager.Prototypes.Logic.Analysis
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly JsonConverter[] _converters;
         private readonly JsonConverter[] _instanceConverters;
-
 
         public AnalysisService(CustomJsonConverter[] converters, ICommonRepository commonRepository, IAnalysisRepository analysisRepository, IPrototypesRepository prototypesRepository, IInstancesRepository instancesRepository, IInstanceManagerService instanceManagerService)
         {
@@ -50,80 +50,88 @@ namespace CheckListManager.Prototypes.Logic.Analysis
             };
         }
 
-        public async Task<AnalysisResponse> PrototypesAsync(DefaultIdentity identity, AnalysisRequest request, CancellationToken cancellationToken)
+        public async Task PrototypesAsync(DefaultIdentity identity, AnalysisRequest request)
         {
-            var response = new AnalysisResponse();
-            var query = _analysisRepository.GetPrototypeVersions()
-                //.Take(20)
-                //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
-                ;
-
-            cancellationToken.ThrowIfCancellationRequested();
-            var list = await query
-                .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
-
-            cancellationToken.ThrowIfCancellationRequested();
-            foreach (var prototypeVersion in list)
+            try
             {
-                try
+                MigrationTools.Api.Monitor.Counts.Clear();
+                MigrationTools.Api.Monitor.Errors.Clear();
+
+                var query = _analysisRepository.GetPrototypeVersions()
+                    //.Take(10)
+                    //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
+                    ;
+                MigrationTools.Api.Monitor.Start(query.Count());
+
+                var list = await query
+                    .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
+
+                foreach (var prototypeVersion in list)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _converters);
-                    prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
-                    prototype.Setup(false);
-                    if (!prototype.Valid)
-                    {
-                        var errors = new List<string>();
-                        errors.AddRange(prototype.Errors.Select(e => $"Prototype property {e.Property}: {e.Message}"));
-
-                        foreach (var expression in prototype.Expressions.Values)
-                            if (expression.Error != null)
-                                errors.Add($"Expression {expression.Code}: {expression.Error} (at row {expression.ErrorPosition?.Row.ToString() ?? "n/a"} and column {expression.ErrorPosition?.Column.ToString() ?? "n/a"})");
-
-                        foreach (Models.CheckLists.Page page in prototype.Pages)
-                            if (page.Errors.Any())
-                                errors.Add($"{page.ToString()}: {string.Join(" - ", page.Errors.Select(e => $"Property {e.Property}: {e.Message}"))}");
-
-                        foreach (Models.CheckLists.Item item in prototype.Items.Values)
-                            if (item.Errors.Any())
-                                errors.Add($"{item.ToString()}: {string.Join(" - ", item.Errors.Select(e => $"Property {e.Property}: {e.Message}"))}");
-
-                        foreach (var source in prototype.ExternalSources.Values)
-                            if (source.Errors.Any())
-                                errors.Add($"Source {source.Code}: {string.Join(" - ", source.Errors.Select(e => $"Parameter {e.Property}: {e.Message}"))}");
-
-                        throw new Exception(string.Join(Environment.NewLine, errors));
-                    }
-
                     try
                     {
-                        if (prototypeVersion.VersionState != VersionState.Obsolete && prototypeVersion.VersionState != VersionState.Draft) CreateInstanceAsync(prototypeVersion);
+                        if (MigrationTools.Api.Monitor.Aborted) break;
+                        MigrationTools.Api.Monitor.Inc();
+                        var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _converters);
+                        prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
+                        prototype.Setup(false);
+                        if (!prototype.Valid)
+                        {
+                            var errors = new List<string>();
+                            errors.AddRange(prototype.Errors.Select(e => $"Prototype property {e.Property}: {e.Message}"));
+
+                            foreach (var expression in prototype.Expressions.Values)
+                                if (expression.Error != null)
+                                    errors.Add($"Expression {expression.Code}: {expression.Error} (at row {expression.ErrorPosition?.Row.ToString() ?? "n/a"} and column {expression.ErrorPosition?.Column.ToString() ?? "n/a"})");
+
+                            foreach (Models.CheckLists.Page page in prototype.Pages)
+                                if (page.Errors.Any())
+                                    errors.Add($"{page.ToString()}: {string.Join(" - ", page.Errors.Select(e => $"Property {e.Property}: {e.Message}"))}");
+
+                            foreach (Models.CheckLists.Item item in prototype.Items.Values)
+                                if (item.Errors.Any())
+                                    errors.Add($"{item.ToString()}: {string.Join(" - ", item.Errors.Select(e => $"Property {e.Property}: {e.Message}"))}");
+
+                            foreach (var source in prototype.ExternalSources.Values)
+                                if (source.Errors.Any())
+                                    errors.Add($"Source {source.Code}: {string.Join(" - ", source.Errors.Select(e => $"Parameter {e.Property}: {e.Message}"))}");
+
+                            throw new ValidationException(errors);
+                        }
+
+                        try
+                        {
+                            if (prototypeVersion.VersionState != VersionState.Obsolete && prototypeVersion.VersionState != VersionState.Draft) CreateInstanceAsync(prototypeVersion);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception($"Intance creation: {e.InnerException?.Message ?? e.Message}");
+                        }
+
+                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
+                            MigrationTools.Api.Monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        ++count.ok;
                     }
                     catch (Exception e)
                     {
-                        throw new Exception($"Intance creation: {e.InnerException?.Message ?? e.Message}");
+                        var Key = $"{prototypeVersion.Prototypes.Company}.{prototypeVersion.Prototypes.Name}.{prototypeVersion.Version}.{prototypeVersion.VersionState}";
+                        if (!MigrationTools.Api.Monitor.Errors.TryGetValue(Key, out var error))
+                            MigrationTools.Api.Monitor.Errors[Key] = error = new List<string>();
+                        if (e is ValidationException validationException)
+                            error.AddRange(validationException.Messages);
+                        else
+                            error.Add(e.Message);
+
+                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
+                            MigrationTools.Api.Monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        ++count.ko;
                     }
-
-                    if (!response.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
-                        response.Counts[prototypeVersion.VersionState] = count = new AnalysisResponse.CountRecord();
-                    ++count.OK;
-                }
-                catch (Exception e)
-                {
-                    var Key = $"{prototypeVersion.Prototypes.Company}.{prototypeVersion.Prototypes.Name}.{prototypeVersion.Version}.{prototypeVersion.VersionState}";
-                    if (!response.Errors.TryGetValue(Key, out var error))
-                        response.Errors[Key] = error = new List<string>();
-                    error.Add(e.Message);
-
-                    if (!response.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
-                        response.Counts[prototypeVersion.VersionState] = count = new AnalysisResponse.CountRecord();
-                    ++count.KO;
                 }
             }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            response.End = DateTimeOffset.Now;
-            return response;
+            finally
+            {
+                MigrationTools.Api.Monitor.Stop();
+            }
         }
 
         public InstanceCacheObject CreateInstanceAsync(PrototypeVersions prototypeVersion)

@@ -1,1 +1,1 @@
-﻿*{font-family:Arial,sans-serif;}a{color:#000;text-decoration:none;}a:hover{text-decoration:underline;}div#output{border-left:solid 1px #000;margin-left:20px;}.hidden{display:none;}
+﻿*{font-family:Arial,sans-serif;}h1{margin-bottom:5px;}h1+p{margin-top:0;font-size:smaller;color:#333;}h2{margin:30px 0 10px;}a{color:#000;text-decoration:none;}a:hover{text-decoration:underline;}.hidden{display:none;}label{display:block;}input{display:block;}input+label{margin-top:10px;}

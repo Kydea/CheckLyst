@@ -12,7 +12,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
 {
     public interface IAnalysisService : IService
     {
-        Task<AnalysisResponse> PrototypesAsync(DefaultIdentity identity, AnalysisRequest request, CancellationToken cancellationToken);
+        Task PrototypesAsync(DefaultIdentity identity, AnalysisRequest request);
         InstanceCacheObject CreateInstanceAsync(PrototypeVersions prototypeVersion);
     }
 }
