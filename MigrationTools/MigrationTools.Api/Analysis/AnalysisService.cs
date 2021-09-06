@@ -82,7 +82,10 @@ namespace CheckListManager.Prototypes.Logic.Analysis
 
                             foreach (var expression in prototype.Expressions.Values)
                                 if (expression.Error != null)
-                                    errors.Add($"Expression {expression.Code}: {expression.Error} (at row {expression.ErrorPosition?.Row.ToString() ?? "n/a"} and column {expression.ErrorPosition?.Column.ToString() ?? "n/a"})");
+                                {
+                                    string position = expression.ErrorPosition == null ? string.Empty : $" (at row {expression.ErrorPosition.Row + 1} and column {expression.ErrorPosition.Column + 1})";
+                                    errors.Add($"Expression {expression.Code}: {expression.Error}{position}");
+                                }
 
                             foreach (Models.CheckLists.Page page in prototype.Pages)
                                 if (page.Errors.Any())
@@ -101,7 +104,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
 
                         try
                         {
-                            if (prototypeVersion.VersionState != VersionState.Obsolete && prototypeVersion.VersionState != VersionState.Draft) CreateInstanceAsync(prototypeVersion);
+                            if (prototypeVersion.VersionState != VersionState.Obsolete) CreateInstanceAsync(prototypeVersion);
                         }
                         catch (Exception e)
                         {
