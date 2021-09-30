@@ -6,48 +6,63 @@ using System.Web.Http;
 
 namespace CheckListManager.MigrationTools.Api
 {
-    public static class Monitor
+    public class Monitor
     {
-        private static bool Running { get; set; }
-        public static bool Aborted { get; private set; }
-        private static DateTime? InitialTime { get; set; }
-        private static DateTime? IterationTime { get; set; }
-        private static DateTime? FinalTime { get; set; }
-        private static int RecordCount { get; set; }
-        private static int CurrentRecordIndex { get; set; }
-        public static Dictionary<string, CountRecord> Counts { get; } = new Dictionary<string, CountRecord>();
-        public static Dictionary<string, List<string>> Errors { get; } = new Dictionary<string, List<string>>();
+        private long CompanyID { get; set; }
+        private string CompanyDescription { get; set; }
+        private bool Running { get; set; }
+        public bool Aborted { get; private set; }
+        private DateTime? InitialTime { get; set; }
+        private DateTime? IterationTime { get; set; }
+        private DateTime? FinalTime { get; set; }
+        private int RecordCount { get; set; }
+        private int CurrentRecordIndex { get; set; }
+        public Dictionary<string, CountRecord> Counts { get; } = new Dictionary<string, CountRecord>();
+        public Dictionary<string, List<string>> Errors { get; } = new Dictionary<string, List<string>>();
 
-        public static void Start(int RecordCount)
+        public Monitor()
+        {
+
+        }
+
+        public Monitor(long CompanyID, string CompanyDescription)
+        {
+            this.CompanyID = CompanyID;
+            this.CompanyDescription = CompanyDescription;
+        }
+
+        public void Start(int RecordCount)
         {
             if (Running) throw new InvalidOperationException();
             InitialTime = DateTime.Now;
             Running = true;
             Aborted = false;
-            Monitor.RecordCount = RecordCount;
+            this.RecordCount = RecordCount;
             CurrentRecordIndex = 0;
         }
 
-        public static void Inc()
+        public void Inc()
         {
             IterationTime = IterationTime ?? DateTime.Now;
             ++CurrentRecordIndex;
         }
 
-        public static void Stop()
+        public void Stop()
         {
             Running = false;
             IterationTime = null;
             FinalTime = DateTime.Now;
         }
 
-        public static dynamic Dump()
+        public dynamic Dump()
         {
             var EstimatedMilliseconds = !IterationTime.HasValue || CurrentRecordIndex == 0 ? default(double?) : (DateTime.Now - IterationTime.Value).TotalMilliseconds / CurrentRecordIndex * (RecordCount - CurrentRecordIndex);
             var MissingTime = Running && EstimatedMilliseconds.HasValue ? TimeSpan.FromMilliseconds(EstimatedMilliseconds.Value) : default(TimeSpan?);
 
             return new
             {
+                company = CompanyID,
+                companyDescription = $"{CompanyID} - {CompanyDescription}",
                 status = Running && Aborted ? "Aborting" : Running ? (CurrentRecordIndex == 0 ? "Starting" : "Running") : Aborted ? "Aborted" : "Stopped",
                 running = Running,
                 aborted = Aborted,
@@ -62,7 +77,7 @@ namespace CheckListManager.MigrationTools.Api
             };
         }
 
-        public static void Abort() => Aborted = true;
+        public void Abort() => Aborted = true;
 
         public class CountRecord
         {

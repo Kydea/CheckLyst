@@ -1,22 +1,25 @@
 ﻿matematici.archivingProcess = function () {
     var
+        company,
         getCompanies = function () {
             var xhttp = new XMLHttpRequest();
             xhttp.open("GET", "../../Archiving/Companies", true);
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     if (this.status == 200) {
-                        console.log(this.responseText);
-                        var monitor = JSON.parse(this.responseText);
-                        document.getElementById("start").classList.toggle("hidden", !!monitor.running);
-                        document.getElementById("stop").classList.toggle("hidden", !monitor.running);
-                        var controls = document.getElementById("status").getElementsByTagName("input");
-                        for (var index in controls) {
-                            var control = controls[index];
-                            control.value = monitor[control.name];
+                        var list = JSON.parse(this.responseText);
+                        company = document.getElementById("company");
+                        for (var index in list) {
+                            var option = document.createElement("option");
+                            option.value = index;
+                            option.text = list[index];
+                            company.appendChild(option);
                         }
-                        if (monitor.counts) setTotals(monitor.counts);
-                        if (monitor.errors) setErrors(monitor.errors);
+                        company.addEventListener("change", function () {
+                            document.getElementById("start").classList.toggle("hidden", true);
+                            document.getElementById("stop").classList.toggle("hidden", true);
+                            ping();
+                        });
                         setTimeout(ping, 1000);
                     } else {
                         console.log(xhttp);
@@ -64,12 +67,14 @@
         },
 
         ping = function () {
+            if (!company.value) return;
             var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "../../Archiving/Monitor", true);
+            xhttp.open("POST", "../../Archiving/Monitor/" + company.value, true);
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     if (this.status == 200) {
                         var monitor = JSON.parse(this.responseText);
+                        if (company.value != monitor.company) return;
                         document.getElementById("start").classList.toggle("hidden", !!monitor.running);
                         document.getElementById("stop").classList.toggle("hidden", !monitor.running);
                         var controls = document.getElementById("status").getElementsByTagName("input");
@@ -97,13 +102,20 @@
 
     return {
         go: function () {
-            var xhttp = new XMLHttpRequest();
+            var
+                xhttp = new XMLHttpRequest(),
+                parameters = {
+                    company: parseInt(company.value),
+                    auditTrail: document.getElementById("auditTrail").checked,
+                    instances: document.getElementById("instances").checked
+                };
 
             errors = document.getElementById("totals").innerHTML = document.getElementById("detail").innerHTML = "n/a";
             document.getElementById("copy").classList.add("hidden");
             document.getElementById("start").classList.add("hidden");
-            xhttp.open("GET", "../../Analysis/Prototypes", true);
-            xhttp.send();
+            xhttp.open("POST", "../../Archiving/Export", true);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send(JSON.stringify(parameters));
         },
 
         stop: function () {

@@ -13,9 +13,11 @@
     <h2>Parameters</h2>
     <div id="parameters">
         <label>company</label>
-        <select name="company">
-            <option value="-1" selected="selected">wait...</option>
-        </select>
+        <select id="company" name="company"></select>
+        <label>audit trail</label>
+        <input type="checkbox" id="auditTrail" name="auditTrail" />
+        <label>instances</label>
+        <input type="checkbox" id="instances" name="instances" />
     </div>
 
     <h2>Controls</h2>
@@ -28,6 +30,8 @@
     <div id="status">
         <label>state</label>
         <input type="text" name="status" value="wait..." readonly="readonly" />
+        <label>company</label>
+        <input type="text" name="companyDescription" value="" readonly="readonly" />
         <label>started on</label>
         <input type="text" name="initialTime" readonly="readonly" />
         <label>completed on</label>

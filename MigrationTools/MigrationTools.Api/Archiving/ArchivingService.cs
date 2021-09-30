@@ -46,17 +46,23 @@ namespace CheckListManager.Prototypes.Logic.Archiving
             };
         }
 
-        public async Task InstancesAsync(DefaultIdentity identity, ArchivingRequest request)
+        public async Task<Dictionary<long, string>> GetCompaniesAsync()
+        {
+            var companies = await _commonRepository.GetCompaniesAsync();
+            return companies.ToDictionary(k => k.ID, v => v.Name);
+        }
+
+        public async Task ExportAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, ArchivingRequest request)
         {
             try
             {
-                MigrationTools.Api.Monitor.Counts.Clear();
-                MigrationTools.Api.Monitor.Errors.Clear();
+                monitor.Counts.Clear();
+                monitor.Errors.Clear();
 
                 var query = _archivingRepository.GetInstances(request.Company)
                     .Take(10)
                     ;
-                MigrationTools.Api.Monitor.Start(query.Count());
+                monitor.Start(query.Count());
 
                 var list = await query
                     .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
@@ -65,8 +71,8 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                 {
                     try
                     {
-                        if (MigrationTools.Api.Monitor.Aborted) break;
-                        MigrationTools.Api.Monitor.Inc();
+                        if (monitor.Aborted) break;
+                        monitor.Inc();
                         var prototype = JsonConvert.DeserializeObject<Prototype>(instance.Data, _instanceConverters);
                         prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
                         prototype.Setup(false);
@@ -95,26 +101,26 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                                     errors.Add($"Source {source.Code}: {string.Join(" - ", source.Errors.Select(e => $"Parameter {e.Property}: {e.Message}"))}");
                         }
 
-                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(instance.InstanceState, out var count))
-                            MigrationTools.Api.Monitor.Counts[instance.InstanceState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        if (!monitor.Counts.TryGetValue(instance.InstanceState, out var count))
+                            monitor.Counts[instance.InstanceState] = count = new MigrationTools.Api.Monitor.CountRecord();
                         ++count.ok;
                     }
                     catch (Exception e)
                     {
                         var Key = $"{instance.Prototypes.Company}.{instance.Prototypes.Name}.{instance.Version}.{instance.InstanceState}";
-                        if (!MigrationTools.Api.Monitor.Errors.TryGetValue(Key, out var error))
-                            MigrationTools.Api.Monitor.Errors[Key] = error = new List<string>();
+                        if (!monitor.Errors.TryGetValue(Key, out var error))
+                            monitor.Errors[Key] = error = new List<string>();
                         error.Add(e.Message);
 
-                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(instance.InstanceState, out var count))
-                            MigrationTools.Api.Monitor.Counts[instance.InstanceState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        if (!monitor.Counts.TryGetValue(instance.InstanceState, out var count))
+                            monitor.Counts[instance.InstanceState] = count = new MigrationTools.Api.Monitor.CountRecord();
                         ++count.ko;
                     }
                 }
             }
             finally
             {
-                MigrationTools.Api.Monitor.Stop();
+                monitor.Stop();
             }
         }
     }

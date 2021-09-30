@@ -12,7 +12,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
 {
     public interface IArchivingService : IService
     {
-        Task<Dictionary<int, string>> GetCompaniesAsync();
-        Task InstancesAsync(DefaultIdentity identity, ArchivingRequest request);
+        Task<Dictionary<long, string>> GetCompaniesAsync();
+        Task ExportAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, ArchivingRequest request);
     }
 }

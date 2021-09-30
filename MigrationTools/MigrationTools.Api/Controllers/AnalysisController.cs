@@ -16,6 +16,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
     public class AnalysisController : BaseApiController
     {
         private readonly IAnalysisService _analysisService;
+        private readonly Monitor _monitor = new Monitor();
 
         public AnalysisController(IAnalysisService analysisService)
         {
@@ -26,7 +27,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Route("Prototypes")]
         public async Task<IHttpActionResult> Prototypes()
         {
-            await _analysisService.PrototypesAsync(Identity, null);
+            await _analysisService.PrototypesAsync(Identity, _monitor, null);
             return Ok();
         }
 
@@ -34,14 +35,14 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Route("Monitor")]
         public IHttpActionResult Monitor()
         {
-            return Json(MigrationTools.Api.Monitor.Dump());
+            return Json(_monitor.Dump());
         }
 
         [HttpGet]
         [Route("Abort")]
         public IHttpActionResult Abort()
         {
-            MigrationTools.Api.Monitor.Abort();
+            _monitor.Abort();
             return Ok();
         }
     }

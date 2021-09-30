@@ -51,18 +51,18 @@ namespace CheckListManager.Prototypes.Logic.Analysis
             };
         }
 
-        public async Task PrototypesAsync(DefaultIdentity identity, AnalysisRequest request)
+        public async Task PrototypesAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, AnalysisRequest request)
         {
             try
             {
-                MigrationTools.Api.Monitor.Counts.Clear();
-                MigrationTools.Api.Monitor.Errors.Clear();
+                monitor.Counts.Clear();
+                monitor.Errors.Clear();
 
                 var query = _analysisRepository.GetPrototypeVersions()
                     //.Take(10)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                     ;
-                MigrationTools.Api.Monitor.Start(query.Count());
+                monitor.Start(query.Count());
 
                 var list = await query
                     .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
@@ -71,8 +71,8 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                 {
                     try
                     {
-                        if (MigrationTools.Api.Monitor.Aborted) break;
-                        MigrationTools.Api.Monitor.Inc();
+                        if (monitor.Aborted) break;
+                        monitor.Inc();
                         var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _converters);
                         prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
                         prototype.Setup(false);
@@ -112,29 +112,29 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                             throw new Exception($"Intance creation: {e.InnerException?.Message ?? e.Message}");
                         }
 
-                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
-                            MigrationTools.Api.Monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        if (!monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
+                            monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
                         ++count.ok;
                     }
                     catch (Exception e)
                     {
                         var Key = $"{prototypeVersion.Prototypes.Company}.{prototypeVersion.Prototypes.Name}.{prototypeVersion.Version}.{prototypeVersion.VersionState}";
-                        if (!MigrationTools.Api.Monitor.Errors.TryGetValue(Key, out var error))
-                            MigrationTools.Api.Monitor.Errors[Key] = error = new List<string>();
+                        if (!monitor.Errors.TryGetValue(Key, out var error))
+                            monitor.Errors[Key] = error = new List<string>();
                         if (e is ValidationException validationException)
                             error.AddRange(validationException.Messages);
                         else
                             error.Add(e.Message);
 
-                        if (!MigrationTools.Api.Monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
-                            MigrationTools.Api.Monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        if (!monitor.Counts.TryGetValue(prototypeVersion.VersionState, out var count))
+                            monitor.Counts[prototypeVersion.VersionState] = count = new MigrationTools.Api.Monitor.CountRecord();
                         ++count.ko;
                     }
                 }
             }
             finally
             {
-                MigrationTools.Api.Monitor.Stop();
+                monitor.Stop();
             }
         }
 

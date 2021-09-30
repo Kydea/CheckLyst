@@ -23,8 +23,7 @@ namespace CheckListManager.Common.Logic.Api.Configuration
             return base.ReadContentAsync(request, type, GetFormatters(formatters, request), formatterLogger);
         }
 
-        public override Task<object> ReadContentAsync(HttpRequestMessage request, Type type, IEnumerable<MediaTypeFormatter> formatters, IFormatterLogger formatterLogger,
-            CancellationToken cancellationToken)
+        public override Task<object> ReadContentAsync(HttpRequestMessage request, Type type, IEnumerable<MediaTypeFormatter> formatters, IFormatterLogger formatterLogger, CancellationToken cancellationToken)
         {
             return base.ReadContentAsync(request, type, GetFormatters(formatters, request), formatterLogger, cancellationToken);
         }
