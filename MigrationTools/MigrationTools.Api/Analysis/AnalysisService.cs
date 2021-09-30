@@ -22,6 +22,7 @@ using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.MigrationTools.Api.Analysis;
+using CheckListManager.Prototypes.Api;
 
 namespace CheckListManager.Prototypes.Logic.Analysis
 {

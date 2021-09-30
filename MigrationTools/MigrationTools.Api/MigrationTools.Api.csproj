@@ -159,7 +159,9 @@
     <Content Include="Global.asax" />
     <Content Include="Index.html" />
     <Content Include="JavaScript\base.js" />
+    <Content Include="JavaScript\archivingProcess.js" />
     <Content Include="JavaScript\prototypesAnalysis.js" />
+    <Content Include="Pages\ArchivingProcess\Index.html" />
     <Content Include="Pages\PrototypeAnalysis\Index.html" />
     <Content Include="Parameters.xml" />
     <Content Include="ReadMe.txt" />
@@ -174,12 +176,18 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Archiving\ArchivingRequest.cs" />
+    <Compile Include="Archiving\ArchivingService.cs" />
+    <Compile Include="Archiving\ArchivingRepository.cs" />
+    <Compile Include="Archiving\IArchivingService.cs" />
+    <Compile Include="Archiving\IArchivingRepository.cs" />
+    <Compile Include="InstanceJsonConverter.cs" />
     <Compile Include="Analysis\ValidationException.cs" />
+    <Compile Include="Controllers\ArchivingController.cs" />
     <Compile Include="Monitor.cs" />
     <Compile Include="Analysis\AnalysisRequest.cs" />
     <Compile Include="Analysis\AnalysisService.cs" />
     <Compile Include="Analysis\IAnalysisService.cs" />
-    <Compile Include="Analysis\InstanceJsonConverter.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AnalysisController.cs" />
     <Compile Include="Analysis\IAnalysysRepository.cs" />

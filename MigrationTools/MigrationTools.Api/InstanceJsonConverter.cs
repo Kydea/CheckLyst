@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace CheckListManager.Prototypes.Logic.Analysis
+namespace CheckListManager.Prototypes.Api
 {
     public class InstanceJsonConverter : JsonConverter
     {
