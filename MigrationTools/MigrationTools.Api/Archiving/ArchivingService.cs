@@ -74,7 +74,6 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                         if (monitor.Aborted) break;
                         monitor.Inc();
                         var prototype = JsonConvert.DeserializeObject<Prototype>(instance.Data, _instanceConverters);
-                        prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
                         prototype.Setup(false);
                         if (!prototype.Valid)
                         {
