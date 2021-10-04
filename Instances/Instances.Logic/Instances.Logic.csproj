@@ -136,8 +136,8 @@
       <Name>Common.Logic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Instances.Data\Instances.Data.csproj">
-      <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
-      <Name>Trail.Data</Name>
+      <Project>{2B8DACE9-8001-4CCE-86EB-815E4330D7EC}</Project>
+      <Name>Instances.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

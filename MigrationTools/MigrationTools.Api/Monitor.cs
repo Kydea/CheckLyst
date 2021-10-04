@@ -8,9 +8,9 @@ namespace CheckListManager.MigrationTools.Api
 {
     public class Monitor
     {
-        private long CompanyID { get; set; }
-        private string CompanyDescription { get; set; }
-        private bool Running { get; set; }
+        public long CompanyID { get; private set; }
+        public string CompanyDescription { get; private set; }
+        public bool Running { get; private set; }
         public bool Aborted { get; private set; }
         private DateTime? InitialTime { get; set; }
         private DateTime? IterationTime { get; set; }
@@ -19,6 +19,7 @@ namespace CheckListManager.MigrationTools.Api
         private int CurrentRecordIndex { get; set; }
         public Dictionary<string, CountRecord> Counts { get; } = new Dictionary<string, CountRecord>();
         public Dictionary<string, List<string>> Errors { get; } = new Dictionary<string, List<string>>();
+        public List<string> Files { get; private set; } = new List<string>();
 
         public Monitor()
         {

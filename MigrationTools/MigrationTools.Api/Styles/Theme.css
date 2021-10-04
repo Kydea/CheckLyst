@@ -24,7 +24,7 @@ a {
 label {
   display: block; }
 
-input {
+input, select {
   display: block; }
-  input + label {
+  input + label, select + label {
     margin-top: 10px; }
