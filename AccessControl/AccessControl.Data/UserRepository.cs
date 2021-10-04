@@ -201,7 +201,7 @@ namespace CheckListManager.AccessControl.Data
             var Threshold = DateTime.UtcNow.AddDays(-Days);
             return await Entities.Users
                 .Include(u => u.Companies)
-                .Where(x => x.Enabled && (x.LastLoginOn < Threshold || x.LastLoginOn == null && x.CreatedOn < Threshold)).ToListAsync();
+                .Where(x => x.Company == company && x.Enabled && (x.LastLoginOn < Threshold || x.LastLoginOn == null && x.CreatedOn < Threshold)).ToListAsync();
         }
 
         public async Task<List<Users>> GetUsersWithExpiredPin(long company)

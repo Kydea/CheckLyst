@@ -756,7 +756,6 @@ namespace CheckListManager.AccessControl.Logic.Services
             {
                 var users = await _userRepository.GetUsersDisableWarningAsync(company);
                 foreach (var user in users)
-                {
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
                             new EmailMessage(user.Company, "User disabled soon",
@@ -766,7 +765,6 @@ namespace CheckListManager.AccessControl.Logic.Services
                             {
                                 TrailMessage = new EmailTrailMessage(user.Code, null, null, null)
                             }, cancellationToken);
-                }
             }
             catch (Exception e)
             {
