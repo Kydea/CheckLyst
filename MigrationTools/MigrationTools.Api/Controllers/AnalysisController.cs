@@ -16,7 +16,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
     public class AnalysisController : BaseApiController
     {
         private readonly IAnalysisService _analysisService;
-        private readonly Monitor _monitor = new Monitor();
+        private static readonly Monitor _monitor = new Monitor();
 
         public AnalysisController(IAnalysisService analysisService)
         {

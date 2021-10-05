@@ -25,6 +25,7 @@ using System.IO;
 using CheckListManager.Common.Logic.Services;
 using System.Text;
 using CheckListManager.Common.Core.Helpers;
+using System.Configuration;
 
 namespace CheckListManager.Prototypes.Logic.Archiving
 {
@@ -39,6 +40,8 @@ namespace CheckListManager.Prototypes.Logic.Archiving
         private readonly JsonConverter[] _instanceConverters;
 
         private const string CSV_SEPARATOR = ";";
+        private readonly string _bucketName;
+        private string _folderName;
 
         public ArchivingService(
             ICommonRepository commonRepository,
@@ -60,6 +63,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                 new TypedValueJsonConverter(),
                 new ExternalSourceJsonConverter()
             };
+            _bucketName = ConfigurationManager.AppSettings["BucketName"];
         }
 
         public async Task<Dictionary<long, string>> GetCompaniesAsync()
@@ -79,8 +83,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
             var csvFileName = $"Instances.csv";
             monitor.Files.Add(csvFileName);
 
-            //creare file temporaneo?
-            using (FileStream FileStream = File.Create(Path.Combine(Folder, csvFileName)))
+            using (MemoryStream csvMemoryStream = new MemoryStream())
             {
                 byte[] Content = new UTF8Encoding(true).GetBytes(
                     EscapeCSVToken("Code") + CSV_SEPARATOR +
@@ -93,7 +96,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                     Environment.NewLine
                 );
 
-                FileStream.Write(Content, 0, Content.Length);
+                csvMemoryStream.Write(Content, 0, Content.Length);
 
                 foreach (var instance in instances)
                 {
@@ -106,15 +109,17 @@ namespace CheckListManager.Prototypes.Logic.Archiving
 
                         var jsonFileName = $"{cacheObject.InstanceCode}.json";
                         monitor.Files.Add(jsonFileName);
-                        //export instance.Data on amazon as jsonFileName
+                        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(instance.Data ?? string.Empty)))
+                            await _storageService.PutAsync(_bucketName, $"{_folderName}/{jsonFileName}", memoryStream);
 
                         var PDF = new InstancePDF(company.ID, company.Name, company.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
-                        var MemoryStream = new MemoryStream();
-                        await PDF.GenerateAsync(MemoryStream);
-
-                        var pdfFileName = $"{cacheObject.InstanceCode}.pdf";
-                        monitor.Files.Add(pdfFileName);
-                        //export memory stream on amazon as pdfFileName
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await PDF.GenerateAsync(memoryStream);
+                            var pdfFileName = $"{cacheObject.InstanceCode}.pdf";
+                            monitor.Files.Add(pdfFileName);
+                            await _storageService.PutAsync(_bucketName, $"{_folderName}/{pdfFileName}", memoryStream);
+                        }
 
                         Content = new UTF8Encoding(true).GetBytes(
                             cacheObject.InstanceCode + CSV_SEPARATOR +
@@ -127,7 +132,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                             Environment.NewLine
                         );
 
-                        FileStream.Write(Content, 0, Content.Length);
+                        csvMemoryStream.Write(Content, 0, Content.Length);
 
                         if (!monitor.Counts.TryGetValue("Instances - " + instance.InstanceState, out var count))
                             monitor.Counts["Instances - " + instance.InstanceState] = count = new MigrationTools.Api.Monitor.CountRecord();
@@ -146,7 +151,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                     }
                 }
 
-                //export file temporaneo su amazon s3 as csvFileName
+                await _storageService.PutAsync(_bucketName, $"{_folderName}/{csvFileName}", csvMemoryStream);
             }
         }
 
@@ -170,8 +175,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                     var FileName = $"AuditTrail{Month:-yyyy-MM}.csv";
                     monitor.Files.Add(FileName);
 
-                    //creare file temporaneo?
-                    using (FileStream FileStream = File.Create(Path.Combine(Folder, FileName)))
+                    using (MemoryStream csvMemoryStream = new MemoryStream())
                     {
                         byte[] Content = new UTF8Encoding(true).GetBytes(
                             EscapeCSVToken("Id") + CSV_SEPARATOR +
@@ -184,7 +188,7 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                             Environment.NewLine
                         );
 
-                        FileStream.Write(Content, 0, Content.Length);
+                        csvMemoryStream.Write(Content, 0, Content.Length);
 
                         foreach (var Record in MonthRecords)
                         {
@@ -203,10 +207,11 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                                 Environment.NewLine
                             );
 
-                            FileStream.Write(Content, 0, Content.Length);
+                            csvMemoryStream.Write(Content, 0, Content.Length);
                         }
+
+                        await _storageService.PutAsync(_bucketName, $"{_folderName}/{FileName}", csvMemoryStream);
                     }
-                    //export file temporaneo su amazon s3 as csvFileName
 
                     Month = Month.AddMonths(1);
                 }
@@ -220,21 +225,20 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                 }
         }
 
-        private void ExportSummary(DefaultIdentity identity, MigrationTools.Api.Monitor monitor)
+        private async Task ExportSummaryAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor)
         {
             //creare file temporaneo?
             var summaryFileName = "Summary.txt";
             monitor.Files.Add(summaryFileName);
-            using (FileStream FileStream = File.Create(Path.Combine(Folder, summaryFileName)))
+            using (MemoryStream csvMemoryStream = new MemoryStream())
             {
                 byte[] Content = new UTF8Encoding(true).GetBytes(
                     string.Join(Environment.NewLine, monitor.Files.OrderBy(f => f))
                 );
 
-                FileStream.Write(Content, 0, Content.Length);
+                csvMemoryStream.Write(Content, 0, Content.Length);
+                await _storageService.PutAsync(_bucketName, $"{_folderName}/{summaryFileName}", csvMemoryStream);
             }
-
-            //export file temporaneo su amazon s3 as csvFileName
         }
 
         public async Task ExportAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, ArchivingRequest request)
@@ -245,6 +249,9 @@ namespace CheckListManager.Prototypes.Logic.Archiving
                 monitor.Counts.Clear();
                 monitor.Errors.Clear();
                 monitor.Files.Clear();
+
+
+                _folderName = $"Company-{request.Company}-{DateTime.Now:yyyy-MM-dd-HH-mm-ss}";
 
                 var intancesQuery = _archivingRepository.GetInstances(request.Company)
                     .Where(x => request.Instances ? true : false)
@@ -260,7 +267,14 @@ namespace CheckListManager.Prototypes.Logic.Archiving
 
                 await ExportInstancesAsync(identity, monitor, await intancesQuery.OrderBy(i => i.Prototypes.Company).ThenBy(i => i.Prototype).ThenBy(i => i.Version).ThenBy(i => i.Year).ThenBy(i => i.Number).ThenBy(i => i.ID).ToListAsync());
                 await ExportTrailRecordsAsync(identity, monitor, trailRecordsQuery);
-                ExportSummary(identity, monitor);
+                await ExportSummaryAsync(identity, monitor);
+            }
+            catch(Exception e)
+            {
+                var Key = "Process...";
+                if (!monitor.Errors.TryGetValue(Key, out var error))
+                    monitor.Errors[Key] = error = new List<string>();
+                error.Add(e.Message);
             }
             finally
             {

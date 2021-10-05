@@ -33,17 +33,21 @@ namespace CheckListManager.Prototypes.Logic.Analysis
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly IInstancesRepository _instancesRepository;
         private readonly IInstanceManagerService _instanceManagerService;
-        private readonly JsonConverter[] _converters;
+        private readonly JsonConverter[] _prototypeConverters;
         private readonly JsonConverter[] _instanceConverters;
 
         public AnalysisService(CustomJsonConverter[] converters, ICommonRepository commonRepository, IAnalysisRepository analysisRepository, IPrototypesRepository prototypesRepository, IInstancesRepository instancesRepository, IInstanceManagerService instanceManagerService)
         {
-            _converters = converters;
             _commonRepository = commonRepository;
             _analysisRepository = analysisRepository;
             _prototypesRepository = prototypesRepository;
             _instancesRepository = instancesRepository;
             _instanceManagerService = instanceManagerService;
+            _prototypeConverters = new JsonConverter[] {
+                new PrototypeJsonConverter(),
+                new TypedValueJsonConverter(),
+                new ExternalSourceJsonConverter()
+            };
             _instanceConverters = new JsonConverter[] {
                 new InstanceJsonConverter(),
                 new TypedValueJsonConverter(),
@@ -59,7 +63,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                 monitor.Errors.Clear();
 
                 var query = _analysisRepository.GetPrototypeVersions()
-                    //.Take(10)
+                    .Take(100)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                     ;
                 monitor.Start(query.Count());
@@ -73,7 +77,7 @@ namespace CheckListManager.Prototypes.Logic.Analysis
                     {
                         if (monitor.Aborted) break;
                         monitor.Inc();
-                        var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _converters);
+                        var prototype = JsonConvert.DeserializeObject<Prototype>(prototypeVersion.Data, _prototypeConverters);
                         prototype.InstanceCreation = true; //true: only errors on instance creation, false: include errors specific of the prototype editing process
                         prototype.Setup(false);
                         if (!prototype.Valid)

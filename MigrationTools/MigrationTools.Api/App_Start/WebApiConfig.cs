@@ -4,7 +4,7 @@ using Autofac;
 using CheckListManager.Common.Logic.Api.Configuration;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.Prototypes.Logic.Models.CheckLists;
+using CheckListManager.Instances.Logic.Models.CheckLists;
 using MultipartDataMediaFormatter;
 using MultipartDataMediaFormatter.Infrastructure;
 using Owin;

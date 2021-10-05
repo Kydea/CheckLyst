@@ -181,6 +181,7 @@
     <Compile Include="Archiving\ArchivingRepository.cs" />
     <Compile Include="Archiving\IArchivingService.cs" />
     <Compile Include="Archiving\IArchivingRepository.cs" />
+    <Compile Include="PrototypeJsonConverter.cs" />
     <Compile Include="InstanceJsonConverter.cs" />
     <Compile Include="Analysis\ValidationException.cs" />
     <Compile Include="Controllers\ArchivingController.cs" />
