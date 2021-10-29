@@ -53,8 +53,8 @@ create table "WorkFlows"."WorkFlowApplications"
 	"ID" bigserial primary key,
 
 	"Prototype" bigint,
-	"PrototypeVersion" int,
-	check("Prototype" is null and "PrototypeVersion" is null or not "Prototype" is null and not "PrototypeVersion" is null),
+	"Version" int,
+	check("Prototype" is null and "Version" is null or not "Prototype" is null and not "Version" is null),
 	--the followin constraint is added in the script Script3.CheckLists.sql
 	--constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 

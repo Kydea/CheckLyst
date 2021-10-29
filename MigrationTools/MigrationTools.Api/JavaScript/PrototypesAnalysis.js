@@ -22,7 +22,6 @@
 
         copy = function () {
             var textArea = document.createElement("textarea");
-            textArea.classList.add("hidden");
             document.body.appendChild(textArea);
             textArea.value = document.getElementById("detail").innerHTML;
             textArea.focus();
