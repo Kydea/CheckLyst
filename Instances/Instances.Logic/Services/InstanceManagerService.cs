@@ -604,6 +604,8 @@ namespace CheckListManager.Instances.Logic.Services
 
                 _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
+                bool ExportFTP = false;
+
                 if (complete)
                 {
                     long? WorkFlowApplicationId = null;
@@ -632,13 +634,7 @@ namespace CheckListManager.Instances.Logic.Services
                         cacheObject.InstanceState = row.InstanceState = InstanceState.Confirmed;
 
                         if (!row.PrototypeVersions.VersionState.In(VersionState.Draft, VersionState.InSimulation) && !string.IsNullOrEmpty(row.FileName))
-                            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
-                            {
-                                Company = identity.CompanyId,
-                                ID = row.ID,
-                                Path = row.FileName,
-                                Code = cacheObject.InstanceCode
-                            });
+                            ExportFTP = true;
                     }
 
                     row.InstancesHistory.Add(new InstancesHistory
@@ -659,6 +655,15 @@ namespace CheckListManager.Instances.Logic.Services
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.TouchAsync(cacheObject.Code)
                     );
+
+                if (ExportFTP)
+                    await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+                    {
+                        Company = identity.CompanyId,
+                        ID = row.ID,
+                        Path = row.FileName,
+                        Code = cacheObject.InstanceCode
+                    });
 
                 await UpdateParentInstance(cacheObject, identity, true);
 
