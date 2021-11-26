@@ -15,8 +15,8 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Dispose();
 
-        public abstract void PrepareMetaData();
-        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone);
+        public abstract void PrepareMetaData(out double ExecutionTime);
+        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double ExecutionTime);
 
         protected string Code { get; private set; }
 

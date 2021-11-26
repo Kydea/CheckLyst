@@ -121,7 +121,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"Approved" boolean
 );
 
-create  index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
+create index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
 
 create table "WorkFlows"."WorkFlowApplicationStepTags"
 (

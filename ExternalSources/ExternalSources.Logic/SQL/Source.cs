@@ -8,6 +8,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace CheckListManager.ExternalSources.Logic.SQL
 {
@@ -135,17 +136,24 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         {
         }
 
-        public override void PrepareMetaData()
+        public override void PrepareMetaData(out double OperationTime)
         {
+            var stopWatch = Stopwatch.StartNew();
             var DataSet = LoadData(null, 0, 0);
+            stopWatch.Stop();
+            OperationTime = stopWatch.Elapsed.TotalMilliseconds;
             Columns = new List<string>(DataSet.Tables[0].Columns.Count);
             foreach (var Column in DataSet.Tables[0].Columns)
                 Columns.Add(((DataColumn)Column).ColumnName);
         }
 
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double OperationTime)
         {
-            return LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
+            var stopWatch = Stopwatch.StartNew();
+            var Result = LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
+            stopWatch.Stop();
+            OperationTime = stopWatch.Elapsed.TotalMilliseconds;
+            return Result;
         }
     }
 }

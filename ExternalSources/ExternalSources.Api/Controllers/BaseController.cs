@@ -18,6 +18,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
 	public class BaseController: ApiController
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static long OperationNumber = 0;
 
         private void BuildExceptionMessage(StringBuilder Message, Exception Exception)
         {
@@ -43,16 +44,20 @@ namespace CheckListManager.ExternalSources.Api.Controllers
             return Content(HttpStatusCode.InternalServerError, Message.ToString());
         }
 
+        private long GetOperationNumber() => OperationNumber = OperationNumber == long.MaxValue ? 0 : OperationNumber + 1;
+
         [HttpPost]
         [Route("GetMetaData")]
         public IHttpActionResult GetMetaData(ExternalSourceRequest request)
         {
             try
             {
-                Logger.Info("ExternalSource/GetMetaData parameters:\n" + JsonConvert.SerializeObject(request));
+                var OperationNumber = GetOperationNumber();
+                Logger.Info($"ExternalSource/GetMetaData {OperationNumber} parameters:\n {JsonConvert.SerializeObject(request)}");
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
-                    Source.PrepareMetaData();
+                    Source.PrepareMetaData(out var OperationTime);
+                    Logger.Info($"ExternalSource/GetMetaData {OperationNumber} time:\n {OperationTime}");
                     return Ok(new
                     {
                         Code = request.code,
@@ -73,15 +78,18 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
-                Logger.Info("ExternalSource/GetData parameters:\n" + JsonConvert.SerializeObject(request));
+                var OperationNumber = GetOperationNumber();
+                Logger.Info($"ExternalSource/GetData {OperationNumber} parameters:\n{JsonConvert.SerializeObject(request)}");
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
+                    var Result = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
+                    Logger.Info($"ExternalSource/GetData time:\n {OperationTime}");
                     return Ok(new
                     {
                         Rows = request.page > 4 ? //limited to maximum 5 pages
-                            null : 
-                            Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone)
+                            null :
+                            Result
                     });
                 }
             }
@@ -97,7 +105,9 @@ namespace CheckListManager.ExternalSources.Api.Controllers
         {
             try
             {
-                Logger.Info("ExternalSource/Export parameters:\n" + JsonConvert.SerializeObject(request));
+                double TotalOperationTime = 0;
+                var OperationNumber = GetOperationNumber();
+                Logger.Info($"ExternalSource/Export {OperationNumber} parameters:\n{JsonConvert.SerializeObject(request)}");
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
@@ -107,8 +117,10 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                         var Parameters = new Dictionary<string, string>();
                         for (var Index = 0; Index < request.names.Count; ++Index)
                             Parameters.Add(request.names[Index], Record[Index]);
-                        Source.GetData(Parameters, request.page, request.decimalSeparator, request.timeZone);
+                        Source.GetData(Parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
+                        TotalOperationTime += OperationTime;
                     }
+                    Logger.Info($"ExternalSource/Export {OperationNumber} time:\n {TotalOperationTime}");
 
                     return Ok();
                 }

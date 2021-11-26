@@ -124,6 +124,7 @@ namespace CheckListManager.Instances.Terminal
         {
             string code = await _instancesRepository.GetCodeAsync(message.Company, message.ID);
             var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(message.Company, code, true);
+            if (cacheObject.InstanceState != InstanceState.Confirmed) throw new InvalidOperationException($"Instance {message.ID} is in state {cacheObject.InstanceState}");
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
             if (FTPServer == null)

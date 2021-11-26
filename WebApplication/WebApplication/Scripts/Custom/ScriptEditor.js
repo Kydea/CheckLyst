@@ -167,7 +167,6 @@
                                         //for prototypes from versions < 2.2
                                         var expression = newModel.expressions[code];
                                         expression.code = code;
-                                        expression.unique = expression.unique >= "2" ? expression.unique : "0";
                                     }
                                 else
                                     newModel.expressions = oldModel.expressions;

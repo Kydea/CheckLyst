@@ -112,7 +112,22 @@ namespace CheckListManager.WorkFlows.Data
 
             var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
             if (WorkFlow == null) throw new ArgumentException($"Workflow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
-            var WorkFlowApplication = new WorkFlowApplications
+
+            WorkFlowApplications WorkFlowApplication = null;
+
+            if (Instance != null)
+                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Instance == Instance.ID && (a.Approved == null || a.Approved == true));
+            if (PrototypeVersion != null)
+                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Prototype == PrototypeVersion.Prototype && Instance.ID == PrototypeVersion.Version && (a.Approved == null || a.Approved == true));
+
+            if (WorkFlowApplication != null)
+            {
+                //security deletion of applications created on a client connection failure that would yield a unique index violation
+                Entities.WorkFlowApplications.Remove(WorkFlowApplication);
+                await SaveChangesAsync();
+            }
+
+            WorkFlowApplication = new WorkFlowApplications
             {
                 WorkFlow = workFlow,
                 Date = date,

@@ -172,7 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="ConnectionStrings.config" />
+    <Content Include="ConnectionStrings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="..\..\Common\NLog.config">
       <Link>NLog.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

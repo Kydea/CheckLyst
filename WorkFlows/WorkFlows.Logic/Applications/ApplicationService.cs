@@ -100,9 +100,10 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             }
         }
 
-        private async Task Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        private async Task<bool> Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             var UtcNow = DateTimeOffset.UtcNow;
+            var Export = false;
 
             if (!PrototypeVersion.ValidFrom.HasValue)
                 PrototypeVersion.ValidFrom = UtcNow;
@@ -130,18 +131,22 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 }
             }
 
-            if (State == VersionState.Active || State == VersionState.Obsolete)
-                await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
-                {
-                    Company = identity.CompanyId,
-                    Prototype = PrototypeVersion.Prototype,
-                    PrototypeName = PrototypeVersion.Prototypes.Name,
-                    Version = PrototypeVersion.Version,
-                    State = State,
-                    Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
-                });
-
+            if (State == VersionState.Active || State == VersionState.Obsolete) Export = true;
             await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
+            return Export;
+        }
+
+        private async Task Export(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        {
+            await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+            {
+                Company = identity.CompanyId,
+                Prototype = PrototypeVersion.Prototype,
+                PrototypeName = PrototypeVersion.Prototypes.Name,
+                Version = PrototypeVersion.Version,
+                State = PrototypeVersion.VersionState,
+                Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
+            });
         }
 
         private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
@@ -170,18 +175,24 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             });
         }
 
-        private async Task Approve(DefaultIdentity identity, Instances Instance)
+        private async Task<bool> Approve(DefaultIdentity identity, Instances Instance)
         {
+            var Export = false;
             await SetInstanceState(identity, Instance, InstanceState.Confirmed);
 
-            if (!string.IsNullOrWhiteSpace(Instance.FileName))
-                await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
-                {
-                    Company = identity.CompanyId,
-                    ID = Instance.ID,
-                    Path = Instance.FileName,
-                    Code = $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}"
-                });
+            if (!string.IsNullOrWhiteSpace(Instance.FileName)) Export = true;
+            return Export;
+        }
+
+        private async Task Export(DefaultIdentity identity, Instances Instance)
+        {
+            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+            {
+                Company = identity.CompanyId,
+                ID = Instance.ID,
+                Path = Instance.FileName,
+                Code = $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}"
+            });
         }
 
         private async Task Reject(DefaultIdentity identity, Instances Instance)
@@ -271,6 +282,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 else
                     throw new InvalidOperationException();
 
+                bool ExportFTP = false;
+
                 if (request.Approved)
                 {
                     bool AllApproved = SignResponse.Completed = Steps.All(x => x.Approved == true);
@@ -287,7 +300,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                         if (AllApproved)
                         {
-                            await Approve(identity, PrototypeVersion);
+                            ExportFTP = await Approve(identity, PrototypeVersion);
                             Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
                         }
                     }
@@ -295,7 +308,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         if (AllApproved)
                         {
-                            await Approve(identity, Instance);
+                            ExportFTP = await Approve(identity, Instance);
                             Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                         }
                     }
@@ -322,6 +335,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 }
 
                 await _workFlowsRepository.SaveChangesAsync();
+
+                if (ExportFTP)
+                {
+                    if (PrototypeVersion != null)
+                        await Export(identity, PrototypeVersion);
+                    else if (Instance != null)
+                        await Export(identity, Instance);
+                }
 
                 if (PrototypeVersion != null)
                 {
@@ -397,8 +418,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         public async Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request)
         {
-            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow,
-                request.Date, request.Prototype, request.Version, request.Instance, request.Action);
+            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow, request.Date, request.Prototype, request.Version, request.Instance, request.Action);
             await SendEmailsAsync(identity, workFlowApplication);
 
             return new CreateResponse
