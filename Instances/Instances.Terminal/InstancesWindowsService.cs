@@ -21,7 +21,7 @@ namespace CheckListManager.Instances.Terminal
 			using (var scope = Container.BeginLifetimeScope())
 			{
 				var service = scope.Resolve<IInstanceManagerService>();
-				await service.ClearPendingInstances(CancellationTokenSource.Token);
+				await service.ClosePendingInstances(CancellationTokenSource.Token);
 			}
 		}
 

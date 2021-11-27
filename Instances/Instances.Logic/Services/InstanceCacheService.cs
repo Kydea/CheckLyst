@@ -94,10 +94,14 @@ namespace CheckListManager.Instances.Logic.Services
 		public Task TouchAsync(string code)
 			=>_redisCache.SortedSetElementInsertAsync("Instances", code, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), RegionName);
 
-		public Task<LockObject> LockAsync(string code)
-			=> _redisCache.LockAsync($"Instance:{code}:Lock", RegionName);
+        public async Task<LockObject> LockAsync(string code)
+        {
+            var lockObject = await _redisCache.LockAsync($"Instance:{code}:Lock", RegionName);
+            if (!lockObject.IsAcquired) throw new InstanceException("Instance is currently being updated by another user");
+            return lockObject;
+        }
 
-		public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+        public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
 			=> _redisCache.SortedSetGetAsync("Instances", start, stop, RegionName);
     }
 }

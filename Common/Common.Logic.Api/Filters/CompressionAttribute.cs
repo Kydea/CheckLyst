@@ -9,7 +9,7 @@ using CheckListManager.Common.Core.Helpers;
 namespace CheckListManager.Common.Logic.Api.Filters
 {
     public class CompressionAttribute : ActionFilterAttribute
-    {
+    { 
         private bool IsCompressionSupported()
         {
             var AcceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];

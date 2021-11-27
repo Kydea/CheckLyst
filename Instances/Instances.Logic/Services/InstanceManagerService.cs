@@ -133,7 +133,7 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-        public async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
+        private async Task SaveCacheObjectAsync(InstanceCacheObject cacheObject)
         {
             if (cacheObject.NeedToSaveExpressionValues && cacheObject.ID.HasValue)
             {
@@ -197,7 +197,7 @@ namespace CheckListManager.Instances.Logic.Services
             instance.Pages.Add(SimulationPage);
         }
 
-        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID)
+        public async Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, bool saveCache, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID)
         {
             try
             {
@@ -235,6 +235,8 @@ namespace CheckListManager.Instances.Logic.Services
 
                 cacheObject.Instance.UpdateAll(cacheObject);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
+
+                if (saveCache) await SaveCacheObjectAsync(cacheObject);
 
                 return cacheObject;
             }
@@ -361,6 +363,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await UpdateParentInstance(cacheObject, identity, false);
                 await UpdateJSONFieldsAsync(cacheObject);
+                await SaveCacheObjectAsync(cacheObject);
 
                 return cacheObject;
             }
@@ -380,18 +383,10 @@ namespace CheckListManager.Instances.Logic.Services
             try
             {
                 var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
-                if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Instance state not valid");
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                if (cacheObject.NeedToSave)
-                {
-                    cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
-                    await SaveAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
-                    cacheObject.NeedToCache = true;
-                    await SaveCacheObjectAsync(cacheObject);
-                }
+                if (cacheObject.NeedToSave) await UpdateDataBaseAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             }
             catch (InstanceException)
             {
@@ -408,21 +403,11 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
-                if (cacheObject.InstanceState != InstanceState.Progress)
-                    throw new InstanceException("Invalid instance state");
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, false);
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
-                if (InvalidItems.Any())
-                    throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
-
-                var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
-                if (InvalidPage != null)
-                    throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
-
-                cacheObject = await SaveAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
+                cacheObject = await UpdateDataBaseAsync(cacheObject, identity, false, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -561,23 +546,34 @@ namespace CheckListManager.Instances.Logic.Services
                         Instance = cacheObject.ID,
                         Type = Refresh ? EventTypes.RefreshAttachedInstance : EventTypes.AttachInstance
                     });
-                    await SaveCacheObjectAsync(parentCacheObject);
                 }
                 catch { }
         }
 
-        private async Task<InstanceCacheObject> SaveAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
+        private async Task<InstanceCacheObject> UpdateDataBaseAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, bool close, bool complete, bool alreadyLocked, string ModifiedBy, DateTimeOffset? ModifiedOn)
         {
             LockObject lockObject = null;
 
             try
             {
+                if (cacheObject.InstanceState != InstanceState.Progress)
+                    throw new InstanceException("Instance state not valid");
+
                 if (!alreadyLocked)
                 {
                     lockObject = await _instanceCache.LockAsync(cacheObject.Code);
-                    if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is currently being updated by another user");
                     cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
+                }
+
+                if (complete)
+                {
+                    var InvalidItems = cacheObject.Instance.Items.Values.Where(i => !i.Removed && !i.IteratorModelItem && i is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid);
+                    if (InvalidItems.Any())
+                        throw new InstanceException($"The following items are not valid: {string.Join(", ", InvalidItems.Select(i => i.ToString()))}");
+
+                    var InvalidPage = cacheObject.Instance.Pages.FirstOrDefault(p => !p.Valid);
+                    if (InvalidPage != null)
+                        throw new InstanceException($"The page {InvalidPage.Description} is not valid{(InvalidPage.ValidityMessage == null ? string.Empty : $": {InvalidPage.ValidityMessage}")}");
                 }
 
                 var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code);
@@ -1115,7 +1111,7 @@ namespace CheckListManager.Instances.Logic.Services
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
-        public async Task ClearPendingInstances(CancellationToken cancellationToken = new CancellationToken())
+        public async Task ClosePendingInstances(CancellationToken cancellationToken = new CancellationToken())
         {
             var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - _configurationService.InstanceCloseTimeout * 60;
             var codes = await _instanceCache.GetInstancesInRangeAsync(stop: score);
@@ -1134,7 +1130,7 @@ namespace CheckListManager.Instances.Logic.Services
                                 await _instanceCache.RemoveAsync(instance.Code);
                                 break;
                             case InstanceState.Progress:
-                                await SaveAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
+                                await UpdateDataBaseAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
                                 break;
                             default:
                                 throw new InstanceException($"Invalid state: {instance.InstanceState}");
@@ -1193,15 +1189,7 @@ namespace CheckListManager.Instances.Logic.Services
                             Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {cacheObject.Prototype}-{cacheObject.Version}");
 
                         if (cacheObject.NeedToSave)
-                            await SaveAsync(
-                                cacheObject,
-                                identity,
-                                true,
-                                false,
-                                false,
-                                cacheObject.ModifiedBy,
-                                cacheObject.ModifiedOn
-                            );
+                            await UpdateDataBaseAsync(cacheObject, identity, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                     }
                 }
                 catch (InstanceException)
@@ -1282,13 +1270,22 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (cacheObject.InstanceState == InstanceState.Progress)
             {
+                LockObject lockObject = null;
                 Page page;
                 if (cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                {
-                    UnlockPages(cacheObject.Instance, identity.Code);
-                    page.Lock = new Lock(identity.Code);
-                    cacheObject.NeedToCache = true;
-                }
+                    try
+                    {
+                        lockObject = await _instanceCache.LockAsync(cacheObject.Code);
+                        cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
+                        UnlockPages(cacheObject.Instance, identity.Code);
+                        page.Lock = new Lock(identity.Code);
+                        cacheObject.NeedToCache = true;
+                        await SaveCacheObjectAsync(cacheObject);
+                    }
+                    finally
+                    {
+                        lockObject?.Dispose();
+                    }
             }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -1328,13 +1325,10 @@ namespace CheckListManager.Instances.Logic.Services
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                 {
-                    //Lock and reload the data to be sure it's the most recent one
                     stopWatch = Stopwatch.StartNew();
                     lockObject = await _instanceCache.LockAsync(request.Code);
                     stopWatch.Stop();
                     lockTime = stopWatch.Elapsed.TotalMilliseconds;
-                    if (!lockObject.IsAcquired)
-                        throw new InstanceException("Instance is currently being updated by another user");
                 }
 
                 stopWatch = Stopwatch.StartNew();
@@ -1466,6 +1460,7 @@ namespace CheckListManager.Instances.Logic.Services
                 stopWatch.Stop();
                 handleTime = stopWatch.Elapsed.TotalMilliseconds;
 
+                await SaveCacheObjectAsync(cacheObject);
                 return cacheObject;
             }
             catch (InstanceException)
@@ -1810,7 +1805,7 @@ namespace CheckListManager.Instances.Logic.Services
                 await ExportSignedIterators(cacheObject, identity, signature);
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
-                    await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                    await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 TrackChanges(cacheObject, request.Username);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -1886,7 +1881,7 @@ namespace CheckListManager.Instances.Logic.Services
                 signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
                 TrackChanges(cacheObject, identity.Code);
                 if (cacheObject.InstanceState == InstanceState.Progress)
-                    await SaveAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                    await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
@@ -1999,6 +1994,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     UnlockPages(cacheObject.Instance, identity.Code);
                     cacheObject.NeedToCache = cacheObject.NeedToSave = true;
+                    await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 }
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

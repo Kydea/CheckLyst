@@ -69,8 +69,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, true, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
                 var response = new InstanceResponse
                 {
                     Code = cacheObject.Code,
@@ -103,8 +102,6 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.OpenInstanceAsync(null, request.Code, Identity);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
-
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.ID,
@@ -129,9 +126,8 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, false, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
                 await _instanceManagerService.OpenInstanceAsync(cacheObject, cacheObject.Code, Identity);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.ID,
@@ -218,11 +214,10 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, true);
+                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, false);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
                 cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState, false);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
 
                 var response = new InstanceResponse
                 {
@@ -260,9 +255,6 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
-                if (request.Type == EventTypes.Quit) await _instanceManagerService.SaveInstanceAsync(request.Code, Identity);
-
                 var response = new InstanceResponse
                 {
                     Id = cacheObject.ID,

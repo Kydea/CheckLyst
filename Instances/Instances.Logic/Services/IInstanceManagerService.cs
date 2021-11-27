@@ -16,16 +16,15 @@ namespace CheckListManager.Instances.Logic.Services
 	{
         Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData);
         Task<InstanceCacheObject> GetCacheObjectForEditAsync(IDefaultIdentity identity, string code, bool includeData);
-        Task SaveCacheObjectAsync(InstanceCacheObject cacheObject);
         Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
         Task<GetPrototypeResponse> CheckCreationGrantsAsync(IDefaultIdentity identity, long prototype, int? version);
-        Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID);
+        Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, bool saveCache, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID);
 		Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity);
         Task SaveInstanceAsync(string code, IDefaultIdentity identity);
         Task<InstanceCacheObject> CompleteInstanceAsync(string code, IDefaultIdentity identity);
         Task DeleteInstanceAsync(string code, IDefaultIdentity identity, string note);
         Task<InstanceCacheObject> HandleEventAsync(IDefaultIdentity identity, InstanceEventRequest request);
-        Task ClearPendingInstances(CancellationToken cancellationToken = default(CancellationToken));
+        Task ClosePendingInstances(CancellationToken cancellationToken = default(CancellationToken));
         Task<List<HistoryRow>> History(DefaultIdentity identity, long id);
         Task<InstanceLinkParametersResponse> GetInstanceLinkParameters(string code, IDefaultIdentity identity, int itemId);
         Task<ExternalSourceResponse> GetExternalSource(string code, IDefaultIdentity identity, string dataSourceCode, int itemId);
