@@ -7,7 +7,7 @@ select.AutoComplete {
 
 input.AutoComplete {
     text-overflow: ellipsis;
-    padding-right: $Metric-Control-Height !important;
+    padding-right: 28px !important;
 
     &.Open {
         border-bottom-left-radius: 0 !important;
@@ -15,21 +15,34 @@ input.AutoComplete {
         //default focus for chrome
         outline: 5px auto -webkit-focus-ring-color;
     }
+
+    &.Red {
+        color: $Color-Red-Regular;
+    }
+
+    &.Locked {
+        background-color: $Color-Silver-Light;
+    }
 }
 
 input.AutoComplete-Filter {
     min-width: unset !important;
-    position: absolute;
     border-radius: 0 !important;
     margin-top: 0 !important;
     border-top: none !important;
     border-bottom: none !important;
     background-color: $Color-Grey-Light !important;
-    z-index: $Depth-AutoComplete;
     outline: none;
 
+    &:not(.FullHeight) {
+        position: absolute;
+        z-index: $Depth-AutoComplete;
+    }
+
     &.FullHeight {
-        display: none !important;
+        display: block !important;
+        position: static;
+        width: 100% !important;
     }
 }
 
@@ -72,15 +85,37 @@ div.AutoComplete-List {
             }
         }
 
-        &:hover {
-            background: $Color-Silver-Dark !important;
-            text-decoration: none !important;
-        }
-
         &.None {
             i {
                 font-style: normal;
                 color: $Color-Grey-Dark;
+            }
+        }
+
+        &:hover {
+            text-decoration: none !important;
+        }
+    }
+
+    &:not(.Locked) a:hover {
+        background: $Color-Silver-Dark !important;
+    }
+
+    &.Locked a {
+        cursor: default !important;
+    }
+
+    &.NoCheck {
+        a {
+            padding: 0 5px !important;
+            text-align: center;
+
+            &.Selected {
+                padding-right: 5px !important;
+
+                &::after {
+                    content: none;
+                }
             }
         }
     }
@@ -98,7 +133,9 @@ div.AutoComplete-List {
         display: block;
         position: static;
         margin-top: 0;
-        max-height: 500px;
+        height: 300px;
+        max-height: 300px;
+        width: 100% !important;
     }
 }
 
@@ -108,7 +145,6 @@ i.AutoComplete {
     position: absolute !important;
     margin: 0 !important;
     display: none; //shown by matematici.loader
-
     &.FullHeight {
         display: none !important;
     }

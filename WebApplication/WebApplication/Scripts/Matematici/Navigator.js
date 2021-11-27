@@ -27,6 +27,7 @@
                 && value.toLowerCase() != "/"
                 && value.toLowerCase().indexOf("/?") != 0
                 && value.toLowerCase().indexOf("/security/login") == -1
+                && value.toLowerCase().indexOf("/security/administration") == -1
                 && value.toLowerCase().indexOf("/error") == -1
                 && value.toLowerCase().indexOf("/dashboard") == -1
             ) {
@@ -126,19 +127,17 @@
 
             matematici.navigator.resetForm();
 
-            matematici.AnimationManager.toggle(true);
-
             matematici.events.onPageLoad.call(null, callback);
         },
 
         handleAjaxError: function (e) {
-            if (e.status == 401 || e.status == 498) { //we use the status 498 to mean invalid token (as arcgis)
+            if (e.status == 401 || e.status == 498) { //we use the status 498 for invalid token (as arcgis)
                 if (matematici.appMode)
                     alert("Access denied to the following resource: " + location.href);
                 else if (localStorage.accessToken && window.location && window.location.href.toLowerCase().indexOf("/dashboard") == -1) {
                     console.log("Access denied to the following resource: " + location.href);
                     window.location = matematici.urls.dashboard;
-                } else 
+                } else
                     window.location = matematici.urls.accessControl.login;
 
                 return true;
@@ -146,7 +145,7 @@
         },
 
         changePage: function (e) {
-            //console.log("change", e.path, fullSupport, landing);
+            //console.log("change", e, fullSupport, landing);
             if (!fullSupport || !landing) {
                 //console.log("ajaxing " + e.path);
 
@@ -165,9 +164,7 @@
                         }
                     });
 
-                matematici.AnimationManager.toggle(false);
-
-                $("document, html").animate({ scrollTop: 0 }, 500, function () {
+                $("document, html").animate({ scrollTop: 0 }, 300, function () {
                     matematici.events.onPageUnload(function () {
 
                         if (landing)

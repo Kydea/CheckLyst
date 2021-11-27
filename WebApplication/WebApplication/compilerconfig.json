@@ -140,8 +140,8 @@
     "inputFile": "Content/Theme/Columns.scss"
   },
   {
-    "outputFile": "Content/Theme/Users.css",
-    "inputFile": "Content/Theme/Users.scss"
+    "outputFile": "Content/Theme/GrantsDetailPage.css",
+    "inputFile": "Content/Theme/GrantsDetailPage.scss"
   },
   {
     "outputFile": "Content/Theme/ButtonGroup.css",
@@ -162,5 +162,53 @@
   {
     "outputFile": "Content/Theme/Dashboard.css",
     "inputFile": "Content/Theme/Dashboard.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ItemsList.css",
+    "inputFile": "Content/Theme/ItemsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ExpressionsList.css",
+    "inputFile": "Content/Theme/ExpressionsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/GridFiltersBar.css",
+    "inputFile": "Content/Theme/GridFiltersBar.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ExternalSources.css",
+    "inputFile": "Content/Theme/ExternalSources.scss"
+  },
+  {
+    "outputFile": "Content/Theme/GridFixedHeader.css",
+    "inputFile": "Content/Theme/GridFixedHeader.scss"
+  },
+  {
+    "outputFile": "Content/Theme/SourcesList.css",
+    "inputFile": "Content/Theme/SourcesList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/SourceEditor.css",
+    "inputFile": "Content/Theme/SourceEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Companies.css",
+    "inputFile": "Content/Theme/Companies.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Report.css",
+    "inputFile": "Content/Theme/Report.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ColumnsList.css",
+    "inputFile": "Content/Theme/ColumnsList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ClausesList.css",
+    "inputFile": "Content/Theme/ClausesList.scss"
+  },
+  {
+    "outputFile": "Content/Theme/ReportEditor.css",
+    "inputFile": "Content/Theme/ReportEditor.scss"
   }
 ]

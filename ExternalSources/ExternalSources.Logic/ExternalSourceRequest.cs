@@ -10,7 +10,14 @@ namespace CheckListManager.ExternalSources.Logic
     public class ExternalSourceRequest
     {
         public string code { get; set; }
+
+        //read from external source
         public Dictionary<string, string> parameters { get; set; }
+
+        //export to an external source
+        public List<string> names { get; set; }
+        public List<List<string>> records { get; set; }
+
         public int page { get; set; }
         public string className { get; set; }
         public string password { get; set; }

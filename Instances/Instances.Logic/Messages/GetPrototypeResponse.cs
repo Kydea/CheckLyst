@@ -12,5 +12,6 @@ namespace CheckListManager.Instances.Logic.Messages
         public string PrototypeTypeName { get; set; }
         public string State { get; set; }
         public Instance CheckList { get; set; }
+        public int? Version { get; set; }
 	}
 }

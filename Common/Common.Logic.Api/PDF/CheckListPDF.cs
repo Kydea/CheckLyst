@@ -44,14 +44,18 @@ namespace CheckListManager.Common.Logic.Api.PDF
             var CompleteKey = Bucket + Key;
 
             if (!Attachments.ContainsKey(CompleteKey))
-                Attachments[CompleteKey] = new AttachmentModel()
+            {
+                var Description = GetItemDescription(Item);
+                Attachments[CompleteKey] = new AttachmentModel
                 {
                     File = await StorageService.GetAsync(Bucket, Key),
                     Index = Attachments.Count + 1,
                     Bucket = Bucket,
                     Item = Item,
-                    Key = Key
+                    Key = Key,
+                    Description = string.IsNullOrEmpty(Description) ? "(empty)" : Description
                 };
+            }
 
             return Attachments[CompleteKey].Index;
         }
@@ -61,6 +65,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
         protected abstract Task<Template> GenerateTemplateAsync();
 
         public abstract string GetFieldValue(ICheckListField Field);
+
+        public abstract string GetItemDescription(ICheckListItem Item);
 
         public abstract bool IsPrototype();
 
@@ -73,11 +79,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
             if (Header != null && Header is ICheckListGroup)
                 await new Group(this, Header).RenderAsync();
 
-            foreach (var Element in Model.Pages)
-            {
-                Container.AddPageBreak();
+            foreach (var Element in Model.Pages.Where(e => !e.Hidden))
                 await new Page(this, Element).RenderAsync();
-            }
         }
 
         protected Section AttachmentsListPage { get; set; }
@@ -103,7 +106,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Table.SetWidths(25, 75);
                 foreach (var Attachment in Attachments.Values)
                 {
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment #{Attachment.Index}", GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText($"Attachment {Attachment.Index}", GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Attachment.Description, GenericFont).Padding(5)));
                 }
 
@@ -119,22 +122,23 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 return;
 
             DocumentBuilder.RenderPdfDocument();
-            await this.AddSectionAsync();
+            await AddSectionAsync();
             Container.RemovePageCount();
 
             foreach (var Attachment in Attachments.Values)
             {
                 Container.AddPageBreak();
-                Paragraph Paragraph = Container.AddParagraph();
-                Paragraph.SetFont(TitleFont1);
-                Paragraph.AddText($"Attachment {Attachment.Index}");
-                Paragraph.Format.SpaceAfter = 10;
+
+                var Title = Container.AddParagraph();
+                Title.SetFont(TitleFont1);
+                Title.AddText($"Attachment {Attachment.Index}");
+                Title.Format.SpaceAfter = 10;
 
                 try
                 {
                     if (Attachment.File.ContentType.StartsWith("image", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Paragraph = Container.AddParagraph();
+                        Title = Container.AddParagraph();
 
                         Bitmap Image;
                         byte[] Data;
@@ -145,9 +149,9 @@ namespace CheckListManager.Common.Logic.Api.PDF
                             Data = ms.ToArray();
                         }
 
-                        var PDFImage = Paragraph.AddImage(Data);
+                        var PDFImage = Title.AddImage(Data);
                         var MaxWidth = Container.PageSetup.PageWidth - Container.PageSetup.LeftMargin - Container.PageSetup.LeftMargin;
-                        Paragraph.Format.SpaceAfter = 10;
+                        Title.Format.SpaceAfter = 10;
 
                         if (Image.Width * .4 > MaxWidth)
                         {
@@ -163,6 +167,21 @@ namespace CheckListManager.Common.Logic.Api.PDF
                         {
                             await Attachment.File.Content.CopyToAsync(ms);
                             PdfDocument Document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
+
+                            var PhaseParagraph = Container.AddParagraph(Attachment.Description);
+                            PhaseParagraph.Format.SpaceAfter = 15;
+                            PhaseParagraph.Format.SpaceBefore = 30;
+
+                            var AttachmentPageCount = Container.AddParagraph($"Number of pages: {Document.PageCount + 1} (including this one)");
+                            AttachmentPageCount.Format.SpaceAfter = 25;
+                            AttachmentPageCount.Format.SpaceBefore = 10;
+
+                            var Description = Container.AddParagraph();
+                            Description.AddText("This page is the cover of ");
+                            Description.AddFormattedText($"Attachment {Attachment.Index} ", TextFormat.Bold);
+                            Description.AddText("and as such it is intentionally left blank, it only reports the description and number of pages of ");
+                            Description.AddFormattedText($"Attachment {Attachment.Index}", TextFormat.Bold);
+
                             DocumentBuilder.AddRange(Enumerable.Range(0, Document.PageCount).Select(index => Document.Pages[index]));
                         }
                     }

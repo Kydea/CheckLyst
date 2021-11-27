@@ -9,19 +9,83 @@ using CheckListManager.Common.Logic;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Models.ExternalSources;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
-    public class Instance : DependencyNode, ICheckList
+    public class Instance : DependencyNode, IInstance
     {
+        #region versioning 
+
+        //history
+        /*
+            2.0: dependencies and persistence
+        */
+        private const decimal ModelVersion = 2.0m;
+        public decimal InstanceModelVersion { get; set; }
+        public bool CheckVersion(decimal? ReferenceModelVersion, bool Save)
+        {
+            var Result = InstanceModelVersion >= (ReferenceModelVersion ?? ModelVersion);
+            if (!Result && Save)
+                InstanceModelVersion = ModelVersion;
+            return Result;
+        }
+
+        #endregion
+
+        public dynamic GetViewModel(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+        {
+            var Expressions = new PascalCaseDictionary<string, dynamic>(this.Expressions.Count);
+            if (identity.HasPermission("Trail") || cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
+                foreach (var Expression in this.Expressions.Values)
+                    Expressions[Expression.Code] = Expression.GetViewModel(DecimalSeparator);
+
+            var ChildInstances = this.ChildInstances.Keys.Select(i =>
+            {
+                var InstanceLink = (InstanceLink)cacheObject.Instance.Items[i];
+                return new InstanceRelation
+                {
+                    Item = i,
+                    InstanceCode = InstanceLink.Record.Code,
+                    Description = InstanceLink.Record.Description,
+                    Code = InstanceLink.AttachedInstanceCode,
+                    RelationType = InstanceRelation.RelationTypes.Child
+                };
+            });
+
+            return new
+            {
+                ReadOnly,
+                Exceptions,
+                ExternalSources = ExternalSources.ToDictionary(k => k.Key, v => v.Value.GetViewModel()),
+                ChildInstances,
+                Header = ((Group)Header).GetViewModel(false),
+                Pages = Pages.Select(p => ((Page)p).GetViewModel(false)),
+                Description,
+                ParentInstanceCode,
+                Expressions = Expressions.Any() ? Expressions : null
+            };
+        }
+
+        public DateTimeOffset CreatedOn { get; set; }
+        public DateTimeOffset? InProgressOn { get; set; }
+
         public bool ReadOnly { get; set; }
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; set; }
         public PascalCaseDictionary<string, string> Exceptions =>
-            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e => e.Value?.Exception == true && e.Value?.Value?.Value as bool? == true).ToDictionary(k => k.Key, v => v.Value?.Description));
-        public PascalCaseDictionary<string, string> ExternalSources { get; set; }
-        public PascalCaseDictionary<string, PascalCaseDictionary<string, string>> ExternalSourceRows { get; set; }
-        public PascalCaseDictionary<string, ExternalSourceDependencyNode> ExternalSourceDependencyNodes { get; } = new PascalCaseDictionary<string, ExternalSourceDependencyNode>();
+            Expressions == null ? null : new PascalCaseDictionary<string, string>(Expressions.Where(e =>
+                e.Value?.Exception == true
+                && (
+                    e.Value.Value?.Type == DataType.Boolean && e.Value.Value.BooleanValue
+                    || e.Value.Value?.Type == DataType.Date && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    || e.Value.Value?.Type == DataType.DateTime && e.Value.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                )
+           ).ToDictionary(k => k.Key, v => v.Value?.Description));
+        public PascalCaseDictionary<string, ExternalSource> ExternalSources { get; set; }
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; set; }
 
@@ -33,32 +97,37 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string FileNameFormulaString { get; set; }
         public string FileName => FileNameFormula.Value;
 
+        //ParentInstanceCode and ParentInstanceLinkID are used to keep the parent/child relationship for instances still in draft (not saved)
+        public string ParentInstanceCode { get; set; }
+        public int? ParentInstanceLinkID { get; set; }
+
+        public Dictionary<int, long> ChildInstances { get; } = new Dictionary<int, long>();
+
         public bool FTPExport { get; set; }
 
         [JsonIgnore]
         public bool InCreation { get; private set; }
+        [JsonIgnore]
+        public bool InstanceCreation { get; } 
+        public bool NeedToSaveExpressionValues { get; set; }
 
         public ICheckList CheckList { get => this; set => throw new NotImplementedException(); }
 
-        public decimal InstanceModelVersion { get; set; }
-        private readonly decimal ModelVersion = 2.0m;
-        public bool CheckVersion(decimal? ReferenceModelVersion, bool Save)
-        {
-            var Result = InstanceModelVersion >= (ReferenceModelVersion ?? ModelVersion);
-            if (!Result && Save)
-                InstanceModelVersion = ModelVersion;
-            return Result;
-        }
+        [JsonProperty]
+        private int ItemSequence { get; set; }
+        public int IterationSequence { get; set; }
 
-        private int itemSequence;
         public void AddItem(ICheckListItem item)
         {
             if (item.Id == 0 || InCreation)
-                item.Id = ++itemSequence;
-            else
-                itemSequence = Math.Max(itemSequence, item.Id);
+                item.Id = ++ItemSequence;
+            else if (item.Id > ItemSequence) //for version < 3.0.0
+                ItemSequence = item.Id;
 
-            Items.Add(item.Id, item);
+            if (Items.TryGetValue(item.Id, out var RemovedItem) && RemovedItem.Removed) //for version < 3.0.0
+                Items[item.Id] = item;
+            else
+                Items.Add(item.Id, item);
         }
 
         public Dictionary<int, ICheckListItem> Items { get; } = new Dictionary<int, ICheckListItem>();
@@ -73,11 +142,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             this.TimeZone = TimeZone;
 
             if (creation)
-                ExternalSourceRows = new PascalCaseDictionary<string, PascalCaseDictionary<string, string>>(ExternalSources.ToDictionary(x => x.Key, x => new PascalCaseDictionary<string, string>()));
+                CreatedOn = cacheObject.CreatedOn;
 
             Header.CheckList = this;
             Header.Setup();
-            if (InCreation) Header.CreateInstanceIterations();
+            if (InCreation)
+            {
+                Header.CreateInstanceIterations();
+                ((Group)Header).SetupIterationsIndexes();
+            }
 
             foreach (var page in Pages)
             {
@@ -100,13 +173,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             if (InCreation || !CheckVersion(2, false)) //version 2 introduces dependencies
                 BuildDependencies();
+
             InCreation = false;
         }
 
-        public void BuildDependencies()
+        private void BuildDependencies()
         {
-            foreach (string ExternalSource in ExternalSources.Keys)
-                ExternalSourceDependencyNodes.Add(ExternalSource, new ExternalSourceDependencyNode { Code = ExternalSource });
+            foreach (var ExternalSource in ExternalSources.Values)
+                ExternalSource.BuildDependencies(this);
 
             foreach (var Expression in Expressions.Values)
                 Expression.ClearDependencies();
@@ -143,7 +217,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string DecimalSeparator { get; set; }
         public string TimeZone { get; set; }
         public Dictionary<string, object> InstanceRuntimeValues { get; private set; } = new Dictionary<string, object>();
-        public void UpdateInstanceRuntimeValues (InstanceCacheObject cacheObject)
+        public void UpdateInstanceRuntimeValues(InstanceCacheObject cacheObject)
         {
             InstanceRuntimeValues = new Dictionary<string, object> {
                 { "InstanceCompany", cacheObject.CompanyId },
@@ -155,14 +229,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstancePrototypeName", cacheObject.PrototypeName },
                 { "InstanceVersion", cacheObject.Version },
                 { "InstanceYear", cacheObject.YearCode },
-                { "InstanceNumber", cacheObject.Number },
+                { "InstanceNumber", cacheObject.Number }
             };
         }
 
         public void UpdateAll(InstanceCacheObject cacheObject = null)
         {
             Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain = new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>();
-            var Roots = new List<Tuple<DependencyNode, DependencyRelation.Properties>>();
+            var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
 
             MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Formula);
 
@@ -177,18 +251,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             UpdateNodes(this, Roots);
         }
 
-        public void UpdateReadOnly(string userCode, string state)
+        public void UpdateReadOnly(string userCode, string state, bool ignoreNullLock)
         {
             ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
             foreach (var page in Pages)
-                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress);
-        }
-
-        public bool HideExpressions { get; set; }
-
-        public bool ShouldSerializeExpressions()
-        {
-            return !HideExpressions;
+                ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress, ignoreNullLock);
         }
 
         [JsonIgnore]
@@ -243,13 +310,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override bool Update(DependencyRelation.Properties Property)
         {
-            if (Property != DependencyRelation.Properties.Formula) throw new ArgumentException();
-
-            DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
-            FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Formula:
+                    DescriptionFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+                    FileNameFormula.Evaluate(this, InstanceRuntimeValues, DecimalSeparator, TimeZone, null);
+                    break;
+                case DependencyRelation.Properties.StateChange:
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
 
             return true;
         }
 
+        public static string GetYearCode(string VersionState, int? Year) =>
+            VersionState == Common.Data.VersionState.Draft ? "Test" : VersionState == Common.Data.VersionState.InSimulation ? "SE" : (Year?.ToString() ?? "?");
+
+        public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>
+            $"{PrototypeName}.{Version}.{GetYearCode(VersionState, Year)}.{Number?.ToString() ?? "?"}";
+
+        public static string GetUrl(IConfigurationService configurationService, string Code) =>
+            $"{configurationService.WebApplicationUrl}/Instances/Detail/{Code}";
     }
 }

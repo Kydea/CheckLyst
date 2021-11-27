@@ -10,14 +10,15 @@
 import UIKit
 import WebKit
 
-class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate {
+class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, UIGestureRecognizerDelegate, UIDocumentInteractionControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    let app = UIApplication.shared as! MyApplication
+    let appDelegate = UIApplication.shared as! MyApplication
     var instance:Instance!
     var instanceCodeFromRequest : String?
     var newInstance = false
     var newInstancePrototype: String?
     var newInstanceVersion: String?
+    var newInstanceFieldsValues: String?
     var selectedItemsDictionary = [Int:Option] ()
     var contentView : UIView?
     var scanButtonIsVisible : Bool = false
@@ -27,24 +28,28 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     let supportedProtocols : Set = [ "http", "https", "mailto" ]
     var isInstanceClosed : Bool = false
     var scanButton : UIBarButtonItem?
-    
+    var creationTime: Date?
+    var currentAccessToken: String?
+    var oldImagePickerDelegate: UIImagePickerControllerDelegate?
+    var imagePickerController: UIImagePickerController = UIImagePickerController()
+    var closeCompletition: (() -> Void)?
+    let loader: LoadingViewController = LoadingViewController.shared
     
     @IBOutlet weak var webView: WKWebView!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var customBackButton: UIBarButtonItem!
-    
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        creationTime = Date()
+        currentAccessToken = (UserDefaults.standard.value(forKey: "access_token") as! String)
+        self.appDelegate.currentWebViewCreationTime = creationTime
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
         documentInteractionController.delegate = self
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.configuration.userContentController.add(self, name: "instances")
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
         self.definesPresentationContext = true
         
         scanButtonIsVisible = true
@@ -55,13 +60,13 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             }
         }
         
+        let newInstanceVersionSegment = (newInstanceVersion != nil ? "/" + newInstanceVersion! : "")
+        
         let fullUrl = !newInstance ?
             ServerConnection.baseFrontEndUrl + "/Instances/Detail/" + (instanceCodeFromRequest != nil ? instanceCodeFromRequest! : instance.code) + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))! :
-            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + "/" + newInstanceVersion! + "?d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
+            ServerConnection.baseFrontEndUrl + "/Instances/Create/" + newInstancePrototype! + newInstanceVersionSegment + "?" + (newInstanceFieldsValues! != "" ? newInstanceFieldsValues! + "&" : "") + "d=" + String(Int64(Date().timeIntervalSince1970 * 1000)) + "&AppUser=" + (UserDefaults.standard.string(forKey: "userCode"))!
         
-        
-        //print(fullUrl)
-        
+                
         let url = URL(string: fullUrl)
         
         let request = NSMutableURLRequest(url: url!)
@@ -78,25 +83,27 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         request.httpBody = bodyString.data(using: String.Encoding.utf8)
         
        //For testing -> gives 10 seconds to open safari inspector
-        /*DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+       /* DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
             self.webView.load(request as URLRequest)
         }*/
         
         webView.load(request as URLRequest)
         
-        self.lockView()
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.keyboardDidHide(_:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(InstanceViewController.signersHaveBeenChanged(_:)), name: .SignersHaveBeenChanged, object: nil)
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(InstanceViewController.dismissKeyboard))
         tap.delegate = self
         self.view.addGestureRecognizer(tap)
         
-        
         scanButton = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(scanItem(_:)))
         
         self.contentView!.inputAssistantItem.trailingBarButtonGroups = [UIBarButtonItemGroup(barButtonItems: [scanButton!], representativeItem: nil)] as! [UIBarButtonItemGroup]
+        
+        FileManager.default.clearTemporaryDirectory()
+        
+        self.tabBarController?.tabBar.items?[1].badgeValue = "Open"
     }
     
     override func didReceiveMemoryWarning()
@@ -111,7 +118,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func lockView()
     {
-        activityIndicator.startAnimating()
+        loader.startLoading(controller: self)
         self.webView.isHidden = true
         webView.scrollView.isScrollEnabled = false
         self.navigationItem.setHidesBackButton(true, animated:false)
@@ -121,7 +128,7 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func unlockView()
     {
-        activityIndicator.stopAnimating()
+        loader.stopLoading(controller: self)
         self.webView.isHidden = false
         webView.scrollView.isScrollEnabled = true
         self.navigationItem.setHidesBackButton(false, animated:false)
@@ -129,53 +136,117 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.tabBarController?.tabBar.isUserInteractionEnabled = true
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        toggleNavigatioBarTint(false)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         requestForScanning = false
         requestForDocument = false
         isInstanceClosed = false
+        if webView.isLoading { self.lockView() }
+    }
+    
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        
+        if let imagePicker = viewControllerToPresent as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .photoLibrary {
+
+            toggleNavigatioBarTint(false)
+        }
+        
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
     
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
         
+        toggleNavigatioBarTint(false)
+
         if(self.presentedViewController is QRCodeScannerViewController) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
             requestForScanning = false
         }
+        
+        if let imagePicker = self.presentedViewController as? UIImagePickerController, !imagePicker.isKind(of: QRCodeScannerViewController.self), imagePicker.sourceType == .camera {
+            toggleNavigatioBarTint(true)
+            setupWatermarkImagePicker(imagePicker)
+        }
 
     }
     
-    func closeInstance() {
-        self.webView.evaluateJavaScript("instances.instance.close(function(){})", completionHandler: nil)
-        isInstanceClosed = true
+    //This is a workaround because UINavigationBar.appearance(whenContainedInInstancesOf: [UIImagePickerController.self]) seems not working
+    private func toggleNavigatioBarTint(_ value: Bool) {
+        UINavigationBar.appearance().tintColor = value ? UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0) : .white
     }
     
+    private func setupWatermarkImagePicker(_ controller: UIImagePickerController) {
+            oldImagePickerDelegate = controller.delegate
+            imagePickerController = controller
+            imagePickerController.delegate = self
+    }
+        
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerControllerDidCancel!(picker)
+        toggleNavigatioBarTint(false)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var newInfo = info
+        if let pickedImage = newInfo[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+            let imageWithWatermark = pickedImage.addWatermark(position: .RightBottom, watermark: WatermarkGenerator.getWatermark(size: CGSize(width: 400, height: 100)) ?? UIImage(), margin: 10)
+            
+            newInfo[UIImagePickerControllerOriginalImage] = imageWithWatermark
+        }
+
+        picker.delegate = oldImagePickerDelegate as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+        oldImagePickerDelegate?.imagePickerController!(picker, didFinishPickingMediaWithInfo: newInfo)
+        toggleNavigatioBarTint(false)
+    }
+    
+    func closeInstance(completion: (() -> Void)? = nil) {
+        #if DEBUG
+            print("Closing instance...")
+        #endif
+        self.closeCompletition = completion
+        self.webView.evaluateJavaScript("instances.instance.close(function(){window.webkit.messageHandlers.instances.postMessage(\"close\");})")
+    }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "instances", let messageBody = message.body as? String {
-            if messageBody.hasPrefix("quit") {
-                self.app.goBackToList()
+            if messageBody.hasPrefix("close") {
+                #if DEBUG
+                    print("Closed instance...")
+                #endif
+                self.cleanWebViewController()
+                self.isInstanceClosed = true
+                self.closeCompletition?()
+                self.tabBarController?.tabBar.items?[1].badgeValue = nil
+            } else if messageBody.hasPrefix("quit") {
+                self.cleanWebViewController()
+                self.appDelegate.goBackToList()
+                self.tabBarController?.tabBar.items?[1].badgeValue = nil
             } else if messageBody.hasPrefix("file") {
-                activityIndicator.startAnimating()
+                loader.startLoading(controller: self)
                 let fileURL = String(messageBody.split(separator: " ")[1])
                 //print(fileURL)
-                FileManager.default.getFile(fileURL) { (url, error) -> Void in
-                    self.activityIndicator.stopAnimating()
-                    if url != nil {
-                        self.requestForDocument = true
-                        self.documentInteractionController.url = url!
-                        self.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
-                        self.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
-                        self.documentInteractionController.presentPreview(animated: true)
-                    } else if error != nil {
-                        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
-                    } else {
-                        let alert = UIAlertController(title: "Error", message: "Unable to retrieve document", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-                        self.present(alert, animated: false, completion: nil)
+                    FileManager.default.downloadFile(fileURL) { (url, error, data) -> Void in
+                        self.loader.stopLoading(controller: self) { [weak self] in
+                        if url != nil {
+                            if let result = self?.checkFile(file: data, url: fileURL), result {
+                                self?.requestForDocument = true
+                                self?.documentInteractionController.url = url!
+                                self?.documentInteractionController.uti = url!.typeIdentifier ?? "public.data, public.content"
+                                self?.documentInteractionController.name = url!.localizedName ?? url!.lastPathComponent
+                                self?.documentInteractionController.presentPreview(animated: true)
+                            }
+                        } else if error != nil {
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                        } else {
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Unable to retrieve document")
+                        }
                     }
                 }
             }
@@ -190,11 +261,9 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         unlockView()
-        let alert = UIAlertController(title: "Error", message: "Connection error to the server", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) -> Void in
+        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server") { () -> Void in
             self.navigationController?.popViewController(animated: true)
-        }))
-        self.present(alert, animated: false, completion: nil)
+        }
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -207,34 +276,65 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             if let value = response as? String {
                 if(value.contains("Security/Login")) {
                     webView.isHidden = true
-                    //print("redirecting")
-                    self.app.logoutAndGoToLogin()
+                    #if DEBUG
+                        let message = String(format: "InstanceViewController\nCurrent WKWebView creationTime: %@\nLogout WKWebView creationTime: %@\nCurrent accessToken: %@\nLogout WKWebView accessToken: %@\n", Formatter.instance.stringFromTestDate( self.appDelegate.currentWebViewCreationTime!), Formatter.instance.stringFromTestDate(self.creationTime!), (UserDefaults.standard.value(forKey: "access_token") as? String) ?? "nil", self.currentAccessToken ?? "nil")
+                        try? message.write(to: FileManager.default.getDocumentsDirectory().appendingPathComponent("error.log"), atomically: true, encoding: .utf8)
+                        self.appDelegate.displayMessage(Title: "Security Error", Message: message) { [weak self] in
+                            self?.appDelegate.logoutAndGoToLogin()
+                        }
+                    #else
+                        self.appDelegate.logoutAndGoToLogin()
+                    #endif
+                } else {
+                    self.setOrRefreshSigners(SignersManager.shared.signers)
                 }
             }
         }
     }
     
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if navigationAction.targetFrame == nil {
-            if let scheme = navigationAction.request.url?.scheme {
-                if supportedProtocols.contains(scheme) {
-                    UIApplication.shared.open(navigationAction.request.url!, options: [:])
-                } else {
-                    let alert = UIAlertController(title: "Error", message: "Protocol \(scheme) not supported", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: false, completion: nil)
-                }
-            } else {
-                let alert = UIAlertController(title: "Error", message: "Missing protocol", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                self.present(alert, animated: false, completion: nil)
-            }
+    func webView(_ webView: WKWebView, decidePolicyFor
+           navigationAction: WKNavigationAction,
+           decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {
+
+       if navigationAction.sourceFrame == nil {
+            decisionHandler(.allow)
+            return
         }
-        return nil
+
+        guard let url = navigationAction.request.url, let scheme = url.scheme else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Missing protocol")
+            decisionHandler(.cancel)
+            return
+        }
+        
+        if !supportedProtocols.contains(scheme) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Protocol \(scheme) not supported")
+            decisionHandler(.cancel)
+            return
+        }
+                
+        if url.schemeHost == ServerConnection.baseFrontEndUrl &&
+        (url.getCallType == .Create ||
+        url.getCallType == .Detail) {
+            #if DEBUG
+            print("Redirect to \(url.absoluteString)")
+            #endif
+            appDelegate.requestToOpenInstance = true
+            appDelegate.requestedUrlInfo = url.getParametersForInstance
+            self.goBackToSearchInstances(self)
+            decisionHandler(.cancel)
+            return
+        }
+        
+        #if DEBUG
+        print("Redirect to \(url.absoluteString)")
+        #endif
+        UIApplication.shared.open(navigationAction.request.url!, options: [:])
+        decisionHandler(.cancel)
     }
     
     func shouldShowScanButton() {
-        webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\")") {
+        webView.evaluateJavaScript("document.activeElement.classList.contains(\"Scan\");") {
             (response, error) -> Void in
             if let value = response as? Bool {
                 if(value) {
@@ -245,44 +345,67 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
                 } else if (self.contentView != nil && self.scanButtonIsVisible) {
                         self.scanButton?.isEnabled = false;
                         self.scanButtonIsVisible = false
-                        //print("scan button off")
                 }
             }
         }
     }
     
     func refreshTokensByJSInjection(accessToken : String, refreshToken : String) {
-        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")") /*{
-            (response, error) -> Void in
-            if let res = response {
-                print(res)
-            } else if let err = error {
-                print(err)
-            } else {
-                print("Unexpected situation")
-            }
-        }*/
+        webView.evaluateJavaScript("matematici.tokenManager.setTokens(\"\(accessToken)\",\"\(refreshToken)\")")
+        self.currentAccessToken = accessToken
+    }
+    
+    func setOrRefreshSigners(_ signers:[Signer]) {
+        guard let signersJSON = try? JSONEncoder().encode(signers) else { return }
+        let signersString = String(decoding: signersJSON, as: UTF8.self)
+        print("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+        webView.evaluateJavaScript("matematici.tokenManager.setSigners(JSON.stringify(\(signersString)))")
+    }
+    
+    @objc func signersHaveBeenChanged(_ notification:Notification) {
+        setOrRefreshSigners(SignersManager.shared.signers)
+        webView.reload()
     }
     
     func setValueForInputField(_ value : String) {
-        webView.evaluateJavaScript("$(document.activeElement).val(\"\(value)\").change(); ") {
+        webView.evaluateJavaScript("document.activeElement.value = \"\(value)\";document.activeElement.dispatchEvent(new Event(\"change\"));") {
             (response, error) -> Void in
             self.view.endEditing(true)
             self.requestForScanning = false
         }
-        webView.evaluateJavaScript("document.activeElement")
+    }
+    
+    func checkFile(file data : Data?, url : String) -> Bool {
+        
+        guard let file = data else {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\nFile is empty")
+            return false
+        }
+        
+        if let json = try? JSONSerialization.jsonObject(with: file, options: .allowFragments) as! [String:Any], let messages = json["messages"] as? [String] {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\n\(messages.joined(separator: "\n"))")
+            return false
+        }
+        
+        if let dataString = String(bytes: file, encoding: .utf8) {
+            self.appDelegate.displayMessage(Title: "Error", Message: "Can't display file\n\(dataString)")
+            return false
+        }
+        
+        return true
+    
     }
     
     @objc private func scanItem(_ sender: UIBarButtonItem) {
-        //print("camera pressed")
         requestForScanning = true
         performSegue(withIdentifier: "ScanSegue", sender: self)
     }
     
     
     @IBAction func goBackToSearchInstances(_ sender: Any) {
-        self.closeInstance()
-        self.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+        self.closeInstance() { [weak self] in
+            self?.performSegue(withIdentifier: "goBackSearchInstances", sender: self)
+        }
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -311,6 +434,14 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         
     }
     
+    func cleanWebViewController() {
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "instances")
+        webView.uiDelegate = nil
+        webView.navigationDelegate = nil
+        documentInteractionController.delegate = nil
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         guard let navVC = self.navigationController else {
             return self
@@ -325,7 +456,6 @@ class InstanceViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
         requestForDocument = false
         self.tabBarController?.tabBar.isHidden = false
-        FileManager.default.clearTemporaryDirectory()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

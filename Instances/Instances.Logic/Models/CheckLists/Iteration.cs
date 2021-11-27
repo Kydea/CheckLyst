@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
@@ -10,12 +11,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
     public class Iteration : Group, ICheckListIteration
     {
         public override string TypeName => "Iteration";
-
         [JsonIgnore]
         public int Index { get; set; }
-
         [JsonIgnore]
         public List<int> Indexes { get; set; } = new List<int>();
+        public int Identifier { get; set; }
+        [JsonIgnore]
+        public TypedValue ReccurencyValue { get; set; }
 
         private void AddAvailableSubItem(ICheckListGroup Group)
         {
@@ -39,7 +41,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void GetAllChildren(List<DependencyNode> children) => GetAllChildren(this, children);
 
-        public override void Setup()
+        public override bool Setup()
         {
             //loads or setup for the first time the iteration
             var Loading = Id > 0;
@@ -52,16 +54,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     Item.IterationItem = true;
                 }
             else
+            {
+                Identifier = ++Instance.IterationSequence;
                 foreach (var Item in Group.Items)
                 {
                     var Clone = Item.Clone(this);
                     Clone.Iteration = this;
                     Items.Add(Clone);
                 }
+            }
             SetupItems();
 
             ElementsList = new List<ICheckListElement>();
             AddAvailableSubItem(this);
+
+            return true;
         }
 
         [JsonIgnore]
@@ -100,15 +107,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.BuildDependencies();
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             foreach (Item item in Items)
-                item.MarkAllAsChanged(Roots);
+                if (!item.IteratorModelItem)
+                    item.MarkAllAsChanged(Roots);
         }
 
-        protected override void UpdateValid()
-        {
-
-        }
+        public override bool Valid => true;
     }
 }

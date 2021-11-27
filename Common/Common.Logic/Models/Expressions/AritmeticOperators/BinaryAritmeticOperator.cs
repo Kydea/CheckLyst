@@ -6,20 +6,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators
     {
         protected abstract TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue);
 
-        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
-        {
-            var Value = base.Evaluate(LeftValue, RightValue);
-            if (Value == null)
-                try
-                {
-                    return EvaluateResult(LeftValue, RightValue);
-                }
-                catch (Exception Exception)
-                {
-                    return new TypedValue(DataType.Error, Exception.Message);
-                }
-            else
-                return Value;
-        }
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone) =>
+            base.Evaluate(LeftValue, RightValue, TimeZone) ?? EvaluateResult(LeftValue, RightValue);
     }
 }

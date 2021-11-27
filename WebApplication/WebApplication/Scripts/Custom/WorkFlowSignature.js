@@ -107,22 +107,22 @@
 
 						if (options.model) {
 							validityStartType = $("input.ValidityStartType", element);
-							new matematici.DatePicker(validityStart);
+							new matematici.DatePicker(validityStart[0]);
 
 							validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
-							if (options.model.validFrom)
-								validityStart.data("datePicker").setValue(options.model.validFrom);
+                            if (options.model.validFrom)
+                                matematici.DatePicker.map.get(validityStart[0]).setValue(options.model.validFrom);
 							if (options.model.state != prototypes.Prototype.states.approval) {
 								matematici.controls.setEditable(validityStart, false);
 								validityStartType.prop("disabled", true);
 							}
 
 							validityEndType = $("input.ValidityEndType", element);
-							new matematici.DatePicker(validityEnd);
+							new matematici.DatePicker(validityEnd[0]);
 
 							validityEndType.eq(options.model.state != prototypes.Prototype.states.approval ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
-							if (options.model.validUntil)
-                                validityEnd.data("datePicker").setValue(options.model.validUntil);
+                            if (options.model.validUntil)
+                                matematici.DatePicker.map.get(validityEnd[0]).setValue(options.model.validUntil);
 							if (options.model.state == prototypes.Prototype.states.approval)
 								validityEndType.eq(1).parent().hide();
 

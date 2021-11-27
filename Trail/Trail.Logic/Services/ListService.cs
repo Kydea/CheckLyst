@@ -21,11 +21,12 @@ namespace CheckListManager.Trail.Logic.Services
                     companyId,
                     r => new TrailMessage
                     {
-                        Id = r.ID,
+                        ID = r.ID,
                         Date = r.Date,
                         User = r.User,
                         Action = r.Action,
-                        CheckList = r.CheckList,
+                        CheckListCode = r.CheckListCode,
+                        CheckListID = r.CheckListID,
                         Information = r.Information
                     },
                     r =>
@@ -33,7 +34,8 @@ namespace CheckListManager.Trail.Logic.Services
                         && (form.From == null || r.Date >= form.From)
                         && (form.To == null || r.Date <= form.WholeTo)
                         && (form.User == string.Empty || r.User != null && r.User.ToUpper().Contains(form.User.ToUpper()))
-                        && (form.CheckList == string.Empty || r.CheckList != null && r.CheckList.ToUpper().Contains(form.CheckList.ToUpper()))
+                        && (form.CheckListCode == string.Empty || r.CheckListCode != null && r.CheckListCode.ToUpper().Contains(form.CheckListCode.ToUpper()))
+                        && (form.CheckListID == null || r.CheckListID == form.CheckListID)
                         && (form.Action == string.Empty || r.Action != null && r.Action.ToUpper().Contains(form.Action.ToUpper()))
                         && (form.Information == string.Empty || r.Information != null && r.Information.ToUpper().Contains(form.Information.ToUpper())),
                     r => r.Date
@@ -43,25 +45,27 @@ namespace CheckListManager.Trail.Logic.Services
             =>
                 await _trailRepository.GetRecordsAsync(
                     companyId,
-                    p => new TrailMessage
+                    r => new TrailMessage
                     {
-                        Id = p.ID,
-                        Date = p.Date,
-                        User = p.User,
-                        Action = p.Action,
-                        CheckList = p.CheckList,
-                        Information = p.Information,
-                        ShortInformation = p.Information != null && p.Information.StartsWith("{") ? "..." : p.Information
+                        ID = r.ID,
+                        Date = r.Date,
+                        User = r.User,
+                        Action = r.Action,
+                        CheckListCode = r.CheckListCode,
+                        CheckListID = r.CheckListID,
+                        Information = r.Information,
+                        ShortInformation = r.Information != null && r.Information.StartsWith("{") ? "..." : r.Information
                     },
-                    p =>
-                        p.Company == companyId
-                        && (form.Data.From == null || p.Date >= form.Data.From)
-                        && (form.Data.To == null || p.Date <= form.Data.WholeTo)
-                        && (form.Data.User == string.Empty || p.User != null && p.User.ToUpper().Contains(form.Data.User.ToUpper()))
-                        && (form.Data.CheckList == string.Empty || p.CheckList != null && p.CheckList.ToUpper().Contains(form.Data.CheckList.ToUpper()))
-                        && (form.Data.Action == string.Empty || p.Action != null && p.Action.ToUpper().Contains(form.Data.Action.ToUpper()))
-                        && (form.Data.Information == string.Empty || p.Information != null && p.Information.ToUpper().Contains(form.Data.Information.ToUpper())),
-                    p => p.Date,
+                    r =>
+                        r.Company == companyId
+                        && (form.Data.From == null || r.Date >= form.Data.From)
+                        && (form.Data.To == null || r.Date <= form.Data.WholeTo)
+                        && (form.Data.User == string.Empty || r.User != null && r.User.ToUpper().Contains(form.Data.User.ToUpper()))
+                        && (form.Data.CheckListCode == string.Empty || r.CheckListCode != null && r.CheckListCode.ToUpper().Contains(form.Data.CheckListCode.ToUpper()))
+                        && (form.Data.CheckListID == null || r.CheckListID == form.Data.CheckListID)
+                        && (form.Data.Action == string.Empty || r.Action != null && r.Action.ToUpper().Contains(form.Data.Action.ToUpper()))
+                        && (form.Data.Information == string.Empty || r.Information != null && r.Information.ToUpper().Contains(form.Data.Information.ToUpper())),
+                    r => r.Date,
                     form.CurrentPage,
                     form.ItemsPerPage
                 );

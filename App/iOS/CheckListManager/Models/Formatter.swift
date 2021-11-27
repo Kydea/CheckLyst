@@ -17,6 +17,10 @@ class Formatter: NSObject {
     
     fileprivate let dateToDateTimeFormatter : DateFormatter
     
+    fileprivate let testDateFormatter : DateFormatter
+    
+    fileprivate let testTimeFormatter : DateFormatter
+    
     fileprivate let dateToTimeFormatter : DateFormatter
     
     fileprivate let stringToDateFormatter : DateFormatter
@@ -40,8 +44,12 @@ class Formatter: NSObject {
         
         self.instanceDateTimeFormatter = DateFormatter()
         
+        self.testDateFormatter = DateFormatter()
+        
+        self.testTimeFormatter = DateFormatter()
+        
         self.dateToDateTimeFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-        self.dateToDateTimeFormatter.locale = Locale(identifier: "en_US")
+        self.dateToDateTimeFormatter.timeZone = TimeZone(abbreviation: "UTC")
         self.dateToTimeFormatter.dateFormat = "HH:mm"
         
         self.stringToDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SZ"
@@ -51,12 +59,18 @@ class Formatter: NSObject {
         
         self.instanceDateTimeFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         
+        self.testDateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
+        
+        self.testTimeFormatter.dateFormat = "HH:mm:ss"
+        
     }
     
  
     
     func dateToDateTimeString(_ date: Date) -> String {
-        
+        if ((UserDefaults.standard.value(forKey: "timeZone") as! String) != self.dateToDateTimeFormatter.timeZone.identifier) {
+            self.dateToDateTimeFormatter.timeZone = TimeZone(identifier: UserDefaults.standard.value(forKey: "timeZone") as! String)
+        }
         return self.dateToDateTimeFormatter.string(from: date)
         
     }
@@ -65,8 +79,12 @@ class Formatter: NSObject {
         return self.dateToDateTimeFormatter.date(from: date)!
     }
     
-    
-    
+    func stringFromTestDate(_ date: Date, timeOnly: Bool = false) -> String {
+        if (timeOnly) {
+            return self.testTimeFormatter.string(from: date)
+        }
+        return self.testDateFormatter.string(from: date)
+    }
     
     func dateToTimeString(_ date: Date) -> String {
         

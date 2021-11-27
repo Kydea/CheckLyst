@@ -1,6 +1,4 @@
 ﻿namespace CheckListManager.Common.Core.Services
 {
-	public interface IService
-	{
-	}
+	public interface IService { }
 }

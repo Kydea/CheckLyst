@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -46,14 +47,29 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("CheckCreationGrants")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
+        public async Task<IHttpActionResult> CheckCreationGrants(CreateInstanceRequest request)
+        {
+            try
+            {
+                await _instanceManagerService.CheckCreationGrantsAsync(Identity, request.Prototype, request.Version);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
         [Route("Create")]
         [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
         public async Task<IHttpActionResult> Create(CreateInstanceRequest request)
         {
             try
             {
-                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, Identity.Code, request.Prototype, request.Version, request.Parameters);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, true, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
                 var response = new InstanceResponse
                 {
                     Code = cacheObject.Code,
@@ -68,9 +84,8 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState,
 
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -86,19 +101,52 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.OpenInstanceAsync(request.Code, Identity);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
-
+                var cacheObject = await _instanceManagerService.OpenInstanceAsync(null, request.Code, Identity);
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     State = cacheObject.InstanceState,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
 
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("CreateAndOpen")]
+        [Authorize(Roles = "Instances#Create, Prototypes#Preview")]
+        public async Task<IHttpActionResult> CreateAndOpen(CreateInstanceRequest request)
+        {
+            try
+            {
+                var cacheObject = await _instanceManagerService.CreateInstanceAsync(Identity, false, request.Prototype, request.Version, request.Parameters.ToDictionary(k => k.Name, v => v.Value), request.ParentInstanceCode, request.ParentInstanceLinkID);
+                await _instanceManagerService.OpenInstanceAsync(cacheObject, cacheObject.Code, Identity);
+                var response = new InstanceResponse
+                {
+                    Id = cacheObject.ID,
+                    Year = cacheObject.Year,
+                    Number = cacheObject.Number,
+                    Code = cacheObject.Code,
+                    State = cacheObject.InstanceState,
+                    Department = cacheObject.Department,
+                    DepartmentName = cacheObject.DepartmentName,
+                    PrototypeType = cacheObject.PrototypeType,
+                    PrototypeTypeName = cacheObject.PrototypeTypeName,
+                    Prototype = cacheObject.Prototype,
+                    PrototypeName = cacheObject.PrototypeName,
+                    PrototypeDescription = cacheObject.PrototypeDescription,
+                    Version = cacheObject.Version,
+                    VersionState = cacheObject.VersionState,
+
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
+                };
                 return Ok(response);
             }
             catch (Exception e)
@@ -150,7 +198,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 return Ok(new InstanceResponse
                 {
                     State = cacheObject.InstanceState,
-                    CheckList = cacheObject.Instance
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject)
                 });
             }
             catch (Exception e)
@@ -166,21 +214,20 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, true);
+                var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, false);
                 _instanceManagerService.CheckViewPermission(Identity, cacheObject);
                 await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
-                cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
+                cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState, false);
 
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     Code = cacheObject.Code,
                     Year = cacheObject.Year,
                     Number = cacheObject.Number,
                     State = cacheObject.InstanceState,
 
-                    CheckList = cacheObject.Instance,
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject),
 
                     Department = cacheObject.Department,
                     DepartmentName = cacheObject.DepartmentName,
@@ -192,7 +239,6 @@ namespace CheckListManager.Instances.Api.Controllers
                     Version = cacheObject.Version,
                     VersionState = cacheObject.VersionState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -209,15 +255,13 @@ namespace CheckListManager.Instances.Api.Controllers
             try
             {
                 var cacheObject = await _instanceManagerService.HandleEventAsync(Identity, request);
-                await _instanceManagerService.SaveCacheObjectAsync(cacheObject);
                 var response = new InstanceResponse
                 {
-                    Id = cacheObject.Id,
+                    Id = cacheObject.ID,
                     Code = cacheObject.Code,
-                    CheckList = cacheObject.Instance,
+                    CheckList = cacheObject.Instance.GetViewModel(Identity, cacheObject),
                     State = cacheObject.InstanceState
                 };
-                if (!Identity.HasPermission("Trail") && cacheObject.VersionState != VersionState.Draft && cacheObject.VersionState != VersionState.InSimulation) cacheObject.Instance.HideExpressions = true;
                 return Ok(response);
             }
             catch (Exception e)
@@ -275,10 +319,41 @@ namespace CheckListManager.Instances.Api.Controllers
                 User = Data.UserCode,
                 Action = TrailAction.InstanceDownloaded,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = cacheObject.InstanceCode
+                CheckListCode = cacheObject.InstanceCode,
+                CheckListID = cacheObject.ID
             });
             
-            return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileName) ? "Instance" : cacheObject.Instance.FileName));
+            return Content(HttpStatusCode.OK, PDF, new PDFFormatter(string.IsNullOrEmpty(cacheObject.Instance.FileNameFormula.Value) ? "Instance" : cacheObject.Instance.FileNameFormula.Value));
+        }
+
+        [HttpPost]
+        [Route("GetInstanceLinkParameters")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> GetInstanceLinkParameters(ExternalSourceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetInstanceLinkParameters(request.InstanceCode, Identity, request.ItemId));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetExternalSource")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> GetExternalSource(ExternalSourceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetExternalSource(request.InstanceCode, Identity, request.ExternalSourceCode, request.ItemId));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
         }
 
         [HttpPost]
@@ -288,7 +363,22 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             try
             {
-                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.Parameters, request.Data.Page));
+                return Ok(await _instanceManagerService.GetExternalSourceRows(request.Data.InstanceCode, Identity, request.Data.ExternalSourceCode, request.Data.ItemId, request.Data.Parameters, request.Data.Page));
+            }
+            catch (Exception e)
+            {
+                return Error(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetParentInstances")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> GetParentInstances(InstanceRequest request)
+        {
+            try
+            {
+                return Ok(await _instanceManagerService.GetParentInstances(request.Code, Identity));
             }
             catch (Exception e)
             {

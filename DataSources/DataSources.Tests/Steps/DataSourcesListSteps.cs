@@ -68,22 +68,14 @@ namespace CheckListManager.DataSources.Tests.Steps
         [Given(@"I click on a Data Source")]
         public async Task GivenIClickOnADataSource()
         {
-            List<ListRow> data = (await _listService.GetDataAsync(_defaultIdentity.CompanyId, new PagingRequest<ListRequest>
-            {
-                Data = new ListRequest
-                {
-                    Code = String.Empty,
-                    Description = String.Empty
-                }
-            })).Data;
+            _context.Request.Code = Guid.NewGuid().ToString().Substring(0, 30);
+            _context.Request.Description = "testDataSource2124";
+            _context.Request.Reason = "Testing";
+            _context.Request.Class = "test";
 
-            Assert.NotZero(data.Count(), "At least one element must exist in the list.");
+            var Response = await _detailService.AddAsync(_defaultIdentity, _context.Request);
 
-            var element = data.First();
-
-            _context.Request.Code = element.Code;
-            _context.Request.Class = element.Class;
-            _context.Request.Description = element.Description;
+            Assert.IsTrue(Response.Valid);
         }
         #endregion
 

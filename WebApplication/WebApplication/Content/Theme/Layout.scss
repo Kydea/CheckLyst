@@ -14,7 +14,10 @@ html, body {
     width: 100%;
     color: black;
     font-size: 14px;
-    background-color: $Color-Silver-Dark;
+
+    @media screen {
+        background-color: $Color-Silver-Dark;
+    }
 }
 
 ul.Plain {
@@ -40,6 +43,10 @@ a {
     &.Right {
         float: right;
     }
+}
+
+pre {
+    margin: 0;  
 }
 
 i.fa, i.fal {

@@ -6,6 +6,19 @@ namespace CheckListManager.Instances.Logic.Models
 {
 	public class InstanceCacheObject
 	{
+        #region versioning
+
+        //history
+        /*
+            2.0: zip compression
+        */
+        private const decimal ModelVersion = 2.0m;
+        public decimal CacheObjectVersion { get; set; }
+        public bool CheckVersion(decimal? ReferenceModelVersion) => CacheObjectVersion >= (ReferenceModelVersion ?? ModelVersion);
+        public void SetModelVersion() { CacheObjectVersion = ModelVersion; }
+        
+        #endregion
+
         public long CompanyId { get; set; }
 
 		public string Code { get; set; }
@@ -22,7 +35,7 @@ namespace CheckListManager.Instances.Logic.Models
         [JsonIgnore]
 		public Instance Instance { get; set; }
 
-		public long? Id { get; set; }
+		public long? ID { get; set; }
 		public int? Year { get; set; }
 		public int? Number { get; set; }
 
@@ -32,18 +45,18 @@ namespace CheckListManager.Instances.Logic.Models
         [JsonIgnore]
         public bool NeedToCache { get; set; }
 		public bool NeedToSave { get; set; }
+        [JsonIgnore]
+        public bool NeedToSaveExpressionValues { get => Instance.NeedToSaveExpressionValues; set { Instance.NeedToSaveExpressionValues = value; } }
 
-		public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
 		public DateTimeOffset CreatedOn { get; set; }
 		public string ModifiedBy { get; set; }
 		public DateTimeOffset? ModifiedOn { get; set; }
 
         [JsonIgnore]
-        public string YearCode =>
-            VersionState == Common.Data.VersionState.Draft ? "Test" : Year == 0 ? "SE" : (Year?.ToString() ?? "?");
+        public string YearCode => Instance.GetYearCode(VersionState, Year);
 
         [JsonIgnore]
-        public string InstanceCode =>
-            $"{PrototypeName}.{Version}.{(YearCode)}.{Number?.ToString() ?? "?"}";
+        public string InstanceCode => Instance.GetCode(PrototypeName, Version, VersionState, Year, Number);
     }
 }

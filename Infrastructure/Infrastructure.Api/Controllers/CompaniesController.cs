@@ -22,13 +22,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         }
 
         [HttpPost]
-        [Route("GetData")]
+        [Route("GetSyntheticData")]
         [AllowAnonymous]
-        public async Task<IHttpActionResult> GetData()
+        public async Task<IHttpActionResult> GetSyntheticData()
         {
             try
             {
-                return Ok(await _companiesService.GetDataAsync());
+                return Ok(await _companiesService.GetSyntheticDataAsync());
             }
             catch (Exception e)
             {
@@ -48,6 +48,46 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             {
                 return Error(new Exception("Error retrieving the company settings", e));
             }
+        }
+
+        [HttpPost]
+        [Route("Bind")]
+        [Authorize(Roles = "Companies#View")]
+        public async Task<IHttpActionResult> Bind(Message<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.BindAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("GetData")]
+        [Authorize(Roles = "Companies#View")]
+        public async Task<IHttpActionResult> GetData(PagingRequest<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.GetDataAsync(Identity, request));
+        }
+
+        [HttpPost]
+        [Route("Add")]
+        [Authorize(Roles = "Companies#Edit")]
+        public async Task<IHttpActionResult> Add(Message<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.AddAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("Edit")]
+        [Authorize(Roles = "Companies#Edit")]
+        public async Task<IHttpActionResult> Edit(Message<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.EditAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("Load")]
+        [Authorize(Roles = "Companies#View")]
+        public async Task<IHttpActionResult> Load(Message<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.LoadAsync(Identity, request.Data));
         }
     }
 }

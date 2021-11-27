@@ -18,16 +18,19 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         private readonly PrototypeTypesContext _context;
         private readonly IDefaultIdentity _defaultIdentity;
         private readonly ICommonRepository _commonRepository;
+        private readonly IInfrastructureHelper _infrastructureHelper;
         private readonly IPrototypeTypesService _prototypeTypesService;
 
         public PrototypeTypesListSteps(PrototypeTypesContext context, 
             IDefaultIdentity defaultIdentity, 
             ICommonRepository commonRepository,
+            IInfrastructureHelper infrastructureHelper,
             IPrototypeTypesService prototypeTypesService)
         {
             _context = context;
             _defaultIdentity = defaultIdentity;
             _commonRepository = commonRepository;
+            _infrastructureHelper = infrastructureHelper;
             _prototypeTypesService = prototypeTypesService;
         }
         
@@ -65,20 +68,27 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I choose a department from the list")]
         public async Task GivenIChooseADepartmentFromTheList()
         {
-            PrototypeTypesResponse response = (await _prototypeTypesService.BindAsync(_defaultIdentity, _context.Request));
+            //PrototypeTypesResponse response = (await _prototypeTypesService.BindAsync(_defaultIdentity, _context.Request));
 
-            Assert.IsTrue(response.Fields.ContainsKey("Department") && response.Fields["Department"].Options.Any(), "Missing dipartments: cannot select a department from the list.");
-            Assert.IsTrue(long.TryParse(response.Fields["Department"].Options.First().Value, out long Department));
+            //Assert.IsTrue(response.Fields.ContainsKey("Department") && response.Fields["Department"].Options.Any(), "Missing dipartments: cannot select a department from the list.");
+            //Assert.IsTrue(long.TryParse(response.Fields["Department"].Options.First().Value, out long Department));
 
-            Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
-            Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ApprovationWorkFlow));
+            //Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
+            //Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ApprovationWorkFlow));
 
-            Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
-            Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ObsolescenceWorkFlow));
+            //Assert.IsTrue(response.Fields.ContainsKey("ApprovationWorkFlow") && response.Fields["ApprovationWorkFlow"].Options.Any());
+            //Assert.IsTrue(long.TryParse(response.Fields["ApprovationWorkFlow"].Options.First().Value, out long ObsolescenceWorkFlow));
 
-            _context.Request.Department = Department;
-            _context.Request.ApprovationWorkFlow = ApprovationWorkFlow;
-            _context.Request.ObsolescenceWorkFlow = ObsolescenceWorkFlow;
+            //_context.Request.Department = Department;
+            //_context.Request.ApprovationWorkFlow = ApprovationWorkFlow;
+            //_context.Request.ObsolescenceWorkFlow = ObsolescenceWorkFlow;
+
+
+            var Department = await _infrastructureHelper.CreateDepartmentAsync();
+            var WorkFlow = await _infrastructureHelper.CreateWorkFlowAsync();
+            _context.Request.ObsolescenceWorkFlow = WorkFlow.ID;
+            _context.Request.ApprovationWorkFlow = WorkFlow.ID;
+            _context.Request.Department = Department.ID;
         }
         
         [Given(@"I change the name of the prototype in '(.*)'")]
@@ -92,33 +102,22 @@ namespace CheckListManager.Infrastructure.Tests.Steps
         [Given(@"I click on a prototype type")]
         public async Task GivenIClickOnAPrototypeType()
         {
-            string Name = Guid.NewGuid().ToString();
+            _context.Request.Name = Guid.NewGuid().ToString();
+            _context.Request.Reason = "Testing";
 
-            // Add a prototype type
-            GivenIAssignAsTheNameOfThePrototype(Name);
-            await WhenISendTheAddRequestAsync();
+            var Response = await _prototypeTypesService.Add(_defaultIdentity, _context.Request);
 
-            // Get the prototype type
-            _context.Request.Name = Name;
-
-            List<PrototypeTypesRow> data = (await _prototypeTypesService.GetDataAsync(_defaultIdentity, new PagingRequest<PrototypeTypesRequest>
-            {
-                Data = _context.Request
-            })).Data;
-
-            _context.Request.ID = data.First().ID;
+            Assert.IsTrue(Response.Valid, "Prototype type cannot be created.");
         }
         
         [Given(@"I click on a prototype type that is used for a prototype")]
         public async Task GivenIClickOnAPrototypeTypeThatIsUsedForAPrototype()
         {
-            List<PrototypeTypes> data = (await _commonRepository.GetPrototypeTypesAsync(_defaultIdentity, _context.Request.Department.Value, null, null))
-                .Where(pt => pt.Prototypes.Count != 0).ToList();
+            var Department = await _infrastructureHelper.CreateDepartmentAsync();
+            var PrototypeType = await _infrastructureHelper.CreatePrototypeTypeAsync(Department);
+            var Prototype = await _infrastructureHelper.CreatePrototypeAsync(Department, PrototypeType);
 
-            // If you click on a prototype: Count > 0 (it's a must)
-            Assert.NotZero(data.Count, "Clicking on a prototype type implies that the number of prototypes types is greater than 0.");
-
-            _context.Request.ID = data.First().ID;
+            _context.Request.ID = Prototype.ID;
         }
 
         [When(@"I send the add request")]

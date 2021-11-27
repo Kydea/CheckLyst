@@ -56,6 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPrototypesRepository.cs" />
+    <Compile Include="Models\PrototypeFilters.cs" />
+    <Compile Include="Models\PrototypeRecord.cs" />
+    <Compile Include="Models\SyntheticRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrototypesRepository.cs" />
     <Compile Include="SetStateResult.cs" />

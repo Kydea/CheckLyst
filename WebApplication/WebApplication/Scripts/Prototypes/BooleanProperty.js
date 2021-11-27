@@ -1,34 +1,36 @@
-﻿prototypes.BooleanProperty = function (model, property, readOnly) {
+﻿prototypes.BooleanProperty = function (model, property, readOnly, defaultValue) {
     var
+        base,
         input,
-        handler,
+
         change = function () {
             model[property] = input.prop("checked");
-            matematici.canClose = false;
-            if (handler) handler.call(this, model);
+            base.updateModel(model);
         };
 
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
-
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        var _readOnly = readOnly || prototypes.prototype.getModel().state != prototypes.Prototype.states.draft;
+        base = baseClass;
         valuePanel.addClass("Boolean");
         input = $("<input />")
-            .attr({ type: "checkbox", readOnly: !!readOnly })
+            .attr({ type: "checkbox", readOnly: _readOnly })
             .prop("checked", model[property]);
-        if (!readOnly) input.on("change", change);
+        if (!_readOnly) input.on("change", change);
         else input.attr("disabled", "disabled");
         valuePanel.append(input);
     };
 
     this.hasChanges = function () {
-        return !!model[property];
+        return !!model[property] == !defaultValue;
     };
 
     this.setReadOnly = function (value) {
         readOnly = value;
+    }
+
+    this.setValue = function (node) {
+        if (model[property])
+            node.append($("<i>").addClass("fal fa-check"));
     }
 };
 

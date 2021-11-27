@@ -3,7 +3,11 @@
 $label-height: 40px;
 
 div.TabContainer {
-    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 35px;
+    z-index: $Depth-Tab;
+    background: white;
     transition: height .3s;
     display: none;
     min-height: $label-height;

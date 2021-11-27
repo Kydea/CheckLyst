@@ -14,16 +14,6 @@ namespace CheckListManager.WebApplication.Controllers
             => _identity ?? (_identity = User?.Identity as DefaultIdentity);
 
 
-        protected string GetAppUser()
-        {
-            return Request["AppUser"];
-        }
-
-        protected bool IsAppMode()
-        {
-            return !string.IsNullOrEmpty(GetAppUser());
-        }
-
         protected override void OnException(ExceptionContext filterContext)
         {
             if (filterContext.Exception is InvalidTokenException)
@@ -36,7 +26,7 @@ namespace CheckListManager.WebApplication.Controllers
 
         private void CheckAppMode()
         {
-            ViewBag.AppUser = GetAppUser();
+            ViewBag.AppUser = Request["AppUser"];
             ViewBag.AppMode = !string.IsNullOrEmpty(ViewBag.AppUser);
         }
 

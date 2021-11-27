@@ -34,24 +34,22 @@ namespace CheckListManager.Common.Logic.Api.Formatters
             base.SetDefaultContentHeaders(type, headers, mediaType);
         }
 
-        public override async Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content,
-            TransportContext transportContext)
+        public override async Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
+            var Stream = (Stream)value;
             if (_serializeAsBase64)
-            {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await ((Stream)value).CopyToAsync(memoryStream);
+                    await Stream.CopyToAsync(memoryStream);
                     var serialized = Convert.ToBase64String(memoryStream.GetBuffer());
                     var bytes = Encoding.UTF8.GetBytes(serialized);
 
                     await writeStream.WriteAsync(bytes, 0, bytes.Length);
                 }
-            }
             else
-            {
-                await ((Stream)value).CopyToAsync(writeStream);
-            }
+                await Stream.CopyToAsync(writeStream);
+
+            Stream.Dispose();
         }
     }
 }

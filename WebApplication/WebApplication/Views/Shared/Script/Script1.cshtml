@@ -3,12 +3,13 @@
 
     function copyError() {
         copy(lastError);
+        return "last error copied in the clipboard, you can paste it in your editor";
     };
 
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
 
-    $(document).ajaxStart(
-        function () {
+    $(document)
+        .ajaxStart(function () {
             matematici.loader.show();
         }).ajaxStop(function () {
             matematici.loader.hide();
@@ -26,16 +27,31 @@
                     message += jqxhr.responseJSON.messages[index] + "<br />";
             else if (jqxhr.responseJSON && jqxhr.responseJSON.error_description)
                 message = jqxhr.responseJSON.error_description;
-            else
+            else if (thrownError)
                 message = thrownError;
+            else if (jqxhr.status)
+                message = "HTTP error " + jqxhr.status;
+            else
+                message = "Unexpected error";
 
             lastError = { message, detail: data, extra: { event, jqxhr, settings, thrownError } };
 
             console.log("error", new Date(), lastError);
             console.log("you can copy last error in the clipboard with the command copyError()");
 
-            if (!settings.suppressErrors)
-                matematici.dialog.error("Error", message);
+            if (!settings.suppressErrors) {
+                var dialogSettings = {
+                    title: "Error",
+                    content: message,
+                    cssClass: "Error",
+                    buttons: { text: "ok", icon: "check", defaultButton: true, cancelButton: true }
+                };
+
+                if (settings.onErrorClosed)
+                    dialogSettings.buttons.handler = settings.onErrorClosed;
+                matematici.dialog.show(dialogSettings);
+            }
+            settings.errorHandler && settings.errorHandler();
         }
     );
 
@@ -64,8 +80,6 @@
     matematici.elements.menu = $("nav", matematici.elements.header);
     matematici.elements.footer = $("footer");
 
-    matematici.logo.init();
-
     matematici.clock = new matematici.Clock(matematici.isLoginPage); //@@(ViewBag.AppMode ? "true" : "matematici.isLoginPage"));
 
     matematici.elements.window.on("beforeunload", function () {
@@ -91,21 +105,20 @@
     matematici.clock.add("span.ServerTime");
     matematici.clock.add("span.LocalTime");
 
-    matematici.AnimationManager.toggle(true);
-
     matematici.menu.toggleItemsByRole();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken() && !matematici.appMode)
+    if (matematici.tokenManager.getAccessToken())
         matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;
+        if (key == 13 && e.target.type == "textarea") return;
+
         switch (key)
         {
             case 13:
             case 27:
-
                 var
                     selector = key == 13 ? ".DefaultButton:visible" : ".CancelButton:visible",
                     container = $("div.Blip"),
@@ -117,7 +130,7 @@
                 }
 
                 if (container.size() == 0) {
-                    container = $("div.Popup");
+                    container = $("div.Popup, div.CheckListGrid").last();
                     button = $(selector, container);
                 }
 
@@ -125,7 +138,7 @@
                     button = $(selector);
 
                 if (button.size() > 0) {
-                    button.first().click();
+                    button.last().click();
                     e.preventDefault();
                 }
 

@@ -16,12 +16,44 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		public bool Cancelable { get; set; }
 		public bool SendEmail { get; set; }
 		public string SendEmailAddress { get; set; }
-        public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
 		public string SignatureLevel { get; set; }
 		public bool Signed { get; set; }
-		public string SignedBy { get; set; }
+        public List<SignatureRecord> History { get; } = new List<SignatureRecord>();
+        public string SignedBy { get; set; }
 		public DateTimeOffset SignedOn { get; set; }
-		public string SignerDescription { get; set; }
+        public string ModifiedBy => SignedBy;
+        public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
+        public string SignerDescription { get; set; }
+
+        public override dynamic GetViewModel(bool ReportModel)
+        {
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (Cancelable) ItemModel.Cancelable = Cancelable;
+            if (AcceptsPin) ItemModel.AcceptsPin = AcceptsPin;
+            if (SendEmail)
+            {
+                ItemModel.SendEmail = SendEmail;
+                ItemModel.SendEmailAddress = SendEmailAddress;
+            }
+            if (!string.IsNullOrEmpty(ButtonLabel)) ItemModel.ButtonLabel = ButtonLabel;
+            ItemModel.Signed = Signed;
+            if (Signed)
+            {
+                ItemModel.SignedBy = SignedBy;
+                ItemModel.SignedOn = SignedOn;
+                ItemModel.SignerDescription = SignerDescription;
+            }
+
+            if (History.Any())
+                ItemModel.History = History.Select(x => new {
+                    x.DateTime,
+                    x.User,
+                    x.Signature,
+                    x.Note,
+                    x.Action
+                });
+            return ItemModel;
+        }
 
         public override bool IsValidByDefault() => Signed;
 
@@ -34,10 +66,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Signature)
-                return;
-            else
-                base.OnUpdate(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Signature:
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
         }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
@@ -47,7 +83,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				Group = parent,
 				ButtonLabel = ButtonLabel,
 				Cancelable = Cancelable,
-				AcceptsPin = AcceptsPin
+				AcceptsPin = AcceptsPin,
+                SignatureLevel = SignatureLevel,
+                SendEmail = SendEmail,
+                SendEmailAddress = SendEmailAddress
 			};
 
 			Copy(this, signature);
@@ -56,7 +95,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         private void CheckItem(ICheckListItem Item)
         {
-            if (Item.SignatureCode == Code && !Item.Removed && !Item.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
+            if (Item.SignatureCode == Code && !Item.Removed && !Item.IteratorModelItem && Item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
         }
 
         private void FindInvalidItem(ICheckListGroup Group)
@@ -66,8 +105,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     FindInvalidItem(Iteration);
             else
                 foreach (var Item in Group.Items)
-                    if (Item is ICheckListGroup)
-                        FindInvalidItem((ICheckListGroup)Item);
+                    if (Item is ICheckListGroup group)
+                        FindInvalidItem(group);
                     else
                         CheckItem(Item);
         }
@@ -78,7 +117,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = true;
                 SignedBy = UserCode;
-                SignedOn = DateTimeOffset.UtcNow;
+                ModifiedOn = SignedOn = DateTimeOffset.UtcNow;
+                History.Add(new SignatureRecord ()); 
 
                 UpdateChain(Instance, DependencyRelation.Properties.Signature);
 
@@ -95,15 +135,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 SignedBy = null;
+                History.RemoveAt(History.Count - 1);
+                Instance.NeedToSaveExpressionValues = false; //reverts the flag in case of notification expressions changed to true
             }
         }
 
         public void Sign(string UserCode, string UserDescription, DateTimeOffset Now)
         {
             Signed = true;
+
             SignedBy = UserCode;
             SignerDescription = UserDescription;
-            SignedOn = Now;
+            ModifiedOn = SignedOn = Now;
 
             History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription });
         }
@@ -114,11 +157,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Signed = false;
                 var Instance = ((Instance)CheckList);
-                Instance.UpdateReadOnly(UserCode, InstanceState);
+                Instance.UpdateReadOnly(UserCode, InstanceState, false);
                 if (ReadOnly)
-                    throw new Exception("This signature not editable"); //Signature is still readonly after unsigned, may be locked by another signature or a special condition
+                    throw new Exception("This signature is not editable"); //Signature is still readonly after unsign, may be locked by another signature or a special condition
 
-                SignedOn = Now;
+                SignedBy = UserCode;
+                SignerDescription = UserDescription;
+                ModifiedOn = SignedOn = Now;
 
                 History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = UserDescription , Note = Note });
             }

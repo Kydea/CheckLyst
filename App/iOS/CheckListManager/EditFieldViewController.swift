@@ -10,17 +10,20 @@ import Foundation
 import UIKit
 
 
-class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate
-    
-    
-{
+class EditFieldViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UITextFieldDelegate {
 
     @IBOutlet var tableView: UITableView!
     
-    
     @IBOutlet var okButton: UIButton!
- 
+     
     var fieldsArray: [Option]?
+    
+    var filteredFieldsArray: [Option] {
+        guard let text = searchController.searchBar.text, !text.isEmpty else {
+            return fieldsArray ?? []
+        }
+        return fieldsArray?.filter({ ($0.text.lowercased().contains(text.lowercased())) }) ?? []
+    }
     
     var rowIndex : Int?
     
@@ -38,50 +41,50 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
     
     var indexFieldDictionary: Dictionary<Int, String>?
     
+    let searchController = UISearchController()
+    
+    let appDelegate = UIApplication.shared as! MyApplication
+    
+    
     @IBOutlet var fieldNameLabel: UILabel!
     
-  
-
     
     override func viewDidLoad() {
         
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         self.navigationItem.rightBarButtonItem = infoBarButtonItem
+                
+        searchController.searchBar.autocapitalizationType = .none
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.backgroundColor = .white
+            searchController.searchBar.searchTextField.tintColor = .black
+        } else {
+            searchController.searchBar.barTintColor = .white
+            searchController.searchBar.tintColor = .black
+        }
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
+        searchController.obscuresBackgroundDuringPresentation = false
         
         fieldNameLabel?.text = fieldNameString
         
         okButton.isHidden = (isListField!) ? true : false
         
-        if(!isListField!)
-        
-        {
+        if(!isListField!){
             tableView.allowsSelection = false
+        } else {
+            searchController.searchResultsUpdater = self
+            self.navigationItem.searchController = searchController
         }
     }
     
-
-
-    
-    
     func numberOfSections(in tableView: UITableView) -> Int {
-        
         return 1
-        
     }
-    
-    
- 
-    
-    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        
-        return fieldsArray?.count ?? 1
+        return isListField! ? filteredFieldsArray.count : 1
     }
-    
-    
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -91,12 +94,14 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel
         
         inputTextField = cell!.contentView.viewWithTag(2) as? UITextField
+        inputTextField?.delegate = self
         
         if(isListField!)
         
         {
           
-            fieldLabel?.text = fieldsArray![indexPath.row].text
+            let option = filteredFieldsArray[indexPath.row]
+            fieldLabel?.text = option.text
         
             inputTextField?.isHidden = true
             
@@ -109,7 +114,7 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         fieldLabel?.text = searchViewController?.indexTextDictionary[rowIndex!]
         
         inputTextField?.text = (searchViewController?.selectedItemsDictionary[rowIndex!]?.text != "Insert") ?  searchViewController?.selectedItemsDictionary[rowIndex!]?.text: ""
-            
+                        
         }
         
         cell!.preservesSuperviewLayoutMargins = false
@@ -153,8 +158,9 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
         if(isListField!)
         
         {
+            let option = filteredFieldsArray[indexPath.row]
             
-            if(searchViewController!.selectedItemsDictionary[rowIndex!]?.text != fieldsArray![indexPath.row].text && rowIndex! < 7) {
+            if(searchViewController!.selectedItemsDictionary[rowIndex!]?.text != option.text && rowIndex! < 7) {
                 for i in (rowIndex! + 1)...7 {
                     if(indexFieldDictionary![i] != "description" && indexFieldDictionary![i] != "state") {
                         searchViewController!.selectedItemsDictionary[i]?.text = ""
@@ -163,38 +169,47 @@ class EditFieldViewController: UIViewController, UITableViewDataSource, UITableV
                 }
             }
             
-            searchViewController!.selectedItemsDictionary[rowIndex!] = fieldsArray![indexPath.row]
+            searchViewController!.selectedItemsDictionary[rowIndex!] = option
             
-        
             self.navigationController?.popViewController(animated: true)
-        }
-        
-        
+        }        
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        tableView.reloadData()
     }
     
     
-    override func viewWillDisappear(_ animated : Bool) {
+    @IBAction func saveEditing(_ sender: AnyObject) {
+        if searchViewController?.indexFieldDictionary[rowIndex!] == "id", let value = inputTextField?.text, !value.isEmpty {
+            guard let _ = Int(value) else {
+                appDelegate.displayMessage(Title: "Error", Message:" Value for \(searchViewController?.indexTextDictionary[rowIndex!] ?? "") is not valid" )
+                return
+            }
+            
+        }
         
-        super.viewWillDisappear(animated)
-        
-        if (self.isMovingFromParentViewController && !isListField!){
+        if (!isListField!){
             
             searchViewController!.selectedItemsDictionary[rowIndex!]?.text = (inputTextField?.text == "" ? "Insert" : (inputTextField?.text)!)
             
             searchViewController!.selectedItemsDictionary[rowIndex!]?.value = (inputTextField?.text == "" ? "" : (inputTextField?.text)!)
             
         }
-    
-    }
-    
-
-    
-    @IBAction func saveEditing(_ sender: AnyObject) {
         
         self.navigationController?.popViewController(animated: true)
     }
 
-
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if (searchViewController?.indexFieldDictionary[rowIndex!] == "id" && textField.isEqual(inputTextField)) {
+            let allowedCharacters = CharacterSet.decimalDigits
+            let characterSet = CharacterSet(charactersIn: string)
+            return allowedCharacters.isSuperset(of: characterSet)
+        }
+        
+        return true
+    }
 
 
 }

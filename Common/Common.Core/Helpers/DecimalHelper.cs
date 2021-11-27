@@ -1,0 +1,69 @@
+﻿using System;
+using System.Globalization;
+
+namespace CheckListManager.Common.Core.Helpers
+{
+    public static class DecimalHelper
+    {
+        private static readonly NumberFormatInfo
+            CommaNumberFormatInformation = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ",",
+                NumberGroupSeparator = ".",
+                PercentDecimalSeparator = ",",
+                PercentGroupSeparator = ".",
+                CurrencyDecimalSeparator = ",",
+                CurrencyGroupSeparator = "."
+            },
+            DotNumberFormatInformation = new NumberFormatInfo
+            {
+                NumberDecimalSeparator = ".",
+                NumberGroupSeparator = ",",
+                PercentDecimalSeparator = ".",
+                PercentGroupSeparator = ",",
+                CurrencyDecimalSeparator = ".",
+                CurrencyGroupSeparator = ","
+            };
+
+        public static decimal? Parse(string Value) =>
+            Value == null ? default(decimal?) : decimal.TryParse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalResult) ? decimalResult : default(decimal?);
+
+        public static string Format (decimal? Value, string DecimalSeparator) =>
+            Value?.ToString().Replace(",", DecimalSeparator).Replace(".", DecimalSeparator);
+
+        public static string Format(decimal? Value, string Format, string DecimalSeparator) =>
+            Value?.ToString(Format ?? string.Empty, DecimalSeparator == "," ? CommaNumberFormatInformation : DotNumberFormatInformation) ?? string.Empty;
+
+        public static string Format(double? Value, string Format, string DecimalSeparator) =>
+            Value?.ToString(Format ?? string.Empty, DecimalSeparator == "," ? CommaNumberFormatInformation : DotNumberFormatInformation) ?? string.Empty;
+
+        public static void Parse(string Value, int? Precision, bool ScientificNotation, string DecimalSeparator, out decimal? Result, out string FormattedResult)
+        {
+            Result = Parse(Value);
+            try
+            {
+                if (!Result.HasValue)
+                    FormattedResult = null;
+                else if (Result == 0m)
+                    FormattedResult = "0";
+                else if (ScientificNotation)
+                {
+                    var Exponent = (int)Math.Floor(Math.Log10((double)Result));
+                    var Coefficent = (double)Result / Math.Pow(10, Exponent);
+                    if (Precision.HasValue) Coefficent = Math.Round(Coefficent, Precision.Value);
+                    Result = (decimal)(Coefficent * Math.Pow(10, Exponent));
+                    FormattedResult = Format((decimal)Coefficent, DecimalSeparator) + "e" + (Exponent >= 0 ? "+" : string.Empty) + Exponent;
+                }
+                else
+                {
+                    Result = Precision.HasValue ? Math.Round(Result.Value, Precision.Value) : Result;
+                    FormattedResult = Format(Result, DecimalSeparator);
+                }
+            }
+            catch
+            {
+                FormattedResult = null;
+            }
+        }
+    }
+}

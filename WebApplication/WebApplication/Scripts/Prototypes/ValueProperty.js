@@ -1,5 +1,6 @@
 ﻿prototypes.ValueProperty = function (model) {
-	var
+    var
+        base,
 		sourceName,
 		sourceColumn,
 		input,
@@ -19,26 +20,28 @@
 			for (var valueIndex in model.valuesList)
 				if (model.valuesList[valueIndex])
 					model.valuesList[valueIndex] = model.valuesList[valueIndex].trim();
-			matematici.canClose = false;
+            base.updateModel(model);
+            base.setError(model.errors, "value", null);
 		},
 
 		sourceChanged = function (column) {
-			sourceColumn.empty();
-			if (!!sourceName.val() && !!prototypes.prototype.getModel().externalSources[sourceName.val()])
+            sourceColumn.empty();
+            var sourceCode = sourceName.val();
+            if (!!sourceCode && !!prototypes.prototype.getModel().externalSources[sourceCode])
 				$.ajax({
 					type: "post",
 					url: matematici.urls.dataSources.api + "/Data/GetDataSource",
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
-					data: JSON.stringify({
-						code: prototypes.prototype.getModel().externalSources[sourceName.val()]
+                    data: JSON.stringify({
+                        code: prototypes.prototype.getModel().externalSources[sourceCode].dataSource
 					})
 				}).done(function (result) {
 					var columns = result.columns;
 					for (index in columns)
-						$("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
-					sourceName.data("autoComplete").refresh();
-					sourceColumn.data("autoComplete").refresh();
+                        $("<option />").appendTo(sourceColumn).text(columns[index]).attr("value", columns[index]);
+                    matematici.AutoComplete.get(sourceName[0]).refresh();
+                    matematici.AutoComplete.get(sourceColumn[0]).refresh();
 					if (column)
 						sourceColumn.val(column);
 					else
@@ -47,9 +50,11 @@
 				});
 			else
 				setTimeout(function () {
-					sourceName.data("autoComplete").refresh();
-					sourceColumn.data("autoComplete").refresh();
-				}, 0);
+                    matematici.AutoComplete.get(sourceName[0]).refresh();
+                    matematici.AutoComplete.get(sourceColumn[0]).refresh();
+                }, 0);
+
+            base.setError(model.errors, "value", null);
 		},
 
 		selectChanged = function () {
@@ -57,7 +62,8 @@
 			input.toggle(index >= 2);
 			sourceName.parent().toggle(index == 1);
 			sourceColumn.parent().toggle(index == 1);
-			if (index == 1) sourceChanged();
+            if (index == 1) sourceChanged();
+            base.setError(model.errors, "value", null);
 			valueChanged();
 		},
 
@@ -69,7 +75,8 @@
 			empty = !externalSource && !formula && !list;
 		};
 
-	this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
 		refresh();
 		valuePanel.addClass("Value");
 
@@ -103,8 +110,11 @@
 				$("<option />").appendTo(sourceName).text(index).attr("value", index);
 
 			if (externalSource) {
-				sourceName.val(model.externalSourceName);
-				sourceChanged(model.externalSourceColumn);
+                sourceName.val(model.externalSourceName);
+                if (sourceName.val() != model.externalSourceName) {
+                    sourceName.attr("data-error", model.externalSourceName);
+                } else
+				    sourceChanged(model.externalSourceColumn);
 				input.hide();
 			} else {
 				sourceName.parent().hide();
@@ -118,8 +128,8 @@
 				.val(
 				empty ? "empty" :
 					externalSource ? "external source" :
-						formula ? "formula" :
-							"comma separated values"
+				    formula ? "formula" :
+					"comma separated values"
 				)
 				.appendTo(valuePanel);
 
@@ -127,7 +137,7 @@
 				$("<label />").text("Source").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceName)).appendTo(valuePanel);
 				$("<label />").text("Column").append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceColumn)).appendTo(valuePanel);
 			} else if (!empty)
-				input = $("<textarea />").appendTo(valuePanel).attr({ type: "text" }).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
+                input = $("<textarea />").appendTo(valuePanel).attr({ type: "text", readOnly: true }).val(model.valueFormulaString || (model.valuesList && model.valuesList.join()));
 		}
 	}
 
@@ -135,5 +145,9 @@
 		refresh();
 		return !empty;
 	}
+
+    this.setError = function (handler) {
+        handler(model.errors, "value");
+    };
 }
 

@@ -145,10 +145,8 @@ namespace CheckListManager.Instances.Logic.ImageUtilities
 		{
 			ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
 			for (int j = 0; j < encoders.Length; ++j)
-			{
 				if (encoders[j].MimeType.ToLower() == mimeType.ToLower())
 					return encoders[j];
-			}
 			return null;
 		}
 

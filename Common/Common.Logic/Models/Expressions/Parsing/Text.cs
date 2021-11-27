@@ -7,14 +7,19 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Parsing
 {
     public class Text : Token
     {
-        public Text(ref string ExpressionValue, ref int Position, int Index, char Separator) : base(Position, Index)
+        public Text(ref string ExpressionValue, Position Position, int Index, char Separator) : base(Position, Index)
         {
-            while (Position == this.Position || ExpressionValue[Position] != Separator)
-                if (++Position == ExpressionValue.Length)
-                    throw new ParseException(Separator + " expected", Position);
+            Position.Increment(false);
+            while (Position.Index == this.Position.Index || ExpressionValue[Position.Index] != Separator)
+            {
+                Position.Increment(ExpressionValue[Position.Index] == '\n');
+                if (Position.Index == ExpressionValue.Length)
+                    throw new ParseException($"{Separator} expected", this.Position);
+            }
 
-            Value = ExpressionValue.Substring(this.Position + 1, Position++ - this.Position - 1);
-            Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = Position };
+            Value = ExpressionValue.Substring(this.Position.Index + 1, Position.Index - this.Position.Index - 1);
+            Position.Increment(false);
+            Symbol = new Constant(new TypedValue(DataType.Text, Value)) { Position = new Position(Position) };
             Operator = OperatorType.No;
         }
     }

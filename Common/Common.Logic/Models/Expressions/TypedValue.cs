@@ -22,7 +22,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 this.Value =
                     string.IsNullOrWhiteSpace(Value) ? null :
                     Type == DataType.Boolean ? bool.Parse(Value) :
-                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}") :
+                    Type == DataType.DateTime ? DateTimeOffsetHelper.Parse(Value, TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, DateTimeOffsetHelper.DateTimeFormats) :
                     Type == DataType.Date ? DateTimeOffsetHelper.Parse(Value, TimeZone, out Ambiguous, out AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat) :
                     Type == DataType.Time ? TimeSpan.ParseExact(Value, "hh\\:mm", null) :
                     Type == DataType.Number ? decimal.Parse(Value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture) :

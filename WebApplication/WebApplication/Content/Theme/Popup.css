@@ -9,8 +9,9 @@ div.Popup {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 105;
-  background-color: rgba(102, 102, 102, 0.7); }
+  z-index: 104;
+  background-color: rgba(102, 102, 102, 0.7);
+  padding: 20px; }
   div.Popup div.Container {
     padding: 20px;
     background-color: white;
@@ -23,9 +24,11 @@ div.Popup {
       padding: 20px;
       color: white;
       text-transform: uppercase;
-      font-weight: normal; }
+      font-weight: normal;
+      overflow: hidden;
+      text-overflow: ellipsis; }
     div.Popup div.Container div.Buttons {
-      margin-top: 40px; }
+      margin-top: 20px; }
       div.Popup div.Container div.Buttons a {
         min-width: 100px;
         float: right;

@@ -10,6 +10,7 @@
             text: "Text",
             field: "Field",
             signature: "Signature",
+            instanceLink: "InstanceLink",
             link: "Link",
             image: "Image",
             attachment: "Attachment"
@@ -24,12 +25,13 @@
 
             if (specificItem = (
                 model.typeName == typeNames.text ? new prototypes.Text(item, model) :
-                model.typeName == typeNames.field ? new prototypes.Field(item, model) :
-                model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
-                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
-                model.typeName == typeNames.image ? new prototypes.Image(item, model) :
-                model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
-                null)) {
+                    model.typeName == typeNames.field ? new prototypes.Field(item, model) :
+                        model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
+                            model.typeName == typeNames.instanceLink ? new prototypes.InstanceLink(item, model) :
+                                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
+                                    model.typeName == typeNames.image ? new prototypes.Image(item, model) :
+                                        model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
+                                            null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {
@@ -45,6 +47,7 @@
         else
             model.id = prototypes.prototype.getNewItemsId();
         element.attr("data-code", model.code).attr("id", "ItemId" + model.id).data("id", model.id);
+        if (model.errors && model.errors.length > 0) $("div.ActionBar a.Button.ItemsList").addClass("Invalid");
         specificItem.update(model)
     };
 
@@ -54,6 +57,10 @@
 
     this.setFontSize = function (value) {
         specificItem.setFontSize(value);
+    };
+
+    this.getSpecificItem = function () {
+        return specificItem;
     };
 
     this.setIndex = function (value) {
@@ -76,5 +83,9 @@
         return model;
     };
 
+    this.toString = function () {
+        return model.typeName + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || "")
+    };
+
     create();
-}
+};

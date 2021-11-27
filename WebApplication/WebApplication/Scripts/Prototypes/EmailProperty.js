@@ -1,5 +1,6 @@
 ﻿prototypes.EmailProperty = function (model, readOnly) {
     var
+        base,
         conditionSelect, valueInput,
 
         toggleControls = function () {
@@ -10,7 +11,7 @@
             var condition = conditionSelect.val();
             model.sendEmail = condition != 0;
             if (condition != 1) model.sendEmailAddress = null;
-            matematici.canClose = false;
+            base.updateModel(model);
 
             toggleControls();
         },
@@ -36,19 +37,22 @@
             matematici.canClose = false;
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Email");
         if (readOnly) {
             $("<input />")
                 .attr({ type: "text" })
                 .val(!model.sendEmail ? "(disabled)" : model.sendEmailAddress ? "distribution list" : "instance editors")
                 .appendTo(valuePanel)
+                .addClass("ReadOnly")
                 .attr("disabled", "disabled");
             if (model.sendEmail && model.sendEmailAddress)
                 $("<input />")
                     .attr({ type: "text" })
                     .val(model.sendEmailAddress)
                     .appendTo(valuePanel)
+                    .addClass("ReadOnly")
                     .attr("disabled", "disabled");
         } else {
             conditionSelect = $("<select />")

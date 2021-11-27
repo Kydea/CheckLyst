@@ -6,7 +6,7 @@
 
 		clickHandler = function () {
 			if (a.hasClass("ReadOnly") || a.hasClass("GreyYellowButton")) 
-				return;
+				return false;
 
 			var id = instances.instance.getPrototype();
 			var version = instances.instance.getVersion();
@@ -21,7 +21,8 @@
 			url += "&key=" + model.key;
 			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
 
-			matematici.imageViewer.show(title, url);
+            matematici.imageViewer.show(title, url);
+            return true;
         },
 
         setup = function () {
@@ -30,13 +31,12 @@
         };
 
     this.update = function (model) {
-        span.html(title = model.description ? model.description : "show image");
+        span.html(title = model.descriptionValue || "show image");
 
         this.setColor(model.color);
 		this.setFontSize(model.fontSize);
 
 		a.toggleClass("GreyYellowButton", !model.key || model.key === '');
-		//a.toggleClass("ReadOnly", model.readOnly);
     };
 
     this.setColor = function (value) {
@@ -44,8 +44,10 @@
     };
 
     this.setFontSize = function (value) {
-        a.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+        a.css({ fontSize: model.fontSize && model.fontSize + "px" });
     };
+
+    this.trigger = clickHandler;
 
 	setup();
 }

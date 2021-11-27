@@ -18,13 +18,11 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		bool NewLine { get; set; }
 		[JsonIgnore]
 		ICheckListPage Page { get; set; }
-		[JsonIgnore]
-		ICheckListItem Previous { get; set; }
 		string TypeName { get; }
 		ICheckListItem Clone(ICheckListGroup parent);
         int FontSize { get; set; }
         string Color { get; set; }
         void Remove();
         bool Removed { get; set; }
-	}
+    }
 }

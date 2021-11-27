@@ -19,21 +19,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions.MathFunctions
 
         protected abstract TypedValue EvaluateResult(TypedValue LeftValue, TypedValue RightValue);
 
-        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
-        {
-            var Value = base.Evaluate(LeftValue, RightValue);
-            if (Value == null)
-                try
-                {
-                    return LeftValue.IsNull || RightValue.IsNull ? LeftValue : EvaluateResult(LeftValue, RightValue);
-                }
-                catch (Exception Exception)
-                {
-                    return new TypedValue(DataType.Error, Exception.Message);
-                }
-            else
-                return Value;
-        }
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone) =>
+            base.Evaluate(LeftValue, RightValue, TimeZone) ?? (LeftValue.IsNull || RightValue.IsNull ? LeftValue : EvaluateResult(LeftValue, RightValue));
 
         public override string ToString()
         {

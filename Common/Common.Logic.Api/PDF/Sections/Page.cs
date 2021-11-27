@@ -8,12 +8,13 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         public Page(CheckListPDF PDFBase, ICheckListPage Page, int Indentation = 1) : base(PDFBase, Page, Indentation)
         {}
 
-        public override Task RenderAsync(params object[] State)
+        public override async Task RenderAsync()
         {
+            await base.RenderAsync();
             var PageElement = (ICheckListPage)Element;
 
             DrawText(PageElement.Description, PDFBase.TitleFont1, 20);
-            return RenderChildrenAsync();
+            await RenderChildrenAsync();
         }
 
         public override async Task RenderChildrenAsync()

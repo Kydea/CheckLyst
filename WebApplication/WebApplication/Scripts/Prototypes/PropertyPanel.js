@@ -4,53 +4,78 @@
         element = $(selector),
         border = element.children("div.Border"),
         noItem = element.children("div.NoItem"),
-        propertyList = element.children("div.PropertyList"),
+        propertyList = $("tbody", element.children("div.PropertyList")),
         propertyValue = element.children("div.PropertyValue"),
         information = element.children("div.Information"),
-        dragY,
         currentProperty,
         prototypeTypesList,
         properties,
+        item,
+        model,
+        oldModel,
+        options,
 
         copyModel = function (source, destination) {
             for (var property in source)
                 destination[property] = source[property];
+            if (source.errors) {
+                destination.errors = [];
+                for (var error in source.errors)
+                    destination.errors.push(source.errors[error]);
+            }
+        },
+
+        confirm = function () {
+            if (model.typeName == "Image") {
+                if (oldModel.key && !oldModel.cloned && !model.key)
+                    prototypes.prototype.deleteImage(oldModel.key);
+                if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
+                    prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
+            }
+            $("input:not(.ReadOnly)", propertyValue).change();
+            currentProperty && currentProperty.getType().destroy && currentProperty.getType().destroy();
+
+            prototypes.prototype.verify(options && options.okHandler);
         };
 
-    propertyPanel.select = function (value) {
-        var
-            item = value,
-            model = item.getModel(),
-            state = prototypes.prototype.getModel().state,
-            oldModel = {};
+    propertyPanel.confirm = confirm;
+
+    propertyPanel.select = function (value, o) {
+        if (!!value) item = value;
+
+        var state = prototypes.prototype.getModel().state;
+        model = item.getModel();
+        oldModel = {};
+        options = o;
 
         copyModel(model, oldModel);
 
-        matematici.popup.show({
-            title: "Properties - " + model.typeName + (model.id && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
-            content: element,
-            buttons: [{
+        var
+            name = model.typeName,
+            buttons = [];
+
+        if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+            buttons.push({
                 icon: "check",
                 text: "apply",
-                handler: function () {
-                    if (model.typeName == "Image") {
-                        if (oldModel.key && !oldModel.cloned && !model.key)
-                            prototypes.prototype.deleteImage(oldModel.key);
-                        if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
-                            prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
-                    }
-                    $("input:not(.ReadOnly)", propertyValue).change();
-                }
-            }, {
-                cancelButton: true,
-                hidden: true,
-                handler: function () {
-                    if (model.typeName == "Image" && !oldModel.key && model.key)
-                        prototypes.prototype.deleteImage(model.key);
-                    copyModel(oldModel, model);
-                    prototypes.prototype.update();
-                }
-            }]
+                handler: confirm
+            });
+        
+        buttons.push({
+            cancelButton: true,
+            hidden: true,
+            handler: function () {
+                if (model.typeName == "Image" && !oldModel.key && model.key)
+                    prototypes.prototype.deleteImage(model.key);
+                copyModel(oldModel, model);
+                prototypes.prototype.update();
+            }
+        });
+
+        matematici.popup.show({
+            title: "Properties - " + name + (model.index != null && " - Index: " + (parseInt(model.index) + 1) || model.id != null && " - ID: " + model.id || "") + (model.code && " - Code: " + model.code || ""),
+            content: element,
+            buttons: buttons
         });
 
         matematici.popup.setWidth("760px");
@@ -78,8 +103,9 @@
                 "The version number."
             ));
             properties.push(new prototypes.Property(
-                this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () { $("h2 span", item.getElement()).text(model.description); }),
-                "Description", "A short description of the prototype."
+                this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                "Description", "A short description of the prototype.",
+                function () { $("h2 span", item.getElement()).text(model.description); }
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "descriptionFormulaString", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
@@ -95,8 +121,7 @@
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "state", { readOnly: true, defaultValue: prototypes.Prototype.states.draft }), "State",
-                "The state of the prototype. This property is not editable. " +
-                "Use the action <strong>buttons</strong> to change the state of the version."
+                "The state of the prototype. This property is not editable. Use the action <strong>buttons</strong> to change the state of the version."
             ));
             properties.push(new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
                 readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0
@@ -130,7 +155,7 @@
                 "If specified, in this date, the version gets the state <b>obsolete</b>, if the state of the version is <b>active</b>."
             ));
             properties.push(new prototypes.Property(
-                this, new prototypes.BooleanProperty(model, "ftpExport", state != prototypes.Prototype.states.draft),
+                this, new prototypes.BooleanProperty(model, "ftpExport"),
                 "FTP Export", "When checked, the instances are exported to the FTP server, once confirmed."
             ));
 
@@ -138,30 +163,40 @@
             var
                 parent = item.getParent(),
                 siblings = !!parent && parent.getChildren(),
-                itemIndex = item.getIndex();
+                itemIndex = item.getIndex(),
+                isHeader = model.typeName == "Group" && parent.getModel().header === model;
+
+            if (!isHeader)
+                properties.push(new prototypes.Property(
+                    this, new prototypes.BooleanProperty(model, "pageBreak", false, model.typeName == "Page"), "Page break",
+                    "Forces a page break in the pdf version of the checklist before the element."
+                ));
 
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "code", {
                     readOnly: state != prototypes.Prototype.states.draft,
                     code: true
-                }).setHandler(function (value) {
-                    item.getElement().data("code", model.code);
-                    prototypes.prototype.completeModel();
                 }).setCheck([{
                     action: function (value) {
                         return value == "" || matematici.codeRegularExpression.test(value);
                     },
                     message: "Invalid code"
                 }]), "Code",
-                "Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed is some expression."
+                "Uniquely identifies an element. Can be left empty. Use only if a reference to the element is needed.",
+                function (value) {
+                    item.getElement().data("code", model.code);
+                    prototypes.prototype.completeModel();
+                    if (!model.code && model.dumpExternalSourceName) model.dumpExternalSourceName = null;
+                }
             ));
+
             if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image")
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ReadOnlyProperty(model), "Read-only",
+                    this, new prototypes.ExpressionProperty(model, "readOnly", "read-only", true, true, 0), "Read-only",
                     "Determines if the element is editable by the operator or not."
                 ));
             properties.push(new prototypes.Property(
-                this, new prototypes.HiddenProperty(model, "hidden", state != prototypes.Prototype.states.draft), "Hidden",
+                this, new prototypes.ExpressionProperty(model, "hidden", "hidden", false, false, 2), "Hidden",
                 "Determines if the element is visible or not."
             ));
             properties.push(new prototypes.Property(
@@ -171,8 +206,8 @@
 
             if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image") {
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ValidProperty(model), "Validity",
-                    "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields are valid if contains a value, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
+                    this, new prototypes.ExpressionProperty(model, "valid", "validity", true, true, 0), "Validity",
+                    "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields and attachments are valid if not empty, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
                 ));
                 properties.push(new prototypes.Property(
                     this, new prototypes.SimpleValueProperty(model, "validityMessage", { readOnly: state != prototypes.Prototype.states.draft }), "Validity message",
@@ -180,7 +215,7 @@
                 ));
                 properties.push(new prototypes.Property(
                     this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
-                    "Determines which signature locks the element."
+                    "Determines which signature locks the element. For iterators with a code, it is present alse a Source on which perform a data export when the signature is issued."
                 ));
             }
 
@@ -194,10 +229,9 @@
                             },
                             message: "invalid value"
                         }
-                    ]).setHandler(function () {
-                        item.setFontSize(model.fontSize);
-                    }), "Font size",
-                    "The size in pixel of the text (empty or 0 for the default font size)."
+                    ]), "Font size",
+                    "The size in pixel of the text (empty or 0 for the default font size).",
+                    function () { item.setFontSize(model.fontSize); }
                 ));
                 properties.push(new prototypes.Property(
                     this, new prototypes.ListProperty(model, "color", [
@@ -208,28 +242,28 @@
                         { label: "Green", code: "#009688" },
                         { label: "Grey", code: "#999" },
                         { label: "Yellow", code: "#ffba00" }
-                    ], { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function (value) {
-                        item.setColor(model.color);
-                    }), "Color",
-                    "The color of the text."
+                    ]),
+                    "Color",
+                    "The color of the text.",
+                    function (value) { item.setColor(model.color); }
                 ));
             }
 
             switch (model.typeName) {
                 case "Page":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.description);
-                        }), "Caption",
-                        "The caption of the page."
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Caption",
+                        "The caption of the page.",
+                        function () { $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.description); }
                     ));
                     break;
                 case "Group":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            item.getElement().children("h3").text(model.description);
-                        }), "Caption",
-                        "The caption of the group."
+                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
+                        "Caption",
+                        "The caption of the group.",
+                        function () { item.getElement().children("h3").text(model.description); }
                     ));
                     var tableContent = false;
                     for (var node = parent; node.getModel().typeName == "Group"; node = node.getParent())
@@ -238,90 +272,165 @@
                             break;
                         }
 
-                    if (!tableContent && parent.getModel().header !== model) {
-                        properties.push(new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "iterator", state != prototypes.Prototype.states.draft).setHandler(function () {
-                                showAsTable.getType().setReadOnly(!model.iterator);
-                                instanceIterationsNumber.getType().setReadOnly(!model.iterator);
-                                prototypeIterationsNumber.getType().setReadOnly(!model.iterator);
-                                disableAdd.getType().setReadOnly(!model.iterator);
-                                disableRemove.getType().setReadOnly(!model.iterator);
-                                disableMove.getType().setReadOnly(!model.iterator);
+                    if (!tableContent && !isHeader) {
+                        var
+                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration,
+                            toggleIteratorControls = function () {
+                                var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
+                                showAsTable.getType().setReadOnly(!itaratorCommandsEnabled);
+                                instanceIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
+                                prototypeIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
+                                addIteration.getType().setReadOnly(!itaratorCommandsEnabled);
+                                removeIteration.getType().setReadOnly(!itaratorCommandsEnabled);
+                                moveIteration.getType().setReadOnly(!itaratorCommandsEnabled);
 
                                 if (!model.iterator) {
                                     model.instanceIterationsNumber = 0;
                                     model.prototypeIterationsNumber = 0;
 
-                                    model.showAsTable =
-                                        model.disableAdd =
-                                        model.disableRemove =
-                                        model.disableMove =
-                                        false;
+                                    model.showAsTable = false;
+                                    model.addIterationCondition = 1;
+                                    model.removeIterationCondition = 1;
+                                    model.moveIterationCondition = 1
+                                    model.dumpExternalSourceName = null;
+
+                                    instanceIterationsNumber.setValue();
+                                    prototypeIterationsNumber.setValue();
+                                    showAsTable.setValue();
                                 }
-                            }), "Iterator",
-                            "Determines if the group is an iterator."
+
+                                addIteration.setValue();
+                                removeIteration.setValue();
+                                moveIteration.setValue();
+                            };
+
+                        properties.push(new prototypes.Property(
+                            this, new prototypes.BooleanProperty(model, "iterator"), "Iterator",
+                            "Determines if the group is an iterator.", toggleIteratorControls
                         ));
 
-                        var showAsTable = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "showAsTable", state != prototypes.Prototype.states.draft || !model.iterator), "Show as table",
+                        showAsTable = new prototypes.Property(
+                            this, new prototypes.BooleanProperty(model, "showAsTable", !model.iterator), "Show as table",
                             "Displays the group as a table."
                         );
                         properties.push(showAsTable);
 
-                        var instanceIterationsNumber = new prototypes.Property(
+                        instanceIterationsNumber = new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "instanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Instance iterations",
                             "Creates the specified number of iterations automatically for new instances."
                         );
                         properties.push(instanceIterationsNumber);
 
-                        var prototypeIterationsNumber = new prototypes.Property(
+                        prototypeIterationsNumber = new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "prototypeIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Prototype iterations",
                             "Creates the specified number of iterations automatically int the PDF version."
                         );
                         properties.push(prototypeIterationsNumber);
 
-                        var disableAdd = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableAdd", state != prototypes.Prototype.states.draft || !model.iterator), "Disable add",
-                            "Disable the add button of the iterator."
-                        );
-                        properties.push(disableAdd);
+                        addIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "addIteration", "add-iteration", false, false, 1), "Add iteration",
+                            "Defines if the buttons add and import of the iterator are present."
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
+                        properties.push(addIteration);
 
-                        var disableRemove = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableRemove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable remove",
-                            "Disable the remove button of the iterator."
-                        );
-                        properties.push(disableRemove);
+                        removeIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "removeIteration", "remove-iteration", false, false, 1), "Remove iteration",
+                            "Defines if the remove button of the iterator is present."
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
+                        properties.push(removeIteration);
 
-                        var disableMove = new prototypes.Property(
-                            this, new prototypes.BooleanProperty(model, "disableMove", state != prototypes.Prototype.states.draft || !model.iterator), "Disable move",
-                            "Disable the move up and move down buttons of the iterator."
-                        );
-                        properties.push(disableMove);
+                        moveIteration = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "moveIteration", "move-iteration", false, false, 1), "Move iteration",
+                            "Defines if the mover button of the iterator is present."
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
+                        properties.push(moveIteration);
+
+                        setTimeout(toggleIteratorControls, 0);
                     }
 
                     break;
                 case "Text":
+                    var widthBaseProperty, widthProperty, heightBaseProperty, heightProperty, newLineBaseProperty, newLineProperty;
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("p", item.getElement()).html((model.description || '').split('\n').join('<br />'));
-                        }), "Content",
-                        "The content of the text."
+                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
+                        "Content",
+                        "The content of the text.",
+                        function () { $("p", item.getElement()).html((model.description || '').split('\n').join('<br />')); }
                     ));
+                    properties.push(newLineBaseProperty = new prototypes.Property(
+                        this, newLineProperty = new prototypes.BooleanProperty(model, "newLine", model.width == 0, true),
+                        "New line",
+                        "If checked, the field breaks the line. Available only if the width is not set on auto.",
+                        function () { item.getElement().toggleClass("NewLine", model.newLine); }
+                    ));
+                    properties.push(heightBaseProperty = new prototypes.Property(
+                        this, heightProperty = new prototypes.ListProperty(model, "height", [
+                            { label: "Auto", code: "0" },
+                            { label: "Fixed standard height", code: "1" },
+                        ], { readOnly: model.width == 0 }),
+                        "Height",
+                        "The height of the text. Available only if the width is not set on auto.",
+                        function () {
+                            if (model.height == 0) {
+                                model.newLine = true;
+                                newLineBaseProperty.setValue();
+                            }
+                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.height == 0)
+                            item.getSpecificItem().setSize();
+                        }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, widthProperty = new prototypes.ListProperty(model, "width", [
+                            { label: "Auto", code: "0" },
+                            { label: "Single width", code: "1" },
+                            { label: "Double width", code: "2" }
+                        ]),
+                        "Width",
+                        "The width of the text.",
+                        function () {
+                            if (model.width == 0) {
+                                model.height = 0;
+                                model.newLine = true;
+                                heightBaseProperty.setValue();
+                                newLineBaseProperty.setValue();
+                            }
+                            newLineProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.height == 0);
+                            heightProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0);
+                            item.getSpecificItem().setSize();
+                        }
+                    ));
+
                     break;
                 case "Field":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("label", item.getElement()).children("span").text(model.description);
-                        }), "Label",
-                        "The label of the item."
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the item.",
+                        function () { $("label", item.getElement()).children("span").text(model.description); }
                     ));
 
-                    let
+                    var
                         linesCountProperty,
                         linesCountItems,
                         prepareLinesCount = function () {
                             linesCountItems = [
-                                { label: "Standard width", code: "0" },
+                                { label: "Single width", code: "0" },
+                                { label: "Double width", code: "-1" },
                                 { label: "Full width", code: "1" }
                             ];
 
@@ -334,25 +443,28 @@
 
                     if (!model.linesCount) model.linesCount = 0;
                     properties.push(new prototypes.Property(
-                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems, { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            var element = item.getElement();
-                            element.toggleClass("MultiLine", model.linesCount > 0);
-                            $("div.Input", element).outerHeight(model.linesCount < 2 ? 36 : 20 * model.linesCount + 12);
-                        }), "Size",
-                        "The size of the field."
+                        this, linesCountProperty = new prototypes.ListProperty(model, "linesCount", linesCountItems),
+                        "Size",
+                        "The size of the field.",
+                        function () {
+                            item.getSpecificItem().setSize();
+                        }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "newLine", state != prototypes.Prototype.states.draft).setHandler(function () {
-                            item.getElement().toggleClass("NewLine", model.newLine);
-                        }), "New line",
-                        "If checked, the field breaks the line."
+                        this, new prototypes.BooleanProperty(model, "newLine"),
+                        "New line",
+                        "If checked, the field breaks the line.",
+                        function () { item.getElement().toggleClass("NewLine", model.newLine); }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.ValueProperty(model), "Value",
                         "The value of the field."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.ValueTypeProperty(model, "valueTypeName", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Value type",
+                        "The data type returned by field. Data type affects the behaviour of the field and restricts the allowed inputs.",
+                        function () {
                             prepareLinesCount();
                             if (model.valueTypeName != "Text" && model.linesCount > 1) {
                                 var element = item.getElement();
@@ -361,33 +473,33 @@
                                 $("div.Input", element).outerHeight(36);
                             }
                             linesCountProperty.refresh(linesCountItems);
-                        }), "Value type",
-                        "The data type returned by field. Data type affects the behaviour of the field and restricts the allowed inputs."
+                        }
                     ));
                     break;
                 case "Signature":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("label", item.getElement()).children("span").text(model.description);
-                        }), "Label",
-                        "The label (cause) of the signature."
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label (cause) of the signature.",
+                        function () { $("label", item.getElement()).children("span").text(model.description); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Button label",
+                        "The label of the button.",
+                        function () {
                             var
                                 button = $("a.SignatureButton", item.getElement()),
                                 icon = button.children().clone();
                             button.text(model.buttonLabel).prepend(icon);
-                        }), "Button label",
-                        "The label of the button."
+                        }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles,
-                            { readOnly: state != prototypes.Prototype.states.draft, nullable: true }), "Signature level",
+                        this, new prototypes.ListProperty(model, "signatureLevel", matematici.profiles, { nullable: true }), "Signature level",
                         "If has a value only users with that level can sign."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "cancelable", state != prototypes.Prototype.states.draft), "Cancelable",
+                        this, new prototypes.BooleanProperty(model, "cancelable"), "Cancelable",
                         "If checked, the signature can be reverted by a signature manager."
                     ));
                     properties.push(new prototypes.Property(
@@ -395,55 +507,119 @@
                         "If the option 'distribution lists' is selected, an atuomatic email will be automatically sent to the specified distribution lists. If the option 'instance editors' is selected or the distribution list is left empty, all the possible instance editors will be prompted to the signer. The signer will be then able to send an automatic email to any of those users."
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.BooleanProperty(model, "acceptsPin", state != prototypes.Prototype.states.draft), "Accepts PIN",
+                        this, new prototypes.BooleanProperty(model, "acceptsPin"), "Accepts PIN",
                         "If checked, the signature users can issue this signature using their PIN."
+                    ));
+                    break;
+                case "InstanceLink":
+                    var parametersProperty;
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the instance link.",
+                        function () { $("label", item.getElement()).children("span").text(model.description); }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.PrototypeProperty(model),
+                        "Prototype",
+                        "The prototype of the linked checklist.",
+                        function () {
+                            if (!model.prototypeName) {
+                                model.parameters = null;
+                                parametersProperty.setValue();
+                            }
+                        }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.ListProperty(model, "actions", [
+                            { label: "Link and create instances", code: "0" },
+                            { label: "Create instances", code: "1" },
+                            { label: "Link instances", code: "2" }
+                        ]),
+                        "Actions",
+                        "The actions available.",
+                        function () {
+                            if (model.actions == 2) {
+                                model.parameters = null;
+                                parametersProperty.setValue();
+                            }
+                        }
+                    ));
+                    properties.push(parametersProperty = new prototypes.Property(
+                        this, new prototypes.ParametersProperty(model),
+                        "Parameters",
+                        "The parameters to pass to the created instances."
                     ));
                     break;
                 case "Link":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("a.Link", item.getElement()).html((model.description || '(no label)'));
-                        }), "Label",
-                        "The label of the link."
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the link.",
+                        function () { $("a.Link", item.getElement()).html((model.description || '(no label)')); }
                     ));
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("a.Link", item.getElement()).attr("href", model.url);
-                        }), "Url",
-                        "The url to open."
+                        this, new prototypes.SimpleValueProperty(model, "url", { readOnly: state != prototypes.Prototype.states.draft, fullHeight: true }),
+                        "Url",
+                        "The url to open.",
+                        function () { $("a.Link", item.getElement()).attr("href", model.url); }
                     ));
                     break;
                 case "Image":
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
-                            $("a.Button span", item.getElement()).html((model.description || 'open image'));
-                        }), "Label",
-                        "The label of the button."
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the button.",
+                        function () { $("a.Button span", item.getElement()).html((model.description || 'open image')); }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.UploadProperty(model, "key", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Image",
                         "Upload the image to show."
                     ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.TargetProperty(model, "Image"),
+                        "Target",
+                        "If the target is specified, the button will show the image of the specified item."
+                    ));
                     break;
                 case "Attachment":
+                    var restrictToCameraProperty;
                     properties.push(new prototypes.Property(
-                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }).setHandler(function () {
+                        this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
+                        "Label",
+                        "The label of the button.",
+                        function () {
                             $("a.Attachment", item.getElement())
                                 .html(model.description || "upload")
                                 .append($("<i />").addClass("Icon fa fa-paperclip"));
-                        }), "Label",
-                        "The label of the button."
+                        }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.ListProperty(
                             model,
                             "fileType",
                             /* The first element is the default one. To change it, change also in CheckListManager.Prototypes.Logic.Models.CheckLists.Attachment */
-                            ["images", "pdf"],
-                            { readOnly: state != prototypes.Prototype.states.draft }
+                            ["images", "pdf"]
                         ), "File type",
-                        "The file type of the attachment."
+                        "The file type of the attachment.",
+                        function () {
+                            if (model.fileType != "images") {
+                                model.restrictToCamera = false;
+                                restrictToCameraProperty.setValue();
+                            }
+                            restrictToCameraProperty.getType().setReadOnly(model.fileType == "pdf");
+                        }
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.TargetProperty(model, "Attachment"),
+                        "Target",
+                        "If the target is specified, the attachment will be linked to the specified item."
+                    ));
+                    properties.push(restrictToCameraProperty = new prototypes.Property(
+                        this, new prototypes.BooleanProperty(model, "restrictToCamera", model.fileType == "pdf"),
+                        "Restrict to camera",
+                        "If the flag is set, the attachment will be taken exclusively by camera of the mobile device on the app."
                     ));
                     break;
                 default:
@@ -455,6 +631,9 @@
         properties.sort(function (a, b) { return a.getCaption().localeCompare(b.getCaption()); });
         for (var property in properties)
             properties[property].setup();
+
+        if (!value)
+            propertyPanel.setCurrentProperty()
     };
 
     propertyPanel.getPropertyList = function () {
@@ -469,6 +648,10 @@
         return information;
     };
 
+    propertyPanel.getCurrentProperty = function () {
+        return currentProperty;
+    };
+
     propertyPanel.setCurrentProperty = function (value) {
         if (currentProperty) currentProperty.unselect();
         currentProperty = currentProperty == value ? null : value;
@@ -476,16 +659,8 @@
         if (currentProperty) currentProperty.select();
     };
 
-    propertyPanel.setPrototypeTypesList = function (data) {
-        prototypeTypesList = data;
-    };
-
-    propertyPanel.getPrototypeTypesList = function () {
-        return prototypeTypesList;
-    };
-
     propertyPanel.checkDataType = function (expression, typeName) {
-        return expression.dataType.typeName == typeName || expression.innerDataType && expression.innerDataType.typeName == typeName;
+        return expression.innerDataType && expression.innerDataType.typeName == typeName || expression.dataType && expression.dataType.typeName == typeName;
     };
 
     prototypes.propertyPanel = propertyPanel;

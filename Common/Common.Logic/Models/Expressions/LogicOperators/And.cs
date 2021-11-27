@@ -2,9 +2,9 @@
 {
     public class And : BiaryLogicOperator
     {
-        protected override TypedValue Evaluate(TypedValue leftValue, TypedValue rightValue)
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone)
         {
-            return base.Evaluate(leftValue, rightValue) ?? new TypedValue(DataType.Boolean, !leftValue.IsNull && leftValue.BooleanValue && !rightValue.IsNull && rightValue.BooleanValue);
+            return base.Evaluate(LeftValue, RightValue, TimeZone) ?? new TypedValue(DataType.Boolean, !LeftValue.IsNull && LeftValue.BooleanValue && !RightValue.IsNull && RightValue.BooleanValue);
         }
 
         protected override string OperatorName => "and";

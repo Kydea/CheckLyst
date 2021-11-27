@@ -8,4 +8,5 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('PublicRepositoryUrl', 'https://s3-eu-west-1.amazonaws.com/public-02.matematici-clm.com/'), -- TODO ??
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '???'),
-	('InstancesStorageBucket', '???');
+	('InstancesStorageBucket', '???'),
+	('NotificationsEmailAddress', '??@matematici.com');

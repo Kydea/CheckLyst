@@ -14,6 +14,6 @@ namespace CheckListManager.WorkFlows.Logic.Applications
     {
         Task<GetStepsResponse> GetStepsAsync(DefaultIdentity identity, GetStepsRequest request);
         Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request);
-        Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request);
+        Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone);
     }
 }

@@ -27,14 +27,14 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             DataType = Argument.DataType;
         }
 
-        protected virtual TypedValue Evaluate(TypedValue ArgumentValue)
+        protected virtual TypedValue Evaluate(IElementsBranch ElementsBranch, TypedValue ArgumentValue)
         {
             return ArgumentValue.Type == DataType.Error ? ArgumentValue : null;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
-            var Value = Evaluate(Argument.GetValue(ElementsBranch, TimeZone));
+            var Value = Evaluate(ElementsBranch, Argument.GetValue(ElementsBranch, IterationIndexes, TimeZone));
             if (Value == null) throw new NullReferenceException("Software design error");
             return Value;
         }

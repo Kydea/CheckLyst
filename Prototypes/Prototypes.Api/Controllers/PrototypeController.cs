@@ -17,6 +17,7 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
+using System.Linq;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -25,7 +26,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
     {
         private readonly IPrototypeService _prototypeService;
         private readonly IPrototypesRepository _prototypesRepository;
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
@@ -36,7 +37,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         public PrototypeController(
             IPrototypeService prototypeService,
             IPrototypesRepository prototypesRepository,
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IRedisCache redisCache,
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
@@ -47,7 +48,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             _prototypeService = prototypeService;
             _prototypesRepository = prototypesRepository;
-            _converter = converter;
+            _converters = converters.ToArray<JsonConverter>();
             _redisCache = redisCache;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
@@ -134,13 +135,14 @@ namespace CheckListManager.Prototypes.Api.Controllers
         }
 
         [HttpPost]
-        [Route("VerifyExpressions")]
+        [Route("Verify")]
         [Authorize(Roles = "Prototypes#Edit")]
-        public IHttpActionResult VerifyExpressions(PrototypeRequest request)
+        public IHttpActionResult Verify(PrototypeRequest request)
         {
             try
             {
-                return Ok(_prototypeService.VerifyExpressions(request));
+                request.Parse(_converters);
+                return Ok(_prototypeService.Verify(request));
             }
             catch (Exception e)
             {
@@ -155,6 +157,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             try
             {
+                request.Parse(_converters);
                 return Ok(await _prototypeService.SaveAsync(Identity, request));
             }
             catch (Exception e)
@@ -232,7 +235,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
             var Data = await _redisCache.GetAsync<PrototypeRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(Data.CompanyId.Value, Data.ID, Data.Version);
-            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
+            CheckList.Setup(false);
 
             var PDF = new PrototypePDF(
                 Data.CompanyId.Value,
@@ -251,7 +255,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 User = Data.UserCode,
                 Action = TrailAction.PrototypeDownloaded,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
+                CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                CheckListID = PrototypeVersion.Prototype
             });
 
             return Content(HttpStatusCode.OK, PDF, new PDFFormatter("Prototype"));
@@ -289,7 +294,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
 
         [HttpGet]
         [Route("DownloadAttachment")]
-        [Authorize(Roles = "Prototypes#View")]
+        [Authorize(Roles = "Prototypes#View, Instances#View")]
         public async Task<IHttpActionResult> DownloadAttachment([FromUri]ProcessAttachmentRequest request)
         {
             try
@@ -298,8 +303,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
                     throw new Exception("Key must have a value");
 
                 var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
-                return Content(HttpStatusCode.OK, response.Content,
-                    new FileFormatter(response.ContentType, request.FormatAsBase64));
+                return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
             }
             catch (Exception e)
             {

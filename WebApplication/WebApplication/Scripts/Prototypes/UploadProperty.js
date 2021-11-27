@@ -1,9 +1,9 @@
 ﻿prototypes.UploadProperty = function (model, property, options) {
-	var
+    var
+        base,
 		input,
 		previewButton,
 		deleteButton,
-		handler,
 		change = function () {
 			if (!input[0].files.length) 
 				return;
@@ -14,7 +14,7 @@
                 formData.append("attachment", input[0].files[0]);
                 formData.append("id", prototypeKey.id);
                 formData.append("version", prototypeKey.version);
-				if (model.imageName) formData.append("code", model.imageName);
+				if (!model.cloned && model.imageName) formData.append("code", model.imageName);
 
                 $.ajax({
                     url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
@@ -30,11 +30,12 @@
                     model[property] = result.key;
                     previewButton.toggle(true);
                     deleteButton.toggle(true);
+                    base.updateModel(model);
                 }).always(function () {
                     input.val('');
                 });
             } else
-                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images uplaod");
+                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images upload");
 		},
 
 		deleteImage = function () {
@@ -42,6 +43,7 @@
             model.cloned = false;
             previewButton.toggle(false);
             deleteButton.toggle(false);
+            base.updateModel(model);
 		},
 
 		preview = function () {
@@ -56,12 +58,8 @@
 			matematici.imageViewer.show("Preview", url);
 		};
 
-	this.setHandler = function (value) {
-		handler = value;
-		return this;
-	};
-
-	this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
 		valuePanel.addClass("Upload");
 		options = options || {};
 		input = $("<input />").attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });

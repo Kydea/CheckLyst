@@ -15,9 +15,8 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Dispose();
 
-        public abstract void Test();
-        public abstract void PrepareMetaData();
-        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone);
+        public abstract void PrepareMetaData(out double ExecutionTime);
+        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double ExecutionTime);
 
         protected string Code { get; private set; }
 
@@ -50,6 +49,11 @@ namespace CheckListManager.ExternalSources.Logic
         public static string Format(DateTime DateTime)
         {
             return DateTime.ToString("yyyy-MM-dd HH:mm");
+        }
+
+        public static string Format(TimeSpan Time)
+        {
+            return Time.ToString("hh\\:mm");
         }
 
         public static string Format(DateTimeOffset DateTimeOffset, string TimeZone)

@@ -1,23 +1,55 @@
-﻿instances.Text = function (item, model) {
+﻿instances.Text = function (item, m) {
     var
+        model = m,
+        element,
         p,
+        ellipsis,
+
+        parsedText = function () {
+            return model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)";
+        },
+
+        showMore = function () {
+            matematici.dialog.show("Full content", parsedText(model));
+            matematici.dialog.setWidth("900px");
+        },
 
         setup = function () {
-            p = $("<p />").addClass("Description").appendTo(item.getElement());
+            element = item.getElement();
+            element.classList.toggle("Wide", model.width == 0);
+            element.classList.toggle("SingleRow", model.height == 1);
+
+            p = document.createElement("p");
+            p.classList.toggle("Label", model.width > 0)
+            p.classList.toggle("Controls2", model.width == 2);
+            element.appendChild(p);
+
+            ellipsis = document.createElement("a");
+            ellipsis.classList.add("Hidden");
+            ellipsis.classList.add("Ellipsis");
+            element.appendChild(ellipsis);
+
+            var i = document.createElement("i");
+            i.classList.add("fa");
+            i.classList.add("fa-ellipsis-h");
+            i.addEventListener("click", showMore);
+            ellipsis.appendChild(i);
         };
 
-    this.update = function (model) {
-		p.html(model.descriptionValue ? model.descriptionValue.split('\n').join('<br />') : "(no description)");
-        this.setColor(model.color);
-        this.setFontSize(model.fontSize);
+    this.update = function (m) {
+        model = m;
+        p.innerHTML = parsedText();
+        this.setColor();
+        this.setFontSize();
+        ellipsis.classList.toggle("Hidden", model.height == 0 || p.offsetHeight >= p.scrollHeight);
     };
 
-    this.setColor = function (value) {
-        p.css({ color: model.color });
+    this.setColor = function () {
+        p.style.color = model.color;
     };
 
-    this.setFontSize = function (value) {
-        p.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+    this.setFontSize = function () {
+        p.style.fontSize = model.fontSize && model.fontSize + "px";
     };
 
     setup();

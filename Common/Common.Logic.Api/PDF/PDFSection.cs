@@ -15,7 +15,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
             this.Indentation = Indentation;
         }
 
-        public abstract Task RenderAsync(params object[] State);
+        public abstract Task RenderAsync();
 
         public Paragraph DrawText(string Text, Font Font = null, int? SpaceAfter = null)
         {

@@ -23,10 +23,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ComparisonOperators
             DataType = DataType.Boolean;
         }
 
-        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
+        protected override TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone)
         {
             return
-                base.Evaluate(LeftValue, RightValue) ?? (LeftValue.IsNull || RightValue.IsNull ? new TypedValue(DataType.Boolean, null) : null);
+                base.Evaluate(LeftValue, RightValue, TimeZone) ?? (LeftValue.IsNull || RightValue.IsNull ? new TypedValue(DataType.Boolean, null) : null);
         }
     }
 }

@@ -1,0 +1,128 @@
+﻿matematici.archivingProcess = function () {
+    var
+        company,
+        getCompanies = function () {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "../../Archiving/Companies", true);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var list = JSON.parse(this.responseText);
+                        company = document.getElementById("company");
+                        for (var index in list) {
+                            var option = document.createElement("option");
+                            option.value = index;
+                            option.text = list[index];
+                            company.appendChild(option);
+                        }
+                        company.addEventListener("change", function () {
+                            document.getElementById("start").classList.toggle("hidden", true);
+                            document.getElementById("stop").classList.toggle("hidden", true);
+                            ping();
+                        });
+                        setTimeout(ping, 1000);
+                    } else {
+                        console.log(xhttp);
+                        alert("Error reading server status");
+                    }
+                }
+            };
+            xhttp.send();
+        },
+
+        setTotals = function (records) {
+            var html = "";
+            var totals = document.getElementById("totals");
+            for (var index in records)
+                html += "<br />" + index + ": " + records[index].ok + " ok, " + records[index].ko + " ko";
+            totals.innerHTML = html;
+        },
+
+        setErrors = function (records) {
+            var html = "<table><tr><th>company</th><th>prototype</th><th>version</th><th>state</th><th>error</th></tr>";
+            for (var prototype in records)
+                for (var error in records[prototype]) {
+                    var tokens = prototype.split(".");
+                    html += "<tr><td>" + tokens[0] + "</td><td>" + tokens[1] + "</td><td>" + tokens[2] + "</td><td>" + tokens[3] + "</td><td>" + records[prototype][error] + "</td></tr>";
+                }
+            html += "</table>";
+            detail.innerHTML = html;
+            document.getElementById("copy").classList.remove("hidden")
+        },
+
+        copy = function () {
+            var textArea = document.createElement("textarea");
+            document.body.appendChild(textArea);
+            textArea.value = document.getElementById("detail").innerHTML;
+            textArea.focus();
+            textArea.select();
+
+            try {
+                successful = document.execCommand("copy");
+            } catch (e) {
+                console.log(e);
+            }
+            setTimeout(function () { textArea.remove(); }, 0);
+        },
+
+        ping = function () {
+            if (!company.value) return;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "../../Archiving/Monitor/" + company.value, true);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var monitor = JSON.parse(this.responseText);
+                        if (company.value != monitor.company) return;
+                        document.getElementById("start").classList.toggle("hidden", !!monitor.running);
+                        document.getElementById("stop").classList.toggle("hidden", !monitor.running);
+                        var controls = document.getElementById("status").getElementsByTagName("input");
+                        for (var index in controls) {
+                            var control = controls[index];
+                            control.value = monitor[control.name];
+                        }
+                        if (monitor.counts) setTotals(monitor.counts);
+                        if (monitor.errors) setErrors(monitor.errors);
+                        setTimeout(ping, 1000);
+                    } else {
+                        console.log(xhttp);
+                        alert("Error reading server status");
+                    }
+                }
+            };
+            xhttp.send();
+        },
+
+        initialize = function () {
+            getCompanies();
+        };
+
+    initialize();
+
+    return {
+        go: function () {
+            var
+                xhttp = new XMLHttpRequest(),
+                parameters = {
+                    company: parseInt(company.value),
+                    auditTrail: document.getElementById("auditTrail").checked,
+                    instances: document.getElementById("instances").checked
+                };
+
+            errors = document.getElementById("totals").innerHTML = document.getElementById("detail").innerHTML = "n/a";
+            document.getElementById("copy").classList.add("hidden");
+            document.getElementById("start").classList.add("hidden");
+            xhttp.open("POST", "../../Archiving/Export", true);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.send(JSON.stringify(parameters));
+        },
+
+        stop: function () {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "../../Analysis/Abort", true);
+            xhttp.send();
+        },
+
+        copy: copy
+    }
+}();

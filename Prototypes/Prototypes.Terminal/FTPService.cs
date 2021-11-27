@@ -11,9 +11,11 @@ using System.IO;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Common.Logic.Terminal.FTP;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Prototypes.Logic.PDF;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Json;
+using System.Linq;
 
 namespace CheckListManager.Prototypes.Terminal
 {
@@ -21,42 +23,52 @@ namespace CheckListManager.Prototypes.Terminal
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly CheckListJsonConverter _converter;
+        private readonly JsonConverter[] _converters;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
         private readonly IStorageService _storageService;
+        private readonly IEmailServiceBase _emailService;
 
         public FTPService(
-            CheckListJsonConverter converter,
+            CustomJsonConverter[] converters,
             IQueueService queueService,
             ISettingService settingService,
             IPrototypesRepository prototypesRepository,
             ICommonRepository commonRepository,
             IConfigurationService configurationService,
-            IStorageService storageService
+            IStorageService storageService,
+            IEmailServiceBase emailService
         )
         {
-            _converter = converter;
+            _converters = converters.ToArray<JsonConverter>();
             _queueService = queueService;
             _settingService = settingService;
             _prototypesRepository = prototypesRepository;
             _commonRepository = commonRepository;
             _configurationService = configurationService;
             _storageService = storageService;
+            _emailService = emailService;
         }
 
         public async Task ProcessFTPMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<PrototypesFTPMessage>(QueueName.PrototypesFTP, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
         private async Task ProcessMessageAsync(QueueMessage<PrototypesFTPMessage> message, CancellationToken cancellationToken = default(CancellationToken))
@@ -83,7 +95,8 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportCompleted,
                     Company = message.Message.Company,
-                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(Information)
                 }, cancellationToken);
             }
@@ -93,7 +106,8 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportFailed,
                     Company = message.Message.Company,
-                    CheckList = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
+                    CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(new
                     {
                         Exported = false,
@@ -103,16 +117,13 @@ namespace CheckListManager.Prototypes.Terminal
                 }, cancellationToken);
 
                 Logger.Error(exception);
+
+                await _emailService.LogErrorAsync(exception, "Error Sending FTP file");
             }
         }
 
         private async Task<FTPConnectionSettings> Send(PrototypesFTPMessage message)
         {
-            ////we are not using company settings from v2.0.0
-            //var SerializedSettings = await _settingService.PrototypesFtpConnectionAsync(message.Company);
-            //if (string.IsNullOrWhiteSpace(SerializedSettings)) return;
-            //Settings = JsonConvert.DeserializeObject<FTPConnectionSettings>(SerializedSettings);
-
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
             FTPConnectionSettings Settings;
@@ -122,18 +133,20 @@ namespace CheckListManager.Prototypes.Terminal
 
             Settings = new FTPConnectionSettings
             {
+                Protocol = FTPServer.Protocol,
                 Host = FTPServer.Host,
                 Port = FTPServer.Port,
                 Folder = FTPServer.Folder,
                 EnableSSL = FTPServer.SSL,
                 UsePassive = FTPServer.Passive,
                 UserName = FTPServer.UserName,
-                Password = FTPServer.Password
+                Password = FTPServer.Password,
+                Key = FTPServer.Key
             };
 
             var Company = await _commonRepository.GetCompanyAsync(message.Company);
 
-            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converter);
+            var CheckList = JsonConvert.DeserializeObject<Prototype>(PrototypeVersion.Data, _converters);
 
             var PDF = new PrototypePDF(
                 Company.ID,
@@ -148,9 +161,9 @@ namespace CheckListManager.Prototypes.Terminal
 
             var MemoryStream = new MemoryStream();
             await PDF.GenerateAsync(MemoryStream);
-            var ftpClient = new FTPClient();
+            var ftpClient = FTPClientBuilder.Create(FTPServer.Protocol);
 
-            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPClient.Methods.Upload);
+            await ftpClient.ActionAsync(MemoryStream.ToArray(), Settings.Folder, $"{message.Path}{(message.State == VersionState.Obsolete ? "#O" : string.Empty)}", Settings, FTPMethods.Upload);
             return Settings;
         }
     }

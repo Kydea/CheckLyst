@@ -1,8 +1,10 @@
 ﻿prototypes.DateProperty = function (model, property, options) {
     var
+        base,
         input,
 		check,
-		datePicker,
+        datePicker,
+
 		change = function () {
 			var date = datePicker.getValue();
         	if (check)
@@ -19,7 +21,7 @@
         		input.val("");
 			}
 
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
     this.setCheck = function (value) {
@@ -27,12 +29,13 @@
         return this;
     };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
     	valuePanel.addClass("Date");
 		input = $("<input />")
 			.attr({ type: "text", readOnly: options.readOnly });
 		valuePanel.append($("<label >").append(input));
-		datePicker = new matematici.DatePicker(input);
+		datePicker = new matematici.DatePicker(input[0]);
 		if (!!model[property])
 			datePicker.setValue(model[property]);
 		if (!options.readOnly)
@@ -44,5 +47,11 @@
     this.hasChanges = function () {
         return !!model[property];
     }
-}
 
+    this.setValue = function (node) {
+        var
+            stringDate = model[property],
+            formattedDate = stringDate == null || stringDate == "" ? { date: "", time: "", offset: null } : matematici.dateFormatter.format(moment.parseZone(stringDate));
+        node.text(formattedDate.date + " " + formattedDate.time).attr("title", stringDate && stringDate.length == 10 ? null : formattedDate.offset);
+    }
+}

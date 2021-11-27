@@ -6,6 +6,20 @@ namespace CheckListManager.WebApplication.Controllers
     [RoutePrefix("Infrastructure")]
     public class InfrastructureController : BaseController
 	{
+        [DefaultAuthorize(Roles = "FunctionGroup#Companies")]
+        [Route("Companies/List")]
+        public ActionResult CompaniesList()
+        {
+            return ConditionalView("Companies/List");
+        }
+
+        [DefaultAuthorize(Roles = "FunctionGroup#Companies")]
+        [Route("Companies/Detail")]
+        public ActionResult CompaniesDetail()
+        {
+            return PartialView("Companies/Detail");
+        }
+
         [DefaultAuthorize(Roles = "FunctionGroup#Departments")]
         [Route("Departments/List")]
         public ActionResult DepartmentsList()

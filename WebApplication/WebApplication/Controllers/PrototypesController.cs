@@ -38,5 +38,22 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView("Detail", new Prototype { Action = Prototype.CREATE, Id = -1, Version = -1 });
         }
 
+        [Route("ExpressionEditor")]
+        public ActionResult ExpressionEditor()
+        {
+            return ConditionalView("ExpressionEditor");
+        }
+
+        [Route("SourceEditor")]
+        public ActionResult SourceEditor()
+        {
+            return ConditionalView("SourceEditor");
+        }
+
+        [Route("ScriptEditor")]
+        public ActionResult ScriptEditor()
+        {
+            return ConditionalView("ScriptEditor");
+        }
     }
 }

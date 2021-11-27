@@ -21,6 +21,7 @@ namespace CheckListManager.Prototypes.Api
 		    RegisterChecklistItem<Iteration, ICheckListIteration>(builder);
 		    RegisterChecklistItem<Page, ICheckListPage>(builder);
 		    RegisterChecklistItem<Signature, ICheckListSignature>(builder);
+		    RegisterChecklistItem<InstanceLink, ICheckListInstanceLink>(builder);
             RegisterChecklistItem<Text, ICheckListText>(builder);
             RegisterChecklistItem<Link, ICheckListLink>(builder);
             RegisterChecklistItem<Image, ICheckListImage>(builder);
@@ -28,10 +29,16 @@ namespace CheckListManager.Prototypes.Api
 
             builder.RegisterType<CheckListJsonConverter>()
 			    .AsSelf()
-			    .InstancePerDependency();
-	    }
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
 
-	    protected override void OnConfigureWebApi(HttpConfiguration configuration)
+            builder.RegisterType<ExternalSourceJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
+        }
+
+        protected override void OnConfigureWebApi(HttpConfiguration configuration)
 	    {
 		    base.OnConfigureWebApi(configuration);
 

@@ -1,36 +1,32 @@
 ﻿prototypes.SignatureProperty = function (model, options) {
     var
+        base,
         input,
-        setButton,
-        cancelButton,
+        sourceName,
 
         change = function () {
+            base.updateModel(model);
+        },
+
+        inputChanged = function () {
             model.signatureCode = input.val();
-            matematici.canClose = false;
-        },
-
-        setSignature = function () {
-            if (input.closest(matematici.elements.body).size() == 0) {
-                cancel();
-                return true;
+            if (sourceName) {
+                sourceName.parent().toggle(!!model.signatureCode);
+                if (model.signatureCode)
+                    setTimeout(function () { matematici.AutoComplete.get(sourceName[0]).refresh(); }, 0);
+                else {
+                    model.dumpExternalSourceName = null;
+                    externalSourceChanged();
+                }
             }
-
-            var item = $(this);
-            if (!item.hasClass("Item") || !item.hasClass("Signature"))
-                matematici.dialog.error("error", "Select a signature.");
-            else if (!item.data("code"))
-                matematici.dialog.error("error", "The signature must have a code.");
-            else
-                cancel();
-            input.val($(this).data("code"));
+            base.setError(model.errors, "signature", null);
             change();
-            return false;
         },
 
-        cancel = function () {
-            prototypes.prototype.setItemHandler();
-            setButton.show();
-            cancelButton.hide();
+        externalSourceChanged = function () {
+            model.dumpExternalSourceName = !model.signatureCode || !sourceName ? null : sourceName.val();
+            base.setError(model.errors, "export-source", null);
+            change();
         };
 
     this.setCheck = function (value) {
@@ -38,32 +34,54 @@
         return this;
     };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Signature");
-        if (options.readOnly)
+        if (options.readOnly) {
             $("<input />").attr({ type: "text", readOnly: true }).val(model.signatureCode).appendTo(valuePanel);
-        else {
-            input = $("<select />").data("nullable", true);
-            for (var signatureCode in prototypes.prototype.getModel().signatures)
+            if (model.iterator && model.dumpExternalSourceName)
+                $("<label />").addClass("DumpExternalDataSource").append($("<span />").text("Export source"))
+                    .append($("<input />").attr({ type: "text", readOnly: true }).val(model.dumpExternalSourceName)).appendTo(valuePanel);
+        } else {
+            input = $("<select />").attr("data-nullable", "").appendTo(valuePanel);
+            var found = false;
+            for (var signatureCode in prototypes.prototype.getElements(["Signature"])) {
                 input.append($("<option />").attr({ value: signatureCode, selected: signatureCode == model.signatureCode }).text(signatureCode));
-            input.on("change", change);
-			valuePanel.append(input);
-			if (!model.signatureCode) input.val(null);
+                if (signatureCode == model.signatureCode) found = true;
+            }
 
-			setButton = $("<a />").addClass("Button").text("set by click").on("click", function (e) {
-				setButton.hide();
-				cancelButton.show();
-				prototypes.prototype.setItemHandler(setSignature);
-			}); //.appendTo(valuePanel);
+            if (!found) input.attr("data-error", model.signatureCode);
+            if (!model.signatureCode) input.val(null);
+            input.on("change", inputChanged);
 
-            cancelButton = $("<a />").addClass("Button").text("cancel").on("click", function () {
-                cancel();
-            }).hide().appendTo(valuePanel);
+            if (model.iterator && model.code) {
+                $("<label />").addClass("DumpExternalDataSource").append($("<span />").text("Export source")).append(sourceName = $("<select />").attr("data-nullable", "")).appendTo(valuePanel);
+
+                found = false;
+                for (var dumpExternalSourceName in prototypes.prototype.getModel().externalSources) {
+                    sourceName.append($("<option />").attr({ value: dumpExternalSourceName, selected: dumpExternalSourceName == model.dumpExternalSourceName }).text(dumpExternalSourceName));
+                    if (dumpExternalSourceName == model.dumpExternalSourceName) found = true;
+                }
+
+                if (!found) sourceName.attr("data-error", model.dumpExternalSourceName);
+                if (!model.dumpExternalSourceName) sourceName.val(null);
+                sourceName.on("change", externalSourceChanged)
+
+                sourceName.parent().toggle(!!model.signatureCode);
+            }
         }
     }
 
     this.hasChanges = function () {
         return !!model.signatureCode;
     }
+
+    this.setValue = function (node) {
+        node.text(model.dumpExternalSourceName ? "..." : model.signatureCode);
+    }
+
+    this.setError = function (handler) {
+        handler(model.errors, ["signature", "export-source"]);
+    };
 }
 

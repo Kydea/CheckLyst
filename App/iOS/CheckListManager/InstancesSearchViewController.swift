@@ -11,73 +11,82 @@ import UIKit
 
 class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITextFieldDelegate, UITabBarDelegate, UITableViewDataSource, UITableViewDelegate {
     
-    
-
-    @IBOutlet var tableView: UITableView!
-    @IBOutlet var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var tableView: UITableView?
+    @IBOutlet var scrollView: UIScrollView?
     var listInstances : [Instance?] = []
     @IBOutlet var newInstanceButton: UIBarButtonItem!
     @IBOutlet var searchInstanceButton: UIButton!
     
     /*  static text for the labels */
     var indexTextDictionary =
-    [0:"Departments", 1:"Prototype Types", 2:"Prototype", 3:"Version", 4:"Description", 5:"Tags", 6:"Tags Value" ,7:"States"]
+        [0: "Instance ID", 1:"Departments", 2:"Prototype Types", 3:"Prototype", 4:"Version", 5:"Description", 6:"Tags", 7:"Tags Value", 8:"States"]
     
     /*  values sent to the server like query    */
-    var searchDictionary : Dictionary<String, String?> = ["department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : ""]
+    var searchDictionary : Dictionary<String, Any?> = ["id": "", "department" : "", "description" : "", "prototype" : "", "prototypeType": "", "state" : "", "tagCode" : "", "tagValue" : "", "version" : "", "from" : nil, "to" : nil, "advancedSearch" : false, "source" : nil]
     
     var fieldIndexDictionary =
-    ["department":0, "prototypeType":1, "prototype":2, "version":3, "description":4, "tagCode":5, "tagValue":6 ,"state":7]
+        ["id": 0, "department":1, "prototypeType":2, "prototype":3, "version":4, "description":5, "tagCode":6, "tagValue":7 ,"state":8]
     
-    var indexFieldDictionary =
-    [0:"department", 1:"prototypeType", 2:"prototype", 3:"version", 4:"description", 5:"tagCode", 6:"tagValue", 7:"state"]
+    var indexFieldDictionary = [0:"id", 1:"department", 2:"prototypeType", 3:"prototype", 4:"version", 5:"description", 6:"tagCode", 7:"tagValue", 8:"state"]
+    
+    let allowedSearchFieldValues = ["department","prototypeType","prototype","version"]
     
     var selectedItemsDictionary = [Int:Option] ()
-    
     var indexArrayDictionary = [Int:[Option?]] ()
-    
     var statesArray: [String] = []
     
+    let loader: LoadingViewController = LoadingViewController.shared
+    
     var numberOfPages = 0
+    var itemsPerPage = 0
+    var totalItems = 0
     
+    let appDelegate = UIApplication.shared as! MyApplication
     
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         let infoBarButtonItem = SharedControllersProperty.instance.setInfoButton()
         navigationItem.setRightBarButtonItems([infoBarButtonItem,navigationItem.rightBarButtonItem!], animated: false)
 
-        self.tableView.tableFooterView =  UIView()
-        self.tableView.isScrollEnabled = false
-        activityIndicator.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-        activityIndicator.hidesWhenStopped = true
-        newInstanceButton.title = "\u{f103} New Instance   "
-        newInstanceButton.isEnabled = false
+        self.tableView?.tableFooterView =  UIView()
+        self.tableView?.isScrollEnabled = false
+        newInstanceButton.title = "\u{f103} New Instance "
+        newInstanceButton.isEnabled = checkRoles(role: "Instances#Create#")
+        
         self.navigationItem.leftBarButtonItem = SharedControllersProperty.setLogo(self.navigationItem.leftBarButtonItem);
         
-        for i in 0...7 {
+        for i in 0...8 {
             selectedItemsDictionary[i] = Option(text: "",value: "")
         }
+        loadFilters()
     }
     
     
-    override func viewDidAppear(_ animated: Bool)
-    {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        #if DEBUG
+        print("InstanceSearchViewController: viewDidAppear")
+        #endif
+        if appDelegate.requestToOpenInstance {
+            #if DEBUG
+            print("InstanceSearchViewController: openInstance")
+            #endif
+            appDelegate.openInstance(instancesSearchController: self)
+            return
+        }
+        
         fromSelectionToSearchDictionary()
+        saveFilters()
         fillSearchFields()
     }
     
-    
-    
-    
-    func fromSelectionToSearchDictionary()
-    {
+    func fromSelectionToSearchDictionary() {
         for field in searchDictionary.keys {
-            let index = fieldIndexDictionary[field]!
-            searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
-            searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
+            if let index = fieldIndexDictionary[field] {
+                searchDictionary[field] = (field == "version") ? selectedItemsDictionary[index]!.value.components(separatedBy: " -")[0] : searchDictionary[field]
+                searchDictionary[field] = (searchDictionary[field] == nil) ? "" : selectedItemsDictionary[fieldIndexDictionary[field]!]!.value
+            }
         }
     }
     
@@ -88,16 +97,27 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return fieldIndexDictionary.count
     }
     
-    
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    private func shouldUseSlimLayout() -> Bool {
+        let currentDevice = UIDevice.current
+        return currentDevice.userInterfaceIdiom == .phone &&
+            (currentDevice.orientation == .portrait || currentDevice.orientation == .portraitUpsideDown)
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")
-        cell!.preservesSuperviewLayoutMargins = false
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+            super.viewWillTransition(to: size, with: coordinator)
+            tableView?.reloadData()
+        }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as? InstanceSearchCell
+        
+        cell?.setLayout()
+        
         let accessoryButton = UIButton(type: .roundedRect)
         accessoryButton.tag = indexPath.row
         accessoryButton.titleLabel?.font = UIFont (name: "Flaticon", size: 25)
@@ -105,260 +125,339 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         accessoryButton.setTitle("\u{f104}", for: UIControlState())
         accessoryButton.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         accessoryButton.contentMode = .scaleAspectFit
+        accessoryButton.addTarget(self, action: #selector(InstancesSearchViewController.accessoryButtonTapped(_:)), for: .touchUpInside)
         cell!.accessoryView = accessoryButton as UIView
         let fieldLabel = cell!.contentView.viewWithTag(1) as? UILabel
         fieldLabel?.text = indexTextDictionary[indexPath.row]
         let fieldValue = cell!.contentView.viewWithTag(2) as? UILabel
+        fieldValue?.textAlignment = shouldUseSlimLayout() ? .left : .right
+       
         fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
         cell?.isUserInteractionEnabled = true
         fieldValue!.isEnabled = true;
         
-        let isList = !(indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? true : false
+        let isList = indexTextDictionary[indexPath.row] != "Description" && indexTextDictionary[indexPath.row] != "Tags Value" && indexTextDictionary[indexPath.row] != "Instance ID"
 
         fieldValue?.textColor = (isList) ? UIColor.black : fieldValue?.textColor
         
         var blocked: Bool = indexArrayDictionary[indexPath.row] != nil && indexArrayDictionary[indexPath.row]!.count <= 1 ? true : false
 
         
-        if(selectedItemsDictionary[fieldIndexDictionary["version"]!]?.text == "" && indexPath.row == fieldIndexDictionary["tagCode"]!)
-        {
+        if (selectedItemsDictionary[fieldIndexDictionary["version"]!]?.text == "" && indexPath.row == fieldIndexDictionary["tagCode"]!) {
             blocked = true
             selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text = ""
             fieldValue?.text = ""
         }
         
-        if(indexPath.row == fieldIndexDictionary["description"]) {
+        if (indexPath.row == fieldIndexDictionary["id"]) {
+            if(selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text == "") {
+                selectedItemsDictionary[fieldIndexDictionary["id"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
+            }
+        }
+        
+        if (indexPath.row == fieldIndexDictionary["description"]) {
             if(selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text == "") {
                 selectedItemsDictionary[fieldIndexDictionary["description"]!]?.text = "Insert"
+                fieldValue?.text = selectedItemsDictionary[indexPath.row]?.text
             }
         }
   
-        if(indexPath.row == fieldIndexDictionary["tagValue"])
-        {
-            if((selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "All" || selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == ""))
-            {
+        if (indexPath.row == fieldIndexDictionary["tagValue"]) {
+            if((selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "All" || selectedItemsDictionary[fieldIndexDictionary["tagCode"]!]?.text == "")) {
+                
                 selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text = ""
                 fieldValue?.text = ""
                 blocked = true
-            }
+            
+            } else if(selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text == "") {
                 
-            else if(selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text == "")
-            {
                 blocked = false
                 selectedItemsDictionary[fieldIndexDictionary["tagValue"]!]?.text = "Insert"
                 fieldValue?.text = "Insert"
+            
             }
         }
         
-        if(blocked){
+        if (blocked) {
+            
             cell?.isUserInteractionEnabled = false
             fieldValue!.isEnabled = false;
             accessoryButton.setTitle("\u{f100}", for: UIControlState())
+        
         }
         
-        if(!isList){
+        if (!isList) {
+            
             accessoryButton.setTitle("", for: UIControlState())
+        
         }
+        
         return cell!
     }
     
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
         textField.resignFirstResponder()
         return true
+    
     }
     
 
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      
         performSegue(withIdentifier: "editFieldSegue", sender: indexPath)
+    
     }
     
-    
-    func fillSearchFields()
-    {
-        self.startActivityIndicator()
+    @objc func accessoryButtonTapped(_ sender : AnyObject) {
         
-        ServerConnection.bindListWithParams(["data" : searchDictionary]) { (serverResponse) -> Void in
-            
-            do
-            {
-                if(serverResponse.data != nil)
-                {
-                    
-                    let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse.data!)
-                    
-                    if(searchFields.valid) {
+        let indexPath = IndexPath(row: sender.tag, section: 0)
+        performSegue(withIdentifier: "editFieldSegue", sender: indexPath)
 
-                        if (searchFields.fields.department != nil) {
-                            guard let departments = searchFields.fields.department?.options else {
-                                print("No departments")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                        
-                            let index = self.fieldIndexDictionary["department"]!
-                            let field = self.indexFieldDictionary[index]!
-                            
-                            self.indexArrayDictionary[index] = departments
-                            
-                            if let value = searchFields.fields.department?.value {
-                                print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                        
-                        if(searchFields.fields.prototypeType != nil) {
-                            guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
-                                print("No prototypeTypes")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                            
-                            let index = self.fieldIndexDictionary["prototypeType"]!
-                            let field = self.indexFieldDictionary[index]!
-                            
-                            self.indexArrayDictionary[index] = prototypeTypes
-                            if let value = searchFields.fields.prototypeType?.value {
-                                print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                        
-                        if(searchFields.fields.prototype != nil) {
-                            guard let prototype = searchFields.fields.prototype?.options else {
-                                print("No prototype")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                            
-                            let index = self.fieldIndexDictionary["prototype"]!
-                            let field = self.indexFieldDictionary[index]!
-                            
-                            self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
-                            self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                            
-                            if let value = searchFields.fields.prototype?.value {
-                                print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                        
-                        if(searchFields.fields.version != nil) {
-                        
-                            guard let versions = searchFields.fields.version?.options else {
-                                print("No versions")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                            
-                            let index = self.fieldIndexDictionary["version"]!
-                            let field = self.indexFieldDictionary[index]!
-                            
-                            self.indexArrayDictionary[self.fieldIndexDictionary["version"]!] = versions
-                            self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                            
-                            if let value = searchFields.fields.version?.value {
-                                print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                        
-                        if(searchFields.fields.tagCode != nil) {
-                        
-                            guard let tags = searchFields.fields.tagCode?.options else {
-                                print("No tags")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                            
-                            let index = self.fieldIndexDictionary["tagCode"]!
-                            let field = self.indexFieldDictionary[index]!
-                        
-                            self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!] = tags
-                            self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                            
-                            if let value = searchFields.fields.tagCode?.value {
-                                //print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                        
-                        if(searchFields.fields.state != nil) {
-                            
-                            guard let states = searchFields.fields.state?.options else {
-                                print("No state")
-                                self.stopActivityIndicator()
-                                return
-                            }
-                            
-                            let index = self.fieldIndexDictionary["state"]!
-                            let field = self.indexFieldDictionary[index]!
-                            
-                            self.indexArrayDictionary[self.fieldIndexDictionary["state"]!] = states
-                            self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
-                            
-                            if let value = searchFields.fields.state?.value {
-                                print("value from search \(value)")
-                                self.selectedItemsDictionary[index] = self.findOPtionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
-                            }
-                        }
-                    
-                        self.setLabelTitles()
-                    } else {
-                        var error = String()
-                        let validationMessages = searchFields.validationMessages
-                        if (validationMessages.count > 0) {
-                            for value in validationMessages {
-                                error.append(value! + "\n")
-                            }
-                            self.displayMessage("Error", messageText: error, goBack: false)
-                            self.tableView.isUserInteractionEnabled = false
-                            self.searchInstanceButton.isUserInteractionEnabled = false
-                        }
-                    }
-                }
+    }
+    
+    @IBAction func newInstanceButtonTapped(_ sender: Any) {
+        guard let prototype = searchDictionary["prototype"] as? String,
+              !prototype.isEmpty else {
+            appDelegate.displayMessage(Title: "Error", Message: "Select a prototype")
+            return
+        }
+        
+        checkCreate(prototype: prototype) { [weak self] in
+            self?.performSegue(withIdentifier: "newInstanceSegue", sender: nil)
+        }
+        
+    }
+    
+    func checkCreate(prototype: String, completition: (() -> Void)? = nil) {
+    
+        loader.startLoading(controller: self) {
+
+            ServerConnection.checkCreationGrants(["prototype" : prototype]) { [weak self]
+                (serverResponse) in
                 
-                else
-                {
-                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
+                self?.loader.stopLoading(controller: self) { [weak self] in
+               
+                    if serverResponse.error != nil {
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                        return
+                    }
+                    
+                    if let response = serverResponse.response as? HTTPURLResponse, response.statusCode != 200 {
+                        
+                        let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        var error = String()
+                        
+                        if let errorMessages = json?["messages"] as? [String] {
+                            for value in errorMessages {
+                                error.append(value + (errorMessages.last == value ? "" : "\n"))
+                            }
+                        }
+                        
+                        if error.isEmpty {
+                            error = json?["message"] as? String ?? "Unexpected error has occurred"
+                        }
+                          
+
+                        self?.appDelegate.displayMessage(Title: "Error", Message: error)
+                        
+                        return
+                    }
+                    
+                    completition?()
                 }
             }
-            catch {
-                print(error)
-                
-                do {
-                    /*This handles the case in which the error is not about validation (ex. send a letter instead of number)*/
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    var error = String()
-                    
-                    if let errorMessages = json["messages"] as? [String] {
-                        for value in errorMessages {
-                            error.append(value + "\n")
-                        }
-                        self.displayMessage("Error", messageText: error, goBack: true)
-                    } else if let error = json["message"] as? String{
-                        self.displayMessage("Error", messageText: error, goBack: true)
-                    } else {
-                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
-                    }
+        }
+    }
+   
     
-                }
+    func fillSearchFields() {
+        
+        loader.startLoading(controller: self)
+
+        ServerConnection.bindListWithParams(["data" : searchDictionary]) { (serverResponse) -> Void in
+            
+            self.loader.stopLoading(controller: self) {
+            
+                do {
                     
-                catch {
+                    if (serverResponse.data != nil) {
+                        
+                        let searchFields = try JSONDecoder().decode(IstanceBindResponseJSON.self, from: serverResponse.data!)
+                        
+                        if (searchFields.valid) {
+
+                            if (searchFields.fields.department != nil) {
+                    
+                                guard let departments = searchFields.fields.department?.options else {
+                                    print("No departments")
+                                    return
+                                }
+                            
+                                let index = self.fieldIndexDictionary["department"]!
+                                let field = self.indexFieldDictionary[index]!
+                                
+                                self.indexArrayDictionary[index] = departments
+                                self.indexArrayDictionary[self.fieldIndexDictionary["department"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.department?.value {
+                                
+                                    print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                
+                                }
+                            }
+                            
+                            if (searchFields.fields.prototypeType != nil) {
+                               
+                                guard let prototypeTypes = searchFields.fields.prototypeType?.options else {
+                                    print("No prototypeTypes")
+                                    return
+                                }
+                                
+                                let index = self.fieldIndexDictionary["prototypeType"]!
+                                let field = self.indexFieldDictionary[index]!
+                                
+                                self.indexArrayDictionary[index] = prototypeTypes
+                                self.indexArrayDictionary[self.fieldIndexDictionary["prototypeType"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.prototypeType?.value {
+                                
+                                    print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                
+                                }
+                            }
+                            
+                            if (searchFields.fields.prototype != nil) {
+                                
+                                guard let prototype = searchFields.fields.prototype?.options else {
+                                    print("No prototype")
+                                    return
+                                }
+                                
+                                let index = self.fieldIndexDictionary["prototype"]!
+                                let field = self.indexFieldDictionary[index]!
+                                
+                                self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!] = prototype
+                                self.indexArrayDictionary[self.fieldIndexDictionary["prototype"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.prototype?.value {
+                                
+                                    print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                               
+                                }
+                            }
+                            
+                            if (searchFields.fields.version != nil) {
+                            
+                                guard let versions = searchFields.fields.version?.options else {
+                                    print("No versions")
+                                    return
+                                }
+                                
+                                let index = self.fieldIndexDictionary["version"]!
+                                let field = self.indexFieldDictionary[index]!
+                                
+                                self.indexArrayDictionary[self.fieldIndexDictionary["version"]!] = versions
+                                self.indexArrayDictionary[self.fieldIndexDictionary["version"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.version?.value {
+                                   
+                                    print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                
+                                }
+                            }
+                            
+                            if (searchFields.fields.tagCode != nil) {
+                            
+                                guard let tags = searchFields.fields.tagCode?.options else {
+                                    print("No tags")
+                                    return
+                                }
+                                
+                                let index = self.fieldIndexDictionary["tagCode"]!
+                                let field = self.indexFieldDictionary[index]!
+                            
+                                self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!] = tags
+                                self.indexArrayDictionary[self.fieldIndexDictionary["tagCode"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.tagCode?.value {
+                                  
+                                    //print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                
+                                }
+                            }
+                            
+                            if (searchFields.fields.state != nil) {
+                                
+                                guard let states = searchFields.fields.state?.options else {
+                                    print("No state")
+                                    return
+                                }
+                                
+                                let index = self.fieldIndexDictionary["state"]!
+                                let field = self.indexFieldDictionary[index]!
+                                
+                                self.indexArrayDictionary[self.fieldIndexDictionary["state"]!] = states
+                                self.indexArrayDictionary[self.fieldIndexDictionary["state"]!]?.insert(Option(text: "All", value: ""), at: 0)
+                                
+                                if let value = searchFields.fields.state?.value {
+                                    print("value from search \(value)")
+                                    self.selectedItemsDictionary[index] = self.findOptionInIndexArrayDictionaryForValue(value, inField: field, andIndex: index)!;
+                                }
+                            }
+                        
+                            self.setLabelTitles()
+                        
+                        } else {
+                           
+                            var error = String()
+                            let validationMessages = searchFields.validationMessages
+                            if (validationMessages.count > 0) {
+                                for value in validationMessages {
+                                    error.append(value! + "\n")
+                                }
+                                self.appDelegate.displayMessage(Title: "Error", Message: error)
+                                self.tableView?.isUserInteractionEnabled = false
+                                self.searchInstanceButton.isUserInteractionEnabled = false
+                            }
+                        
+                        }
+                    } else {
+                        self.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                    }
+                } catch {
                     
                     print(error)
                     
+                    let json = try? JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                    var error = String()
+                    
+                    if let errorMessages = json?["messages"] as? [String] {
+                        for value in errorMessages {
+                            error.append(value + "\n")
+                        }
+                    }
+                    
+                    if error.isEmpty {
+                        error = json?["message"] as? String ?? "Unexpected error has occurred"
+                    }
+                    
+                    self.appDelegate.displayMessage(Title: "Error", Message: error)
                 }
-                
             }
-            self.stopActivityIndicator()
         }
     }
     
-    func findOPtionInIndexArrayDictionaryForValue(_ value:String, inField field:String, andIndex index:Int) -> Option?
-    {
+    func findOptionInIndexArrayDictionaryForValue(_ value:String, inField field:String, andIndex index:Int) -> Option? {
         for element in indexArrayDictionary[index]! {
             if(element!.value == value) {
                 return element
@@ -377,7 +476,7 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
             
             let field = indexFieldDictionary[index]!
             
-            if let option = findOPtionInIndexArrayDictionaryForValue(self.searchDictionary[field]!!, inField: field, andIndex: index)
+            if let option = findOptionInIndexArrayDictionaryForValue(self.searchDictionary[field]!! as! String, inField: field, andIndex: index)
             {
                 if(field == "department") { selectedDepartemnt = option.value }
                 if(field == "prototypeType") { selectedPrototypeType = option.value }
@@ -392,28 +491,8 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
                 }
             }
         }
-        self.newInstanceButton.isEnabled = (self.selectedItemsDictionary[fieldIndexDictionary["version"]!]!.text.contains("Active")
-            && (self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Create#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))
-            && (self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "##") || self.checkRoles(role: "Instances#Edit#" + selectedDepartemnt + "#" + selectedPrototypeType + "#"))) ?
-                true : false
-        
-        self.tableView.reloadData()
-    }
     
-
-    func displayMessage(_ messageTitle:String, messageText:String, goBack back:Bool)
-        
-    {
-        let alert = UIAlertController(title: messageTitle, message: messageText, preferredStyle: .alert)
-        if(back) {
-            alert.addAction(UIAlertAction(title: "Ok", style: .destructive) {
-                UIAlertAction in
-                self.tabBarController?.selectedIndex = 0
-            })
-        } else {
-            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: nil))
-        }
-        self.present(alert, animated: false, completion: nil)
+        self.tableView?.reloadData()
     }
     
     func checkRoles(role:String) -> Bool {
@@ -421,88 +500,78 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
         return roles.contains(role)
     }
     
-
-    
-    @IBAction func searchInstances(_ sender: AnyObject)
+    @IBAction func searchInstances(_ sender: AnyObject) {
         
-    {
+        loader.startLoading(controller: self)
         
-        self.startActivityIndicator()
-        /*Needed to avoid the first call with all parameters set to "" (this is experienced when the user start search without changing filters at the first time)*/
-        if(searchDictionary["department"]!! == "" || searchDictionary["prototypeType"]!! == "") {
-            self.fromSelectionToSearchDictionary()
-        }
+        self.saveFilters()
         self.listInstances = []
-        self.getResearchResultForPage(currentPage: 1)
+        self.getResearchResultForFirstPage()
         
     }
     
-    func getResearchResultForPage(currentPage:Int) {
+    func getResearchResultForFirstPage() {
         
-        ServerConnection.getListInstancesWithParams(["CurrentPage" : String(currentPage), "data" : searchDictionary]) { (serverResponse) -> Void in
-            
-            do
-            {
-                
-                if(serverResponse.data != nil)
-                    
-                {
-                    
-                    let listIstancesJSON = try JSONDecoder().decode(ListIstancesJSON.self, from: serverResponse.data!)
-
-                    self.listInstances += listIstancesJSON.data
-                    
-                    self.numberOfPages = listIstancesJSON.pagesCount
-                    
-                }
-                    
-                else
-                {
-                    self.displayMessage("Error", messageText: "Connection error to the server", goBack: true)
-                    self.stopActivityIndicator()
-                    
-                    return;
-                }
-            }
-                
-            catch {
-                
-                print(error)
-                
+        ServerConnection.getListInstancesWithParams(["CurrentPage" : "1", "data" : searchDictionary]) { (serverResponse) -> Void in
+            self.loader.stopLoading(controller: self) { [weak self] in
                 do {
-                    var error = String()
-                    let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
-                    if let errorMessages = json["messages"] as? [String] {
-                        for value in errorMessages {
-                            error.append(value + "\n")
-                        }
-                        self.displayMessage("Error", messageText: error, goBack: true)
-                    } else {
-                        self.displayMessage("Error", messageText: "Unexpected error has occurred", goBack: true)
-                    }
                     
-                }
-                catch {
+                    if(serverResponse.data != nil) {
+                        
+                        let listIstancesJSON = try JSONDecoder().decode(ListIstancesJSON.self, from: serverResponse.data!)
+
+                        self?.listInstances += listIstancesJSON.data
+                        
+                        self?.numberOfPages = listIstancesJSON.pagesCount
+                        
+                        self?.itemsPerPage = listIstancesJSON.itemsPerPage
+                        
+                        self?.totalItems = listIstancesJSON.count
+                        
+                        if (self?.listInstances.count == 0) {
+                        
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "No records found")
+                        
+                        } else {
+                            
+                            self?.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
+                        
+                        }
+                        
+                    } else {
+                        
+                        self?.appDelegate.displayMessage(Title: "Error", Message: "Connection error to the server")
+                    
+                    }
+                } catch {
                     
                     print(error)
-                    
+
+                    do {
+                        
+                        var error = String()
+                        let json = try JSONSerialization.jsonObject(with: serverResponse.data!, options: .allowFragments) as! [String:Any]
+                        
+                        if let errorMessages = json["messages"] as? [String] {
+                        
+                            for value in errorMessages {
+                                error.append(value + "\n")
+                            }
+                            
+                            self?.appDelegate.displayMessage(Title: "Error", Message: error)
+                        
+                        } else {
+                            
+                            self?.appDelegate.displayMessage(Title: "Error", Message: "Unexpected error has occurred")
+                        
+                        }
+                        
+                    } catch {
+                        
+                        print(error)
+                        
+                    }
                 }
-            }
-            
-            if(self.listInstances.count == 0)
-                
-            {
-                self.stopActivityIndicator()
-                self.displayMessage("Error", messageText: "No records found", goBack: false)
-            }
-                
-                
-            else if(currentPage == self.numberOfPages)
-            {
-                self.stopActivityIndicator()
-                self.performSegue(withIdentifier: "instanceDetailsSegue", sender: self)
-            } else {
-                self.getResearchResultForPage(currentPage: currentPage + 1)
             }
         }
     }
@@ -510,69 +579,98 @@ class InstancesSearchViewController: UIViewController,UIScrollViewDelegate, UITe
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if let controller = segue.destination as? EditFieldViewController
-        {
+        if let controller = segue.destination as? EditFieldViewController {
+            
             let indexPath = sender as! IndexPath
             controller.fieldsArray = indexArrayDictionary[indexPath.row] as? [Option]
             controller.searchViewController = self
             controller.rowIndex = indexPath.row
-            controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
+            controller.isListField = (indexTextDictionary[indexPath.row] == "Description" || indexTextDictionary[indexPath.row] == "Instance ID" || indexTextDictionary[indexPath.row] == "Tags Value") ? false : true
             controller.fieldNameString = indexTextDictionary[indexPath.row]
             controller.indexFieldDictionary = indexFieldDictionary
-        }
+            if let sourceValue = indexFieldDictionary[indexPath.row], allowedSearchFieldValues.contains(sourceValue)
+            {
+                searchDictionary["source"] = sourceValue
+            }
+        
+        } else if let controller = segue.destination as? ListInstancesTableViewController {
             
-        else if let controller = segue.destination as? ListInstancesTableViewController {
             controller.instancesList = self.listInstances as! [Instance]
             controller.selectedItemsDictionary = selectedItemsDictionary;
-        }
+            controller.numberOfPages = self.numberOfPages
+            controller.searchDictionary = self.searchDictionary
+            controller.itemsPerPage = self.itemsPerPage
+            controller.totalItems = self.totalItems
         
-        else if let controller = segue.destination as? InstanceViewController {
-            if((sender as AnyObject).isKind(of: MyApplication.self)) {
+        } else if let controller = segue.destination as? InstanceViewController {
+            if ((sender as AnyObject).isKind(of: MyApplication.self)) {
+                
                 let app = sender as! MyApplication
                 if let parameters = app.requestedUrlInfo {
                     
-                    for i in 0...7 {
-                        selectedItemsDictionary[i] = Option(text: "",value: "")
+                    if selectedItemsDictionary.count == 0  {
+                        for i in 0...8 {
+                            selectedItemsDictionary[i] = Option(text: "",value: "")
+                        }
                     }
                     
-                    if (parameters.keys.contains("version") && parameters.keys.contains("prototype")) {
+                    if parameters.keys.contains("prototype") {
+                        
                         controller.newInstance = true
+                        controller.newInstanceVersion = parameters["version"]
                         controller.newInstancePrototype = parameters["prototype"]!
-                        controller.newInstanceVersion = parameters["version"]!
+                        controller.newInstanceFieldsValues = parameters["fieldsValues"]!
+                    
                     } else if (parameters.keys.contains("code")) {
+                       
                         controller.instanceCodeFromRequest = parameters["code"]!
+                    
                     }
                     
                     controller.selectedItemsDictionary = selectedItemsDictionary;
                 }
             } else {
+                
+                let prototype = searchDictionary["prototype"]! as! String
+                let version = searchDictionary["version"]! as! String
                 controller.newInstance = true
-                controller.newInstancePrototype = searchDictionary["prototype"]!
-                controller.newInstanceVersion = searchDictionary["version"]!
+                controller.newInstancePrototype = prototype
+                controller.newInstanceFieldsValues = ""
                 controller.selectedItemsDictionary = selectedItemsDictionary;
+            
             }
         }
         
     }
     
-    @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? InstanceViewController {
-            selectedItemsDictionary = sourceViewController.selectedItemsDictionary
+    func loadFilters() {
+        for field in searchDictionary.keys {
+            if let index = fieldIndexDictionary[field] {
+                if (field == "description" || field == "tagValue") {
+                    selectedItemsDictionary[index]?.text = FilterManager.shared[field] ?? ""
+                }
+                selectedItemsDictionary[index]?.value = FilterManager.shared[field] ?? ""
+            }
         }
     }
     
-    func startActivityIndicator(){
-        activityIndicator.startAnimating()
-        activityIndicator.layer.zPosition = 1
-        scrollView.isUserInteractionEnabled = false
+    func saveFilters() {
+        for (key, value) in searchDictionary {
+            if let stringValue = value as? String {
+                FilterManager.shared.setFilter(name: key, value: stringValue)
+            }
+            if let boolValue = value as? Bool {
+                FilterManager.shared.setFilter(name: key, value: boolValue.description)
+            }
+        }
     }
     
-    
-    func stopActivityIndicator()
-    {
-        self.activityIndicator.stopAnimating()
-        self.activityIndicator.layer.zPosition = 0
-        self.scrollView.isUserInteractionEnabled = true
+    @IBAction func unwindToSearchInstances(sender: UIStoryboardSegue) {
+        
+        if let sourceViewController = sender.source as? InstanceViewController {
+            selectedItemsDictionary = sourceViewController.selectedItemsDictionary
+        }
+        
     }
     
 }

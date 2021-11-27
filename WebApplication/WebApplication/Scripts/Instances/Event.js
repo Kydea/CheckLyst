@@ -18,6 +18,9 @@
 	quit: "Quit",
 	uploadAttachment: "UploadAttachment",
     sendEmail: "SendEmail",
+    import: "Import",
+    attachInstance: "AttachInstance",
+    refreshAttachedInstance: "RefreshAttachedInstance"
 };
 
 instances.Event = function (type, itemId, data, accessToken, suppressError, fileUpload) {

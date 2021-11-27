@@ -12,7 +12,7 @@ namespace CheckListManager.Common.Data.Configuration
 		}
 
 		[SuppressMessage("ReSharper", "ImplicitlyCapturedClosure")]
-		public Task<Setting> GetAsync(long companyId, string code)
+		public async Task<Setting> GetAsync(long companyId, string code)
 		{
 			var query =
 				from s in Entities.Settings
@@ -26,15 +26,16 @@ namespace CheckListManager.Common.Data.Configuration
 					v.Value
 				};
 
-			return query.FirstOrDefaultAsync()
-				.ContinueWith(x => new Setting
-				{
-					Company = companyId,
-					Code = x.Result.Code,
-					DefaultValue = x.Result.DefaultValue,
-					CurrentValue = x.Result.Value ?? x.Result.DefaultValue
-				});
+			var row = await query.FirstOrDefaultAsync();
+			return row == null ? null : new Setting
+			{
+				Company = companyId,
+				Code = row.Code,
+				DefaultValue = row.DefaultValue,
+				CurrentValue = row.Value ?? row.DefaultValue
+			};
 		}
+		
         public async Task<string> GetTimeZoneAsync(long companyId)
             => (await Entities.Companies.SingleAsync(c => c.ID == companyId)).TimeZone;
     }

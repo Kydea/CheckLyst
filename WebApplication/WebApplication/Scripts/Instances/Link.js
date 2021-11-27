@@ -1,28 +1,55 @@
 ﻿instances.Link = function (item, model) {
     var
-        p,
+        i, a, linkedItem,
+
+        click = function (e) {
+            e.preventDefault();
+            if (!linkedItem.trigger()) matematici.dialog.show("warning", "The " + model.elementType + " " + model.elementCode + " is not enabled");
+        },
 
         setup = function () {
-            i = $("<i >").addClass("Icon Link fa fa-caret-right").appendTo(item.getElement());
-            a = $("<a />").attr("target", "_blank").addClass("Link").appendTo(item.getElement());
+            var element = item.getElement();
+
+            i = document.createElement("i");
+            i.className = "Icon Link fa fa-caret-right";
+            element.appendChild(i);
+
+            a = document.createElement("a");
+            a.className = "Link";
+            element.appendChild(a);
+
+            if (model.elementType == "Attachment" || model.elementType == "Image") {
+                linkedItem = instances.instance.getItems()[model.elementId].getTypedItem();
+                a.addEventListener("click", click);
+                a.setAttribute("href", "#");
+                a.setAttribute("title", model.elementType + " " + model.elementCode);
+            }
         };
 
     this.update = function (model) {
-        a
-            .html(model.description ? model.description : "(no label)")
-            .attr("href", model.url);
+        a.innerHTML = model.descriptionValue || "(no label)";
+
+        if (!linkedItem) {
+            if (!!model.url) {
+                a.setAttribute("target", "_blank");
+                a.setAttribute("href", model.url);
+            } else {
+                a.removeAttribute("target");
+                a.setAttribute("href", "#");
+            }
+        }
 
         this.setColor(model.color);
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function (value) {
-        i.css({ color: model.color });
-        a.css({ color: model.color });
+    this.setColor = function () {
+        i.style.color = model.color;
+        a.style.color = model.color;
     };
 
-    this.setFontSize = function (value) {
-        a.css({ fontSize: model.fontSize == 0 ? "" : model.fontSize + "px" });
+    this.setFontSize = function () {
+        a.style.fontSize = model.fontSize && model.fontSize + "px";
     };
 
     setup();

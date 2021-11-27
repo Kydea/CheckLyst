@@ -21,6 +21,7 @@ namespace CheckListManager.Instances.Api
 		    RegisterChecklistItem<Iteration, ICheckListIteration>(builder);
 		    RegisterChecklistItem<Page, ICheckListPage>(builder);
 		    RegisterChecklistItem<Signature, ICheckListSignature>(builder);
+            RegisterChecklistItem<InstanceLink, ICheckListInstanceLink>(builder);
 		    RegisterChecklistItem<Text, ICheckListText>(builder);
             RegisterChecklistItem<Link, ICheckListLink>(builder);
             RegisterChecklistItem<Image, ICheckListImage>(builder);
@@ -35,9 +36,14 @@ namespace CheckListManager.Instances.Api
                 .AsSelf()
                 .As<CustomJsonConverter>()
                 .InstancePerDependency();
+
+            builder.RegisterType<ExternalSourceJsonConverter>()
+                .AsSelf()
+                .As<CustomJsonConverter>()
+                .InstancePerDependency();
         }
 
-	    private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface
+        private static void RegisterChecklistItem<TClass, TInterface>(ContainerBuilder builder) where TClass : TInterface
 	    {
 		    builder.RegisterType<TClass>()
 			    .As<TInterface>()

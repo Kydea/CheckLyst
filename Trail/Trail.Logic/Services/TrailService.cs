@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CheckListManager.Trail.Data;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
@@ -18,25 +19,35 @@ namespace CheckListManager.Trail.Logic.Services
 		private readonly IQueueService _queueService;
 		private readonly ITrailRepository _trailRepository;
 		private readonly IMapper _mapper;
+		private readonly IEmailServiceBase _emailService;
 
-		public TrailService(IQueueService queueService, ITrailRepository trailRepository, IMapper mapper)
+		public TrailService(
+			IQueueService queueService,
+			ITrailRepository trailRepository,
+			IMapper mapper,
+			IEmailServiceBase emailService)
 		{
 			_queueService = queueService;
 			_trailRepository = trailRepository;
 			_mapper = mapper;
+			_emailService = emailService;
 		}
 
 		public async Task ProcessMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var messages = await _queueService.ReceiveObjectsAsync<TrailMessage>(QueueName.Trail, cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
-			{
-				await ProcessMessageAsync(message, cancellationToken);
-
-				if (cancellationToken.IsCancellationRequested)
-					break;
-			}
+            bool idle;
+            do
+            {
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<TrailMessage>(QueueName.Trail, cancellationToken: cancellationToken);
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+            }
+            while (!idle);
 		}
 
 		private async Task ProcessMessageAsync(QueueMessage<TrailMessage> message, CancellationToken cancellationToken)
@@ -50,6 +61,7 @@ namespace CheckListManager.Trail.Logic.Services
 			}
 			catch (Exception exception)
 			{
+				await _emailService.LogErrorAsync(exception, "Error creating audit trail record");
 				Logger.Error(record == null ? exception : new Exception($"Error creating audit trail record (action: {record.Action})", exception));
 			}
 		}

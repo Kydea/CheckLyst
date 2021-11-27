@@ -62,14 +62,17 @@
     <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AWSSDK.Core.3.3.103.5\lib\net45\AWSSDK.Core.dll</HintPath>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604">
+      <HintPath>..\..\packages\AWSSDK.Core.3.3.106.16\lib\net45\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AWSSDK.S3.3.3.102.22\lib\net45\AWSSDK.S3.dll</HintPath>
+    <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604">
+      <HintPath>..\..\packages\AWSSDK.S3.3.3.110.62\lib\net45\AWSSDK.S3.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AWSSDK.SQS.3.3.3.1\lib\net45\AWSSDK.SQS.dll</HintPath>
+    <Reference Include="AWSSDK.SQS, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604">
+      <HintPath>..\..\packages\AWSSDK.SQS.3.3.102.103\lib\net45\AWSSDK.SQS.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -85,7 +88,7 @@
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c">
-      <HintPath>..\..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\..\packages\NLog.4.7.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RabbitMQ.Client, Version=5.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce">
@@ -108,6 +111,8 @@
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -122,11 +127,23 @@
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
     <Compile Include="DataSources\DataRequest.cs" />
-    <Compile Include="Models\CheckLists\ExternalSourceDependencyNode.cs" />
+    <Compile Include="DataSources\DataSource.cs" />
+    <Compile Include="DataSources\ExportRequest.cs" />
+    <Compile Include="DataSources\Parameter.cs" />
+    <Compile Include="Email\EmailServiceBase.cs" />
+    <Compile Include="Email\IEmailServiceBase.cs" />
+    <Compile Include="Json\ExternalSourceJsonConverter.cs" />
+    <Compile Include="Models\CheckLists\InstanceLinkRecord.cs" />
+    <Compile Include="Models\CheckLists\InstanceLinkParameter.cs" />
+    <Compile Include="Models\CheckLists\InstanceLinkActions.cs" />
+    <Compile Include="Models\CheckLists\ConfigurationError.cs" />
+    <Compile Include="Models\CheckLists\ICheckListInstanceLink.cs" />
+    <Compile Include="Models\Expressions\ElementProperties\InstanceLinkProperty.cs" />
+    <Compile Include="Models\ExternalSources\Parameter.cs" />
+    <Compile Include="Models\ExternalSources\ExternalSource.cs" />
     <Compile Include="Dependency\DependencyRelation.cs" />
     <Compile Include="Dependency\DependencyNode.cs" />
     <Compile Include="Email\EmailTrailMessage.cs" />
-    <Compile Include="ExternalSources\DataRequest.cs" />
     <Compile Include="FTP\InstancesFTPMessage.cs" />
     <Compile Include="FTP\PrototypesFTPMessage.cs" />
     <Compile Include="Email\EmailMessage.cs" />
@@ -135,7 +152,10 @@
     <Compile Include="Json\CustomJsonConverter.cs" />
     <Compile Include="Json\TypedValueJsonConverter.cs" />
     <Compile Include="Models\CheckLists\Conditions.cs" />
+    <Compile Include="Models\CheckLists\IInstance.cs" />
     <Compile Include="Models\CheckLists\ICheckListAttachmentBase.cs" />
+    <Compile Include="Models\CheckLists\ICheckListValitityElement.cs" />
+    <Compile Include="Models\CheckLists\ICheckListEditableItem.cs" />
     <Compile Include="Models\CheckLists\ICheckListField.cs" />
     <Compile Include="Models\CheckLists\ICheckListGroup.cs" />
     <Compile Include="Models\CheckLists\ICheckListItem.cs" />
@@ -154,8 +174,31 @@
     <Compile Include="Models\CheckLists\SignatureRecord.cs" />
     <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\Expressions\AritmeticOperators\Power.cs" />
+    <Compile Include="Models\Expressions\ElementProperties\ValidityElementProperty.cs" />
     <Compile Include="Models\Expressions\ElementProperties\IteratorProperty.cs" />
+    <Compile Include="Models\Expressions\ElementProperties\EditableElementProperty.cs" />
+    <Compile Include="Models\Expressions\Functions\StateDateTime.cs" />
+    <Compile Include="Models\Expressions\Functions\Time.cs" />
+    <Compile Include="Models\Expressions\Functions\DateTime.cs" />
+    <Compile Include="Models\Expressions\Functions\DateTimeIncrement.cs" />
+    <Compile Include="Models\Expressions\Functions\Error.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\NumberValue.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Pad.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Trim.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Extreme.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Substring.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Replace.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Find.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\ToggleCase.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Length.cs" />
+    <Compile Include="Models\Expressions\StringFunctions\Format.cs" />
+    <Compile Include="Models\Expressions\Functions\DateIncrement.cs" />
+    <Compile Include="Models\Expressions\Functions\Date.cs" />
+    <Compile Include="Models\Expressions\Functions\Null.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\BinaryIteratorFunction.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\RecurrenceTerm.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\IterationValue.cs" />
+    <Compile Include="Models\Expressions\IteratorFunctions\Ispection.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\UnaryIteratorFunction.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\Each.cs" />
     <Compile Include="Models\Expressions\IteratorFunctions\GeometricFunction.cs" />
@@ -179,6 +222,7 @@
     <Compile Include="Models\Expressions\Expression.cs" />
     <Compile Include="Models\Expressions\ExpressionValue.cs" />
     <Compile Include="Models\Expressions\Formula.cs" />
+    <Compile Include="Models\Expressions\MathFunctions\Abs.cs" />
     <Compile Include="Models\Expressions\MathFunctions\BinaryMathFunction.cs" />
     <Compile Include="Models\Expressions\MathFunctions\Round.cs" />
     <Compile Include="Models\Expressions\MathFunctions\UnaryMathFunction.cs" />
@@ -192,12 +236,15 @@
     <Compile Include="Models\Expressions\Parsing\Literal.cs" />
     <Compile Include="Models\Expressions\Parsing\Number.cs" />
     <Compile Include="Models\Expressions\Parsing\Operator.cs" />
+    <Compile Include="Models\Expressions\Parsing\UnknowDataTypeException.cs" />
+    <Compile Include="Models\Expressions\Parsing\Position.cs" />
     <Compile Include="Models\Expressions\Parsing\ParseException.cs" />
-    <Compile Include="Models\Expressions\Parsing\TernaryOperator.cs" />
+    <Compile Include="Models\Expressions\Parsing\ConditionalOperator.cs" />
     <Compile Include="Models\Expressions\Parsing\Text.cs" />
     <Compile Include="Models\Expressions\Parsing\Token.cs" />
     <Compile Include="Models\Expressions\Parsing\TokenSet.cs" />
-    <Compile Include="Models\Expressions\TernaryOperator.cs" />
+    <Compile Include="Models\Expressions\EnnaryOperator.cs" />
+    <Compile Include="Models\Expressions\ConditionalOperator.cs" />
     <Compile Include="Models\Expressions\LogicOperators\And.cs" />
     <Compile Include="Models\Expressions\LogicOperators\BinaryLogicOperator.cs" />
     <Compile Include="Models\Expressions\LogicOperators\Not.cs" />
@@ -264,8 +311,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\..\packages\AWSSDK.S3.3.3.102.22\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
-    <Analyzer Include="..\..\packages\AWSSDK.SQS.3.3.3.1\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
+    <Analyzer Include="..\..\packages\AWSSDK.S3.3.3.110.62\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
+    <Analyzer Include="..\..\packages\AWSSDK.SQS.3.3.102.103\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

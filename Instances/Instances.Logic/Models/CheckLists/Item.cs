@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
@@ -22,24 +23,33 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool IterationItem { get; set; }
         public bool IteratorModelItem { get; set; }
         public int IteratorModelItemId { get; set; }
+        public bool TableContent { get; set; }
         public virtual bool NewLine { get; set; }
         public ICheckListPage Page { get; set; }
-        public ICheckListItem Previous { get; set; }
+        [JsonIgnore]
+        public ICheckListValidityElement Previous { get; set; }
         public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
         public bool Removed { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            if (!IterationItem) base.Setup();
+            var Result = true;
+            if (!IterationItem) Result = base.Setup();
+            TableContent = Group != null && (Group.ShowAsTable || ((Group)Group).TableContent);
             CheckList.AddItem(this);
+            return Result;
         }
 
         protected Dictionary<string, object> GetRuntimeValues()
         {
             Dictionary<string, object> RuntimeValues = new Dictionary<string, object>();
-            if (Iteration != null) RuntimeValues["IterationIndex"] = Iteration.Index;
+            if (Iteration != null)
+            {
+                RuntimeValues["IterationIndex"] = Iteration.Index;
+                RuntimeValues["IterationIdentifier"] = Iteration.Identifier;
+            }
             return RuntimeValues;
         }
 
@@ -60,10 +70,15 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected virtual void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Formula)
-                UpdateFormula();
-            else
-                base.Update(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Formula:
+                    UpdateFormula();
+                    break;
+                default:
+                    base.Update(Property);
+                    break;
+            }
         }
 
         public sealed override bool Update(DependencyRelation.Properties Property)
@@ -78,7 +93,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
                 NeedToUpdate.Remove(Property);
             }
-            else
+
+            if (!IteratorModelItem || Property == DependencyRelation.Properties.Formula && TableContent) //needed for the headers of the table
                 OnUpdate(Property);
 
             return true;
@@ -90,14 +106,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, FindIteratorModelItem().DescriptionFormula);
             else
                 DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
-
         }
 
         protected override void UpdateHidden()
         {
             base.UpdateHidden();
             if (!Hidden && Group != null)
-                Hidden = Hidden || Group.Hidden;
+                Hidden = Group.Hidden || Group is Iteration && Group.Group.Hidden;
         }
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
@@ -117,26 +132,38 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 IteratorModelItem = (Item)Instance.Items[IteratorModelItemId];
             else
             {
-                IteratorModelItem = IterationItem ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : this;
+                IteratorModelItem = 
+                    !IterationItem ? this :
+                    Group is Iteration Iteration ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : 
+                    (Item)((Group)((Group)Group).FindIteratorModelItem()).Items[ItemIndex];
                 IteratorModelItemId = IteratorModelItem.Id;
             }
             return IteratorModelItem;
         }
 
-        public IEnumerable<Item> FindIterationItems()
+        public IEnumerable<Item> FindIterationItems(ICheckListIteration SpecificIteration = null)
         {
             if (IteratorModelItem)
             {
-                var IterationGroups = ((Group)Group).FindIterationItems();
-                var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
-                foreach (var Iteration in Iterations.Where(i => !i.Removed))
-                    yield return (Item)Iteration.Items[ItemIndex];
+                var Group = (Group)this.Group;
+                var IterationGroups = Group.FindIterationItems();
+                if (!Group.Iterator)
+                    foreach (Group IterationGroup in IterationGroups)
+                        yield return (Item)IterationGroup.Items[ItemIndex];
+                else if (SpecificIteration != null)
+                    yield return (Item)SpecificIteration.Items[ItemIndex];
+                else 
+                {
+                    var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
+                    foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                        yield return (Item)Iteration.Items[ItemIndex];
+                }
             }
             else
                 yield return this;
         }
 
-        public override void MarkNodeAsChanged(ICheckList CheckList, List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
+        public override void MarkNodeAsChanged(ICheckList CheckList, HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots, DependencyRelation.Properties Property)
         {
             if (IterationItem)
             {
@@ -147,7 +174,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 base.MarkNodeAsChanged(CheckList, Roots, Property);
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             if (IterationItem)
             {
@@ -163,7 +190,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override string GetSignatureInformation() => base.GetSignatureInformation() ?? ((Group)Group)?.GetSignatureInformation() ?? ((Page)Page)?.GetSignatureInformation();
 
-        protected override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
+        public override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
 
         public virtual void Remove() =>  Removed = true;
 
@@ -184,8 +211,28 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.DescriptionFormula.IsSet = source.FindIteratorModelItem().DescriptionFormula.IsSet;
         }
 
+        public override dynamic GetViewModel(bool ReportModel)
+        {
+            var elementModel = base.GetViewModel(ReportModel);
+            elementModel.DescriptionValue = TableContent ? FindIteratorModelItem().DescriptionValue : DescriptionValue;
+            elementModel.Id = Id;
+            elementModel.TypeName = TypeName;
+            if (Hidden) elementModel.Hidden = true;
+            if (!ReportModel)
+            {
+                if (NewLine) elementModel.NewLine = NewLine;
+                if (!string.IsNullOrEmpty(Color)) elementModel.Color = Color;
+                if (FontSize > 0) elementModel.FontSize = FontSize;
+                if (Removed) elementModel.Removed = true;
+            }
+
+            return elementModel;
+        }
+
         public override string DependencyClassName => "item";
         public override int? DependencyObjectID => Id;
         public override string DependencyObjectCode => IterationItem ? null : Code;
+
+        public override string ToString() => $"item {Code ?? Id.ToString()}";
     }
 }

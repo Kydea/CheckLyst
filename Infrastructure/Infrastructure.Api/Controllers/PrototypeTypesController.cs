@@ -40,9 +40,9 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [HttpPost]
         [Route("GetSyntheticData")]
         [Authorize(Roles = "Prototypes#View, Users#View")]
-        public async Task<IHttpActionResult> GetSyntheticData(PagingRequest<PrototypeTypesRequest> request)
+        public async Task<IHttpActionResult> GetSyntheticData(Message<PrototypeTypesRequest> request)
         {
-            return Ok(await _prototypeTypesService.GetSyntheticDataAsync(Identity, request));
+            return Ok(await _prototypeTypesService.GetSyntheticDataAsync(Identity, request.Data));
         }
 
         [HttpPost]
@@ -68,6 +68,5 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         {
             return Ok(await _prototypeTypesService.Delete(Identity, request.Data));
         }
-
     }
 }

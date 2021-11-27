@@ -15,9 +15,7 @@ namespace CheckListManager.Common.Logic.Services
         {
             var path = Path.Combine(bucketName, key);
             if (!File.Exists(path))
-            {
                 throw new Exception($"File {path} not found");
-            }
 
             var ms = new MemoryStream();
             using (var fileStream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
@@ -35,9 +33,7 @@ namespace CheckListManager.Common.Logic.Services
                 var path = Path.Combine(bucketName, key);
                 var directory = Path.GetDirectoryName(path);
                 if (directory != null && !Directory.Exists(directory))
-                {
                     Directory.CreateDirectory(directory);
-                }
                 using (var outputStream = File.OpenWrite(path))
                 {
                     await inputStream.CopyToAsync(outputStream);
@@ -58,17 +54,15 @@ namespace CheckListManager.Common.Logic.Services
             try
             {
                 var path = Path.Combine(bucketName, key);
-                var attributes = File.GetAttributes(path);
-
-                if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                if (File.Exists(path))
                 {
-                    Directory.Delete(path);
-                }
-                else
-                {
-                    File.Delete(path);
-                }
+                    var attributes = File.GetAttributes(path);
 
+                    if ((attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                        Directory.Delete(path);
+                    else
+                        File.Delete(path);
+                }
                 return Task.FromResult(true);
             }
             catch (Exception e)
@@ -88,9 +82,7 @@ namespace CheckListManager.Common.Logic.Services
             
             var directory = Path.GetDirectoryName(destinationPath);
             if (directory != null && !Directory.Exists(directory))
-            {
                 Directory.CreateDirectory(directory);
-            }
 
             try
             {

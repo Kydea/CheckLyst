@@ -11,12 +11,11 @@ namespace CheckListManager.Common.Core.Cache
         private readonly InMemoryCache _storage = InMemoryCache.Default;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public object Get(string key, string regionName = null) => _storage.Get(ResolveKey(key, regionName));
+        private object Get(string key, string regionName = null) => _storage.Get(ResolveKey(key, regionName));
 
-        public T Get<T>(string key, string regionName = null)
+        private T Get<T>(string key, string regionName = null)
         {
             var result = Get(ResolveKey(key, regionName));
-            // ReSharper disable once MergeConditionalExpression
             return result != null
                 ? (T)result
                 : default(T);
@@ -25,7 +24,7 @@ namespace CheckListManager.Common.Core.Cache
 
         public Task<T> GetAsync<T>(string key, string regionName = null) => Task.FromResult(Get<T>(ResolveKey(key, regionName)));
 
-        public object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
+        private object GetOrAdd(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
         {
             var result = Get(key, regionName);
             if (result == null)
@@ -78,7 +77,7 @@ namespace CheckListManager.Common.Core.Cache
         public void Set(string key, object value, string regionName = null, TimeSpan? expiry = null)
         {
             if (value != null)
-                _storage.Set(ResolveKey(key, regionName), value, new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.Add(expiry ?? new TimeSpan(0, 30, 0)) });
+                _storage.Set(ResolveKey(key, regionName), value, new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.UtcNow.Add(expiry ?? new TimeSpan(0, 30, 0)) });
         }
 
         public async Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null)
@@ -86,7 +85,7 @@ namespace CheckListManager.Common.Core.Cache
             await Task.Run(() => Set(key, value, regionName, expiry));
         }
 
-        public void Remove(string key, string regionName = null)
+        public void Remove(string key, string regionName)
         {
             _storage.Remove(ResolveKey(key, regionName));
         }
@@ -98,5 +97,6 @@ namespace CheckListManager.Common.Core.Cache
 
         private static string ResolveKey(string key, string regionName)
             => string.IsNullOrEmpty(regionName) ? key : $"{regionName}.{key}";
+
     }
 }

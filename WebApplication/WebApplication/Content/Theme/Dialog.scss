@@ -52,6 +52,7 @@ div.Dialog {
             textarea {
                 min-height: 60px;
                 resize: vertical;
+                padding-top: 10px;
             }
 
             &::after {
@@ -155,7 +156,7 @@ div.Dialog {
                     background-color: $Color-Red-Light !important;
 
                     i {
-                        color: $Color-Red-Light;
+                        color: $Color-Red-Light !important;
                     }
                 }
             }

@@ -22,12 +22,6 @@
     </div>
 </div>
 
-<div class="PropertyPanel">
-    <div class="PropertyList"></div>
-    <div class="PropertyValue"></div>
-    <div class="Information"></div>
-</div>
-
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
         @if (ViewBag.AppMode)
@@ -42,7 +36,7 @@
             cssClass: "InstanceManager CheckList",
             breadcrumbs: [
                 { content: "instance manager" }
-            ],
+            ]
         });
 
         var
@@ -57,46 +51,11 @@
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fa fa-sitemap'></i>", function () {
+                    instance.showRelations();
+                }, "Icon RelationsButton")
                 .add("<i class='Icon fa fa-calculator'></i>", function () {
-                    new matematici.CheckListGrid(instance.getExpressions(), null, function (tr, row, rowIndex, columnIndex, passedValue) {
-                        var
-                            typeName = row.value && row.value.type && row.value.type.typeName,
-                            value = row.value && row.value.value;
-
-                        if (columnIndex == 2) {
-                            var td = $("<td />").appendTo(tr);
-                            if (typeName == "DateTime" || typeName == "Date") {
-                                if (value) {
-                                    var
-                                        formattedDate = matematici.dateFormatter.format(moment.parseZone(value)),
-                                        formattedValue = row.typeName == "DateTime" ? formattedDate.date + " " + formattedDate.time + ":" + formattedDate.seconds : formattedDate.date;
-
-                                    td.append($("<span />").html(formattedValue).attr("title", formattedDate.offset));
-                                }
-                            } else if (typeName == "Array") {
-                                td.text("(click to open)");
-                                tr.addClass("Handler");
-                                tr.on("click", function () {
-                                    instance.showArray($(this));
-                                    matematici.checkListGrid.close();
-                                }).data("array", value);
-                            } else if (typeName == "Boolean") {
-                                td.addClass("Centered").append($("<i />").addClass("fa").addClass("fa-" + (value || value == true ? "check" : "times")));
-                            } else
-                                td.html(value);
-                            return true;
-                        } else if (columnIndex == 3) {
-                            var td = $("<td />").appendTo(tr);
-                            td.html(row.value && row.value.type && row.value.type.typeName);
-                            return true;
-                        }
-                        return false;
-                    }, [
-                        { label: "Code" },
-                        { name: "description", label: "Description" },
-                        { label: "Value" },
-                        { label: "Type" }
-                    ]);
+                    instance.showExpressions();
                 }, "Icon ExpressionsButton")
                 .add("<i class='Icon fa fa-exclamation'></i>", function () {
                     instance.showExceptions();

@@ -1,0 +1,15 @@
+﻿using System.Collections.Generic;
+using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
+
+namespace CheckListManager.Common.Logic.Models.CheckLists
+{
+	public interface ICheckListInstanceLink : ICheckListEditableItem
+    {
+        string PrototypeName { get; set; }
+        long? PrototypeID { get; set; }
+        InstanceLinkActions Actions { get; set; }
+        InstanceLinkRecord Record { get; set; }
+        List<InstanceLinkParameter> Parameters { get; set; }
+    }
+}

@@ -7,31 +7,28 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
 {
-    public class ElementProperty : Symbol
+    public abstract class ElementProperty : Symbol
     {
         public ElementProperty()
         {
-            Property = "property Valid";
         }
 
         public string Code { get; set; }
 
         protected string Property { get; set; }
-        protected virtual DependencyRelation.Properties DependencyProperty => DependencyRelation.Properties.Validity;
+        protected abstract DependencyRelation.Properties GetDependencyProperty(DependencyNode DependingElement);
 
         public override void BuildDependencies(ICheckList CheckList, Expression Expression)
         {
             if (!CheckList.Elements.ContainsKey(Code)) throw new ParseException($"Element with code {Code} not found", Position);
             var DependingElement = (DependencyNode)CheckList.Elements[Code];
-            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, DependencyProperty);
+            var Property = GetDependencyProperty(DependingElement);
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, Property);
         }
 
-        protected virtual void Check(ICheckListElement Element, List<string> IteratorStack)
-        {
-            DataType = DataType.Boolean;
-        }
+        protected abstract void Check(ICheckListElement Element, List<string> IteratorStack);
 
-        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, int Position)
+        public static ICheckListElement Check(ICheckList CheckList, List<string> IteratorStack, string Code, Position Position)
         {
             var Element = CheckList.Elements[Code];
             if (Element is ICheckListItem Item)
@@ -68,13 +65,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions.ElementProperties
             Check(Element, IteratorStack);
         }
 
-        protected virtual TypedValue GetValue(ICheckListElement Element, string TimeZone)
-            => new TypedValue(DataType.Boolean, Element.Valid);
+        protected abstract TypedValue GetValue(ICheckListElement Element, Dictionary<string, int> IterationIndexes, string TimeZone);
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             var Element = ElementsBranch.Elements[Code];
-            return GetValue(Element, TimeZone);
+            return GetValue(Element, IterationIndexes, TimeZone);
         }
 
         public override string ToString()

@@ -15,14 +15,21 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
 		public string ExternalSourceColumn { get; set; }
 		public string ExternalSourceName { get; set; }
-		public List<FieldRecord> History { get; } = new List<FieldRecord>();
-		public int LinesCount { get; set; }
+
+        public int LinesCount { get; set; }
 		public string Value { get; set; }
-        public Formula ValueFormula { get; } = new Formula();
+        private Formula ValueFormula { get; } = new Formula();
 		public string ValueFormulaString { get; set; }
 
         private List<string> _ValuesList;
         public List<string> ValuesList { get { return _ValuesList; } set { _ValuesList = value == null || !value.Any() ? null : value; } }
+
+        [JsonIgnore]
+        public List<FieldRecord> History { get; } = new List<FieldRecord>();
+        [JsonIgnore]
+        public string ModifiedBy { get; }
+        [JsonIgnore]
+        public DateTimeOffset? ModifiedOn { get; }
 
         [JsonIgnore]
         public DataType ValueType { get; private set; } = DataType.Text;
@@ -33,6 +40,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         }
 
         public string DefaultValue { get; set; }
+        public int? Precision { get; set; }
+        public bool ScientificNotation { get; set; }
 
         public bool LocalTimeZone { get; set; }
 
@@ -46,6 +55,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
+                Precision = Precision,
+                ScientificNotation = ScientificNotation,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
@@ -55,9 +66,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return field;
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
 
             ValueFormula.BuildDependencies(ValueFormulaString, null);
             foreach (var Key in ValueFormula.ValueKeys)
@@ -69,12 +80,16 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (ExternalSourceName != null)
             {
-                if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
-                    throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
-
-                AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSourceDependencyNodes[ExternalSourceName], DependencyRelation.Properties.Value);
+                if (!CheckList.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSourceNode))
+                {
+                    Errors.Add(new ConfigurationError("value", $"External source {ExternalSourceName} not found"));
+                    Result = false;
+                }
+                else
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSources[ExternalSourceName], DependencyRelation.Properties.Value);
             }
-        }
 
+            return Result;
+        }
     }
 }

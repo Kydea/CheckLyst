@@ -33,7 +33,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             return (decimal)Math.Sqrt(Values.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - Avg), 2)) / Values.Count);
         }
 
-        protected override TypedValue GetValue(List<TypedValue> Values)
+        protected override TypedValue GetValue(ICheckListGroup Iterator, List<TypedValue> Values)
         {
             var Result =
                 Values.Any(Value => Value.IsNull) ? default(decimal?) :
@@ -41,7 +41,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                 Values.Count == 0 ? default(decimal?) :
                 Property == "Avg" ? Values.Average(TypedValue => TypedValue.NumberValue) :
                 Property == "StDev" ? StDev(Values) :
-                default(decimal?);
+                throw new ArgumentException();
 
             return new TypedValue(DataType.Number, Result);
         }

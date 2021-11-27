@@ -136,28 +136,31 @@ div.Prototype {
             cursor: pointer;
         }
 
+        input {
+            cursor: pointer;
+            outline: none;
+        }
+
+        a.Placeholder {
+            cursor: pointer;
+        }
+
         &.Field {
-        }
-
-        &.Signature {
-            input {
-                cursor: pointer;
-            }
-
-            a.Button:not(.MiniIcon):hover {
-                background-color: $Color-Green-Regular;
-                cursor: pointer;
-
-                i {
-                    color: $Color-Green-Regular;
-                }
+            div.Input {
+                width: 100% !important;
             }
         }
-
 
         &.Text {
             p {
                 position: relative;
+
+                &.Ellipsis::after {
+                    content: "...";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                }
             }
         }
 

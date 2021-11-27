@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
@@ -14,41 +12,44 @@ using NLog;
 
 namespace CheckListManager.Infrastructure.Logic.Email
 {
-    public class EmailService : IEmailService
+    public class EmailService : EmailServiceInternal, IEmailService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IQueueService _queueService;
-        private readonly ISettingService _settingService;
 
-        public EmailService(IQueueService queueService, ISettingService settingService)
+        public EmailService(
+            IQueueService queueService,
+            ISettingService settingService) : base(settingService)
         {
             _queueService = queueService;
-            _settingService = settingService;
         }
 
         public async Task ProcessEmailMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var messages =
-                await _queueService.ReceiveObjectsAsync<EmailMessage>(QueueName.Email,
-                    cancellationToken: cancellationToken);
-
-            foreach (var message in messages)
+            bool idle;
+            do
             {
-                await ProcessMessageAsync(message, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) break;
+                idle = true;
+                var messages = await _queueService.ReceiveObjectsAsync<EmailMessage>(QueueName.Email, cancellationToken: cancellationToken);
+
+                foreach (var message in messages)
+                {
+                    idle = false;
+                    await ProcessMessageAsync(message, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
             }
+            while (!idle);
         }
 
-        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message,
-            CancellationToken cancellationToken = default(CancellationToken))
+        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
-                await Send(message.Message);
+                await SendInternal(message.Message);
 
-                var deleteTask =
-                    _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
+                var deleteTask = _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
                 if (message.Message.TrailMessage != null)
                 {
                     var recipients = message.Message.To.Concat(message.Message.Cc).ToArray();
@@ -61,7 +62,8 @@ namespace CheckListManager.Infrastructure.Logic.Email
                         User = message.Message.TrailMessage.User,
                         Action = TrailAction.EmailSent,
                         Date = DateTimeOffset.UtcNow,
-                        CheckList = message.Message.TrailMessage.CheckList,
+                        CheckListCode = message.Message.TrailMessage.CheckListCode,
+                        CheckListID = message.Message.TrailMessage.CheckListID,
                         Information = message.Message.TrailMessage.Information.ToJson(new JsonSerializerSettings
                         {
                             TypeNameHandling = TypeNameHandling.None
@@ -71,67 +73,22 @@ namespace CheckListManager.Infrastructure.Logic.Email
                     await Task.WhenAll(deleteTask, trailTask);
                 }
                 else
-                {
                     await deleteTask;
-                }
             }
             catch (Exception exception)
             {
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                 {
                     Action = TrailAction.EmailFailed,
+                    User = message.Message.TrailMessage?.User,
                     Company = message.Message.Company,
+                    CheckListCode = message.Message.TrailMessage?.CheckListCode,
+                    CheckListID = message.Message.TrailMessage?.CheckListID,
                     Information = exception.Message,
                 }, cancellationToken);
 
                 Logger.Error(exception);
             }
-        }
-
-        private async Task Send(EmailMessage message)
-        {
-            var body = new StringBuilder();
-
-            body = body.Append("<h1>CheckList Manager - " + message.Subject + "</h1>");
-            if (message.Content != null)
-                body = body.Append($"<p>{message.Content}</p>");
-
-            var sender = await _settingService.EmailSenderAsync(message.Company);
-            var mailMessage = new MailMessage { From = new MailAddress(sender) };
-
-            if (message.To != null)
-                foreach (var email in message.To)
-                    mailMessage.To.Add(email);
-
-            if (message.Cc != null)
-                foreach (var email in message.Cc)
-                    mailMessage.CC.Add(email);
-
-            mailMessage.Body = body.ToString();
-
-            mailMessage.IsBodyHtml = true;
-            mailMessage.Subject = "CheckLyst - " + message.Subject;
-
-
-            var username = await _settingService.SmtpUsernameAsync(message.Company);
-
-            var secure = !string.IsNullOrEmpty(username);
-
-            var smtpClient = new SmtpClient(await _settingService.SmtpHostAsync(message.Company),
-                await _settingService.SmtpPortAsync(message.Company))
-            {
-                UseDefaultCredentials = true,
-                EnableSsl = secure
-            };
-
-            if (secure)
-                smtpClient.Credentials = new System.Net.NetworkCredential
-                {
-                    UserName = username,
-                    Password = await _settingService.SmtpPasswordAsync(message.Company)
-                };
-
-            smtpClient.Send(mailMessage);
         }
     }
 }

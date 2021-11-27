@@ -141,12 +141,10 @@ namespace CheckListManager.Common.Logic.Configuration
 			
 			var useFileSystem = "FileSystem".Equals(ConfigurationManager.AppSettings["StorageSystem"], StringComparison.InvariantCultureIgnoreCase);
 			if (useFileSystem)
-			{
 				builder.RegisterType<StorageServiceFileSystem>()
 					.As<IStorageService>()
 					.AsSelf()
 					.InstancePerScope(UseInstancePerRequest);
-			}
 			else
 			{
 				builder.RegisterType<AmazonS3Client>()
@@ -173,7 +171,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			e.Instance.ServiceURL = configuration.SqsBaseUrl;
 		}
 
-		private static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
+		public static void OnConfiguringRabbitMq(IActivatingEventArgs<ConnectionFactory> e)
 		{
 			e.Instance.HostName = ConfigurationManager.AppSettings["RabbitMQHost"];
 			e.Instance.UserName = ConfigurationManager.AppSettings["RabbitMQUsername"];

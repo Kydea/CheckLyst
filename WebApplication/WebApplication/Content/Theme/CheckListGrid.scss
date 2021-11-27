@@ -8,14 +8,26 @@ div.CheckListGrid {
 
     div.Container {
         background-color: white;
-        border: solid 1px $Color-Grey-Light;
         padding: 20px;
         box-shadow: $Box-Shadow;
-        overflow: auto;
+
+        > div {
+            position: relative;
+        }
+
+        div.ScrollablePanel {
+            overflow: auto;
+            position: relative;
+            border: solid 1px $Color-Grey-Regular;
+        }
 
         h2 {
-            margin: 0;
-            padding-bottom: $Metric-Separator-Extended;
+            margin: -20px -20px 20px;
+            background: $Color-Green-Regular;
+            padding: $Metric-Control-Space;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
         }
 
         div.Parameters {
@@ -26,7 +38,7 @@ div.CheckListGrid {
 
             label {
                 margin: 20px 0 0 20px;
-                width: 200px;
+                width: 230px;
             }
 
             input {
@@ -41,6 +53,10 @@ div.CheckListGrid {
             tr {
                 th {
                     text-align: center;
+
+                    &:first-child {
+                        border-left: none !important;
+                    }
                 }
 
                 &.Selected {
@@ -53,71 +69,75 @@ div.CheckListGrid {
                     }
                 }
             }
-
-            &.ExpressionsList {
-                tr {
-                    td {
-                        width: 30px;
-
-                        &:first-child {
-                            width: 30px;
-                            text-align: center;
-
-                            i {
-                                display: none;
-                                font-size: 16px;
-                            }
-                        }
-
-                        &.CodeColumn {
-                            width: 10%;
-                        }
-
-                        &.DescriptionColumn {
-                            width: 20%;
-                        }
-
-                        &.ExpressionColumn {
-                            width: 70%;
-                        }
-
-                        i {
-                            font-size: 14px;
-
-                            &.fa-times {
-                                color: $Color-Red-Regular !important;
-                            }
-
-                            &.fa-check {
-                                color: $Color-Green-Regular !important;
-                            }
-                        }
-                    }
-
-                    &.Selected {
-                        td {
-                            i {
-                                display: block;
-                            }
-                        }
-                    }
-                }
-            }
-
-            &.SourcesList {
-                td {
-                    width: 50%;
-                }
-            }
         }
 
         div.Buttons {
-            padding-top: 20px;
+            padding-top: 10px;
 
             a {
                 float: right;
                 margin-left: 10px;
                 margin-top: 10px;
+            }
+        }
+
+        a.CloseButton {
+            position: absolute;
+            top: 15px;
+            right: 0;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Light;
+            }
+        }
+
+        div.OrderBar {
+            position: absolute;
+            right: 0;
+            top: 124px;
+            bottom: 56px;
+            width: 20px;
+
+            a {
+                position: absolute;
+                top: 50%;
+                border: solid 1px $Color-Green-Regular;
+                width: 20px;
+                height: 20px;
+                display: block;
+                text-align: center;
+
+                i {
+                    font-size: 16px;
+                    color: $Color-Green-Regular !important;
+                }
+
+                &.Off {
+                    opacity: .3;
+                }
+
+                &:hover:not(.Off) {
+                    background-color: $Color-Silver-Dark;
+                }
+
+                &:first-child {
+                    margin-top: -20px;
+                    border-radius: 3px 3px 0 0;
+                    border-bottom: 0;
+                }
+
+                &:last-child {
+                    border-radius: 0 0 3px 3px;
+                }
             }
         }
     }
@@ -132,16 +152,26 @@ div.CheckListGrid {
         background-color: rgba(102, 102, 102, .7);
 
         div.Container {
-            position: absolute;
-            width: 90%;
-            max-height: 90%;
-            top: 50%;
-            left: 50%;
-            -moz-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            -o-transform: translate(-50%, -50%);
-            -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+            position: relative;
+            margin: auto;
+            width: calc(100vw - 60px);
+            border-radius: 15px 15px 0 0;
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
+
+            div.Buttons {
+                &::after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+            }
+        }
+
+        div.ScrollablePanel {
+            max-height: calc(100vh - 240px); //overridden by js (autoCenter.js)
         }
     }
 

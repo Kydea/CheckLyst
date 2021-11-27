@@ -14,25 +14,82 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
+        public HashSet<string> ExternalSources { get; } = new HashSet<string>();
         public bool Iterator { get; set; }
-
         public bool ShowAsTable { get; set; }
-
         public int InstanceIterations { get; set; }
-
         public int PrototypeIterations { get; set; }
+        public bool DisableAdd { set { AddIterationButton = !value; AddIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableRemove { set { RemoveIterationButton = !value; RemoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableMove { set { MoveIterationButton = !value; MoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool AddIterationButton { get; set; }
+        public Conditions AddIterationCondition { get; set; } = Conditions.True;
+        public string AddIterationExpressionCode { get; set; }
+        public bool RemoveIterationButton { get; set; }
+        public Conditions RemoveIterationCondition { get; set; } = Conditions.True;
+        public string RemoveIterationExpressionCode { get; set; }
+        public bool MoveIterationButton { get; set; }
+        public Conditions MoveIterationCondition { get; set; } = Conditions.True;
+        public string MoveIterationExpressionCode { get; set; }
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
+        public string DumpExternalSourceName { get; set; }
 
-        public bool DisableAdd { get; set; }
+        public override dynamic GetViewModel(bool ReportModel)
+        {
+            var ItemModel = base.GetViewModel(ReportModel);
+            if (!ReportModel)
+            {
+                if (Iterator)
+                {
+                    ItemModel.Iterator = true;
+                    ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel(ReportModel));
+                    ItemModel.AddIterationButton = AddIterationButton;
+                    ItemModel.RemoveIterationButton = RemoveIterationButton;
+                    ItemModel.MoveIterationButton = MoveIterationButton;
+                    if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
+                    if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
+                }
 
-        public bool DisableRemove { get; set; }
+                ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel(ReportModel));
+                if (ShowAsTable) ItemModel.ShowAsTable = true;
+            }
+            return ItemModel;
+        }
 
-        public bool DisableMove { get; set; }
+        protected override void OnUpdate(DependencyRelation.Properties Property)
+        {
+            switch (Property)
+            {
+                case DependencyRelation.Properties.AddIteration:
+                    AddIterationButton =
+                        AddIterationCondition == Conditions.True
+                        || AddIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(AddIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.RemoveIteration:
+                    RemoveIterationButton =
+                        RemoveIterationCondition == Conditions.True
+                        || RemoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(RemoveIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.MoveIteration:
+                    MoveIterationButton =
+                        MoveIterationCondition == Conditions.True
+                        || MoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(MoveIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.Iterations:
+                    //at the moment this is handled directly into InstanceManagerService
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
+        }
 
         protected override void UpdateHidden()
         {
             base.UpdateHidden();
             if (!Hidden && Page != null)
-                Hidden = Hidden || Page.Hidden;
+                Hidden = Page.Hidden;
         }
 
         public void CreateInstanceIterations()
@@ -52,14 +109,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         Group.CreateInstanceIterations();
         }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             SetupItems();
             if (Iterator)
             {
                 SetupIterationsIndexes();
-                foreach (var Iteration in Iterations.Where(i => !i.Removed))
+                foreach (var Iteration in Iterations/*.Where(i => !i.Removed)*/)
                 {
                     Iteration.CheckList = CheckList;
                     Iteration.Page = Page;
@@ -67,6 +124,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     Iteration.Setup();
                 }
             }
+
+            return Result;
         }
 
         public void SetupIterationsIndexes()
@@ -91,24 +150,22 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         }
 
-        protected override void UpdateValid()
+        public override bool IsValidByDefault()
         {
-            base.UpdateValid();
-            if (!Valid) return;
-
             if (Iterator)
+            {
                 foreach (var Iteration in Iterations.Where(i => !i.Removed))
                     foreach (var item in Iteration.Items) //the iteration are never updated so they are considered transparent to validity
-                    {
-                        Valid = Valid && item.Valid;
-                        if (!Valid) return;
-                    }
+                        if (item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid)
+                            return false;
+            }
             else
+            {
                 foreach (var item in Items)
-                {
-                    Valid = Valid && item.Valid;
-                    if (!Valid) return;
-                }
+                    if (item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid)
+                        return false;
+            }
+            return true;
         }
 
         public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
@@ -116,7 +173,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             base.UpdateReadOnly(userCode, readOnlyInstance);
 
             if (Iterator)
-                foreach (var iteration in Iterations.Where(i => !i.Removed))
+                foreach (var iteration in Iterations)
                     ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance);
             else
                 foreach (var item in Items)
@@ -133,9 +190,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ShowAsTable = ShowAsTable,
                 InstanceIterations = InstanceIterations,
                 PrototypeIterations = PrototypeIterations,
-                DisableAdd = DisableAdd,
-                DisableRemove = DisableRemove,
-                DisableMove = DisableMove,
+                AddIterationCondition = AddIterationCondition,
+                AddIterationExpressionCode = AddIterationExpressionCode,
+                RemoveIterationCondition = RemoveIterationCondition,
+                RemoveIterationExpressionCode = RemoveIterationExpressionCode,
+                MoveIterationCondition = MoveIterationCondition,
+                MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
             foreach (var item in Items)
@@ -166,7 +227,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Remove();
 
             if (Iterator)
-                foreach (var iteration in Iterations)
+                foreach (var iteration in Iterations.Where(i => !i.Removed))
                     iteration.Remove();
 
             base.Remove();
@@ -174,7 +235,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected void SetupItems()
         {
-            ICheckListItem previous = null;
+            ICheckListValidityElement previous = null;
 
             int ItemIndex = 0;
             foreach (Item item in Items)
@@ -187,7 +248,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 item.Iteration = item.Iteration ?? Iteration;
                 item.ItemIndex = ItemIndex++;
                 item.Setup();
-                previous = item;
+                if (item is ICheckListValidityElement checkListValidityElement)
+                    previous = checkListValidityElement;
             }
         }
 
@@ -220,15 +282,25 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             iteration.Remove();
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             base.MarkAllAsChanged(Roots);
+            if (Iterator)
+            {
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.AddIteration);
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.RemoveIteration);
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.MoveIteration);
+            }
+
+            var Iterations = this.Iterations.Where(i => !i.Removed);
+            bool AnyIteration = Iterations.Any();
 
             foreach (Iteration iteration in Iterations)
                 iteration.MarkAllAsChanged(Roots);
 
             foreach (Item item in Items)
-                item.MarkAllAsChanged(Roots);
+                if (!item.IteratorModelItem || !AnyIteration) //when there is no iteration the table header must be marked explicitely, could be imporved by checking if an ancestor is a table
+                    item.MarkAllAsChanged(Roots);
         }
 
 
@@ -246,18 +318,32 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 if (!IterationItem)
                 {
-                    if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                    if (HiddenCondition != Conditions.True)
                         Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
-                    if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                    if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
                         AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
                 }
-                Item.BuildDependencies();
+
+                if (!(IterationItem && Item.IteratorModelItem)) //the cloned iterator model items are ignored
+                    Item.BuildDependencies();
+            }
+
+            if (Iterator)
+            {
+                if (AddIterationCondition == Conditions.Expression)
+                    BindExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
+                if (RemoveIterationCondition == Conditions.Expression)
+                    BindExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
+                if (MoveIterationCondition == Conditions.Expression)
+                    BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
             }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
                 foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
                     Iteration.BuildDependencies();
         }
+
+        public override string ToString() => $"group {Code ?? Id.ToString()}";
     }
 }

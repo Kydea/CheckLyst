@@ -14,6 +14,7 @@ div.Popup {
     left: 0;
     z-index: $Depth-Popup;
     background-color: rgba(102, 102, 102, .7);
+    padding: 20px;
 
     div.Container {
         padding: 20px;
@@ -31,10 +32,12 @@ div.Popup {
             color: white;
             text-transform: uppercase;
             font-weight: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         div.Buttons {
-            margin-top: 2 * $Metric-Control-Space;
+            margin-top: $Metric-Control-Space;
 
             a {
                 min-width: 100px;

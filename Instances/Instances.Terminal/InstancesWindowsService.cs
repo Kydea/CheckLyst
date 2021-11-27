@@ -13,23 +13,33 @@ namespace CheckListManager.Instances.Terminal
 		{
             Add(new IntervalSchedulerStrategy(ClearPendingInstances, 3600) { RunAtStartup = true });
             Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
+            Add(new ComputedSchedulerStrategy(SendNotifications, new[] { 1 }));
         }
 
-        protected async Task ClearPendingInstances()
+        private async Task ClearPendingInstances()
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
 				var service = scope.Resolve<IInstanceManagerService>();
-				await service.ClearPendingInstances(CancellationTokenSource.Token);
+				await service.ClosePendingInstances(CancellationTokenSource.Token);
 			}
 		}
 
-        protected async Task SendFTPFiles()
+		private async Task SendFTPFiles()
         {
             using (var scope = Container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IFTPService>();
                 await service.ProcessFTPMessagesAsync(CancellationTokenSource.Token);
+            }
+        }
+
+        private async Task SendNotifications()
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IInstanceManagerService>();
+                await service.SendNotificationsAsync(CancellationTokenSource.Token);
             }
         }
     }

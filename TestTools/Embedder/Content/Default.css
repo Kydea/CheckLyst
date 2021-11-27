@@ -1,0 +1,23 @@
+﻿* {
+    box-sizing: content-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+form label {
+    display: block;
+    width: 200px;
+}
+
+form input[type=text], form input[type=password] {
+    display: block;
+    width: 200px;
+}
+
+form input[type=submit] {
+    display: block;
+    width: 100px;
+    margin-top: 20px;
+}

@@ -1,0 +1,22 @@
+﻿@{ 
+    ViewBag.Title = "Login";
+}
+
+<form id="login">
+    <input type="hidden" name="grant_type" value="password" />
+    <input type="hidden" name="companyId" value="2" />
+
+    <label for="username">username</label>
+    <input type="text" name="username" />
+
+    <label for="password">password</label>
+    <input type="password" name="password" autocomplete="off" />
+
+    <input type="submit" value="login" />
+</form>
+
+@section scripts {
+    <script type="text/javascript">
+        var login = new matematici.Login();
+    </script>
+}

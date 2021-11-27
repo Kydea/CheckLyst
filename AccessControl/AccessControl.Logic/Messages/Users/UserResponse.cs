@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.DataEngine;
+﻿using System.Collections.Generic;
+using CheckListManager.Common.Logic.DataEngine;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
@@ -7,8 +8,10 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
 		public string Code { get; set; }
         public bool ShowPassword { get; set; }
         public bool ShowAuthenticationCode { get; set; }
-        public Function[] GeneralFunctions { get; set; }
-        public Function[] PrototypeFunctions { get; set; }
-        public Function[] InstanceFunctions { get; set; }
+        public Grant[] GeneralFunctions { get; set; }
+        public Grant[] PrototypeFunctions { get; set; }
+        public Grant[] InstanceFunctions { get; set; }
+        public Grant[] Levels { get; set; }
+        public List<string> Groups { get; internal set; }
     }
 }

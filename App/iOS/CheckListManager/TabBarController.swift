@@ -14,8 +14,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
     
     var userCode: String?
     
-    
-    
     override func viewDidLoad() {
  
         super.viewDidLoad()
@@ -23,7 +21,6 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self;
         
     }
-
     
     override func viewDidAppear(_ animated: Bool) {
         
@@ -31,44 +28,30 @@ class TabViewController: UITabBarController, UITabBarControllerDelegate {
         
         let tabBarItems = tabBar.items! as [UITabBarItem]
         
-        let label1 = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 22))
+        tabBarItems[0].image = UIImage(named: "userIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        label1.font =  UIFont (name: "Flaticon", size: 22)
+        tabBarItems[1].image = UIImage(named: "searchIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        label1.text = "\u{f108}"
+        tabBarItems[2].image = UIImage(named: "helpIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        let image1 = UIImage.imageWithLabel(label1)
+        tabBarItems[3].image = UIImage(named: "signatureIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 22))
+        tabBarItems[0].selectedImage = UIImage(named: "userSelectedIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        label2.font =  UIFont (name: "Flaticon", size: 22)
+        tabBarItems[1].selectedImage = UIImage(named: "searchSelectedIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        label2.text = "\u{f109}"
+        tabBarItems[2].selectedImage = UIImage(named: "helpSelectedIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
-        let image2 = UIImage.imageWithLabel(label2)
-        
-        let label3 = UILabel(frame: CGRect(x: 0, y: 0, width: 30, height: 22))
-        
-        label3.font =  UIFont (name: "Flaticon", size: 22)
-        
-        label3.text = "\u{f106}"
-        
-        let image3 = UIImage.imageWithLabel(label3)
- 
-        tabBarItems[0].image = image2
-        
-        tabBarItems[1].image = image1
-        
-        tabBarItems[2].image = image3
-        
-        tabBarItems[0].image = tabBarItems[0].selectedImage?.imageWithColor(UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)).withRenderingMode(UIImageRenderingMode.alwaysOriginal)
-        
-        tabBarItems[1].image = tabBarItems[1].selectedImage?.imageWithColor(UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)).withRenderingMode(UIImageRenderingMode.alwaysOriginal)
-        
-        tabBarItems[2].image = tabBarItems[2].selectedImage?.imageWithColor(UIColor(red: 162.0/255, green: 194.0/255, blue: 205.0/255, alpha: 1.0)).withRenderingMode(UIImageRenderingMode.alwaysOriginal)
+        tabBarItems[3].selectedImage = UIImage(named: "signatureSelectedIcon")?.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
         
     }
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return viewController != tabBarController.selectedViewController
+    }
+    
 }
+
 
 
 

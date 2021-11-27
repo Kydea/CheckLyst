@@ -5,7 +5,6 @@
 <h1>Dashboard</h1>
 
 <div class="Dashboard">
-
     <a href="@Url.Action("List", "Prototypes")" class="DashboardItem" id="PrototypesDashboardItem">
         <img src="~/Content/Media/Dashboard/Prototypes.jpg?1" />
         <i class="fal fa-file-invoice"></i>
@@ -28,6 +27,12 @@
         <img src="~/Content/Media/Dashboard/Logout.jpg?1" />
         <i class="fal fa-sign-out"></i>
         <span>Logout</span>
+    </a>
+
+    <a href="@Url.Action("List", "Reports")" class="DashboardItem Standard" id="ReportsDashboardItem">
+        <img src="~/Content/Media/Dashboard/Reports.jpg" />
+        <i class="fal fa-file-chart-line"></i>
+        <span>Reports</span>
     </a>
 
     <a href="#" class="DashboardItem" id="HelpDashboardItem">
@@ -62,6 +67,11 @@
             ++count;
         else
             $("#InstancesDashboardItem").hide();
+
+        if (matematici.tokenManager.checkRole("Reports#View#"))
+            ++count;
+        else
+            $("#ReportsDashboardItem").hide();
 
         $("#PinDashBoardItem").on("click", function () {
             matematici.userPanel.profile();

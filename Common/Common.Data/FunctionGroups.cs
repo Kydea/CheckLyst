@@ -18,11 +18,14 @@ namespace CheckListManager.Common.Data
         public FunctionGroups()
         {
             this.Functions = new HashSet<Functions>();
+            this.Roles = new HashSet<Roles>();
         }
     
         public string Code { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Functions> Functions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Roles> Roles { get; set; }
     }
 }

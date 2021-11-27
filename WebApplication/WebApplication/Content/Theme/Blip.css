@@ -1,4 +1,7 @@
-﻿div.Blip {
+﻿body.Blip div#Loader {
+  display: none !important; }
+
+body.Blip div.Blip {
   display: none;
   overflow: auto;
   position: fixed;
@@ -9,20 +12,44 @@
   z-index: 1001;
   background-color: rgba(102, 102, 102, 0.7);
   cursor: pointer; }
-  div.Blip div.Container {
+  body.Blip div.Blip div.Container {
     position: fixed;
-    border-radius: 15px;
+    background-color: white;
+    border-radius: 50%;
     top: 50%;
     left: 50%;
-    width: unset;
-    padding: 20px;
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
-    div.Blip div.Container i {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    text-align: center;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+    font-size: 30px; }
+    body.Blip div.Blip div.Container i {
       color: #009688;
       font-size: 30px; }
-  div.Blip.Error {
+  body.Blip div.Blip.Error {
     background-color: rgba(255, 102, 102, 0.7); }
-    div.Blip.Error div.Container i {
-      color: #cc0000;
-      font-size: 30px; }
+    body.Blip div.Blip.Error div.Container i {
+      color: #cc0000; }
+  body.Blip div.Blip.Warning {
+    background-color: rgba(255, 102, 0, 0.7); }
+    body.Blip div.Blip.Warning div.Container i {
+      color: #ffba00; }
+  body.Blip div.Blip.Countdown {
+    background-color: rgba(255, 102, 0, 0.7); }
+    body.Blip div.Blip.Countdown div.Container {
+      color: white;
+      font-weight: bold;
+      background-color: unset;
+      line-height: unset;
+      width: 100%;
+      height: unset;
+      left: 0;
+      top: calc(50% - 62px);
+      box-shadow: unset; }
+      body.Blip div.Blip.Countdown div.Container span {
+        display: block; }
+        body.Blip div.Blip.Countdown div.Container span.Label {
+          font-size: 14px; }
+        body.Blip div.Blip.Countdown div.Container span.Time {
+          font-size: 80px; }

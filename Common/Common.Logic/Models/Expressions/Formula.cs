@@ -44,13 +44,13 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                                 var Key = Match.Groups["Property"].Value;
                                 ValueKeys.Add(Key);
                                 string Format = Match.Groups["Format"].Value;
-                                if (!string.IsNullOrWhiteSpace(Format))
+                                if (string.IsNullOrWhiteSpace(Format))
+                                    Format = null;
+                                else
                                 {
-                                    if (!int.TryParse(Format.Substring(2), out int Number)) Number = -1;
-                                    Format =
-                                        Number < 0 ? string.Empty :
-                                        Format.StartsWith(":n") ? "0." + new string('0', Number) :
-                                        string.Empty;
+                                    Format = Format.Substring(1);
+                                    if (Format.StartsWith("n") && int.TryParse(Format.Substring(1), out int Number))
+                                        Format = $"0.{new string('0', Number)}";
                                 }
                                 TokenFormats.Add(Format);
                                 return new string('{', Match.Groups["Start"].Captures.Count) + (ValueKeys.Count - 1) + new string('}', Match.Groups["End"].Captures.Count);
@@ -71,17 +71,24 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 ValueKeys.Select(Key =>
                 {
                     var ExpressionValue = CheckList.GetExpressionValue(Key, IterationIndexes, out var Error);
-                    var Value =
-                        ExpressionValue != null ?
-                            ExpressionValue.Type == DataType.Error ? ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight :
-                            ExpressionValue.IsNull ? NullValue :
-                            ExpressionValue.Type == DataType.Number ? ExpressionValue.NumberValue.ToString(TokenFormats[Index]).Replace(".", DecimalSeparator).Replace(",", DecimalSeparator) :
-                            ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss") :
-                            ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString("yyyy-MM-dd") :
-                            ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(@"hh\:mm\:ss") :
-                            ExpressionValue.Value :
-                        RuntimeValues?.ContainsKey(Key) ?? false ? RuntimeValues[Key] :
-                        $"{ErrorValueLeft}{Error}{ErrorValueRight}";
+
+                    object Value;
+
+                    if (ExpressionValue == null)
+                        Value = RuntimeValues != null && RuntimeValues.ContainsKey(Key) ? RuntimeValues[Key] : $"{ErrorValueLeft}{Error}{ErrorValueRight}";
+                    else if (ExpressionValue.Type == DataType.Error)
+                        Value = ErrorValueLeft + ExpressionValue.ErrorValue + ErrorValueRight;
+                    else if (ExpressionValue.IsNull)
+                        Value = NullValue;
+                    else if (ExpressionValue.Type == DataType.Number)
+                        Value = DecimalHelper.Format(ExpressionValue.NumberValue, TokenFormats[Index], DecimalSeparator);
+                    else
+                        Value =
+                            ExpressionValue.Type == DataType.DateTime ? ExpressionValue.DateTimeValue.ToLocalTime(TimeZone).ToString(TokenFormats[Index] ?? "yyyy-MM-dd HH:mm:ss") :
+                            ExpressionValue.Type == DataType.Date ? ExpressionValue.DateTimeValue.ToString(TokenFormats[Index] ?? "yyyy-MM-dd") :
+                            ExpressionValue.Type == DataType.Time ? ExpressionValue.TimeSpanValue.ToString(TokenFormats[Index] ?? @"hh\:mm\:ss") :
+                            ExpressionValue.Value;
+
                     ++Index;
                     return Value;
                 }).ToArray());

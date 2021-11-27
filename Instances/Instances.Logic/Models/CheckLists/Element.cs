@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using System.Linq;
+using System.Dynamic;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -26,13 +27,17 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         [JsonIgnore]
         public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
 
-		protected virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
+        public virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
-		public virtual void Setup()
+        public virtual bool Setup()
 		{
-            if (!string.IsNullOrEmpty(Code))
+            Code = string.IsNullOrEmpty(Code) ? null : Code;
+            if (Code != null)
 				CheckList.Elements[Code] = this;
-		}
+            if (!(this is ICheckListValidityElement))
+                Valid = true;
+            return true;
+        }
 
         public override bool Update(DependencyRelation.Properties Property)
         {
@@ -54,11 +59,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public override string ToString() =>
-            this is Page Page ? $"page {Page.Index}" :
-            this is Group Group ? $"group {Code ?? Group.Id.ToString()}" :
-            this is Item Item ? $"item {Code ?? Item.Id.ToString()}" :
-            throw new ArgumentException();
+        public virtual dynamic GetViewModel(bool ReportModel)
+        {
+            dynamic ViewModel = new ExpandoObject();
+            ViewModel.Code = Code;
+            ViewModel.Valid = Valid;
+            ViewModel.ValidityMessage = ValidityMessage;
+            ViewModel.ReadOnly = ReadOnly;
+            ViewModel.CountDownToValue = CountDownToValue;
+            return ViewModel;
+        }
 
         #region Properties
 
@@ -87,7 +97,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValidCondition == Conditions.True;
         }
 
-        public bool ReadOnly { get; protected set; }
+        public bool ReadOnly { get; protected set; } //set is protected because this property is not persistent
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
         protected virtual bool IsReadOnlyByDefault() => false;
@@ -132,11 +142,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool Hidden { get; set; }
         public Conditions HiddenCondition { get; set; }
         public string HiddenExpressionCode { get; set; }
+
+        public virtual bool PageBreak { get; set; }
+
         protected virtual void UpdateHidden()
         {
             Hidden =
-                HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true
-                || HiddenCondition == Conditions.True;
+                HiddenCondition == Conditions.True
+                || HiddenCondition == Conditions.Expression && CheckList?.GetExpressionValue(HiddenExpressionCode, this)?.Value as bool? == true;
         }
 
         public static void Copy(Element source, Element destination)
@@ -152,51 +165,54 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			destination.ValidCondition = source.ValidCondition;
 			destination.ValidityMessage = source.ValidityMessage;
 			destination.SignatureCode = source.SignatureCode;
+            destination.PageBreak = source.PageBreak;
         }
 
         #endregion
 
         #region Dependency
 
-        private void GetExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected void BindExpression(string ExpressionCode, DependencyRelation.Properties SourceProperty, string PropertyName)
         {
             if (!string.IsNullOrEmpty(ExpressionCode) && CheckList.Expressions.TryGetValue(ExpressionCode, out var Expression))
                 AddDependingRelation(SourceProperty, Expression, DependencyRelation.Properties.Value);
         }
 
-        private void GetSignature(string SignatureCode, DependencyRelation.Properties SourceProperty, string PropertyName)
+        protected void BindElement<T>(string Code, DependencyRelation.Properties SourceProperty, DependencyRelation.Properties DestinationProperty) where T : Element
         {
             var BranchElements = GetBranchElements();
-            if (!string.IsNullOrEmpty(SignatureCode) && BranchElements.ContainsKey(SignatureCode) && (BranchElements[SignatureCode] is Signature Signature))
-                AddDependingRelation(SourceProperty, Signature, DependencyRelation.Properties.Signature);
+            if (!string.IsNullOrEmpty(Code) && BranchElements.ContainsKey(Code) && BranchElements[Code] is T Element)
+                AddDependingRelation(SourceProperty, Element, DestinationProperty);
         }
 
         public virtual void BuildDependencies()
         {
             if (!string.IsNullOrEmpty(SignatureCode))
-                GetSignature(SignatureCode, DependencyRelation.Properties.ReadOnly, "signature");
+                BindElement<Signature>(SignatureCode, DependencyRelation.Properties.ReadOnly, DependencyRelation.Properties.Signature);
 
             if (CountDownCondition == Conditions.Expression)
-                GetExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
+                BindExpression(CountDownToCode, DependencyRelation.Properties.CountDown, "countdown");
 
             if (CountDownCondition == Conditions.Signature)
-                GetSignature(CountDownToCode, DependencyRelation.Properties.CountDown, "signature");
+                BindElement<Signature>(CountDownToCode, DependencyRelation.Properties.CountDown, DependencyRelation.Properties.Signature);
 
             if (ValidCondition == Conditions.Expression || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
+                BindExpression(ValidExpressionCode, DependencyRelation.Properties.Validity, "valid");
 
             if (HiddenCondition == Conditions.Expression)
-                GetExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
+                BindExpression(HiddenExpressionCode, DependencyRelation.Properties.Hidden, "hidden");
 
             if (ReadOnlyCondition == Conditions.Expression || ReadOnlyCondition == Conditions.ExpressionOrDefault || ReadOnlyCondition == Conditions.ExpressionAndDefault)
-                GetExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
+                BindExpression(ReadOnlyExpressionCode, DependencyRelation.Properties.ReadOnly, "read-only");
 
-            AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
+            if (this is ICheckListValidityElement)
+                AddDependingRelation(DependencyRelation.Properties.Validity, this, DependencyRelation.Properties.Hidden);
         }
 
-        public virtual void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public virtual void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
-            MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
+            if (this is ICheckListValidityElement)
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Validity);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
         }

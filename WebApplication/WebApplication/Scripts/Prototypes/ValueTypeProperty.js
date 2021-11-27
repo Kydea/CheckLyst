@@ -1,13 +1,15 @@
 ﻿prototypes.ValueTypeProperty = function (model, property, options) {
     var
+        base,
         input,
-        handler,
         setupValues,
-        check,
         radioUTC,
         radioLocal,
+        radioDecimal,
+        radioScientific,
         defaultValueLabel,
         defaultValue,
+        precisionInput,
 
         values = [
             { label: "Text", code: "Text" },
@@ -18,11 +20,20 @@
             { label: "Time", code: "Time" }
         ],
 
+        defaultValueKeyDown = function (e) {
+            if (model[property] == "Number" && (e.key == "." || e.key == ",") && e.key != localStorage.decimalSeparator)
+                e.preventDefault();
+        },
+
+        defaultValueChange = function () {
+        },
+
         setDefaultValueField = function () {
             if (defaultValue) defaultValue.remove();
 
             defaultValue =
-                true ? $("<input />").attr({ type: "text" }).attr('disabled', options.readOnly) : //gestire input specifici a seconda di model[property]
+                true ?
+                    $("<input />").attr({ type: "text" }).attr('readonly', options.readOnly).keydown(defaultValueKeyDown).change(defaultValueChange) : //gestire input specifici a seconda di model[property]
                     null;
 
             if (setupValues.valueType == model[property]) defaultValue.val(setupValues.defaultValue);
@@ -33,34 +44,37 @@
             defaultValueLabel.append(defaultValue);
         },
 
-        toggleRadioButtons = function () {
-            var value = model[property] && model[property].indexOf("Date") == 0;
-            radioUTC.toggle(value);
-            radioLocal.toggle(value);
+        toggleControls = function () {
+            var
+                dateMode = model[property] == "Date" || model[property] == "DateTime",
+                numberMode = model[property] == "Number";
+
+            radioUTC.toggle(dateMode);
+            radioLocal.toggle(dateMode);
+            radioDecimal.toggle(numberMode);
+            radioScientific.toggle(numberMode);
+
+            precisionInput.parent().toggle(numberMode);
+
             setDefaultValueField();
-            return value;
         },
 
         change = function () {
-            model[property] = input.val();
-            matematici.canClose = false;
-            var radioVisible = toggleRadioButtons();
-            model.localTimeZone = radioVisible && $("input", radioLocal).prop("checked"); 
-            setDefaultValueField();
-            if (handler) handler.call(this, model);
+            var
+                value = model[property] = input.val(),
+                dateMode = model[property] == "Date" || model[property] == "DateTime",
+                numberMode = value == "Number";
+
+            toggleControls();
+            model.localTimeZone = dateMode && $("input", radioLocal).prop("checked");
+            model.scientificNotation = numberMode && $("input", radioScientific).prop("checked"); 
+
+            if (!numberMode) model.precision = null;
+            base.updateModel(model);
         };
 
-    this.setCheck = function (value) {
-        check = value;
-        return this;
-    };
-
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
-
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("ValueType");
         setupValues = {
             valueType: model[property],
@@ -78,18 +92,15 @@
                     label.val(values[index].label);
         } else {
             input = $("<select />");
-            if (!!options.nullable) input.data("nullable", true);
-            input.empty();
             for (var index in values) {
                 var
-                    string = typeof (values[index]) == "string",
-                    value = string ? values[index] : values[index].code,
-                    label = string ? values[index] : values[index].label;
-                input.append($("<option />").attr({ value: value, selected: value == model[property] }).text(label));
+                    value = values[index],
+                    code = value.code,
+                    label = value.label;
+                input.append($("<option />").attr({ value: code, selected: code == model[property] }).text(label));
             }
             input.on("change", change);
             valuePanel.append(input);
-            if (!!options.nullable && !model[property]) input.val(null);
         }
 
         radioUTC = $("<label />")
@@ -102,18 +113,43 @@
             .prepend($("<input />").attr({ type: "radio", name: "kind" }).prop("checked", model.localTimeZone).attr('disabled', options.readOnly))
             .appendTo(valuePanel);
 
+        radioDecimal = $("<label />")
+            .text("Decimal notation")
+            .prepend($("<input />").attr({ type: "radio", name: "notation" }).prop("checked", !model.scientificNotation).attr('disabled', options.readOnly))
+            .appendTo(valuePanel);
+
+        radioScientific = $("<label />")
+            .text("Scientific notation")
+            .prepend($("<input />").attr({ type: "radio", name: "notation" }).prop("checked", model.scientificNotation).attr('disabled', options.readOnly))
+            .appendTo(valuePanel);
+
         if (!options.readOnly) {
             radioUTC.change(change);
             radioLocal.change(change);
+            radioDecimal.change(change);
+            radioScientific.change(change);
         }
 
+        precisionInput = $("<input />")
+            .attr({ type: "text", readOnly: options.readOnly, maxLength: 1 })
+            .keyfilter(/^[0-9]*$/i)
+            .val(model.precision)
+            .on("change", function () { model.precision = this.value; });
+
+        $("<label />")
+            .addClass("Precision")
+            .text("Allowed decimals")
+            .appendTo(valuePanel)
+            .append(precisionInput);
+
         defaultValueLabel = $("<label />")
-            .text("default value")
+            .addClass("DefaultValue")
+            .text("Default value")
             .appendTo(valuePanel);
 
         setDefaultValueField();
 
-        toggleRadioButtons();
+        toggleControls();
     }
 
     this.hasChanges = function () {

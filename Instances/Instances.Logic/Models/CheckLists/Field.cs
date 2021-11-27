@@ -17,6 +17,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ExternalSourceColumn { get; set; }
         public string ExternalSourceName { get; set; }
         public List<FieldRecord> History { get; } = new List<FieldRecord>();
+        public string ModifiedBy { get; set; }
+        public DateTimeOffset? ModifiedOn { get; set; }
         public int LinesCount { get; set; }
         public string Value { get; set; }
         public Formula ValueFormula { get; } = new Formula();
@@ -35,10 +37,51 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public string DefaultValue { get; set; }
+        public int? Precision { get; set; }
+        public bool ScientificNotation { get; set; }
 
         public bool LocalTimeZone { get; set; }
 
+        [JsonProperty]
         public int Offset { get; private set; }
+
+        public override dynamic GetViewModel(bool ReportModel)
+        {
+            var ItemModel = base.GetViewModel(ReportModel);
+            ItemModel.ValueFormulaString = ValueFormulaString;
+            ItemModel.ValueTypeName = ValueTypeName;
+            ItemModel.Value = Value;
+            ItemModel.ValidityMessage = ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage;
+
+            if (LocalTimeZone)
+            {
+                ItemModel.LocalTimeZone = LocalTimeZone;
+                ItemModel.Offset = Offset;
+            }
+
+            if (History.Any())
+                ItemModel.History = History.Select(x => new
+                {
+                    x.DateTime,
+                    x.User,
+                    x.Value,
+                    x.TypedValue
+                });
+
+            if (!ReportModel)
+            {
+                ItemModel.LinesCount = LinesCount;
+
+                if (ValuesList != null) ItemModel.ValuesList = ValuesList;
+
+                if (ExternalSourceName != null)
+                {
+                    ItemModel.ExternalSourceName = ExternalSourceName;
+                    ItemModel.ExternalSourceColumn = ExternalSourceColumn;
+                }
+            }
+            return ItemModel;
+        }
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
@@ -50,6 +93,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ValueFormulaString = ValueFormulaString,
                 ValueTypeName = ValueTypeName,
                 DefaultValue = DefaultValue,
+                Precision = Precision,
+                ScientificNotation = ScientificNotation,
                 LocalTimeZone = LocalTimeZone,
                 ValuesList = ValuesList,
                 ExternalSourceName = ExternalSourceName,
@@ -77,75 +122,151 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
                 if (ExternalSourceName != null)
                 {
-                    if (!CheckList.ExternalSourceDependencyNodes.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
+                    if (!CheckList.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSourceDependencyNode))
                         throw new Exception($"The property value references to the inexistent external source {ExternalSourceName} for {this}");
 
                     AddDependingRelation(DependencyRelation.Properties.Value, ExternalSourceDependencyNode, DependencyRelation.Properties.Value);
+                    if (IteratorModelItem)
+                    {
+                        var Parent = Group;
+                        while (!Parent.Iterator)
+                            Parent = Parent.Group;
+                        ((Group)Parent).ExternalSources.Add(ExternalSourceName);
+                    }
                 }
             }
         }
 
         private void UpdateValue()
         {
-            DateTimeOffset? dateTimeOffset = null;
-            if (ValueType == DataType.Date)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
-            else if (ValueType == DataType.DateTime)
-                dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat}");
-            if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
-
             if (IterationItem)
-                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, ((Field)FindIteratorModelItem()).ValueFormula);
+            {
+                var BaseFormula = ((Field)FindIteratorModelItem()).ValueFormula;
+                ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, BaseFormula);
+                ValueFormula.IsSet = BaseFormula.IsSet;
+            }
             else
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
 
+            object ConvertedValue = null;
+
             if (ValueFormula.IsSet)
             {
-                ConversionError = ValueFormula.HasValue && !ValueType.Validate(ValueFormula.Value);
-                Value = ConversionError ? null : ValueFormula.Value;
+                var FormulaValue = ValueFormula.Value;
+                if (!ValueFormula.HasValue)
+                    Value = FormulaValue;
+                else if (ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(FormulaValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedFormulaValue);
+                    Value = FormattedFormulaValue;
+                    ConversionError = FormattedFormulaValue == null;
+                }
+                else
+                {
+                    ConversionError = !ValueType.TryParse(FormulaValue, out ConvertedValue);
+                    Value = ConversionError ? null : FormulaValue;
+                }
             }
 
-            if (ExternalSourceName != null)
+            if (ExternalSourceName != null && Instance.ExternalSources.TryGetValue(ExternalSourceName, out var ExternalSource) && ExternalSource.Values != null)
             {
-                string Value =
-                    ExternalSourceName != null && Instance.ExternalSourceRows.ContainsKey(ExternalSourceName) && Instance.ExternalSourceRows[ExternalSourceName].ContainsKey(ExternalSourceColumn) ?
-                    Instance.ExternalSourceRows[ExternalSourceName][ExternalSourceColumn] :
-                    null;
-                ConversionError = !ValueType.Validate(Value);
-                this.Value = ConversionError ? null : Value;
+                if (!ExternalSource.Values.TryGetValue(ExternalSourceColumn, out var ExternalSourceValue))
+                    ExternalSourceValue = null;
+
+                if (string.IsNullOrEmpty(ExternalSourceValue))
+                    Value = null;
+                else if (ExternalSourceValue != null && ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(ExternalSourceValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out var FormattedExternalSourceValue);
+                    Value = FormattedExternalSourceValue;
+                    ConversionError = FormattedExternalSourceValue == null;
+                }
+                else
+                {
+                    ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
+                    Value = ConversionError ? null : ExternalSourceValue;
+                }
             }
+
+            if (
+                !ConversionError 
+                && !(ValueFormula.IsSet && !ValueFormula.HasValue) //no conversion if formula is error or null
+            )
+                try
+                {
+                    DateTimeOffset? dateTimeOffset = null;
+                    if (ValueType == DataType.Date)
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateFormat);
+                    else if (ValueType == DataType.DateTime)
+                        dateTimeOffset = DateTimeOffsetHelper.Parse(Value, Instance.TimeZone, out var Ambiguous, out var AmbiguousDateTimeOffsets, DateTimeOffsetHelper.DateTimeFormats);
+                    if (dateTimeOffset.HasValue) Offset = (int)dateTimeOffset.Value.Offset.TotalMinutes;
+                }
+                catch(FormatException)
+                {
+                    ConversionError = true;
+                    Value = null;
+                }
         }
 
         protected override void OnUpdate(DependencyRelation.Properties Property)
         {
-            if (Property == DependencyRelation.Properties.Value)
-                UpdateValue();
-            else
-                base.OnUpdate(Property);
+            switch (Property)
+            {
+                case DependencyRelation.Properties.Value:
+                    UpdateValue();
+                    break;
+                default:
+                    base.OnUpdate(Property);
+                    break;
+            }
         }
 
-        public override void MarkAllAsChanged(List<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
+        public override void MarkAllAsChanged(HashSet<Tuple<DependencyNode, DependencyRelation.Properties>> Roots)
         {
             base.MarkAllAsChanged(Roots);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Value);
         }
 
-        public bool Validate(string value) => ValueType.Validate(value);
-
         public bool ConversionError { get; set; }
 
-        public override string ValidityMessage { get => ConversionError ? $"the value {ValueFormula.Value} could not be converted to {ValueType.TypeName}" : base.ValidityMessage; set => base.ValidityMessage = value; }
         public override bool IsValidByDefault() => !ConversionError && (ValueFormula.IsSet ? ValueFormula.HasValue : !string.IsNullOrEmpty(Value));
-        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet; // || !string.IsNullOrEmpty(ExternalSourceName);
+        protected override bool IsReadOnlyByDefault() => base.IsReadOnlyByDefault() || ValueFormula.IsSet;
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             if (!string.IsNullOrEmpty(DefaultValue))
             {
-                if (Validate(DefaultValue)) Value = DefaultValue;
+                string FormattedDefaultValue = DefaultValue;
+                if (ValueType == DataType.Number)
+                {
+                    DecimalHelper.Parse(DefaultValue, Precision, ScientificNotation, Instance.DecimalSeparator, out _, out FormattedDefaultValue);
+                    Value = FormattedDefaultValue;
+                }
+                else if (ValueType == DataType.Time)
+                {
+                    if (DataType.Time.TryParse(DefaultValue, out var parsedValue))
+                        FormattedDefaultValue = ((TimeSpan)parsedValue).ToString("hh\\:mm");
+                    else
+                        FormattedDefaultValue = null;
+                }
+                else if (ValueType == DataType.Boolean)
+                {
+                    if (DataType.Boolean.TryParse(DefaultValue, out var parsedValue))
+                        FormattedDefaultValue = (bool)parsedValue ? "true" : "false";
+                    else
+                        FormattedDefaultValue = null;
+                }
+                //data and date time are handled in UpdateValue
+
+                if (FormattedDefaultValue == null)
+                    ConversionError = true;
+
+                Value = FormattedDefaultValue;
                 DefaultValue = null;
             }
+            return Result;
         }
     }
 }
+ 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -15,26 +18,30 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
         public bool Iterator { get; set; }
-
         public bool ShowAsTable { get; set; }
-
         public int InstanceIterations { get; set; }
-
         public int PrototypeIterations { get; set; }
-
-        public bool DisableAdd { get; set; }
-
-        public bool DisableRemove { get; set; }
-
-        public bool DisableMove { get; set; }
-
+        public bool DisableAdd { set { AddIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableRemove { set { RemoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public bool DisableMove { set { MoveIterationCondition = value ? Conditions.False : Conditions.True; } } //for compatibility with version < 3.0
+        public Conditions AddIterationCondition { get; set; } = Conditions.True;
+        public string AddIterationExpressionCode { get; set; }
+        public Conditions RemoveIterationCondition { get; set; } = Conditions.True;
+        public string RemoveIterationExpressionCode { get; set; }
+        public Conditions MoveIterationCondition { get; set; } = Conditions.True;
+        public string MoveIterationExpressionCode { get; set; }
+        [JsonIgnore]
+        public string ModifiedBy { get; }
+        [JsonIgnore]
+        public DateTimeOffset? ModifiedOn { get; }
+        public string DumpExternalSourceName { get; set; }
         private bool InTable { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
 
-            foreach (var Item in Items)
+            foreach (Item Item in Items)
             {
                 Item.CheckList = CheckList;
                 Item.Group = this;
@@ -44,8 +51,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                     ShowAsTable = false;
                     Iterator = false;
                 }
-                Item.Setup();
+                Item.PageIndex = PageIndex;
+                Item.IterationItem = Iterator || IterationItem; //the item is contained in an iterator at some level
+                Result &= Item.Setup();
             }
+
+            return Result;
         }
 
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
@@ -102,9 +113,13 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ShowAsTable = ShowAsTable,
                 InstanceIterations = InstanceIterations,
                 PrototypeIterations = PrototypeIterations,
-                DisableAdd = DisableAdd,
-                DisableRemove = DisableRemove,
-                DisableMove = DisableMove,
+                AddIterationCondition = AddIterationCondition,
+                AddIterationExpressionCode = AddIterationExpressionCode,
+                RemoveIterationCondition = RemoveIterationCondition,
+                RemoveIterationExpressionCode = RemoveIterationExpressionCode,
+                MoveIterationCondition = MoveIterationCondition,
+                MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
             foreach (var item in Items)
@@ -114,30 +129,76 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             return group;
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
+
+            if (AddIterationCondition == Conditions.Expression)
+                Result &= BindExpression(AddIterationExpressionCode, DependencyRelation.Properties.AddIteration, "add-iteration");
+
+            if (RemoveIterationCondition == Conditions.Expression)
+                Result &= BindExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
+
+            if (MoveIterationCondition == Conditions.Expression)
+                Result &= BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+
+            if (DumpExternalSourceName != null)
+            {
+                var DumpResult = true;
+                if (!CheckList.ExternalSources.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
+                {
+                    Errors.Add(new ConfigurationError("export-source", $"External source {DumpExternalSourceName} not found"));
+                    DumpResult = false;
+                }
+
+                if (CheckList.Elements.TryGetValue(SignatureCode, out var SignatureElement) && SignatureElement is Signature Signature && Signature.Cancelable)
+                {
+                    Errors.Add(new ConfigurationError("export-source", $"The referenced signature is cancelable and cannot be used to export"));
+                    DumpResult = false;
+                }
+
+                if (DumpResult)
+                    AddDependingRelation(DependencyRelation.Properties.Value, CheckList.ExternalSources[DumpExternalSourceName], DependencyRelation.Properties.Value);
+
+                Result &= DumpResult;
+            }
+
             foreach (Item Item in Items)
             {
-                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                     Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
-                if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
+                if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
                     AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
 
-                Item.BuildDependencies();
+                Result &= Item.BuildDependencies();
             }
+
+            return Result;
         }
 
-        public override void Check()
+        public override bool Check()
         {
-            base.Check();
+            var Result = base.Check();
+
+            if (AddIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("add-iteration", AddIterationExpressionCode, DataType.Boolean);
+
+            if (RemoveIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("remove-iteration", RemoveIterationExpressionCode, DataType.Boolean);
+
+            if (MoveIterationCondition == Conditions.Expression)
+                Result &= CheckExpression("move-iteration", MoveIterationExpressionCode, DataType.Boolean);
+
             foreach (Item Item in Items)
-                Item.Check();
+                Result &= Item.Check();
+            return Result;
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
         public override string DependencyClassName => "group";
+
+        public override string ToString() => $"group {Code ?? Id.ToString()}";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Logic.Models.Expressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,46 +24,44 @@ namespace CheckListManager.Common.Logic.Models
 		public object FromJson(JToken token, JsonSerializer jsonSerializer)
 			=> token.ToObject(_actualType, jsonSerializer);
 
-		public static bool operator ==(DataType a, DataType b)
-		{
-			return a.Equals(b);
-		}
+		public static bool operator ==(DataType a, DataType b) => a.Equals(b);
 
-		public static bool operator !=(DataType a, DataType b)
-		{
-			return !a.Equals(b);
-		}
+        public static bool operator !=(DataType a, DataType b) => !a.Equals(b);
 
-		public override bool Equals(object obj)
-		{
-			return obj is DataType type && type._rawValue == _rawValue;
-		}
+		public override bool Equals(object obj) => obj is DataType type && type._rawValue == _rawValue;
 
-		public override int GetHashCode()
-		{
-			return _rawValue.GetHashCode();
-		}
+		public override int GetHashCode() => _rawValue.GetHashCode();
 
 		public override string ToString() => TypeName;
 
-		public bool Validate(string value)
+		public bool TryParse(string value, out object result)
 		{
-			try
-			{
-				if (string.IsNullOrEmpty(value)) return true;
+            result = null;
+            if (string.IsNullOrEmpty(value)) return true;
 
-                if (_rawValue == DataTypeEnum.Boolean)
-	                return "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) || "false".Equals(value, StringComparison.InvariantCultureIgnoreCase);
-				if (_rawValue == DataTypeEnum.Number)
-					return decimal.TryParse(value.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-                if (_rawValue == DataTypeEnum.Date)
-                    return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd" }, null, DateTimeStyles.AssumeUniversal, out _);
-                if (_rawValue == DataTypeEnum.DateTime)
-					return DateTimeOffset.TryParseExact(value, new[] { "yyyy-MM-dd HH:mm" }, null, DateTimeStyles.AssumeUniversal, out _);
-				if (_rawValue == DataTypeEnum.Time)
-					return TimeSpan.TryParseExact(value, "hh\\:mm", null, out _);
-
-				return true;
+            try
+            {
+                switch (_rawValue)
+                {
+                    case DataTypeEnum.Boolean:
+                        result = "true".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? true : "false".Equals(value, StringComparison.InvariantCultureIgnoreCase) ? false : default(bool?);
+                        return result != null;
+                    case DataTypeEnum.Number:
+                        result = DecimalHelper.Parse(value);
+                        return result != null;
+                    case DataTypeEnum.Date:
+                        result = DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateFormat, null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?);
+                        return result != null;
+                    case DataTypeEnum.DateTime:
+                        result = DateTimeOffset.TryParseExact(value, DateTimeOffsetHelper.DateTimeFormats, null, DateTimeStyles.AssumeUniversal, out dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?);
+                        return result != null;
+                    case DataTypeEnum.Time:
+                        result = TimeSpan.TryParseExact(value, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?);
+                        return result != null;
+                    default:
+                        result = value;
+                        return true;
+                }
 			}
 			catch
 			{
@@ -78,6 +77,7 @@ namespace CheckListManager.Common.Logic.Models
 		public static DataType Time = new DataType(DataTypeEnum.Time, "Time", typeof(TimeSpan?));
         public static DataType Array = new DataType(DataTypeEnum.Array, "Array", typeof(List<TypedValue>));
         public static DataType Error = new DataType(DataTypeEnum.Error, "Error", typeof(string));
+        public static DataType Unknown = new DataType(DataTypeEnum.Unkown, null, null);
 
         public static DataType FromName(string name, bool strict = false)
         {
@@ -89,13 +89,14 @@ namespace CheckListManager.Common.Logic.Models
 				name == "Time" ? Time :
                 name == "Array" ? Array :
 				name == "Error" ? Error :
-				name == "Text" || !strict ? Text : 
+				name == "Text" ? Text : 
+                name == "Unknown" || !strict ? Unknown :
                 throw new InvalidOperationException($"DataType {name} not valid");
         }
 
         public enum DataTypeEnum
 		{
-			Text, Boolean, Number, DateTime, Date, Time, Array, Error
+			Text, Boolean, Number, DateTime, Date, Time, Array, Error, Unkown
 		}
 	}
 }

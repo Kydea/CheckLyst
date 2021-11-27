@@ -22,7 +22,7 @@ create table "CheckLists"."PrototypeTypes"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Company", "Department", upper("Name"));
+create unique index "PrototypeTypes_Name" on "CheckLists"."PrototypeTypes" ("Department", upper("Name"));
 
 create table "CheckLists"."Prototypes"
 (
@@ -106,7 +106,7 @@ create table "CheckLists"."InstanceNumerators"
 	"Number" int not null default 0	
 );
 
-create or replace function "CheckLists"."GetInstanceNumber"
+create function "CheckLists"."GetInstanceNumber"
 (
 	_Prototype bigint,
 	_Version int,
@@ -177,7 +177,7 @@ create table "CheckLists"."Instances"
 	"InstanceState" varchar (20) not null references "CheckLists"."InstanceStates",
 
 	"Description" text,
-	"Data" text, --replace with no sql table
+	"Data" text,
 	"FileName" text,
 
 	"CreatedBy" varchar (60),
@@ -207,8 +207,13 @@ create table "CheckLists"."InstanceExpressionValues"
 	constraint "FK_InstanceExpressionValues_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 	"Code" varchar (50),
 	"Description" varchar (100),
-	"Unique" boolean not null,
+	"Unique" int not null,
 	"Exception" boolean not null,
+	"Notification" boolean not null, 
+	"NotificationNote" varchar (200), 
+	"NotificationEmail" varchar (200), 
+	"NotificationDate" timestamptz, 
+	"Notified" boolean not null,
 
 	constraint "PK_InstanceExpressionValues" primary key ("Instance", "Code"),
 
@@ -216,8 +221,9 @@ create table "CheckLists"."InstanceExpressionValues"
 );
 
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
+create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where "Notification" and not "Notified";
 
-create or replace function "CheckLists"."ValidateUniqueExpressions"
+create function "CheckLists"."ValidateUniqueExpressions"
 (
 	_Instance bigint
 ) 
@@ -239,21 +245,36 @@ begin
 	from
 		"CheckLists"."Instances" i1
 		inner join "CheckLists"."PrototypeVersions" pv on i1."Prototype" = pv."Prototype" and i1."Version" = pv."Version"
-		inner join "CheckLists"."Instances" i2 on i1."Prototype" = i2."Prototype" and i1."Version" = i2."Version" and i2."InstanceState" = 'In progress' and i1."ID" <> i2."ID"
-		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance" and iev1."Unique"
-		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value" and iev1."Unique"
+		inner join "CheckLists"."Instances" i2 on i1."Prototype" = i2."Prototype" and i1."Version" = i2."Version" and i1."ID" <> i2."ID"
+		inner join "CheckLists"."InstanceExpressionValues" iev1 on i1."ID" = iev1."Instance" and iev1."Unique" > 0
+		inner join "CheckLists"."InstanceExpressionValues" iev2 on i2."ID" = iev2."Instance" and iev1."Code" = iev2."Code" and iev1."Value" = iev2."Value"
 	where
 		i1."ID" = _Instance
+		and i2."InstanceState" <> 'Deleted'
+		and (i1."Year" = 0 or i2."Year" <> 0) --exclude the old simulation evidences if the simulation phase is over
+		and (iev1."Unique" = 2 or i2."InstanceState" = 'In progress')
 	limit 1;
 	
 	if not _Year is null then
-		raise 'The value % for the expression % has been found in the in progress instance % - %', _Value, _Code, _Year, _Number;
+		raise 'The value % for the expression % has been found in the instance %.%', _Value, _Code, _Year, _Number;
 	end if;
 																	   
 	return 0;
 end
 $$
 language plpgsql;
+
+create table "CheckLists"."InstanceRelations"
+(
+	"Parent" bigint references "CheckLists"."Instances" on delete cascade,
+	"Item" int,
+	constraint "PK_InstanceRelations" primary key ("Parent", "Item"),
+
+	"Child" bigint references "CheckLists"."Instances" on delete cascade,
+	constraint "InstanceRelations_SelfReference" check ("Parent" <> "Child")
+);
+
+create index "Index_InstanceRelations_Child" on "CheckLists"."InstanceRelations"("Child");
 
 create table "CheckLists"."PrototypeVersionsHistory"
 (
@@ -293,3 +314,43 @@ create index "Index_InstancesHistory_Instance" on "CheckLists"."InstancesHistory
 
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade;
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade;
+
+create table "CheckLists"."InstanceData"
+(
+	"Instance" bigint primary key references "CheckLists"."Instances" on delete cascade,
+	"Company" bigint references "Infrastructure"."Companies",
+	"ItemsByLabel" jsonb,
+	"ItemsByCode" jsonb,
+	"Expressions" jsonb
+);
+
+create index "Index_ItemsByLabel" on "CheckLists"."InstanceData" using gin ("ItemsByLabel");
+create index "Index_ItemsByCode" on "CheckLists"."InstanceData" using gin ("ItemsByCode");
+create index "Index_ItemsByExpressions" on "CheckLists"."InstanceData" using gin ("Expressions");
+
+create function "CheckLists"."UpdateInstanceData"
+(
+	"_Instance" bigint,
+	"_Company" bigint,
+	"_ItemsByCode" text,
+	"_ItemsByLabel" text,
+	"_Expressions" text
+) 
+returns int as
+$$ 
+declare 
+	"_ItemsByCodeJSON" jsonb := "_ItemsByCode"::jsonb;
+	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
+	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
+begin
+	insert into "CheckLists"."InstanceData" ("Instance", "Company", "ItemsByLabel", "ItemsByCode", "Expressions")
+	values ("_Instance", "_Company", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
+	on conflict ("Instance") do update set
+		"ItemsByCode" = "_ItemsByCodeJSON", 
+		"ItemsByLabel" = "_ItemsByLabelJSON", 
+		"Expressions" = "_ExpressionsJSON";
+
+	return 0;
+end
+$$
+language plpgsql;

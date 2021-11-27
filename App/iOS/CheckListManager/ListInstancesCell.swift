@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 
-class ListInstancesCell: UITableViewCell {
+class ListInstancesCell: BaseTableViewCell {
     
     @IBOutlet var stateLabelTopConstraint: NSLayoutConstraint!
     
@@ -21,11 +21,16 @@ class ListInstancesCell: UITableViewCell {
         
         super.init(coder: aDecoder)
         
-        self.layoutMargins = UIEdgeInsetsMake(0.0, 0.0, 0.0, 40.0)
-        
-        self.preservesSuperviewLayoutMargins = false
-        
-        self.separatorInset = UIEdgeInsetsMake(0.0, 40.0, 0.0, 40.0)
+        setLayout()
         
     }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        setLayout()
+        
+    }
+    
 }

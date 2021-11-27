@@ -12,6 +12,7 @@ namespace CheckListManager.WebApplication.Code
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
 
         public string BaseUrl => ConfigurationManager.AppSettings["BaseUrl"];
+        public string ReportModule => ConfigurationManager.AppSettings["ReportModule"];
 	}
 
 	public abstract class DefaultViewPage<T> : WebViewPage<T>
@@ -22,5 +23,6 @@ namespace CheckListManager.WebApplication.Code
 			=> _identity ?? (_identity = User?.Identity as DefaultIdentity);
 
         public string BaseUrl => ConfigurationManager.AppSettings["BaseUrl"];
+        public string ReportModule => ConfigurationManager.AppSettings["ReportModule"];
     }
 }

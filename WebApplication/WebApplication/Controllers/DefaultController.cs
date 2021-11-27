@@ -2,6 +2,9 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
@@ -10,6 +13,13 @@ namespace CheckListManager.WebApplication.Controllers
 {
     public class DefaultController : BaseController
     {
+        [AllowAnonymous]
+        [Route("Settings")]
+        public ActionResult Settings()
+        {
+            return Json(new { API = ConfigurationManager.AppSettings["BaseUrl"] }, JsonRequestBehavior.AllowGet);
+        }
+
         [AllowAnonymous]
         [Route("Error", Order = 1)]
         public ActionResult Error()

@@ -1,0 +1,2 @@
+alter table "Infrastructure"."FTPServers" add "Protocol" varchar(50) not null default 'FTP';
+alter table "Infrastructure"."FTPServers" add "Key" text;

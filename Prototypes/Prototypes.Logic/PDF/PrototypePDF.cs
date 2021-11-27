@@ -60,13 +60,18 @@ namespace CheckListManager.Prototypes.Logic.PDF
                 new Tuple<string, string>("Prototype state", PrototypeVersion.VersionState),
                 new Tuple<string, string>("Valid from", PrototypeVersion.ValidFrom?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") ?? "N/A"),
                 new Tuple<string, string>("Valid until", PrototypeVersion.ValidUntil?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") ?? "N/A")
-            }, null);
+            }, null)
+            {
+                ColumnsWidths = new float[] { 20.23f, 100 - 20.23f }
+            };
         }
 
         protected override Task<Template> GenerateTemplateAsync() => Task.FromResult(new Template(this,
             $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version} - {PrototypeVersion.VersionState}"));
 
-        public override string GetFieldValue(ICheckListField Field) => new string('\n', Field.LinesCount);
+        public override string GetFieldValue(ICheckListField Field) => new string('\n', Math.Max(Field.LinesCount, 0));
+
+        public override string GetItemDescription(ICheckListItem Item) => Item.Description;
 
         public override bool IsPrototype() => true;
 

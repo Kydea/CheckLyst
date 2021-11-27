@@ -5,14 +5,24 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Prototypes.Data.Models;
 
 namespace CheckListManager.Prototypes.Data
 {
     public interface IPrototypesRepository : IRepository
     {
-        Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(long companyId,
-            Expression<Func<PrototypeVersions, TResult>> select, Expression<Func<PrototypeVersions, bool>> filters,
-            Expression<Func<PrototypeVersions, TKey>> order, int currentPage, int itemsPerPage);
+        Task<List<TResult>> GetPrototypesAsync<TResult, TKey>(long companyId,
+            Expression<Func<Common.Data.Prototypes, TResult>> select, 
+            Expression<Func<Common.Data.Prototypes, bool>> filters,
+            Expression<Func<Common.Data.Prototypes, TKey>> order);
+
+        Task<List<SyntheticRecord>> GetPrototypesAsync(IDefaultIdentity identity);
+
+        Task<PagingResponse<List<PrototypeRecord>>> GetPrototypeVersionsAsync(
+            IDefaultIdentity identity,
+            PrototypeFilters filters,
+            int currentPage,
+            int itemsPerPage);
 
         Task<Common.Data.Prototypes> GetPrototypeAsync(DefaultIdentity defaultIdentity, long id);
         Task<PrototypeVersions> GetPrototypeVersionAsync(long companyId, long prototype, int version);

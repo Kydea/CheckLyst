@@ -2,15 +2,17 @@ namespace CheckListManager.Common.Logic.Email
 {
     public class EmailTrailMessage
     {
-        public EmailTrailMessage(string user, string checkList, EmailTrailInformation information)
+        public EmailTrailMessage(string user, string checkListCode, long? checkListID, EmailTrailInformation information)
         {
             User = user;
-            CheckList = checkList;
+            CheckListCode = checkListCode;
+            CheckListID = checkListID;
             Information = information ?? new EmailTrailInformation();
         }
         
         public string User { get; }
-        public string CheckList { get; }
+        public string CheckListCode { get; }
+        public long? CheckListID { get; }
         public EmailTrailInformation Information { get; }
 
         public class EmailTrailInformation

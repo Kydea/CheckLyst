@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.WorkFlows;
+using CheckListManager.Prototypes.Data.Models;
 
 namespace CheckListManager.Prototypes.Data
 {
@@ -16,36 +17,103 @@ namespace CheckListManager.Prototypes.Data
         private readonly IWorkFlowsService _workFlowsService;
 
         public PrototypesRepository(RelationalDatabaseEntities entities, IWorkFlowsService workFlowsService) : base(entities)
-		{
+        {
             _workFlowsService = workFlowsService;
         }
 
-        public async Task<PagingResponse<List<TResult>>> GetPrototypesAsync<TResult, TKey>(
+        public async Task<List<TResult>> GetPrototypesAsync<TResult, TKey>(
             long companyId,
-            Expression<Func<PrototypeVersions, TResult>> select,
-            Expression<Func<PrototypeVersions, bool>> filters,
-            Expression<Func<PrototypeVersions, TKey>> order, 
-            int currentPage, 
-            int itemsPerPage)
+            Expression<Func<Common.Data.Prototypes, TResult>> select,
+            Expression<Func<Common.Data.Prototypes, bool>> filters,
+            Expression<Func<Common.Data.Prototypes, TKey>> order
+        )
         {
-            var data = await Entities.PrototypeVersions
+            var data = await Entities.Prototypes
                 .Where(filters)
                 .OrderBy(order)
                 .Select(select)
-                .Skip((currentPage - 1) * itemsPerPage)
-                .Take(itemsPerPage)
                 .ToListAsync();
+            return data;
+        }
 
-            var count = await Entities.PrototypeVersions
-                .Where(filters)
-                .CountAsync();
-
-            return new PagingResponse<List<TResult>>
+        private const string PROTOTYPES_QUERY =
+            "select p.\"ID\", p.\"Name\" " +
+            "from \"CheckLists\".\"Prototypes\" p " +
+            "where " +
+                "p.\"Company\" = :company " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'View') g " +
+                    "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                ") " +
+            "order by p.\"Name\"";
+        public async Task<List<SyntheticRecord>> GetPrototypesAsync(IDefaultIdentity identity)
+        {
+            var Filters = new
             {
-                Data = data,
-                Count = count,
-                ItemsPerPage = itemsPerPage,
-                CurrentPage = currentPage
+                company = identity.CompanyId,
+                user = identity.Code
+            };
+
+            var List = await Read<SyntheticRecord>(PROTOTYPES_QUERY, Filters);
+            return List.ToList();
+        }
+
+        private const string PROTOTYPE_VERSIONS_BASE_QUERY =
+            "from " +
+                "\"CheckLists\".\"Prototypes\" p " +
+                "inner join \"CheckLists\".\"PrototypeVersions\" pv on p.\"ID\" = pv.\"Prototype\" " +
+                "inner join \"Infrastructure\".\"Departments\" d on p.\"Department\" = d.\"ID\" " +
+                "inner join \"CheckLists\".\"PrototypeTypes\" pt on p.\"PrototypeType\" = pt.\"ID\" " +
+            "where " +
+                "p.\"Company\" = :company " +
+                "and (:prototype = -1 or p.\"ID\" = :prototype) " +
+                "and (:department = -1 or p.\"Department\" = :department) " +
+                "and (:prototypetype = -1 or p.\"PrototypeType\" = :prototypetype) " +
+                "and (:state = '' or pv.\"VersionState\" = :state) " +
+                "and (:name = '' or upper(p.\"Name\") like '%' || :name || '%') " +
+                "and (:pending = 'Include' or :pending = 'Exclude' and pv.\"ProposedState\" is null or :pending = 'Filter' and not pv.\"ProposedState\" is null) " +
+                "and exists (" +
+                    "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'View') g " +
+                    "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                ") ";
+        private const string PROTOTYPE_VERSIONS_LIST_QUERY = 
+            "select " +
+                "p.\"ID\", p.\"Name\", pv.\"Description\", pv.\"VersionState\" \"State\", pv.\"Version\", pv.\"ValidFrom\" \"ValidityFrom\", pv.\"ValidUntil\" \"ValidityUntil\", " +
+                "p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
+                "pv.\"CreatedOn\", pv.\"CreatedBy\", pv.\"ModifiedOn\", pv.\"ModifiedBy\" " +
+            PROTOTYPE_VERSIONS_BASE_QUERY + 
+            "order by p.\"ID\", pv.\"Version\" " +
+            "limit :limit offset :offset";
+        private const string PROTOTYPE_VERSIONS_COUNT_QUERY = "select count(*) " + PROTOTYPE_VERSIONS_BASE_QUERY;
+
+        public async Task<PagingResponse<List<PrototypeRecord>>> GetPrototypeVersionsAsync(
+            IDefaultIdentity identity,
+            PrototypeFilters PrototypeFilters,
+            int currentPage,
+            int itemsPerPage)
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                prototype = PrototypeFilters.ID ?? -1,
+                department = PrototypeFilters.Department ?? -1,
+                prototypetype = PrototypeFilters.PrototypeType ?? -1,
+                state = PrototypeFilters.State ?? string.Empty,
+                name = PrototypeFilters.Name?.ToUpper() ?? string.Empty,
+                pending = PrototypeFilters.Pending,
+                limit = itemsPerPage,
+                offset = (currentPage - 1) * itemsPerPage
+            };
+
+            var List = await Read<PrototypeRecord>(PROTOTYPE_VERSIONS_LIST_QUERY, Filters);
+            var Count = await Read<int>(PROTOTYPE_VERSIONS_COUNT_QUERY, Filters);
+            return new PagingResponse<List<PrototypeRecord>>
+            {
+                Data = List.ToList(),
+                Count = Count.Single(),
+                CurrentPage = currentPage,
+                ItemsPerPage = itemsPerPage
             };
         }
 
@@ -91,7 +159,7 @@ namespace CheckListManager.Prototypes.Data
 
             var Prototype = PrototypeVersion.Prototypes;
             Entities.PrototypeVersions.Remove(PrototypeVersion);
-            if (!Prototype.PrototypeVersions.Any()) 
+            if (!Prototype.PrototypeVersions.Any())
                 Entities.Prototypes.Remove(Prototype);
             await SaveChangesAsync();
         }
@@ -104,7 +172,7 @@ namespace CheckListManager.Prototypes.Data
         public async Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed)
         {
             var result = new SetStateResult();
-            
+
             if (prototypeVersion.VersionState == VersionState.Draft && state == VersionState.InSimulation && !proposed)
             {
                 prototypeVersion.VersionState = state;
@@ -151,7 +219,7 @@ namespace CheckListManager.Prototypes.Data
 
                 prototypeVersion.VersionState = VersionState.InApproval;
                 prototypeVersion.ProposedState = state;
-                prototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedDate = DateTimeOffset.UtcNow;
 
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
@@ -171,7 +239,7 @@ namespace CheckListManager.Prototypes.Data
                     User = defaultIdentity.Code,
                     WorkFlowApplication = response.ID
                 });
-                
+
                 result.HasToInvalidateCache = true;
             }
             else if ((prototypeVersion.VersionState == VersionState.Approved || prototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
@@ -189,7 +257,7 @@ namespace CheckListManager.Prototypes.Data
                 });
 
                 prototypeVersion.ProposedState = state;
-                prototypeVersion.ProposedDate = DateTimeOffset.Now;
+                prototypeVersion.ProposedDate = DateTimeOffset.UtcNow;
 
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
@@ -205,13 +273,13 @@ namespace CheckListManager.Prototypes.Data
                 throw new InvalidOperationException($"Cannot {(proposed ? "propose" : "change")} state from {prototypeVersion.VersionState} to {state}");
 
             await SaveChangesAsync();
-            
+
             return result;
         }
 
         public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)
         {
-            return await Entities.PrototypeVersions.Where(filters).ToListAsync();
+            return await Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
         }
 
     }

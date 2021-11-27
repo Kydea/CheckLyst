@@ -8,19 +8,27 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
 	public class Page : Element, ICheckListPage
 	{
+        public Page()
+        {
+            PageBreak = true;
+        }
+
         public int Index { get; set; }
         public string Description { get; set; }
 		public List<ICheckListGroup> Groups { get; set; } = new List<ICheckListGroup>();
         public bool IsLocked { get; set; }
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
-            foreach (var Group in Groups)
+            var Result = base.Setup();
+            foreach (Group Group in Groups)
             {
                 Group.CheckList = CheckList;
-                Group.Setup();
+                Group.PageIndex = Index;
+                Result &= Group.Setup();
             }
+
+            return Result;
         }
         
         public void Traverse(Func<ICheckListItem, bool> condition, Action<ICheckListItem> action)
@@ -35,31 +43,36 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 await group.TraverseAsync(condition, action);
         }
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
             foreach (Group Group in Groups)
             {
-                if (HiddenCondition == Conditions.False || HiddenCondition == Conditions.Expression)
+                if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                     Group.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
                 if (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault)
                     AddDependingRelation(DependencyRelation.Properties.Validity, Group, DependencyRelation.Properties.Validity);
 
-                Group.BuildDependencies();
+                Result &= Group.BuildDependencies();
             }
+
+            return Result;
         }
 
-        public override void Check()
+        public override bool Check()
         {
-            base.Check();
+            var Result = base.Check();
             foreach (Group Group in Groups)
-                Group.Check();
+                Result &= Group.Check();
+
+            return Result;
         }
 
         public void CreateInstanceIterations() { throw new NotImplementedException(); }
 
         public override string DependencyClassName => "page";
         public override int? DependencyObjectID => Index;
+        public override string ToString() => $"page {Index + 1}";
     }
 }

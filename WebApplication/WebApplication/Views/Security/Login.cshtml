@@ -1,5 +1,4 @@
-@model string
-@*Matematici.ViewModels.Membership.Login*@
+@model CheckListManager.WebApplication.Models.Login
 
 <div class="Login">
     <div class="Box AutoCenter">
@@ -14,7 +13,7 @@
             <input type="hidden" name="grant_type" value="password" />
 
             <label class="FullWidth">
-                <span>Company</span>
+                <span>@(Model.Administration ? "Administration company" : "Company")</span>
                 <i class="Icon fal fa-industry"></i>
                 <select name="companyId"></select>
             </label>
@@ -22,7 +21,7 @@
             <label class="FullWidth Controls2">
                 <span>User code / Password</span>
                 <i class="Icon fal fa-user"></i>
-                <input type="text" name="username" placeholder="username" />
+                <input type="text" name="username" placeholder="username" maxlength="60" />
                 <i class="Icon fal fa-key"></i>
                 <input type="password" name="password" placeholder="password" />
             </label>
@@ -43,13 +42,13 @@
     matematici.events.onPageLoad = function (callback) {
         matematici.clock.stop();
 
-		var
+        var
+            administration = @(Model.Administration ? "true" : "false"),
 			form = $("form"),
 			error = $("div.Errors", form),
 			companyList = $("select[name=companyId]", form),
 			userCode = $("input[name=username]", form),
 			password = $("input[name=password]", form),
-			companies = {},
 
 			showError = function (message) {
 				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
@@ -86,15 +85,14 @@
                     type: "post",
                     suppressErrors: true
                 }).done(function (result) {
-                    localStorage.companyName = companyList.data("autoComplete").getControl().val();
-                    var company = companyList.data("autoComplete").getValue();
-                    localStorage.inactivityTimeoutSeconds = companies[company].inactivityTimeoutSeconds;
+                    localStorage.companyName = companyList.next().val();
                     matematici.tokenManager.login(result);
 					matematici.clock.resume();
 
                     getSettings(function () {
-                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl != "undefined" && localStorage.redirectUrl != "/undefined" && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
                         localStorage.removeItem("redirectUrl");
+                        localStorage.removeItem("redirectTime");
 						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
 					});
 
@@ -102,31 +100,37 @@
                     showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
                 });
         });
-        var savedValues = {};
-        savedValues.redirectUrl = localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000 ? localStorage.redirectUrl : "";
-        matematici.tokenManager.logout();
-        localStorage.redirectUrl = savedValues.redirectUrl;
 
-        //closes all possibile pending light boxes
+        var savedValues = {};
+        if (localStorage.redirectUrl && localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000) {
+            savedValues.redirectUrl = localStorage.redirectUrl;
+            savedValues.redirectTime = localStorage.redirectTime;
+        }
+        matematici.tokenManager.notifyLogout();
+        localStorage.redirectUrl = savedValues.redirectUrl;
+        localStorage.redirectTime = savedValues.redirectTime;
+
+        //closes all the possibile pending light boxes
         matematici.popup.close();
         matematici.dialog.close();
+        matematici.blip.close();
         matematici.elements.body.removeClass("CheckListGrid");
         matematici.elements.body.children("div.CheckListGrid").remove();
 
         matematici.loader.checkInitialCurtain();
 
         //load the companies
-        $.ajax(matematici.urls.infrastructure.companies.getData, {
+        $.ajax(matematici.urls.infrastructure.companies.getSyntheticData, {
             type: "post",
-            suppressErrors: true
+            suppressErrors: true,
         }).done(function (result) {
             for (var index in result) {
                 var company = result[index];
-                companies[company.id] = company;
-                companyList.append($("<option />").attr("value", company.id).data("inactivityTimeoutSeconds", company.inactivityTimeoutSeconds).text(company.name));
+                if (administration && company.id == 1 || !administration)
+                    companyList.append($("<option />").attr("value", company.id).text(company.name));
             }
-            companyList.val(null);
             callback.call();
+            matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : localStorage.company);
         }).fail(function (jqXhr, textStatus, errorThrown) {
             showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
         });

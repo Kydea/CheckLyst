@@ -17,6 +17,8 @@ namespace CheckListManager.Common.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Functions()
         {
+            this.GroupFunctions = new HashSet<GroupFunctions>();
+            this.RoleFunctions = new HashSet<RoleFunctions>();
             this.UserFunctions = new HashSet<UserFunctions>();
         }
     
@@ -24,6 +26,10 @@ namespace CheckListManager.Common.Data
         public string Code { get; set; }
     
         public virtual FunctionGroups FunctionGroups { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupFunctions> GroupFunctions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RoleFunctions> RoleFunctions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserFunctions> UserFunctions { get; set; }
     }

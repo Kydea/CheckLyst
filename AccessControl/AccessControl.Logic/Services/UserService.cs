@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.AccessControl.Data;
+using CheckListManager.AccessControl.Data.Models;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
@@ -37,10 +38,11 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IQueueService _queueService;
         private readonly IRedisCache _cache;
         private readonly ISettingService _settingService;
+        private readonly IEmailServiceBase _emailService;
 
         public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
             IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService,
-            IConfigurationService configurationService)
+            IConfigurationService configurationService, IEmailServiceBase emailService)
         {
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
@@ -48,6 +50,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             _queueService = queueService;
             _cache = cache;
             _settingService = settingService;
+            _emailService = emailService;
         }
 
         public async Task<Users> AuthenticateAsync(long? companyId, string code, string password)
@@ -74,9 +77,10 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new AuthenticationException(103, $"User {code} disabled");
 
                 var LDAPHost = await _settingService.LDAPHostAsync(companyId.Value);
+                var LDAPPort = await _settingService.LDAPPortAsync(companyId.Value);
 
                 if (!string.IsNullOrEmpty(LDAPHost) && !string.IsNullOrEmpty(user.AuthenticationCode))
-                    VerifyLDAPPassword(LDAPHost, user.AuthenticationCode, password);
+                    VerifyLDAPPassword(LDAPHost, LDAPPort, user.AuthenticationCode, password);
                 else if (!_hashService.ValidateHash(password, user.Password))
                     throw new AuthenticationException(105, "Password not valid");
 
@@ -110,12 +114,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             return user;
         }
 
-        private static void VerifyLDAPPassword(string LDAPHost, string Code, string Password)
+        private static void VerifyLDAPPassword(string LDAPHost, int LDAPPort, string Code, string Password)
         {
             try
             {
-                var LdapDirectoryIdentifier =
-                    new LdapDirectoryIdentifier(LDAPHost, 636, true, false); //ldap: 389, ldaps: 636
+                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(LDAPHost, LDAPPort, true, false);
                 var NetworkCredential = new NetworkCredential(Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 
@@ -202,8 +205,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return Task.WhenAll(
                 _userSessionRepository.CreateAsync(session),
-                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion,
-                    expiresOn - DateTimeOffset.UtcNow)
+                _cache.SetAsync(identityToken.RefreshToken, identityToken, IdentityCacheRegion, expiresOn - DateTimeOffset.UtcNow)
             );
         }
 
@@ -259,24 +261,21 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-        public async Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request)
-        {
-            return await _userRepository.GetFunctionsAsync(companyId, request.Code, request.Description);
-        }
+        public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request) =>
+            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group, request.Role);
 
-        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId,
-            PagingRequest<UsersRequest> request)
+        public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description,
-                request.Skip, take);
-            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role);
 
             var response = users.Select(u => new UsersResponse
             {
                 Code = u.Code,
                 Description = u.Description,
                 Email = u.Email,
+                CorporateID = u.CorporateID,
                 Enabled = u.Enabled,
                 AuthenticationCode = u.AuthenticationCode,
                 LastLoginOn = u.LastLoginOn,
@@ -298,7 +297,7 @@ namespace CheckListManager.AccessControl.Logic.Services
         private async Task<UserResponse> ValidateAsync(IDefaultIdentity identity, UserRequest record)
         {
             var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
-            
+
             var response = new UserResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
@@ -401,34 +400,64 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     var user = await _userRepository.GetAsync(identity.CompanyId, record.Code);
 
-                    response.GeneralFunctions = user.UserFunctions.Where(f =>
-                            f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
-                        .Select(gf => new Function { functionGroup = gf.FunctionGroup, function = gf.Function })
-                        .ToArray();
+                    response.Groups = user.UserGroups.Select(ug => ug.Group).ToList();
 
-                    response.PrototypeFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
-                        .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                        .Select(g => new Function
-                        {
-                            department = g.Key.Department,
-                            prototypeType = g.Key.PrototypeType,
-                            functionGroup = "Prototypes",
-                            functions = g.Select(pf => pf.Function).ToArray(),
-                            level = g.First().Tag
-                        })
-                        .ToArray();
+                    var role = user.UserRoles.SingleOrDefault(r => r.Roles.FunctionGroup == null);
+                    if (role == null)
+                        response.GeneralFunctions =
+                            user.UserFunctions.Where(f => f.FunctionGroup != "Prototypes" && f.FunctionGroup != "Instances")
+                                .Select(gf => new Grant { FunctionGroup = gf.FunctionGroup, Function = gf.Function })
+                                .ToArray();
+                    else
+                        response.GeneralFunctions = new Grant[] { new Grant { FunctionGroup = null, Role = role.Role } };
 
-                    response.InstanceFunctions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
+                    var functions = new List<Grant>();
+                    functions = user.UserFunctions.Where(f => f.FunctionGroup == "Prototypes")
                         .GroupBy(pf => new { pf.Department, pf.PrototypeType })
-                        .Select(g => new Function
+                        .Select(g => new Grant
                         {
-                            department = g.Key.Department,
-                            prototypeType = g.Key.PrototypeType,
-                            functionGroup = "Instances",
-                            functions = g.Select(pf => pf.Function).ToArray(),
-                            level = g.First().Tag
+                            Department = g.Key.Department,
+                            PrototypeType = g.Key.PrototypeType,
+                            FunctionGroup = "Prototypes",
+                            Functions = g.Select(pf => pf.Function).ToArray()
                         })
-                        .ToArray();
+                        .ToList();
+                    functions.AddRange(user.UserRoles.Where(r => r.Roles.FunctionGroup == "Prototypes").Select(r => new Grant
+                    {
+                        Department = r.Department,
+                        PrototypeType = r.PrototypeType,
+                        FunctionGroup = "Prototypes",
+                        Role = r.Role
+                    }));
+                    response.PrototypeFunctions = functions.ToArray();
+
+                    functions = user.UserFunctions.Where(f => f.FunctionGroup == "Instances")
+                        .GroupBy(pf => new { pf.Department, pf.PrototypeType })
+                        .Select(g => new Grant
+                        {
+                            Department = g.Key.Department,
+                            PrototypeType = g.Key.PrototypeType,
+                            FunctionGroup = "Instances",
+                            Functions = g.Select(pf => pf.Function).ToArray()
+                        }).ToList();
+                    functions.AddRange(user.UserRoles.Where(r => r.Roles.FunctionGroup == "Instances").Select(r =>
+                        new Grant
+                        {
+                            Department = r.Department,
+                            PrototypeType = r.PrototypeType,
+                            FunctionGroup = "Instances",
+                            Role = r.Role
+                        }
+                    ));
+                    response.InstanceFunctions = functions.ToArray();
+
+                    response.Levels = user.UserLevels.Select(l => new Grant {
+                        Department = l.Department.Value,
+                        PrototypeType = l.PrototypeType,
+                        PrototypeWorkFlowLevel = l.PrototypeWorkFlowLevel,
+                        InstanceWorkFlowLevel = l.InstanceWorkFlowLevel,
+                        SignatureLevel = l.SignatureLevel
+                    }).ToArray();
                 }
                 catch (Exception exception)
                 {
@@ -445,66 +474,131 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         private void BuildFunctions(DefaultIdentity identity, UserRequest record, Users User)
         {
-            foreach (var function in record.GeneralFunctions)
-                User.UserFunctions.Add(new UserFunctions
+            if (record.Groups != null)
+                foreach (var group in record.Groups)
+                    User.UserGroups.Add(new UserGroups
+                    {
+                        Company = identity.CompanyId,
+                        Group = group,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+
+            if (record.GeneralFunctions.Length == 1 && record.GeneralFunctions[0].Role != null)
+                User.UserRoles.Add(new UserRoles
                 {
                     Company = identity.CompanyId,
-                    User = record.Code,
-                    FunctionGroup = function.functionGroup,
-                    Function = function.function,
+                    Role = record.GeneralFunctions[0].Role,
                     CreatedOn = DateTimeOffset.UtcNow,
                     CreatedBy = identity.Code
                 });
+            else
+                foreach (var function in record.GeneralFunctions)
+                    User.UserFunctions.Add(new UserFunctions
+                    {
+                        Company = identity.CompanyId,
+                        User = record.Code,
+                        FunctionGroup = function.FunctionGroup,
+                        Function = function.Function,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
 
             foreach (var row in record.PrototypeFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Role != null)
+                    User.UserRoles.Add(new UserRoles
+                    {
+                        Company = identity.CompanyId,
+                        Role = row.Role,
+                        Department = row.Department,
+                        PrototypeType = row.PrototypeType,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+                else if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         User.UserFunctions.Add(new UserFunctions
                         {
                             Company = identity.CompanyId,
                             User = record.Code,
-                            Department = row.department,
-                            PrototypeType = row.prototypeType,
+                            Department = row.Department,
+                            PrototypeType = row.PrototypeType,
                             FunctionGroup = "Prototypes",
                             Function = function,
-                            Tag = row.level,
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
 
             foreach (var row in record.InstanceFunctions)
-                if (row.functions != null)
-                    foreach (var function in row.functions)
+                if (row.Role != null)
+                    User.UserRoles.Add(new UserRoles
+                    {
+                        Company = identity.CompanyId,
+                        Role = row.Role,
+                        Department = row.Department,
+                        PrototypeType = row.PrototypeType,
+                        CreatedOn = DateTimeOffset.UtcNow,
+                        CreatedBy = identity.Code
+                    });
+                else if (row.Functions != null)
+                    foreach (var function in row.Functions)
                         User.UserFunctions.Add(new UserFunctions
                         {
                             Company = identity.CompanyId,
                             User = record.Code,
-                            Department = row.department,
-                            PrototypeType = row.prototypeType,
+                            Department = row.Department,
+                            PrototypeType = row.PrototypeType,
                             FunctionGroup = "Instances",
                             Function = function,
-                            Tag = row.level,
                             CreatedOn = DateTimeOffset.UtcNow,
                             CreatedBy = identity.Code
                         });
+
+            foreach (var Level in record.Levels)
+                User.UserLevels.Add(new UserLevels
+                {
+                    Company = identity.CompanyId,
+                    Department = Level.Department,
+                    PrototypeType = Level.PrototypeType,
+                    PrototypeWorkFlowLevel = Level.PrototypeWorkFlowLevel,
+                    InstanceWorkFlowLevel = Level.InstanceWorkFlowLevel,
+                    SignatureLevel = Level.SignatureLevel,
+                    CreatedOn = DateTimeOffset.UtcNow,
+                    CreatedBy = identity.Code
+                });
         }
 
-        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> userFunctions)
+        private static string SerializeUserInformation(UserRequest user, IEnumerable<UserFunctions> functions, IEnumerable<UserLevels> levels, IEnumerable<UserRoles> roles)
         {
             return JsonConvert.SerializeObject(new
             {
                 user.Code,
                 user.AuthenticationCode,
                 user.Email,
+                user.CorporateID,
                 NameAndSurname = user.Description,
                 user.Enabled,
-                Functions = userFunctions.Select(uf => new
+                user.Groups,
+                Functions = functions.Select(uf => new
                 {
-                    uf.FunctionGroup,
-                    uf.Function,
                     Department = uf.Department.HasValue ? uf.Department + " " + uf.Departments?.Name : null,
                     PrototypeType = uf.PrototypeType.HasValue ? uf.PrototypeType + " " + uf.PrototypeTypes?.Name : null,
-                    Level = uf.Tag
+                    uf.FunctionGroup,
+                    uf.Function
+                }),
+                Roles = roles.Select(ur => new
+                {
+                    Department = ur.Department.HasValue ? ur.Department + " " + ur.Departments?.Name : null,
+                    PrototypeType = ur.PrototypeType.HasValue ? ur.PrototypeType + " " + ur.PrototypeTypes?.Name : null,
+                    ur.Role
+                }),
+                Levels = levels.Select(ul => new
+                {
+                    ul.Department,
+                    ul.PrototypeType,
+                    ul.PrototypeWorkFlowLevel,
+                    ul.InstanceWorkFlowLevel,
+                    ul.SignatureLevel
                 }),
                 ReasonForChange = user.Reason
             });
@@ -521,6 +615,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
+                        CorporateID = record.CorporateID,
                         Password = _hashService.HashStringToBytes(record.Password),
                         AuthenticationCode = record.AuthenticationCode,
                         Enabled = record.Enabled
@@ -536,7 +631,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels, User.UserRoles)
                     });
                 }
                 catch (Exception exception)
@@ -563,6 +658,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Code = record.Code,
                         Description = record.Description,
                         Email = record.Email,
+                        CorporateID = record.CorporateID,
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
                         AuthenticationCode = record.AuthenticationCode
@@ -578,7 +674,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserEdited,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions)
+                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels, User.UserRoles)
                     });
                 }
                 catch (Exception exception)
@@ -629,11 +725,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-        public async Task CheckInactiveUsers(CancellationToken cancellationToken = new CancellationToken())
+        public async Task CheckInactiveUsers(long company, CancellationToken cancellationToken = new CancellationToken())
         {
             try
             {
-                var users = await _userRepository.GetUsersToDisableAsync();
+                var users = await _userRepository.GetUsersToDisableAsync(company);
                 foreach (var user in users)
                 {
                     user.Enabled = false;
@@ -644,7 +740,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                                 user.Email,
                                 new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
                             {
-                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null, null)
                             }, cancellationToken);
                 }
 
@@ -652,14 +748,14 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (Exception e)
             {
+                await _emailService.LogErrorAsync(e, "Failed to disable inactive users");
                 Logger.Error(e);
             }
 
             try
             {
-                var users = await _userRepository.GetUsersDisableWarningAsync();
+                var users = await _userRepository.GetUsersDisableWarningAsync(company);
                 foreach (var user in users)
-                {
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
                             new EmailMessage(user.Company, "User disabled soon",
@@ -667,9 +763,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                                 user.Email,
                                 new List<Tuple<string, string>> { new Tuple<string, string>("User", user.Description) })
                             {
-                                TrailMessage = new EmailTrailMessage(user.Code, null, null)
+                                TrailMessage = new EmailTrailMessage(user.Code, null, null, null)
                             }, cancellationToken);
-                }
             }
             catch (Exception e)
             {
@@ -677,11 +772,11 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-        public async Task CheckUnchangedPins(CancellationToken cancellationToken = new CancellationToken())
+        public async Task CheckUnchangedPins(long company, CancellationToken cancellationToken = new CancellationToken())
         {
             try
             {
-                var users = await _userRepository.GetUsersWithExpiredPin();
+                var users = await _userRepository.GetUsersWithExpiredPin(company);
                 foreach (var user in users)
                     user.PIN = null;
 
@@ -689,8 +784,15 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (Exception e)
             {
+                await _emailService.LogErrorAsync(e, "Failed to clear users pin");
                 Logger.Error(e);
             }
+        }
+
+        public async Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups)
+        {
+            var conflicts = await _userRepository.GetConflicts(identity.CompanyId, groups);
+            return conflicts.Select(c => new Tuple<string, string>(c.Group1, c.Group2)).ToList();
         }
     }
 }

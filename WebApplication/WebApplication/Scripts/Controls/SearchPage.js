@@ -13,6 +13,7 @@
             grid.update(result.data, options.updateHandler);
             paginator.setPage(result.currentPage, result.pagesCount);
             filtered = true;
+            options.filterHandler && options.filterHandler(result);
         },
 
         closeHandler = function () {
@@ -33,9 +34,7 @@
 
                 setTimeout(function () {
                     $("select.AutoComplete", advancedSearchPanel).each(function (index) {
-                        var
-                            select = $(this),
-                            autoComplete = select.data("autoComplete");
+                        var autoComplete = matematici.AutoComplete.get(this);
                         if (autoComplete) autoComplete.refresh();
                     });
                 }, 0);
@@ -51,7 +50,7 @@
         },
 
 		setup = function () {
-			options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole(options.pageName + "#Edit#");
+            options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole((options.functionGroup || options.pageName) + "#Edit#");
 			if (!options.readOnly)
 				new matematici.ActionBar("div.ActionBar").add("Add", function () {
 					matematici.popup.show({

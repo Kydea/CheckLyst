@@ -86,17 +86,21 @@ div.Instance {
                 display: none;
                 position: absolute;
                 background-color: rgba(255, 255, 255, .9);
-                padding: 5px 10px 10px;
+                padding: 10px;
                 border: solid 1px $Color-Grey-Light;
                 border-radius: 0 10px 10px 10px;
                 box-shadow: $Box-Shadow;
                 line-height: 1.5em;
-                width: 200px;
+                font-size: 12px;
+                width: 228px;
+                text-align: left;
 
-                i.fa {
-                    margin-left: -30px;
+                i.fa, i.fal {
+                    margin-left: -20px;
                     color: $Color-Grey-Dark;
                     position: absolute;
+                    font-size: 12px;
+                    line-height: 1.5;
 
                     &.fa-thumbs-up {
                         color: green;
@@ -107,14 +111,22 @@ div.Instance {
                     }
                 }
 
-                span, a {
-                    display: block;
-                    padding: 2px;
-                    color: black !important;
-                    float: none;
-                    margin: 5px 0 0 30px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                div {
+                    span, a {
+                        display: block;
+                        padding-bottom: 5px;
+                        color: black !important;
+                        float: none;
+                        margin-left: 20px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    &:last-child {
+                        span, a {
+                            padding-bottom: 0;
+                        }
+                    }
                 }
             }
 
@@ -190,8 +202,10 @@ div.Instance {
             }
 
             .Item.Field:not(.Boolean) {
-                :focus ~ .Copy {
-                    display: block;
+                :focus, .Focused {
+                    ~ .Copy {
+                        display: block;
+                    }
                 }
             }
 
@@ -200,7 +214,7 @@ div.Instance {
             }
 
             &.Removed {
-                label, input, select {
+                label, input, select, td {
                     color: $Color-Red-Regular !important;
                 }
             }
@@ -224,6 +238,34 @@ div.Instance {
             }
         }
 
+        &.HideRemoveButton {
+            > .Iteration > .IterationCommands {
+                a.Remove {
+                    display: none;
+                }
+            }
+
+            > .TableContainer .IterationCommands {
+                a.Remove {
+                    display: none;
+                }
+            }
+        }
+
+        &.HideMoveButton {
+            > .Iteration > .IterationCommands {
+                a.Up, a.Down {
+                    display: none;
+                }
+            }
+
+            > .TableContainer .IterationCommands {
+                a.Up, a.Down {
+                    display: none;
+                }
+            }
+        }
+
         > div.Information {
 
             div.Panel {
@@ -235,6 +277,7 @@ div.Instance {
         &.CountDownOn {
             height: 163px !important;
             border: none;
+            overflow: hidden;
         }
     }
 
@@ -246,13 +289,13 @@ div.Instance {
         }
 
         &.Field {
-            $Label-Width: 200px;
+            $Label-Width: 230px;
 
             input {
                 &[type=checkbox] {
-                    height: 16px;
-                    width: 16px;
-                    margin: 5px + ($Metric-Control-Height - 16px) / 2 0 ($Metric-Control-Height - 16px) / 2;
+                    height: 36px;
+                    line-height: 36px;
+                    vertical-align: middle;
                 }
             }
 
@@ -281,22 +324,36 @@ div.Instance {
             }
 
             &.DateTime {
-                label {
-                    width: $Label-Width * 2 + $Metric-Control-Space;
-                }
-
                 input {
                     float: left;
-                    width: calc(50% + #{$Metric-Control-Space / 2});
+                    width: 120px;
+                    border-radius: 5px 0 0 5px;
                 }
 
                 input.AutoComplete {
                     float: left;
-                    width: calc(25% - #{$Metric-Control-Space / 4});
-                    border-right: solid 1px $Color-Grey-Light;
-                    border-radius: 5px;
+                    width: 55px;
+                    border-left: 0;
+                    border-radius: 0 5px 5px 0;
                     padding-left: 5px !important;
                     padding-right: 0 !important;
+
+                    &:nth-child(5) {
+                        border-radius: 0;
+                    }
+                }
+
+                label.Controls2, label.FullWidth {
+                    input:not(.AutoComplete) {
+                        width: 50% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px 0 0 5px !important;
+                    }
+
+                    input.AutoComplete {
+                        float: left;
+                        width: 25% !important;
+                    }
                 }
             }
 
@@ -309,10 +366,31 @@ div.Instance {
                 input.AutoComplete {
                     float: left;
                     width: 50%;
-                    border-right: solid 1px $Color-Grey-Light;
-                    border-radius: 5px;
+                    border-left: 0;
+                    border-radius: 0 5px 5px 0;
                     padding-left: 5px !important;
                     padding-right: 0 !important;
+
+                    &:nth-child(4) {
+                        border-radius: 5px 0 0 5px;
+                        border-left: solid 1px $Color-Grey-Light;
+                    }
+                }
+            }
+
+            &.Text, &.Number, &.Date {
+                label.Controls2 {
+                    input {
+                        width: 100% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px !important;
+                    }
+                }
+            }
+
+            &.Boolean {
+                input {
+                    width: unset !important;
                 }
             }
 
@@ -357,6 +435,16 @@ div.Instance {
                 }
             }
 
+            &.List {
+                label.Controls2 {
+                    input.AutoComplete {
+                        width: 100% !important;
+                        border: solid 1px $Color-Grey-Light !important;
+                        border-radius: 5px !important;
+                    }
+                }
+            }
+
             .ExternalSourceLink {
                 position: absolute;
                 top: 26px;
@@ -368,7 +456,6 @@ div.Instance {
                     text-decoration: none;
                 }
             }
-
 
             .Copy {
                 position: absolute;
@@ -390,8 +477,23 @@ div.Instance {
             right: auto;
         }
 
-        &.Text div.Information {
-            display: none;
+        &.Text:not(.Field) {
+            div.Information {
+                display: none;
+            }
+
+            a.Ellipsis {
+                background: white;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                cursor: pointer;
+
+                i {
+                    font-size: 12px !important;
+                    padding: 2px;
+                }
+            }
         }
 
         &.Signature {
@@ -520,6 +622,12 @@ div.Instance {
             overflow: auto;
             width: calc(100% - #{$Metric-Control-Space});
         }
+
+        div.ActionButtonsBar {
+            a + a {
+                margin-left: $Metric-Control-Space;
+            }
+        }
     }
 
     .InstanceDescription {
@@ -552,7 +660,7 @@ div.Instance {
                     position: relative;
 
                     &.Field {
-                        padding: 0;
+                        padding: 1px;
 
                         input[type=checkbox] {
                             display: block;
@@ -601,6 +709,11 @@ div.Instance {
                                 padding-right: 28px !important;
                             }
                         }
+
+                        .ExternalSourceLink {
+                            top: 0 !important;
+                            line-height: 38px;
+                        }
                     }
 
                     &.Signature {
@@ -622,6 +735,28 @@ div.Instance {
                         }
                     }
 
+                    &.InstanceLink {
+                        text-align: center;
+                        width: 100px;
+
+                        input {
+                            display: none;
+                        }
+
+                        > i {
+                            display: none;
+                        }
+
+                        a.Button {
+                            float: none;
+                            min-width: unset;
+                            margin-top: 0;
+                            max-width: 250px;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
+                    }
+
                     &.Link {
                         font-size: 13px;
 
@@ -632,9 +767,8 @@ div.Instance {
 
                     &.Image, &.Attachment {
                         white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
                         max-width: 100%;
+                        padding: 0;
 
                         a + a {
                             margin-left: 10px;
@@ -642,33 +776,49 @@ div.Instance {
                     }
 
                     > div.Information {
-                        left: 2px;
+                        left: 3px;
                     }
 
-                    &:not(.Image):not(.Attachment) i.Icon {
+                    &:not(.Signature):not(.Image):not(.Attachment):not(.InstanceLink) i.Icon {
                         display: none;
                     }
 
                     &.IterationCommands {
                         white-space: nowrap;
                         text-align: center;
+                        width: 10px;
+                        padding: 3px;
 
                         > a.Up, a.Down, a.Remove {
                             display: inline-block;
                             float: none;
                         }
+
+                        &.Inactive {
+                            a {
+                                display: none !important;
+                            }
+                        }
                     }
                 }
 
-                &:nth-child(odd) {
+                &.Odd {
                     td.Inactive {
                         background-color: $Color-Silver-Light;
                     }
                 }
 
-                &:nth-child(even) {
+                &.Even {
                     td.Inactive {
                         background-color: $Color-Silver-Dark;
+                    }
+                }
+
+                &.Removed {
+                    background-color: $Color-Pink !important;
+
+                    td {
+                        background-color: $Color-Pink !important;
                     }
                 }
             }

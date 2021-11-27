@@ -2,6 +2,7 @@
 using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +11,12 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 {
     public class Source : SourceBase
     {
-        private Object Lock = new System.Object();
+        private readonly object Lock = new object();
 
         private static SAPConfiguration SAPConfiguration { get; set; }
 
         private RfcDestination Destination { get; set; }
-        private SAPParameters SAPParameters { get;set;}
+        private SAPParameters SAPParameters { get; set; }
 
         public override void Parse(string Data)
         {
@@ -76,21 +77,21 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             }
         }
 
-        public override void Test()
+        public override void PrepareMetaData(out double OperationTime)
         {
-            var Repository = Destination.Repository;
+            OperationTime = 0;
         }
 
-        public override void PrepareMetaData()
+        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double OperationTime)
         {
-        }
-
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
-        {
+            var stopWatch = Stopwatch.StartNew();
             switch (SAPParameters.FunctionName)
             {
                 case "PO Header":
-                    return FunctionPOHeader(Parameters, Page, DecimalSeparator);
+                    var Result = FunctionPOHeader(Parameters, Page, DecimalSeparator);
+                    stopWatch.Stop();
+                    OperationTime = stopWatch.Elapsed.TotalMilliseconds;
+                    return Result;
                 default:
                     throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
@@ -153,8 +154,6 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                     ++Row;
                 }
             }
-
-
         }
 
         #endregion

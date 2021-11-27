@@ -18,7 +18,11 @@ namespace CheckListManager.Common.Data
         public PrototypeTypes()
         {
             this.Prototypes = new HashSet<Prototypes>();
+            this.GroupFunctions = new HashSet<GroupFunctions>();
+            this.GroupRoles = new HashSet<GroupRoles>();
             this.UserFunctions = new HashSet<UserFunctions>();
+            this.UserLevels = new HashSet<UserLevels>();
+            this.UserRoles = new HashSet<UserRoles>();
         }
     
         public long ID { get; set; }
@@ -42,9 +46,17 @@ namespace CheckListManager.Common.Data
         public virtual Companies Companies { get; set; }
         public virtual Departments Departments { get; set; }
         public virtual WorkFlows WorkFlows1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserFunctions> UserFunctions { get; set; }
         public virtual FTPServers FTPServers { get; set; }
         public virtual FTPServers FTPServers1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupFunctions> GroupFunctions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GroupRoles> GroupRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserFunctions> UserFunctions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserLevels> UserLevels { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserRoles> UserRoles { get; set; }
     }
 }

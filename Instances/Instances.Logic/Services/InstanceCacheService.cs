@@ -34,8 +34,12 @@ namespace CheckListManager.Instances.Logic.Services
 			var cacheObject = await _redisCache.GetAsync<InstanceCacheObject>($"Instance:{code}:Metadata", RegionName);
 			if (cacheObject != null && includeData)
 			{
-				cacheObject.Instance = await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
-				if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
+                cacheObject.Instance =
+                    cacheObject.CheckVersion(2.0m) ?
+                    await _redisCache.GetWithCompressionAsync<Instance>($"Instance:{code}:Data", RegionName, _converters) :
+                    await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
+
+                if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");
 				cacheObject.Instance.Setup(cacheObject, await _settingService.DecimalSeparatorAsync(cacheObject.CompanyId), await _settingService.TimeZoneAsync(cacheObject.CompanyId), false);
 			}
 
@@ -48,9 +52,10 @@ namespace CheckListManager.Instances.Logic.Services
 			{
 				_redisCache.BeginTransaction();
 
-				await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Metadata", cacheObject, RegionName);
+                cacheObject.SetModelVersion();
+                await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Metadata", cacheObject, RegionName);
 				if (cacheObject.Instance != null)
-					await _redisCache.SetAsync($"Instance:{cacheObject.Code}:Data", cacheObject.Instance, RegionName);
+					await _redisCache.SetWithCompressionAsync($"Instance:{cacheObject.Code}:Data", cacheObject.Instance, RegionName);
 
 				var score = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -89,10 +94,14 @@ namespace CheckListManager.Instances.Logic.Services
 		public Task TouchAsync(string code)
 			=>_redisCache.SortedSetElementInsertAsync("Instances", code, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), RegionName);
 
-		public Task<LockObject> LockAsync(string code)
-			=> _redisCache.LockAsync($"Instance:{code}:Lock", RegionName);
+        public async Task<LockObject> LockAsync(string code)
+        {
+            var lockObject = await _redisCache.LockAsync($"Instance:{code}:Lock", RegionName);
+            if (!lockObject.IsAcquired) throw new InstanceException("Instance is currently being updated by another user");
+            return lockObject;
+        }
 
-		public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
+        public Task<string[]> GetInstancesInRangeAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity)
 			=> _redisCache.SortedSetGetAsync("Instances", start, stop, RegionName);
     }
 }

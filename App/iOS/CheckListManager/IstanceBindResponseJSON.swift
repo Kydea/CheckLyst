@@ -55,7 +55,7 @@ public struct Field : Decodable
     
 }
 
-public struct Option : Decodable
+public struct Option : Decodable, Encodable
 {
     
     public var text : String

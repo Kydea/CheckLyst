@@ -23,11 +23,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
         {
             base.Check(CheckList, Expression, IteratorStack);
             if (Left.DataType != DataType.Number || Right.DataType != DataType.Number)
-                throw new ParseException("Operand of operator * must be numbers", Position);
+                throw new ParseException($"Operand of functio {Function} must be numbers", Position);
             DataType = DataType.Number;
         }
 
-        private decimal Corr(List<TypedValue> LeftValues, List<TypedValue> RightValues)
+        private decimal? Corr(List<TypedValue> LeftValues, List<TypedValue> RightValues)
         {
             var LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue);
             var RightAvg = RightValues.Average(TypedValue => TypedValue.NumberValue);
@@ -41,10 +41,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                * RightValues.Sum(TypedValue => Math.Pow((double)(TypedValue.NumberValue - RightAvg), 2))
             );
 
-            return Denominator == 0 ? 0 : Result / Denominator;
+            return Denominator == 0 ? default(decimal?) : Result / Denominator;
         }
 
-        private decimal Slope(List<TypedValue> LeftValues, List<TypedValue> RightValues, decimal? PreCalculatedLeftAvg, decimal? PreCalculatedRightAvg)
+        private decimal? Slope(List<TypedValue> LeftValues, List<TypedValue> RightValues, decimal? PreCalculatedLeftAvg, decimal? PreCalculatedRightAvg)
         {
             var LeftAvg = PreCalculatedLeftAvg ?? LeftValues.Average(TypedValue => TypedValue.NumberValue);
             var RightAvg = PreCalculatedRightAvg ?? RightValues.Average(TypedValue => TypedValue.NumberValue);
@@ -56,10 +56,10 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                 Numerator += (RightValues[Index].NumberValue - RightAvg) * (LeftValues[Index].NumberValue - LeftAvg);
                 Denominator += Math.Pow((double)(RightValues[Index].NumberValue - RightAvg), 2);
             }
-            return Denominator == 0 ? 0 : Numerator / (decimal)Denominator;
+            return Denominator == 0 ? default(decimal?) : Numerator / (decimal)Denominator;
         }
 
-        private decimal Intercept(List<TypedValue> LeftValues, List<TypedValue> RightValues)
+        private decimal? Intercept(List<TypedValue> LeftValues, List<TypedValue> RightValues)
         {
             decimal
                 LeftAvg = LeftValues.Average(TypedValue => TypedValue.NumberValue),
@@ -77,14 +77,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
                 Function == "Intercept" ? Intercept(LeftValues, RightValues) :
                 default(decimal?);
 
-            return new TypedValue(DataType.Number, Result);
+            return Result.HasValue ? new TypedValue(DataType.Number, Result) : new TypedValue(DataType.Error, "Division by 0");
         }
 
         protected override string OperatorName => Function;
-
-        public override string ToString()
-        {
-            return $"{OperatorName} ({Left?.ToString() ?? "#"}, {Right?.ToString() ?? "#"})";
-        }
     }
 }

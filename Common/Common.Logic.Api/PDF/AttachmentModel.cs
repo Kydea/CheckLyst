@@ -16,7 +16,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public int Index { get; set; }
 
-        public string Description =>
-            string.IsNullOrEmpty(Item.Description) ? "(empty)" : Item.Description;
+        public string Description { get; set; }
     }
 }

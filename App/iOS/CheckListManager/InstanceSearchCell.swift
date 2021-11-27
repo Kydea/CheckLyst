@@ -9,17 +9,21 @@
 import Foundation
 import UIKit
 
-class InstanceSearchCell: UITableViewCell {
+class InstanceSearchCell: BaseTableViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)
-        
-        self.layoutMargins = UIEdgeInsetsMake(0.0, 0.0, 0.0, 40.0)
-        
-        self.preservesSuperviewLayoutMargins = false
-        
-        self.separatorInset = UIEdgeInsetsMake(0.0, 40.0, 0.0, 40.0)
-        
+                
+        setLayout()
     }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        setLayout()
+                        
+    }
+    
 }

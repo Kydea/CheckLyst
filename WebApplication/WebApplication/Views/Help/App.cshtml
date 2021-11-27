@@ -1,4 +1,27 @@
 ﻿<h3>Mobile App</h3>
+<h4>Login</h4>
+@if (ViewBag.AppMode)
+{
+    <p>
+        To set the server address, frame the following qr code with the camera of the iPad you want to setup (the application must be already installed).
+    </p>
+}
+else
+{
+    <p>
+        To set the server address, <a id="QRCode" href="Error" target="_blank">click here</a> from the browser of the iPad you want to setup (the application must be already installed) or just frame the following qr code from the ipad camera.
+    </p>
+}
+<p>
+    <img src="@BaseUrl/Infrastructure/Information/SetupQRCode" />
+</p>
+<p>
+    To set the server address manually, type the full web application url in the server address text box (example: https://server.address.com or http://10.10.10.10) and click on the button "verify".
+</p>
+<p>
+    Select your company and fill your username and password, then click on the button "login".
+</p>
+
 <h4>Navigation Bar</h4>
 <p>
     Tap on <strong>User</strong> to open the user section.
@@ -9,14 +32,17 @@
 <p>
     Tap on <strong>Help</strong> to open this help section.
 </p>
+<p>
+    Tap on <strong>Signers</strong> to open this help section.
+</p>
 
 <h4>Header</h4>
 <p>
     Tap on the button <strong>i</strong> to see:
     <ul>
-        <li>server date and time,</li>
-        <li>server,</li>
-        <li>software version.</li>
+        <li>Local date and time</li>
+        <li>Server version</li>
+        <li>App version</li>
     </ul>
 </p>
 
@@ -26,6 +52,9 @@
 </p>
 <p>
     Tap on <strong>logout</strong> to log out and go back to login page.
+</p>
+<p>
+    Tap on <strong>Change PIN</strong> to log out and go back to login page.
 </p>
 
 @Html.Partial("SearchPage", new HelpPage
@@ -37,10 +66,11 @@
 
     Buttons = new Field[]
     {
-        new Field("new instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
+        new Field("New Instance", "Creates a new empty the instance. An active prototype version must have been selected in the filters."),
     },
 
     Filters = new Field[] {
+        new Field("Instance ID","The ID of the instance"),
         new Field("Department / prototype type", "The department and prototype type of the instance prototype."),
         new Field("Prototype / version", "The prototype and version number of the instance."),
         new Field("Instance description", "The description of the instance or part of it."),
@@ -63,26 +93,17 @@
 <table>
     <tbody>
         <tr><td>ID</td><td>The unique identifier.</td></tr>
-        <tr><td>Code</td><td>The code that identifies the instance.</td></tr>
-        <tr><td>State</td><td>The state of the instance.</td></tr>
-        <tr><td>Year</td><td>The year of the instance.</td></tr>
-        <tr><td>Number</td><td>The number of the instance.</td></tr>
-        <tr><td>Description</td><td>The description of the instance.</td></tr>
-        <tr><td>Department</td><td>The department of the prototype.</td></tr>
-        <tr><td>Prototype type</td><td>The type of the prototype.</td></tr>
-        <tr><td>Prototype </td><td>The prototype of the instance.</td></tr>
-        <tr><td>Version</td><td>The version number of the prototype.</td></tr>
         <tr><td>Created by</td><td>The user who created the record.</td></tr>
-        <tr><td>Created by</td><td>The date and time of creation of the record.</td></tr>
+        <tr><td>Created on</td><td>The date and time of creation of the record.</td></tr>
         <tr><td>Modified by</td><td>The user who modified the record last time.</td></tr>
-        <tr><td>Created by</td><td>The date and time of the last modification.</td></tr>
+        <tr><td>Modified on</td><td>The date and time of the last modification.</td></tr>
     </tbody>
 </table>
 
 <h3>Instance manager</h3>
 
 <p>
-    The <strong>Instance manager</strong> can be used to display, follow and fill in instances of checklists.
+    The <strong>Instance manager</strong> can be used to display, execute and fill in instances of checklists.
 </p>
 <p>
     Basing on the corresponding <strong>prototype</strong>, an instance is composed by the <strong>header</strong> and one or more <strong>pages</strong>, containing <strong>groups</strong>. Each group can contain other groups (subgroups) itself, <strong>text</strong>, <strong>fields</strong> and <strong>signatures</strong>. And so on.
@@ -112,11 +133,34 @@
     <tr><td>Save</td><td>Saves the instance.</td></tr>
     <tr><td>History</td><td>Shows the history of the instance.</td></tr>
     <tr><td><i class="fa fa-calculator"></i></td><td>Shows the expressions of the instance and their value.</td></tr>
+    <tr><td><i class="fas fa-sitemap"></i></td><td>Shows the relations list.</td></tr>
 </table>
+
+<h3>Signers section</h3>
+
+<p>
+    Tap on <i class="fas fa-plus"></i> to add a signer.
+</p>
+<p>
+    Tap on user code of the signer to Change the PIN or to Logout.
+</p>
 
 @if (ViewBag.AppMode)
 {
     <script type="text/javascript">
         matematici.elements.body.addClass("OnlyHelp");
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        var
+            settings = matematici.tokenManager.getCompanySettings(),
+            url = settings && settings.webApplicationUrl;
+        url =
+            url && url.startsWith("http://") ? settings.webApplicationUrl.replace("http://", "checklyst://") + "/setup/http" :
+                url && url.startsWith("https://") ? settings.webApplicationUrl.replace("https://", "checklyst://") + "/setup/https" :
+                    "invalid prodocol";
+        $("#QRCode").attr("href", url);
     </script>
 }

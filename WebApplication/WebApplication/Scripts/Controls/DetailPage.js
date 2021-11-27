@@ -1,182 +1,202 @@
 ﻿matematici.DetailPage = function (options) {
-	var
-		detailPage = this,
-		data = matematici.popup.getData(),
-		sender = matematici.popup.getSender(),
-		buttons = options.buttons || [],
-		form,
-		lastReason,
-		title,
+    var
+        detailPage = this,
+        data = !options.wholePage && matematici.popup.getData(),
+        sender = !options.wholePage && matematici.popup.getSender(),
+        buttons = options.buttons || [],
+        form,
+        lastReason,
+        title,
 
-		clickHandler = function (button, event, callback, takeOpen) {
-			if (button.hasClass("ReadOnly")) return false;
+        submit = function (event, callback, takeOpen) {
+            var settings = matematici.tokenManager.getCompanySettings(),
+                input,
+                trigger = function () {
+                    form.trigger(event, function (result) {
+                        form.handleResult(result);
 
-			var settings = matematici.tokenManager.getCompanySettings();
-			var input;
+                        if (settings && settings.requireUserReason) {
+                            lastReason = !result.valid ? input.val() : "";
+                            matematici.dialog.close();
+                        }
 
-			var save = function () {
-				form.trigger(event, function (result) {
-					form.handleResult(result);
+                        if (result.valid) {
+                            matematici.canClose = true;
+                            matematici.popup.getResult().saved = true;
+                            if (!options.wholePage && !takeOpen) matematici.popup.close();
 
-					if (settings && settings.requireUserReason) {
-						lastReason = !result.valid ? input.val() : "";
-						matematici.dialog.close();
-					}
+                            if (!data && result) refresh(result);
 
-					if (result.valid) {
-						matematici.canClose = true;
-						matematici.popup.getResult().saved = true;
-						if (!takeOpen) matematici.popup.close();
+                            matematici.blip.ok(function () {
+                                callback && callback(result);
+                            });
+                        }
+                    }, options.parametersPrepareHandler && options.parametersPrepareHandler());
+                };
 
-						if (!data && result.data) {
-							refresh(result.data);
-						}
+            if (settings && settings.requireUserReason) {
+                matematici.dialog.show({
+                    title: "Reason",
+                    content: $("<div />")
+                        .append(
+                            $("<label />")
+                                .attr("for", "DetailPageReasonInput")
+                                .text("Reason for change")
+                        )
+                        .append(
+                            input = $("<input />")
+                                .attr("id", "DetailPageReasonInput")
+                                .attr("type", "text")
+                                .attr("autocomplete", "off")
+                            //.val(lastReason) //we are currently asking the reason each time as desired by the customer, restore the old value to set last reason
+                        ),
+                    buttons: [
+                        {
+                            text: "save", icon: "check", defaultButton: true, handler: function () {
+                                if (input.val().trim() === "")
+                                    input.addClass("Error");
+                                else {
+                                    input.removeClass("Error");
+                                    form.setValue("reason", input.val());
+                                    trigger();
+                                }
 
-						matematici.blip.ok(callback);
-					}
-				}, options.parametersPrepareHandler && options.parametersPrepareHandler());
-			};
+                                return true;
+                            }
+                        },
+                        { text: "cancel", hidden: false, icon: "times", cancelButton: true }
+                    ],
+                });
+                setTimeout(function () { input.focus(); }, 1);
+            } else {
+                trigger();
+                if (event === "Delete") return false; // Close dialog in case event is delete and reason is not required
+            }
 
-			if (settings && settings.requireUserReason) {
-				matematici.dialog.show({
-					title: "Reason",
-					content: $("<div />")
-						.append(
-							$("<label />")
-								.attr("for", "DetailPageReasonInput")
-								.text("Reason for change")
-						)
-						.append(
-							input = $("<input />")
-								.attr("id", "DetailPageReasonInput")
-								.attr("type", "text")
-								.attr("autocomplete", "off")
-                                //.val(lastReason) //we are currently asking the reason each time as desired by the customer, restore the old value to set last reason
-						),
-					buttons: [
-						{
-							text: "save", icon: "check", defaultButton: true, handler: function () {
-								if (input.val().trim() === "") 
-									input.addClass("Error");
-								else {
-									input.removeClass("Error");
-									form.setValue("reason", input.val());
-                                    save();
-								}
+            return true;
+        },
 
-								return true;
-							}
-						},
-						{ text: "cancel", hidden: false, icon: "times", cancelButton: true }
-					],
-				});
-				setTimeout(function () { input.focus(); }, 1);
-			} else {
-				save();
-				if (event === "Delete") {
-					return false; // Close dialog in case event is delete and reason is not required
-				}
-			}
+        clickHandler = function (button, event, callback, takeOpen) {
+            if (button && button.hasClass("ReadOnly")) return false;
 
-			return true;
-		},
+            if (options && options.validateHandler) {
+                options.validateHandler(event, function () {
+                    submit(event, callback, takeOpen)
+                });
+                return false;
+            } else
+                return submit(event, callback, takeOpen);
+        },
 
-		setup = function () {
-			options.readOnly = options.readOnly != null ? options.readOnly : sender.getOptions().searchPage.isReadOnly();
-			buttons.push({
-				cancelButton: true, hidden: true, handler: function () {
-					if (matematici.canClose)
-						return false;
+        deleteRecord = function (deleteHandler) {
+            matematici.dialog.show("warning", "The record will be deleted.", [
+                {
+                    text: "confirm", icon: "check", handler: function () {
+                        return clickHandler($(this), "Delete", deleteHandler);
+                    }
+                },
+                {
+                    text: "cancel", icon: "times", cancelButton: true
+                }
+            ]);
+        },
 
-					matematici.dialog.show("warning", "Warning: any unsaved change will be lost.", [
-						{ text: "save", icon: "check", handler: matematici.save },
-						{ text: "discard the changes", icon: "exclamation", handler: matematici.popup.close },
-						{ text: "cancel", hidden: true, icon: "remove", cancelButton: true }
-					]);
-					return true;
-				}
-			});
+        setup = function () {
+            options.readOnly = options.readOnly != null ? options.readOnly : sender.getOptions().searchPage.isReadOnly();
+            if (!options.wholePage) {
+                buttons.push({
+                    cancelButton: true, hidden: true, handler: function () {
+                        if (matematici.canClose)
+                            return false;
 
-			if (!options.readOnly) {
-				if (data !== null) {
-					buttons.push({
-						text: "delete", icon: "trash-alt", handler: function () {
-							matematici.dialog.show("warning", "The record will be deleted.", [
-								{
-									text: "confirm", icon: "check", handler: function () {
-										return clickHandler($(this), "Delete");
-									}
-								},
-								{
-									text: "cancel", icon: "times", cancelButton: true
-								}
-							]);
-							return true;
-						}
-					});
-				}
+                        matematici.dialog.show("warning", "Warning: any unsaved change will be lost.", [
+                            { text: "save", icon: "check", handler: matematici.save },
+                            { text: "discard the changes", icon: "exclamation", handler: matematici.popup.close },
+                            { text: "cancel", hidden: true, icon: "remove", cancelButton: true }
+                        ]);
+                        return true;
+                    }
+                });
 
-				buttons.push({
-					text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function () {
-						clickHandler($(this), data == null ? "Add" : "Edit");
-						return true;
-					}
-				});
-			}
+                if (!options.readOnly) {
+                    if (data !== null && !options.disableDelete)
+                        buttons.push({
+                            text: "delete", icon: "trash-alt", handler: function () {
+                                deleteRecord();
+                                return true;
+                            }
+                        });
 
-			matematici.popup.setButtons(buttons);
+                    buttons.push({
+                        text: "save", defaultButton: true, icon: "save", id: "SaveButton", handler: function () {
+                            clickHandler($(this), data == null ? "Add" : "Edit");
+                            return true;
+                        }
+                    });
+                }
 
-			matematici.popup.setWidth(options.width || "460px");
 
-			form = new matematici.Form(options.formSelector, {
-				applyButton: "#SaveButton",
-				bindEvent: options.bindEvent,
-				readOnly: options.readOnly
-			});
-			form.initialize();
-			if (!options.readOnly)
-				form.addChangeHandler(function () {
-					matematici.canClose = false;
-					matematici.save = function (callback, takeOpen) {
-						return clickHandler($("#SaveButton"), data == null ? "Add" : "Edit", callback, takeOpen);
-					};
-				});
+                matematici.popup.setButtons(buttons);
 
-			setTimeout(function () {
-				if (options.initHandler) options.initHandler(detailPage);
-				if (data) form.setValues(data);
-				if (options.completeHandler) options.completeHandler(detailPage);
+                matematici.popup.setWidth(options.width || "520px");
 
-				title = matematici.popup.getTitle().html();
-				refresh(data, true);
-			}, 0);
-		},
+                setTimeout(function () {
+                    if (options.initHandler) options.initHandler(detailPage);
+                    if (data) form.setValues(data);
+                    if (options.completeHandler) options.completeHandler(detailPage);
 
-		refresh = function (d, avoidSetValues) {
-			data = d;
-			if (data && !avoidSetValues) form.setValues(data);
-			matematici.popup.getTitle().html(title + (!data ? " (new)" : data.id ? " (ID: " + data.id + ")" : data.code ? " (Code: " + data.code + ")" : ""));
-		};
+                    title = matematici.popup.getTitle().html();
+                    //refresh(data, true);
+                    refresh(data);
+                }, 0);
+            }
 
-	this.getElement = function () {
-		return matematici.popup.getElement();
-	};
+            form = new matematici.Form(options.formSelector, {
+                applyButton: "#SaveButton",
+                bindEvent: options.bindEvent,
+                readOnly: options.readOnly,
+                resultHandler: options.resultHandler
+            });
+            form.initialize();
+            if (!options.readOnly) {
+                form.addChangeHandler(function () { matematici.canClose = false; });
+                matematici.save = function (callback, takeOpen) {
+                    return clickHandler($("#SaveButton"), data == null ? options.addEvent || "Add" : options.editEvent || "Edit", callback, takeOpen);
+                };
+            }
+        },
 
-	this.getSender = function () {
-		return sender;
-	};
+        refresh = function (d, avoidSetValues) {
+            data = d;
+            //if (data && !avoidSetValues) form.setValues(data);
+            var
+                id = data.id || data.fields && data.fields.id && data.fields.id.value,
+                code = data.code || data.fields && data.fields.code && data.fields.code.value;
+            matematici.popup.getTitle().html(title + (!data ? " (new)" : id ? " (ID: " + id + ")" : code ? " (Code: " + code + ")" : ""));
+        };
 
-	this.getForm = function () {
-		return form;
-	};
+    this.getElement = function () {
+        return matematici.popup.getElement();
+    };
 
-	this.isNew = function () {
-		return data == null;
-	};
+    this.getSender = function () {
+        return sender;
+    };
 
-	this.isReadOnly = function () {
-		return options.readOnly;
-	};
+    this.getForm = function () {
+        return form;
+    };
 
-	setup();
+    this.isNew = function () {
+        return data == null;
+    };
+
+    this.isReadOnly = function () {
+        return options.readOnly;
+    };
+
+    this.clickHandler = clickHandler;
+    this.deleteRecord = deleteRecord;
+
+    setup();
 }

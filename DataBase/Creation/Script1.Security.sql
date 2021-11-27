@@ -10,6 +10,7 @@ create table "Security"."Users"
 	"Description" varchar (100) not null,
 	"AuthenticationCode" text, --json with connection information used to authenticate users with ldap or other company systems
 	"Email" text,
+	"CorporateID" varchar(50),
 	"Enabled" boolean not null default false,
 
     "Password" bytea,
@@ -32,12 +33,16 @@ create table "Security"."Users"
 create unique index "Users_Code" on "Security"."Users" ("Company", upper("Code"));
 
 insert into "Security"."Users" ("Company", "Code", "Description", "Password", "Enabled") values (1, 'CheckListManager', 'System administrator', decode('5b852905cefc6d59524c45b8f642927b5459c2f622d40002466109e69dbccc36', 'hex'), '1'); --V4sc0 R0ss1, sha256
+insert into "Security"."UserFunctions"("Company", "User", "FunctionGroup", "Function") values 
+	(1, 'CheckListManager', 'Companies', 'Edit'),
+	(1, 'CheckListManager', 'Companies', 'View'),
+	(1, 'CheckListManager', 'Trail', 'View');
 
 create table "Security"."UserSessions"
 (
 	"Code" varchar (250) primary key, --refresh token
 
-	"Company" bigint,
+	"Company" bigint not null,
 	"User" varchar (60),
 	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
 

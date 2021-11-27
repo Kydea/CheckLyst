@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - CheckLyet Embed Pilot</title>
+    @Styles.Render("~/bundles/styles")
+    <script type="text/javascript">
+        var
+            matematici = {
+                urls: {
+                    api: "http://api-abbvie.clm.matematici-aws.com/"
+                },
+
+                logout: function () {
+                    sessionStorage.clear();
+                    location = ".";
+                }
+            };
+    </script>
+</head>
+<body>
+    <header></header>
+    <h1>@ViewBag.Title</h1>
+
+    @RenderBody()
+
+    <footer>
+        <a id="Logout" href="javascript:matematici.logout();">logout</a>
+    </footer>
+
+    @Scripts.Render("~/bundles/scripts")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

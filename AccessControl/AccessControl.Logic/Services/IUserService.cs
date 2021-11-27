@@ -8,6 +8,7 @@ using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.AccessControl.Data.Models;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -22,7 +23,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 		Task UpdateTokenAsync(IdentityToken token, DateTimeOffset expiresOn);
 		Task LogoutAsync(DefaultIdentity identity, string token);
 
-		Task<List<UserFunctions>> GetFunctionsAsync(long companyId, UsersRequest request);
+		Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request);
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);
 
         Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record);
@@ -30,7 +31,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, UserRequest record);
 
-		Task CheckInactiveUsers(CancellationToken cancellationToken = default(CancellationToken));
-		Task CheckUnchangedPins(CancellationToken cancellationToken = default(CancellationToken));
-	}
+		Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default(CancellationToken));
+		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default(CancellationToken));
+        Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups);
+    }
 }

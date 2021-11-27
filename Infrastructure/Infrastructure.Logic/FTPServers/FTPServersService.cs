@@ -27,12 +27,14 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         {
             ID = d.ID,
             Name = d.Name,
+            Protocol = d.Protocol,
             Host = d.Host,
             Port = d.Port,
             Folder = d.Folder,
             UserName = d.UserName,
             Password = d.Password,
             SSL = d.SSL,
+            Key = d.Key,
             Passive = d.Passive,
             PrototypesDefault = d.PrototypesDefault,
             InstancesDefault = d.InstancesDefault,
@@ -69,6 +71,19 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
             
             var response = new FTPServersResponse();
+            if (string.IsNullOrWhiteSpace(record.Protocol))
+            {
+                response.Fields["Protocol"] = new Field
+                {
+                    ValidationMessages = new List<ValidationMessage> {
+                        new ValidationMessage {
+                            Level = ValidationMessage.LevelError,
+                            Message = "Protocol is a required field"
+                        }
+                    }
+                };
+                response.Valid = false;
+            }
             if (string.IsNullOrWhiteSpace(record.Name))
             {
                 response.Fields["Name"] = new Field
@@ -126,12 +141,14 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                     {
                         Name = record.Name,
                         Host = record.Host,
+                        Protocol = record.Protocol,
                         Port = record.Port.Value,
                         Folder = record.Folder,
                         UserName = record.UserName,
                         Password = record.Password,
                         Passive = record.Passive,
                         SSL = record.SSL,
+                        Key = record.Key,
                         PrototypesDefault = record.PrototypesDefault,
                         InstancesDefault = record.InstancesDefault
                     };
@@ -187,16 +204,23 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         public async Task<string> Test(IDefaultIdentity identity, long id)
         {
             var record = await _infrastructureRepository.GetFTPServerAsync(identity, id);
-
-            var result = await new FTPClient().TestAsync(new FTPConnectionSettings {
+            var settings = new FTPConnectionSettings
+            {
                 Host = record.Host,
                 Folder = record.Folder,
+                Protocol = record.Protocol,
                 Port = record.Port,
-                EnableSSL = record.SSL,
                 UsePassive = record.Passive,
+                EnableSSL = record.SSL,
                 UserName = record.UserName,
-                Password = record.Password
-            });
+                Password = record.Password,
+                Key = record.Key
+            };
+
+            string result =
+                record.Protocol == "SFTP" ?
+                await new SFTPClient().TestAsync(settings) :
+                await new FTPClient().TestAsync(settings);
 
             return result;
         }
@@ -207,15 +231,17 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
             {
                 record.ID,
                 record.Name,
+                record.Protocol,
                 record.Host,
                 record.Port,
                 record.Folder,
                 record.UserName,
                 Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
                 record.Passive,
+                record.SSL,
+                Key = string.IsNullOrEmpty(record.Key) ? null : "***",
                 record.InstancesDefault,
                 record.PrototypesDefault,
-                record.SSL,
                 ReasonForChange = record.Reason,
             };
             return AuditAsync(identity, action, information);

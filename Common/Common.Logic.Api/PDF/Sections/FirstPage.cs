@@ -25,9 +25,10 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         private string SecondRow { get; }
         private string ThirdRow { get; }
         private string Exceptions { get; }
+        public float[] ColumnsWidths { get; set; }
         private List<Tuple<string, string>> Rows { get; }
 
-        public override Task RenderAsync(params object[] State)
+        public override Task RenderAsync()
         {
             PDFBase.Container.Headers = null;
             PDFBase.Container.PageSetup.TopMargin = 36;
@@ -57,7 +58,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                 paragraph.Format.SpaceBefore = paragraph.Format.SpaceAfter = 20;
             }
 
-            PdfPTable Table = new PdfPTable(2) { WidthPercentage = 100, HorizontalAlignment = RowAlignment.Center };
+            int Columns = 2;
+            PdfPTable Table = new PdfPTable(Columns) { WidthPercentage = 100, HorizontalAlignment = RowAlignment.Center };
+
+            if (ColumnsWidths != null && ColumnsWidths.Length == Columns)
+                Table.SetWidths(ColumnsWidths);
+
             foreach (var Row in Rows)
             {
                 Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(PDFBase.BoldFont).Padding(5)));

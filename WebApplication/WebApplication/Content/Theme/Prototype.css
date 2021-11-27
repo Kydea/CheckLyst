@@ -6,7 +6,7 @@ div.Prototype a.Add.Button {
 
 div.Prototype div.Commands {
   position: absolute;
-  z-index: 31;
+  z-index: 28;
   right: 0;
   top: 0;
   margin: 20px !important;
@@ -74,15 +74,20 @@ div.Prototype div.Item {
   cursor: pointer; }
   div.Prototype div.Item label {
     cursor: pointer; }
-  div.Prototype div.Item.Signature input {
+  div.Prototype div.Item input {
+    cursor: pointer;
+    outline: none; }
+  div.Prototype div.Item a.Placeholder {
     cursor: pointer; }
-  div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover {
-    background-color: #009688;
-    cursor: pointer; }
-    div.Prototype div.Item.Signature a.Button:not(.MiniIcon):hover i {
-      color: #009688; }
+  div.Prototype div.Item.Field div.Input {
+    width: 100% !important; }
   div.Prototype div.Item.Text p {
     position: relative; }
+    div.Prototype div.Item.Text p.Ellipsis::after {
+      content: "...";
+      position: absolute;
+      right: 0;
+      bottom: 0; }
   div.Prototype div.Item.Link a {
     position: relative; }
   div.Prototype div.Item.Current::before {

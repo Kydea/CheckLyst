@@ -25,7 +25,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             DataType = Value.Type;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
             return Value;
         }

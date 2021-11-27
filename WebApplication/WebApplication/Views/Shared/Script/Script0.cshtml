@@ -1,12 +1,12 @@
 ﻿<script type="text/javascript">
-	var
+    var
         matematici = {
-        	cacheVersion: 1,
-        	canClose: true,
+            cacheVersion: 1,
+            canClose: true,
             appClientId: "@(ViewBag.AppClientId ?? string.Empty)",
-        	elements: {},
-        	events: {},
-        	actions: {},
+            elements: {},
+            events: {},
+            actions: {},
             pages: {},
             urls: {
                 webApplication: window.location.origin,
@@ -25,8 +25,8 @@
                 },
                 infrastructure: {
                     companies: {
-						getData: "@BaseUrl/Infrastructure/Companies/GetData",
-						getSettings: "@BaseUrl/Infrastructure/Companies/GetSettings"
+                        getSyntheticData: "@BaseUrl/Infrastructure/Companies/GetSyntheticData",
+                        getSettings: "@BaseUrl/Infrastructure/Companies/GetSettings"
                     },
                     clock: "@BaseUrl/Infrastructure/Information/Clock"
                 },
@@ -34,17 +34,28 @@
                     signature: "@Url.Action("Signature", "WorkFlows")"
                 },
                 instances: {
-                    api: "@BaseUrl/Instances/Instance"
+                    api: "@BaseUrl/Instances/Instance",
+                    detail: "/Instances/Detail",
+                    create: "/Instances/Create"
                 },
                 prototypes: {
                     api: "@BaseUrl/Prototypes/Prototype",
-                    detail: "@Url.Action("Detail", "Prototypes")"
+                    detail: "@Url.Action("Detail", "Prototypes")",
+                    expressionEditor: "@Url.Action("ExpressionEditor", "Prototypes")",
+                    sourceEditor: "@Url.Action("SourceEditor", "Prototypes")",
+                    scriptEditor: "@Url.Action("ScriptEditor", "Prototypes")"
+                },
+                reports: {
+                    api: "@BaseUrl/Reports",
+                    columnEditor: "@Url.Action("ColumnEditor", "Reports")",
+                    clauseEditor: "@Url.Action("ClauseEditor", "Reports")",
+                    groupsList: "@Url.Action("GroupsList", "Reports")"
                 },
                 help: "@Url.Action("Index", "Help")",
-        	},
-        	signatureActions: {
-        		toApprove: "Prototype – state to Approved/Active",
-        		toObsolete: "Prototype – state to Obsolete"
+            },
+            signatureActions: {
+                toApprove: "Prototype – state to Approved/Active",
+                toObsolete: "Prototype – state to Obsolete"
             },
             profiles: [
                 "Revisor",
@@ -59,7 +70,8 @@
             isLoginPage: false
         },
         instances = {},
-        prototypes = {};
+        prototypes = {},
+        reports = {};
 
 	if (typeof console === "undefined") console = {};
 	if (typeof console.log === "undefined") console.log = function () { };

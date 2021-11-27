@@ -18,6 +18,14 @@ values
 	('User edited'),
 	('User deleted'),
 
+	('Group created'),
+	('Group edited'),
+	('Group deleted'),
+
+	('Role created'),
+	('Role edited'),
+	('Role deleted'),
+
 	('Prototype created'),
 	('Prototype deleted'),
 	('Prototype state auto-changed'),
@@ -26,7 +34,6 @@ values
 	('Prototype signature issued'),
 	('Prototype export completed'),
 	('Prototype export failed'),
-
 
 	('Instance created'),
 	('Instance opened'),
@@ -45,6 +52,7 @@ values
 	('Instance iteration moved up'),
 	('Instance iteration moved down'),
 	('Instance external source row changed'),
+	('Instance external source row imported'),
 	('Instance downloaded'),
 
 	('Job error'),
@@ -60,18 +68,25 @@ values
 	('DataSource updated'),
 	('DataSource deleted'),
 	
+	('Company created'),
+	('Company updated'),
+
+	('Department created'),
+	('Department updated'),
+	('Department deleted'),
+
 	('PrototypeType created'),
 	('PrototypeType updated'),
 	('PrototypeType deleted'),
 	('Prototype downloaded'),
 	
-	('Department created'),
-	('Department updated'),
-	('Department deleted'),
-
 	('FTPServer created'),
 	('FTPServer updated'),
-	('FTPServer deleted');
+	('FTPServer deleted'),
+
+	('Report created'),
+	('Report updated'),
+	('Report deleted');
 
 create table "Trail"."Records"
 (
@@ -83,8 +98,10 @@ create table "Trail"."Records"
     "Action" varchar (100) references "Trail"."Actions",
 	"Information" text,
 
-	"CheckList" varchar (100)
+	"CheckListCode" varchar (100),
+	"CheckListID" bigint
 );
 
-create index "Index_Records_CheckList" on "Trail"."Records" ("Company", "CheckList");
+create index "Index_Records_CheckListCode" on "Trail"."Records" ("Company", "CheckListCode");
+create index "Index_Records_CheckListID" on "Trail"."Records" ("Company", "CheckListID");
 create index "Index_Records_User" on "Trail"."Records" ("Company", "User");

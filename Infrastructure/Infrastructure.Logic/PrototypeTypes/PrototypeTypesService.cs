@@ -11,6 +11,7 @@ using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Infrastructure.Data;
+using CheckListManager.Infrastructure.Data.ListItems;
 using Newtonsoft.Json;
 
 namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
@@ -43,7 +44,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             if (Form.Source == null)
             {
                 //initial load
-                var Departments = await _commonRepository.GetDepartmentsAsync(identity, null, null);
+                var Departments = await _commonRepository.GetDepartmentsAsync(identity.CompanyId);
                 Department = Form.Department.HasValue && Departments.Any(d => d.ID == Form.Department) ? Form.Department.Value : Departments.FirstOrDefault()?.ID;
                 response.Fields["Department"] = new Field
                 {
@@ -75,7 +76,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                     Options = FTPServers
                 };
 
-                response.Fields["PrototypeType"] = new Field { Value = Form.Name };
+                response.Fields["Name"] = new Field { Value = Form.Name };
             }
 
             return response;
@@ -102,25 +103,15 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ModifiedBy = pt.ModifiedBy,
                         ModifiedOn = pt.ModifiedOn
                     },
-                    Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup, 
-                    Form.CurrentPage, Form.ItemsPerPage
+                    Form.Data.Department, Form.Data.Name, Form.CurrentPage, Form.ItemsPerPage
                 );
 
-        public async Task<PagingResponse<List<PrototypeTypesSyntheticRow>>> GetSyntheticDataAsync(IDefaultIdentity identity, PagingRequest<PrototypeTypesRequest> Form)
-            => await _infrastructureRepository
-                .GetPrototypeTypesAsync(
-                    identity,
-                    pt => new PrototypeTypesSyntheticRow
-                    {
-                        Department = pt.Department,
-                        DepartmentName = pt.Departments.Name,
-                        ID = pt.ID,
-                        Name = pt.Name
-                    },
-                    Form.Data.Department, Form.Data.Name, Form.Data.FunctionGroup,
-                    Form.CurrentPage, Form.ItemsPerPage,
-                    Form.Data.Function
-                );
+        public async Task<List<PrototypeTypesSyntheticRow>> GetSyntheticDataAsync(IDefaultIdentity identity, PrototypeTypesRequest Form)
+            => (
+                await _commonRepository
+                .GetPrototypeTypesAsync(identity, -1, Form?.FunctionGroup, Form?.Function)
+            )
+                .Select(pt => new PrototypeTypesSyntheticRow { ID = pt.ID, Name = pt.Name, Department = pt.Department, DepartmentName = pt.DepartmentName }).ToList();
 
         private async Task<PrototypeTypesResponse> ValidateAsync(IDefaultIdentity identity, PrototypeTypesRequest record)
         {

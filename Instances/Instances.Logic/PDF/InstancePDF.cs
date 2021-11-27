@@ -7,6 +7,7 @@ using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.PDF;
 using CheckListManager.Common.Logic.Api.PDF.Sections;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Instances.Data;
@@ -36,9 +37,17 @@ namespace CheckListManager.Instances.Logic.PDF
         {
             var Field = (Field)CheckListField;
             if (Field.ValueTypeName == "DateTime")
-                return Field.Value + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
+                return string.IsNullOrEmpty(Field.Value) ? string.Empty : Field.Value + DateTimeOffsetHelper.FormatOffset(Field.LocalTimeZone ? Field.Offset : 0);
             else
                 return FormatFormula(Field.Value);
+        }
+
+        public override string GetItemDescription(ICheckListItem CheckListItem)
+        {
+            var Item = (Models.CheckLists.Item)CheckListItem;
+            return Item.IterationItem ?
+                FormatFormula(Item.FindIteratorModelItem().DescriptionFormula?.Value ?? Item.DescriptionFormula?.Value) :
+                FormatFormula(Item.DescriptionFormula?.Value);
         }
 
         protected override FirstPage GenerateFirstPage()
@@ -57,13 +66,23 @@ namespace CheckListManager.Instances.Logic.PDF
 
             var Exceptions = new StringBuilder();
             foreach (var Expression in Instance.Instance.Expressions.Values)
-                if (Expression.Exception && Expression.Value.Value as bool? == true)
+                if (
+                    Expression.Exception
+                    && (
+                        Expression.Value.Type == DataType.Boolean && Expression.Value.BooleanValue
+                        || Expression.Value.Type == DataType.Date && Expression.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                        || Expression.Value.Type == DataType.DateTime && Expression.Value.DateTimeValue <= DateTimeOffset.UtcNow
+                    )
+                )
                 {
                     Exceptions.AppendLine(Expression.Description);
                     Exceptions.AppendLine();
                 }
 
-            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.Description), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null);
+            return new FirstPage(this, Instance.InstanceCode, Instance.PrototypeDescription, FormatFormula(Instance.Instance.DescriptionFormula.Value), Rows, Exceptions.Length > 0 ? Exceptions.ToString() : null)
+            {
+                ColumnsWidths = new float[] { 23.66f, 100 - 23.66f }
+            };
         }
 
         protected override Task<Template> GenerateTemplateAsync()
@@ -78,7 +97,7 @@ namespace CheckListManager.Instances.Logic.PDF
 
             if (Instance.InstanceState == InstanceState.Confirmed || Instance.InstanceState == InstanceState.Completed || Instance.InstanceState == InstanceState.Deleted)
             {
-                var Record = await InstancesRepository.GetAsync(Instance.CompanyId, Instance.Id.Value);
+                var Record = await InstancesRepository.GetAsync(Instance.CompanyId, Instance.ID.Value);
 
                 var Signatures = Record
                     .InstancesHistory

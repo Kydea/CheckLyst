@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using Newtonsoft.Json;
 
 namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 {
@@ -14,11 +15,12 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 		public ICheckListGroup Group { get; set; }
 		public int Id { get; set; }
 		public ICheckListIteration Iteration { get; set; }
+        [JsonIgnore]
 		public bool IterationItem { get; set; }
 		public bool IteratorModelItem { get; set; }
 		public virtual bool NewLine { get; set; }
 		public ICheckListPage Page { get; set; }
-		public ICheckListItem Previous { get; set; }
+        public virtual int? PageIndex { get; set; }
 		public abstract string TypeName { get; }
         public int FontSize { get; set; }
         public string Color { get; set; }
@@ -26,10 +28,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
-        public override void Setup()
+        public override bool Setup()
         {
-            base.Setup();
+            var Result = base.Setup();
             CheckList.AddItem(this);
+            return Result;
         }
 
         protected static void Copy(Item source, Item destination)
@@ -49,17 +52,20 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 			throw new NotImplementedException();
 		}
 
-        public override void BuildDependencies()
+        public override bool BuildDependencies()
         {
-            base.BuildDependencies();
+            var Result = base.BuildDependencies();
 
             DescriptionFormula.BuildDependencies(Description, null);
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+            return Result;
         }
 
         public override string DependencyClassName => "item";
         public override int? DependencyObjectID => Id;
+        public override string ToString() => $"item {Code ?? Id.ToString()}";
     }
 }

@@ -1,29 +1,19 @@
 ﻿prototypes.ListProperty = function (model, property, values, options) {
     var
+        base,
         input,
-        handler,
-        check,
 
         change = function () {
             model[property] = input.val();
-            matematici.canClose = false;
-            if (handler) handler.call(this, model);
+            base.updateModel(model);
         };
 
-    this.setCheck = function (value) {
-        check = value;
-        return this;
-    };
-
-    this.setHandler = function (value) {
-        handler = value;
-        return this;
-    };
-
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        if (!options) options = {};
+        base = baseClass;
         valuePanel.addClass("Expression");
 
-        if (options.readOnly) {
+        if (options.readOnly || prototypes.prototype.getModel().state != prototypes.Prototype.states.draft) {
             var label = $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(model[property])
@@ -34,7 +24,7 @@
                     label.val(values[index].label);
         } else {
             input = $("<select />");
-            if (!!options.nullable) input.data("nullable", true);
+            if (!!options.nullable) input.attr("data-nullable", "");
             input.empty();
             for (var index in values) {
                 var
@@ -50,11 +40,27 @@
     }
 
     this.hasChanges = function () {
-        return !!model[property] && model[property] != values[0].code && model[property] != values[0];
+        if (!options) options = {};
+        var value = !!options.nullable && !!model[property]
+            || !options.nullable && !!model[property] && model[property] != values[0].code && model[property] != values[0];
+        return value;
     }
 
     this.refresh = function (newValues) {
         values = newValues;
     }
+
+    this.setValue = function (node) {
+        var label = options.nullable ? "" : values[0].label || values[0];
+        if (this.hasChanges())
+            for (var index in values)
+                if (values[index] == model[property] || values[index].code == model[property])
+                    label = values[index].label || values[index];
+        node.text(label);
+    };
+
+    this.setReadOnly = function (value) {
+        options.readOnly = value;
+    };
 }
 

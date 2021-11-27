@@ -19,7 +19,7 @@ div.CheckList .HeaderContainer {
   div.CheckList .HeaderContainer div.Group {
     background-color: white; }
 
-div.CheckList span.Error i.fa {
+div.CheckList span.Error i.fa, div.CheckList span.Error i.fal, div.CheckList span.Error i.fas {
   color: #cc0000; }
 
 div.CheckList span.Null {
@@ -102,15 +102,40 @@ div.CheckList div.Item {
     clear: both; }
   div.CheckList div.Item.Field.Boolean input[value=""] {
     opacity: 0.6; }
+  div.CheckList div.Item.Field label.Controls2 div.Input {
+    width: 100% !important; }
   div.CheckList div.Item.Text {
-    width: calc(100% - 20px);
     font-size: 13px; }
+    div.CheckList div.Item.Text p {
+      max-width: 100%;
+      padding-top: 0 !important;
+      margin: 0;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; }
+    div.CheckList div.Item.Text.Wide {
+      width: calc(100% - 20px); }
+    div.CheckList div.Item.Text:not(.Wide) {
+      min-height: 54px; }
+    div.CheckList div.Item.Text.SingleRow {
+      position: relative; }
+      div.CheckList div.Item.Text.SingleRow p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 54px; }
   div.CheckList div.Item.Signature {
     width: calc(100% - 20px); }
     div.CheckList div.Item.Signature > a.Button {
       margin-top: calc(1em + 5px); }
       @media only screen and (min-width: 760px) {
         div.CheckList div.Item.Signature > a.Button {
+          margin-left: 20px;
+          float: right; } }
+  div.CheckList div.Item.InstanceLink {
+    width: calc(100% - 20px); }
+    div.CheckList div.Item.InstanceLink > a.Button {
+      margin-top: calc(1em + 5px); }
+      @media only screen and (min-width: 760px) {
+        div.CheckList div.Item.InstanceLink > a.Button {
           margin-left: 20px;
           float: right; } }
   div.CheckList div.Item.Image {
@@ -147,9 +172,6 @@ div.CheckList div.Item {
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis; }
-
-div.CheckList .Item p.Description {
-  margin: 0; }
 
 div.CheckList.Loading .TabContainer, div.CheckList.Loading .Page {
   display: none !important; }

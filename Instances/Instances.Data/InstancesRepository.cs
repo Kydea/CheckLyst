@@ -4,61 +4,123 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Instances.Data.Models;
 
 namespace CheckListManager.Instances.Data
 {
-	public class InstancesRepository : Repository, IInstancesRepository
-	{
-		public InstancesRepository(RelationalDatabaseEntities entities) : base(entities)
-		{
-		}
+    public class InstancesRepository : Repository, IInstancesRepository
+    {
+        public InstancesRepository(RelationalDatabaseEntities entities) : base(entities)
+        {
+        }
 
-		public async Task<PagingResponse<List<TResult>>> GetInstancesAsync<TResult, TKey>(
-			long companyId,
-			Expression<Func<Common.Data.Instances, TResult>> select,
-			Expression<Func<Common.Data.Instances, bool>> filters,
-			Expression<Func<Common.Data.Instances, TKey>> order = null,
-			int? currentPage = null,
-			int? itemsPerPage = null)
-		{
-			var query = Entities.Instances
-				.Where(filters)
-				.Where(i => i.Prototypes.Company == companyId);
+        private const string INSTANCES_BASE_QUERY =
+            "from " +
+                "\"CheckLists\".\"Instances\" i " +
+                "inner join \"CheckLists\".\"Prototypes\" p on i.\"Prototype\" = p.\"ID\" " +
+                "inner join \"CheckLists\".\"PrototypeVersions\" pv on p.\"ID\" = pv.\"Prototype\" and i.\"Version\" = pv.\"Version\" " +
+                "inner join \"Infrastructure\".\"Departments\" d on p.\"Department\" = d.\"ID\" " +
+                "inner join \"CheckLists\".\"PrototypeTypes\" pt on p.\"PrototypeType\" = pt.\"ID\" " +
+            "where " +
+                "i.\"Company\" = :company " +
+                "and (:id = -1 or i.\"ID\" = :id) " +
+                "and (:description = '' or upper(i.\"Description\") like '%' || :description || '%') " +
+                "and (:department = -1 or p.\"Department\" = :department) " +
+                "and (:prototypetype = -1 or p.\"PrototypeType\" = :prototypetype) " +
+                "and (:prototype = -1 or p.\"ID\" = :prototype) " +
+                "and (:version = -1 or pv.\"Version\" = :version) " +
+                "and (:year = -1 or i.\"Year\" = :year) " +
+                "and (:number = -1 or i.\"Number\" = :number) " +
+                "and (:state = '' or i.\"InstanceState\" = :state) " +
+                "and (:from = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') >= :from) " +
+                "and (:to = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') <= :to) " +
+                "and (:tagValue = '' or exists(select 1 from \"CheckLists\".\"InstanceTags\" it where it.\"Instance\" = i.\"ID\" and (:tagCode = '' or it.\"Tag\" = :tagCode) and upper(it.\"Value\") like '%' || :tagValue || '%')) " +
+                "and (" +
+                    ":exceptionState = '' " +
+                    "or :exceptionState = 'include' and exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\") " +
+                    "or :exceptionState = 'exclude' and not exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\")" +
+                ")" +
+                "and (" +
+                    ":exceptionDescription = '' " +
+                    "or exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\" and upper(iev.\"Description\") like '%' || :exceptionDescription || '%')" +
+                ")" +
+                "and (" +
+                    "i.\"Year\" = 0 and exists (" +
+                        "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'Preview') g " +
+                        "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                    ") " +
+                    "or i.\"Year\" > 0 and exists (" +
+                        "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Instances', 'View') g " +
+                        "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
+                    ")" +
+                ")";
+        private const string INSTANCES_LIST_QUERY =
+            "select " +
+                "i.\"ID\", i.\"Code\", " +
+                "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", i.\"Description\", d.\"Name\" \"DepartmentName\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
+            INSTANCES_BASE_QUERY +
+            "order by i.\"ID\" desc " +
+            "limit :limit offset :offset";
+        private const string INSTANCES_COUNT_QUERY = "select count(*) " + INSTANCES_BASE_QUERY;
+        
+        public async Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(
+            IDefaultIdentity identity,
+            InstanceFilters filters,
+            int currentPage,
+            int itemsPerPage)
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                limit = itemsPerPage,
+                offset = (currentPage - 1) * itemsPerPage
+            };
 
-			if (order != null)
-				query = query.OrderByDescending(order);
-			if (currentPage.HasValue && itemsPerPage.HasValue)
-				query = query.Skip((currentPage.Value - 1) * itemsPerPage.Value).Take(itemsPerPage.Value);
+            var Count = await Read<int>(INSTANCES_COUNT_QUERY, Filters);
+            var List = await Read<InstanceRecord>(INSTANCES_LIST_QUERY, Filters);
+            foreach (var Record in List)
+                Record.Exceptions = await Entities.InstanceExpressionValues.Where(iev => iev.Instance == Record.Id && iev.Exception).Select(iev => new InstanceExceptionRecord { Code = iev.Code, Description = iev.Description }).ToListAsync();
 
-			var data = await
-				query
-				.Select(select)
-				.ToListAsync();
+            return new PagingResponse<List<InstanceRecord>>
+            {
+                Data = List.ToList(),
+                Count = Count.Single(),
+                CurrentPage = currentPage,
+                ItemsPerPage = itemsPerPage
+            };
+        }
 
-			var count = await Entities.Instances
-				.Where(filters)
-				.CountAsync();
+        public async Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance)
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance), "Instance must be not null");
 
-			return new PagingResponse<List<TResult>>
-			{
-				Data = data,
-				Count = count,
-				ItemsPerPage = itemsPerPage ?? 1,
-				CurrentPage = currentPage ?? -1
-			};
-		}
+            Entities.Database.BeginTransaction();
 
-		public async Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance)
-		{
-			if (instance == null)
-				throw new ArgumentNullException(nameof(instance), "Instance must be not null");
-
-			Entities.Database.BeginTransaction();
-
-			instance.Number =
-				await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
+            instance.Number =
+                await GetInstanceNumberAsync(instance.Prototype, instance.Version, instance.Year);
 
             instance.InstancesHistory.Add(new InstancesHistory
             {
@@ -74,14 +136,14 @@ namespace CheckListManager.Instances.Data
                 State = instance.InstanceState
             });
 
-			Entities.Instances.Add(instance);
+            Entities.Instances.Add(instance);
 
-			await SaveChangesAsync();
+            await SaveChangesAsync();
 
-			await Entities.Entry(instance).ReloadAsync();
+            await Entities.Entry(instance).ReloadAsync();
 
-			return instance;
-		}
+            return instance;
+        }
 
         public void EndCreateInstanceAsync(Common.Data.Instances instance)
         {
@@ -91,43 +153,63 @@ namespace CheckListManager.Instances.Data
         public void CancelCreateInstanceAsync()
         {
             Entities.Database.CurrentTransaction?.Rollback();
-
         }
 
         public Task<Common.Data.Instances> GetAsync(long companyId, string code)
-			=> Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
+            => Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.Code == code);
 
         public Task<Common.Data.Instances> GetAsync(long companyId, long id)
-            => Entities.Instances.SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.ID == id);
+            => Entities.Instances.Include(i => i.PrototypeVersions).SingleOrDefaultAsync(i => i.Prototypes.Company == companyId && i.ID == id);
 
         public Task<string> GetCodeAsync(long companyId, long id)
             => Entities.Instances.Where(i => i.Prototypes.Company == companyId && i.ID == id).Select(i => i.Code).SingleOrDefaultAsync();
 
         public Task<int> GetInstanceNumberAsync(long prototype, int version, int year)
-		{
-			return Call<int>("\"CheckLists\".\"GetInstanceNumber\"",
-				new Parameter("_prototype", prototype),
-				new Parameter("_version", version),
-				new Parameter("_year", year)
-			);
-		}
+        {
+            return Call<int>("\"CheckLists\".\"GetInstanceNumber\"",
+                new Parameter("_prototype", prototype),
+                new Parameter("_version", version),
+                new Parameter("_year", year)
+            );
+        }
 
-		public Task<List<Common.Data.Instances>> GetInstancesWithExpressions(long Prototype, int Version)
-		{
-			return Entities.Instances.Include(i => i.InstanceExpressionValues).Where(i => i.Prototype == Prototype && i.Version == Version && i.InstanceState == InstanceState.Progress).ToListAsync();
-		}
+        public Task<List<Common.Data.Instances>> GetInstancesWithExpressions(long Prototype, int Version)
+        {
+            return Entities.Instances.Include(i => i.InstanceExpressionValues).Where(i => i.Prototype == Prototype && i.Version == Version && i.InstanceState == InstanceState.Progress).ToListAsync();
+        }
 
         public void DeleteInstance(Common.Data.Instances instance)
         {
             Entities.Instances.Remove(instance);
         }
 
-        public void SaveChildren(Common.Data.Instances instance, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        public void SaveChildren(long instanceID, IEnumerable<InstanceTags> instanceTags, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
         {
-            Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instance.ID));
-            Entities.InstanceTags.AddRange(instanceTags);
+            SaveTags(instanceID, instanceTags);
+            SaveExpressionValues(instanceID, instanceExpressionValues);
+        }
 
-            Entities.InstanceExpressionValues.RemoveRange(instance.InstanceExpressionValues);
+        public void SaveTags(long instanceID, IEnumerable<InstanceTags> instanceTags)
+        {
+            Entities.InstanceTags.RemoveRange(Entities.InstanceTags.Where(x => x.Instance == instanceID));
+            Entities.InstanceTags.AddRange(instanceTags);
+        }
+
+        public void SaveExpressionValues(long instanceID, IEnumerable<InstanceExpressionValues> instanceExpressionValues)
+        {
+            //Notified flag synchronization
+            var OldExpressionValues = Entities.InstanceExpressionValues.Where(x => x.Instance == instanceID);
+            var OldNotifications = OldExpressionValues.Where(e => e.Notification).ToDictionary(k => k.Code, v => v);
+            instanceExpressionValues.Where(iv => iv.Notification).ToList().ForEach(iv =>
+            {
+                OldNotifications.TryGetValue(iv.Code, out var ov);
+                iv.Notified =
+                    iv.Notified //the value has not changed since last save
+                    && ov != null && ov.Notified //last notification has not been sent yet
+                ;
+            });
+
+            Entities.InstanceExpressionValues.RemoveRange(OldExpressionValues);
             Entities.InstanceExpressionValues.AddRange(instanceExpressionValues);
         }
 
@@ -143,24 +225,63 @@ namespace CheckListManager.Instances.Data
             return (await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.VersionState == VersionState.Active))?.Version;
         }
 
-        public async Task<List<Users>> GetInstanceEditors(long department, long prototypeType, string versionState)
+        public async Task<List<Users>> GetInstanceEditors(long company, long department, long prototypeType, string versionState)
         {
-            var Users =
-                versionState == VersionState.Draft || versionState == VersionState.InSimulation ?
-                    Entities.UserFunctions.Where(uf =>
-                        uf.Department == department && (
-                            uf.PrototypeType == null 
-                            || uf.PrototypeType == prototypeType
-                        )
-                        && uf.FunctionGroup == "Prototypes" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync()
-                    : Entities.UserFunctions.Where(uf =>
-                        uf.Department == department && (
-                            uf.PrototypeType == null
-                            || uf.PrototypeType == prototypeType
-                        )
-                        && uf.FunctionGroup == "Instances" && uf.Function == "Edit").Select(uf => uf.Users).Distinct().ToListAsync();
+            var Filters = new
+            {
+                company,
+                department,
+                prototypetype = prototypeType, 
+                functiongroup = versionState == VersionState.Draft || versionState == VersionState.InSimulation ? "Prototypes" : "Instances",
+                function = "Edit"
+            };
 
-            return await Users;
+            var List = await Read<Users>("select * from \"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u order by u.\"Code\"", Filters);
+            return List.ToList();
         }
+
+        public async Task<List<InstanceExpressionValues>> GetNotifications() =>
+            await
+                Entities.InstanceExpressionValues
+                    .Include(i => i.Instances)
+                    .Include(i => i.Instances.PrototypeVersions)
+                    .Where(n => n.Notification && !n.Notified && n.NotificationDate <= DateTimeOffset.UtcNow)
+                    .ToListAsync();
+
+        public async Task<List<InstanceRelation>> GetParentInstances(long Instance) =>
+            await
+                Entities.InstanceRelations.Where(r => r.Child == Instance).Select(r => new InstanceRelation
+                {
+                    Item = r.Item,
+                    ID = r.ParentInstance.ID,
+                    Code = r.ParentInstance.Code,
+                    Prototype = r.ParentInstance.PrototypeName,
+                    Version = r.ParentInstance.Version,
+                    Year = r.ParentInstance.Year,
+                    Number = r.ParentInstance.Number,
+                    Description = r.ParentInstance.Description,
+                    VersionState = r.ParentInstance.PrototypeVersions.VersionState,
+                    RelationType = InstanceRelation.RelationTypes.Parent
+                })
+                .OrderBy(r => r.ID).ThenBy(r => r.Item)
+                .ToListAsync();
+
+        public async Task DeleteRelation(long parent, int item)
+        {
+            var Relation = await Entities.InstanceRelations.SingleOrDefaultAsync(r => r.Parent == parent && r.Item == item);
+            if (Relation != null) Entities.InstanceRelations.Remove(Relation);
+        }
+
+        public void AddRelation(long parent, int item, long child) =>
+            Entities.InstanceRelations.Add(new InstanceRelations { Parent = parent, Item = item, Child = child });
+
+        public async Task UpdateJSONFieldsAsync(long instance, long company, string itemsByCode, string itemsByLabel, string expressions) =>
+            await Call<int>("\"CheckLists\".\"UpdateInstanceData\"",
+                new Parameter("_Instance", instance),
+                new Parameter("_Company", company),
+                new Parameter("_ItemsByCode", itemsByCode),
+                new Parameter("_ItemsByLabel", itemsByLabel),
+                new Parameter("_Expressions", expressions)
+            );
     }
 }

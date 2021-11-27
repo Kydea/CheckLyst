@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public class DependencyRelation
     {
-        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown }
+        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown, Iterations, AddIteration, RemoveIteration, MoveIteration, StateChange, Code, Parameter }
 
         public DependencyRelation()
         { }
@@ -42,7 +42,10 @@ namespace CheckListManager.Common.Logic.Dependency
             => $"{SourceProperty}-{ClassName}-{ObjectCode ?? ObjectID?.ToString()}-{DestinationProperty}".GetHashCode();
 
         public override string ToString()
-            => $"{GetPropertyDescription (SourceProperty)} > {GetPropertyDescription(DestinationProperty)} of {ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+        {
+            var ObjectID = ObjectCode == null && this.ObjectID.HasValue && ClassName == "page" ? this.ObjectID.Value + 1 : this.ObjectID;
+            return $"{GetPropertyDescription(SourceProperty)} > {GetPropertyDescription(DestinationProperty)} of {ClassName} {ObjectCode ?? ObjectID?.ToString()}";
+        }
 
         public string Description => ToString(); //used in the fronted
 
@@ -55,6 +58,13 @@ namespace CheckListManager.Common.Logic.Dependency
                 Property == Properties.Signature ? "signature" :
                 Property == Properties.Formula ? "formula" :
                 Property == Properties.CountDown ? "property countdown" :
+                Property == Properties.Iterations ? "iterations" :
+                Property == Properties.AddIteration ? "add iteration button" :
+                Property == Properties.RemoveIteration ? "remove iteration button" :
+                Property == Properties.MoveIteration ? "move iteration button" :
+                Property == Properties.StateChange ? "state change" :
+                Property == Properties.Code ? "code" :
+                Property == Properties.Parameter ? "parameter" :
                 throw new ArgumentException();
 
 
@@ -74,7 +84,7 @@ namespace CheckListManager.Common.Logic.Dependency
                 case "page":
                     return (DependencyNode)(ObjectID.HasValue ? checkList.Pages[ObjectID.Value] : checkList.Elements[ObjectCode]);
                 case "external source":
-                    return checkList.ExternalSourceDependencyNodes[ObjectCode];
+                    return checkList.ExternalSources[ObjectCode];
                 default:
                     throw new Exception($"Invalid class name {ClassName}");
             }

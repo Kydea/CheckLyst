@@ -6,6 +6,8 @@ using CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions;
 using CheckListManager.Common.Logic.Models.Expressions.ElementProperties;
 using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
 using Newtonsoft.Json;
+using System.Linq;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 
 namespace CheckListManager.Common.Logic.Models.Expressions
 {
@@ -23,12 +25,23 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
         }
 
-        public abstract TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone);
+        public static List<TypedValue> GetIteratorValues(ICheckListGroup Iterator, Symbol Argument, Dictionary<string, int> IterationIndexes, string TimeZone)
+        {
+            var NewIterationIndexes = new Dictionary<string, int>(IterationIndexes) { [Iterator.Code] = 0 }; //creates a clone, because Irerator.Code is contextual and expires at the end of the evaluation
+
+            return Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => {
+                Iteration.ReccurencyValue = Argument.GetValue(Iteration, NewIterationIndexes, TimeZone);
+                NewIterationIndexes[Iterator.Code]++;
+                return Iteration.ReccurencyValue;
+            }).ToList();
+        }
+
+        public abstract TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone);
         public abstract void BuildDependencies(ICheckList CheckList, Expression Expression);
         public abstract void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack);
         public override abstract string ToString();
         public DataType DataType { get; protected set; }
         public DataType? InnerDataType { get; protected set; }
-        public int Position { get; set; }
+        public Position Position { get; set; }
     }
 }

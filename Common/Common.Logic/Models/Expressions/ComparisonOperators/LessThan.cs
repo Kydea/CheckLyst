@@ -2,10 +2,10 @@
 {
 	public class LessThan : BinaryComparisonOperator
 	{
-		protected override TypedValue Evaluate(TypedValue leftValue, TypedValue rightValue)
+		protected override TypedValue Evaluate(TypedValue leftValue, TypedValue rightValue, string TimeZone)
 		{
 			return
-				base.Evaluate(leftValue, rightValue) ??
+				base.Evaluate(leftValue, rightValue, TimeZone) ??
 				(
 					leftValue.Type == DataType.Date || leftValue.Type == DataType.DateTime ?
 						new TypedValue(DataType.Boolean, leftValue.DateTimeValue < rightValue.DateTimeValue) :

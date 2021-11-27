@@ -5,19 +5,19 @@
 
     Buttons = new Field[]
     {
-        new Field("New empty prototype", "Creates a new empty the prototype"),
-        new Field("Open", "Opens the prototype", Field.POPUP_MENU),
-        new Field("Use as template", "Creates a new prototype using the clicked one as template", Field.POPUP_MENU),
-        new Field("New version", "Creates a new version of the clicked prototype", Field.POPUP_MENU),
+        new Field("New empty prototype", "Creates a new empty the prototype."),
+        new Field("Open", "Opens the prototype.", Field.POPUP_MENU),
+        new Field("Use as template", "Creates a new prototype using the clicked one as template.", Field.POPUP_MENU),
+        new Field("New version", "Creates a new version of the clicked prototype.", Field.POPUP_MENU),
     },
-
-    Filters = new Field[] {
+    Filters = new Field[] 
+    {
         new Field("Department / prototype type", "The department and prototype type of the prototype."),
         new Field("Prototype name", "The name of the prototype or part of it."),
+        new Field("Prototype ID",Field.ID),
         new Field("Changing state", "Include, exclude or limit to prototypes which have a changing state workflow in progress."),
         new Field("State", "The state of the prototype.")
     },
-
     Columns = new Field[]
     {
         new Field("ID", Field.ID),

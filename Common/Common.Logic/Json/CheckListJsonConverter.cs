@@ -25,7 +25,9 @@ namespace CheckListManager.Common.Logic.Json
 					return Scope.Resolve<ICheckListIteration>();
 				case "Signature":
 					return Scope.Resolve<ICheckListSignature>();
-				case "Text":
+                case "InstanceLink":
+                    return Scope.Resolve<ICheckListInstanceLink>();
+                case "Text":
 					return Scope.Resolve<ICheckListText>();
                 case "Link":
                     return Scope.Resolve<ICheckListLink>();

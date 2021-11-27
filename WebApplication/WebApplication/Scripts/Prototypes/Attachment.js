@@ -3,7 +3,7 @@
         button,
 
         setup = function () {
-			button = $("<a />").addClass("Button Attachment").attr({ href: "#" }).appendTo(item.getElement());
+            button = $("<a />").addClass("Button Attachment Placeholder").attr({ href: "#" }).appendTo(item.getElement());
         };
 
 	this.update = function (model) {

@@ -20,7 +20,7 @@ class TabBar: UITabBar {
      *  because we use custom image from labels)
      */
     
-    override func sizeThatFits(_ size: CGSize) -> CGSize {
+    /*override func sizeThatFits(_ size: CGSize) -> CGSize {
         
         var sizeThatFits = super.sizeThatFits(size)
        
@@ -33,6 +33,6 @@ class TabBar: UITabBar {
         sizeThatFits.height = 70*/
         
         return sizeThatFits
-    }
+    }*/
 }
 

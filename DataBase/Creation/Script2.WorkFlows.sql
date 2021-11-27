@@ -13,7 +13,7 @@ create table "WorkFlows"."WorkFlows"
 	"ModifiedOn" timestamptz
 );
 
-create unique index "WorkFlows_Description" on "CheckLists"."WorkFlows" ("Company", upper("Description"));
+create unique index "WorkFlows_Description" on "WorkFlows"."WorkFlows" ("Company", upper("Description"));
 
 create table "WorkFlows"."WorkFlowSteps"
 (
@@ -54,6 +54,7 @@ create table "WorkFlows"."WorkFlowApplications"
 
 	"Prototype" bigint,
 	"Version" int,
+	check("Prototype" is null and "Version" is null or not "Prototype" is null and not "Version" is null),
 	--the followin constraint is added in the script Script3.CheckLists.sql
 	--constraint "WorkFlowApplications_PrototypeVersion" foreign key ("Prototype", "Version") references "CheckLists"."PrototypeVersions" on delete cascade,
 
@@ -61,7 +62,18 @@ create table "WorkFlows"."WorkFlowApplications"
 	--the followin constraint is added in the script Script3.CheckLists.sql
 	--constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 
-	check("Prototype" is null and "Version" is null or "Instance" is null),
+	"Document" bigint, 
+	"DocumentVersion" int,
+	check("Document" is null and "DocumentVersion" is null or not "Document" is null and not "DocumentVersion" is null),
+	--the followin constraint is added in the script Script8.Documents.sql
+	--constraint "WorkFlowApplications_DocumentVersion" foreign key ("Document", "Version") references "Documents"."DocumentVersions" on delete cascade,
+
+	constraint Check_WorkFlowApplications_Target check
+	(
+		not "Prototype" is null and "Instance" is null and "Document" is null 
+		or "Prototype" is null and not "Instance" is null and "Document" is null 
+		or "Prototype" is null and "Instance" is null and not "Document" is null 
+	),
 
 	"WorkFlowAction" varchar (50) references "WorkFlows"."WorkFlowActions",
 
@@ -93,7 +105,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"ID" bigserial primary key,
 
 	"WorkFlowApplication" bigint,
-	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade
+	constraint "WorkFlows_WorkFlowApplication" foreign key ("WorkFlowApplication") references "WorkFlows"."WorkFlowApplications" on delete cascade,
 	"Step" int not null,
 	"Reason" varchar (50) not null,
 
@@ -109,7 +121,7 @@ create table "WorkFlows"."WorkFlowApplicationSteps"
 	"Approved" boolean
 );
 
-create  index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
+create index "Index_WorkFlowApplicationSteps_Step" on "WorkFlows"."WorkFlowApplicationSteps"("WorkFlowApplication", "Step");
 
 create table "WorkFlows"."WorkFlowApplicationStepTags"
 (

@@ -9,43 +9,56 @@
         tab,
         pageLock,
         model,
+        elements,
         prototypeKey,
         concurrencyInformation,
         currentItem,
         itemHandler,
         commands,
-        newItemsId = 1,
         dataSources,
         imagesToDelete = [],
 
+        toBase64 = function (arrayBuffer, callback) {
+            var blob = new Blob([arrayBuffer])
+
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var
+                    base64 = event.target.result,
+                    binaryIndex = base64.indexOf("base64,");
+                callback(base64.substring(binaryIndex + 7));
+            };
+
+            reader.readAsDataURL(blob);
+        },
+
         getNewItemsId = function () {
-            return newItemsId++;
+            if (!model.itemIDSequence) model.itemIDSequence = 1;
+            return model.itemIDSequence++;
         },
 
         setNewItemsId = function (value) {
-            newItemsId = Math.max(newItemsId, value + 1);
+            model.itemIDSequence = Math.max(model.itemIDSequence, value + 1);
         },
 
         completeModel = function () {
             var analyzeElement = function (node) {
+                if (node.code) elements[node.code] = node;
                 switch (node.typeName) {
                     case "Group":
                         for (var itemIndex in node.items || [])
                             analyzeElement(node.items[itemIndex]);
                         break;
-                    case "Signature":
-                        if (node.code)
-                            model.signatures[node.code] = node;
-                        break;
                 }
             };
 
             model.typeName = "Prototype";
-            model.signatures = {};
+            elements = {};
 
             analyzeElement(model.header);
             for (var pageIndex in model.pages || []) {
                 var page = model.pages[pageIndex];
+                page.typeName = "Page";
                 for (var groupIndex in page.groups || [])
                     analyzeElement(page.groups[groupIndex])
             }
@@ -129,13 +142,70 @@
             if (
                 prototypeKey.id >= 0
                 && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##")
-                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType)
+                && !matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType + "#")
             ) {
                 if (model.state == prototypes.Prototype.states.draft)
                     model.state = prototypes.Prototype.states.draftReadOnly;
                 if (model.state == prototypes.Prototype.states.simulation)
                     model.state = prototypes.Prototype.states.simulationReadOnly;
             }
+        },
+
+        updateDependencies = function (model, newModel) {
+            switch (model.typeName) {
+                case "Prototype":
+                    model.itemIDSequence = newModel.itemIDSequence;
+                    $("div.ActionBar a.ItemsList").toggleClass("Invalid", false);
+
+                    updateDependencies(model.header, newModel.header);
+
+                    for (var index in model.pages)
+                        updateDependencies(model.pages[index], newModel.pages[index]);
+
+                    model.externalSources = newModel.externalSources;
+
+                    var invalid = false;
+                    for (var index in model.expressions) {
+                        var
+                            expression = model.expressions[index],
+                            newExpression = newModel.expressions[index];
+                        expression.dataType = newExpression.dataType;
+                        expression.innerDataType = newExpression.innerDataType;
+                        expression.error = newExpression.error;
+                        expression.errorPosition = newExpression.errorPosition;
+                        if (expression.error) invalid = true;
+                        updateDependencies(expression, newExpression);
+                    }
+                    $("div.ActionBar a.ExpressionsList").toggleClass("Invalid", invalid);
+
+                    invalid = false;
+                    for (var index in model.externalSources) {
+                        var
+                            source = model.externalSources[index],
+                            newSource = newModel.externalSources[index];
+                        model.dependingRelations = newModel.dependingRelations;
+                        model.dependentRelations = newModel.dependentRelations;
+                        source.errors = newSource.errors;
+                        if (source.errors && source.errors.length) invalid = true;
+                    }
+                    $("div.ActionBar a.SourcesList").toggleClass("Invalid", invalid);
+
+                    break;
+                case "Page":
+                    for (var index in model.groups)
+                        updateDependencies(model.groups[index], newModel.groups[index]);
+                    break;
+                case "Group":
+                    for (var index in model.items)
+                        updateDependencies(model.items[index], newModel.items[index]);
+                    break;
+            }
+
+            model.dependingRelations = newModel.dependingRelations;
+            model.dependentRelations = newModel.dependentRelations;
+            model.errors = newModel.errors;
+            if (model.errors && model.errors.length > 0) $("div.ActionBar a.ItemsList").addClass("Invalid");
+
         },
 
         update = function () {
@@ -147,8 +217,8 @@
 
             commands = $("<div />").addClass("Commands")
                 .append($("<a />").attr("title", "properties").attr("data-command", "properties").addClass("Button MiniIcon Properties").append($("<i />").addClass("fal fa-cogs")))
-                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")))
-                .append($("<a />").attr("title", "dependencies").attr("data-command", "dependencies").addClass("Button MiniIcon Dependencies").append($("<i />").addClass("fal fa-sitemap")));
+                .append($("<a />").attr("title", "dependencies").attr("data-command", "dependencies").addClass("Button MiniIcon Dependencies").append($("<i />").addClass("fal fa-sitemap")))
+                .append($("<a />").attr("title", "copy").attr("data-command", "copy").addClass("Button MiniIcon Copy").append($("<i />").addClass("fal fa-copy")));
             if (model.state == prototypes.Prototype.states.draft)
                 commands
                     .append($("<a />").attr("title", "paste").attr("data-command", "paste").addClass("Button MiniIcon Paste").append($("<i />").addClass("fal fa-paste")))
@@ -184,13 +254,27 @@
                     break;
                 }
 
-            if (currentItemId) {
-                //restores current item
-                currentItem = null;
-                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-            }
+            if (currentItemId) { selectByElementId(currentItemId) };
 
             setupActionBar();
+            setupBreadcrumbs();
+        },
+
+        selectById = function (className, id) {
+            if (currentItem) select(null, null);
+            currentItem = null;
+            var result = {};
+            if (className == "Prototype")
+                selectByElementId("Prototype");
+            else {
+                if (className != "Page") findItem(model, id, null, result);
+                if (result.item && result.page) $("#Page" + result.page, element).click();
+                selectByElementId(className + id);
+            }
+        },
+
+        selectByElementId = function (elementId) {
+            $("#" + elementId, element).removeClass("Current").removeClass("Selected").click(); //class "Selected" is for the tab when current item is a page
         },
 
         select = function (event, item) {
@@ -262,6 +346,7 @@
                             text: "confirm", icon: "check", handler: function () {
                                 parent.getChildren().splice(itemIndex, 1);
                                 update();
+                                prototype.verify();
                                 matematici.canClose = false;
                             }
                         },
@@ -281,17 +366,9 @@
                     break;
                 case "dependencies":
                     var
-                        handler = function () {
-                            var model = currentItem.getModel();
-                            matematici.dependenciesDialog.show(model.dependingRelations, model.dependentRelations);
-                        };
-                    if (matematici.canClose)
-                        handler();
-                    else
-                        matematici.dialog.show("warning", "There are unsaved changes.", [
-                            { text: "save", icon: "check", handler: function () { prototype.save(/*handler*/); } },
-                            { text: "cancel", icon: "times", cancelButton: true }
-                        ]);
+                        model = currentItem.getModel(),
+                        title = currentItem.toString();
+                    matematici.dependenciesDialog.show(title, model.dependingRelations, model.dependentRelations);
                     break;
                 default:
                     alert("invalid command");
@@ -311,6 +388,43 @@
                     traverseForPaste(element.items[index]);
             else if (element.typeName == "Image")
                 element.cloned = true;
+        },
+
+        getElement = function (code, filters) {
+            var result = arguments.length == 0 ? element : elements[code];
+            return result && (!filters || filters.includes(result.typeName)) ? result : null;
+        },
+
+        getElements = function (filters) {
+            var result = {};
+            for (var code in elements) {
+                var element = elements[code];
+                if (!filters || filters.includes(element.typeName))
+                    result[code] = element;
+            }
+            return result;
+        },
+
+        findItem = function (element, itemId, pageIndex, result) {
+            if (element.id == itemId) {
+                result.page = pageIndex;
+                result.item = element;
+                return;
+            }
+
+            if (element.typeName == "Group")
+                for (var index in element.items) {
+                    findItem(element.items[index], itemId, pageIndex, result);
+                    if (result.item) return;
+                }
+            else if (element.typeName == "Prototype")
+                for (var pageIndex in element.pages) {
+                    var page = element.pages[pageIndex];
+                    for (var groupIndex in page.groups) {
+                        findItem(page.groups[groupIndex], itemId, pageIndex, result);
+                        if (result.item) return;
+                    }
+                }
         },
 
         paste = function () {
@@ -358,7 +472,12 @@
 
         addPage = function () {
             if (!model.pages) model.pages = [];
-            model.pages.push({ typeName: "Page", description: "(page)", id: getNewItemsId() });
+            var pageIndex = 0;
+            for (var index in model.pages)
+                if (pageIndex < model.pages[index].index)
+                    pageIndex = model.pages[index].index;
+
+            model.pages.push({ typeName: "Page", description: "(page)", index: pageIndex + 1, pageBreak: true });
         },
 
         sign = function (action, grid, rows, row) {
@@ -371,14 +490,19 @@
                 allowed = false,
                 tags = row.tags.split(", ");
 
-            for (var role in tags)
-                if (
-                    matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##" + tags[role])
-                    || matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#" + tags[role])
-                ) {
-                    allowed = true;
-                    break;
-                }
+            if (
+                matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "##")
+                || matematici.tokenManager.checkRole("Prototypes#Approve#" + model.department + "#" + model.prototypeType + "#")
+            )
+                for (var role in tags)
+                    if (
+                        matematici.tokenManager.checkRole("PrototypeWorkFlowLevel####" + tags[role])
+                        || matematici.tokenManager.checkRole("PrototypeWorkFlowLevel##" + model.department + "##" + tags[role])
+                        || matematici.tokenManager.checkRole("PrototypeWorkFlowLevel##" + model.department + "#" + model.prototypeType + "#" + tags[role])
+                    ) {
+                        allowed = true;
+                        break;
+                    }
 
             if (!allowed) {
                 matematici.dialog.error("error", "Permission denied");
@@ -411,7 +535,7 @@
             }
 
             workFlowSignature = new matematici.WorkFlowSignature({
-                title: action,
+                title: getPrototypeCode() + " " + action,
                 reason: row.reason,
                 url: element.data("signature"),
                 prototype: prototypeKey.id,
@@ -445,6 +569,19 @@
                 }
             });
             return true;
+        },
+
+        getPrototypeCode = function () {
+            return (model.name || "?") + "." + (model.version || "?");
+        },
+
+        setupBreadcrumbs = function () {
+            matematici.breadcrumbs.set([
+                { content: model.departmentName || "?", label: "department" },
+                { content: model.prototypeTypeName || "?", label: "prototype type" },
+                { content: getPrototypeCode(), label: "code" },
+                { content: model.state, label: "state" }
+            ]);
         },
 
         setup = function () {
@@ -485,10 +622,7 @@
                 else {
                     model = result.checkList;
 
-                    if (model.exception) {
-                        console.log(model.exception);
-                        matematici.dialog.error("Error", model.exception && model.exception.Message || "unexpected error");
-                    }
+                    if (!model.valid) matematici.blip.warning();
 
                     prototypeKey = {
                         id: result.id,
@@ -519,10 +653,6 @@
             });
         };
 
-    prototype.getElement = function () {
-        return element;
-    };
-
     prototype.getTab = function () {
         return tab;
     };
@@ -551,56 +681,103 @@
         model.pages = value;
     };
 
+    prototype.verify = function (callback) {
+        var
+            array = pako.gzip(JSON.stringify(model)),
+            handler = function (base64CheckList) {
+                var
+                    data = JSON.stringify({
+                        base64CheckList: base64CheckList
+                    });
+                $.ajax({
+                    url: element.data("action") + "verify",
+                    type: "post",
+                    contentType: "application/json",
+                    data: data
+                }).done(function (result) {
+                    if (!result.checkList.valid) matematici.blip.warning();
+                    updateDependencies(model, result.checkList);
+                    if (callback) callback(result.checkList.valid);
+                });
+            };
+
+        toBase64(array, handler);
+    };
+
     prototype.save = function (callback) {
         var currentItemId = currentItem && (currentItem.isPage && currentItem.isPage() && $("a.Current", element).attr("id") || $("div.Current", element).attr("id")); //saves current item
 
         select();
-        $.ajax({
-            url: element.data("action") + "Save",
-            type: "post",
-            contentType: "application/json",
-            data: JSON.stringify({
-                id: prototypeKey.id,
-                version: prototypeKey.version,
-                modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
-                modifiedby: concurrencyInformation.modifiedBy,
-                validFrom: model.validFrom,
-                validUntil: model.validUntil,
-                instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
-                name: model.name,
-                description: model.description,
-                department: model.department,
-                prototypeType: model.prototypeType,
-                imagesToDelete: imagesToDelete,
-                checkList: model
-            })
-        }).done(function (result) {
-            matematici.canClose = true;
-            prototypeKey.id = result.id;
-            model.header = result.checkList.header;
-            model.pages = result.checkList.pages;
-            imagesToDelete = [];
-            if (model.version == null) {
-                matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
-                model.version = prototypeKey.version = result.version;
-            }
-            concurrencyInformation = {
-                modifiedBy: result.modifiedBy,
-                modifiedOn: result.modifiedOn
+
+        var
+            array = pako.gzip(JSON.stringify(model)),
+            handler = function (base64CheckList) {
+                var
+                    //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
+                    data = JSON.stringify({
+                        id: prototypeKey.id,
+                        version: prototypeKey.version,
+                        modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
+                        modifiedby: concurrencyInformation.modifiedBy,
+                        validFrom: model.validFrom,
+                        validUntil: model.validUntil,
+                        instanceConfirmationWorkFlow: model.instanceConfirmationWorkFlow,
+                        name: model.name,
+                        description: model.description,
+                        department: model.department,
+                        prototypeType: model.prototypeType,
+                        imagesToDelete: imagesToDelete,
+                        base64CheckList: base64CheckList
+                    });
+
+                $.ajax({
+                    url: element.data("action") + "Save",
+                    type: "post",
+                    contentType: "application/json",
+                    data: data
+                }).done(function (result) {
+                    if (!result.checkList.valid) {
+                        matematici.blip.ko();
+                        updateDependencies(model, result.checkList);
+                    } else {
+                        matematici.canClose = true;
+                        prototypeKey.id = result.id;
+                        model.expressions = result.checkList.expressions;
+                        model.externalSources = result.checkList.externalSources;
+                        model.header = result.checkList.header;
+                        model.pages = result.checkList.pages;
+                        model.dependingRelations = result.checkList.dependingRelations;
+                        model.dependentRelations = result.checkList.dependentRelations;
+                        model.itemIDSequence = result.checkList.itemIDSequence;
+                        imagesToDelete = [];
+                        if (model.version == null) {
+                            matematici.navigator.setUrl(options.detailUrl + "/" + result.id + "/" + result.version);
+                            model.version = prototypeKey.version = result.version;
+                        }
+                        concurrencyInformation = {
+                            modifiedBy: result.modifiedBy,
+                            modifiedOn: result.modifiedOn
+                        };
+                        update();
+
+                        if (currentItemId) {
+                            //restores current item
+                            currentItem = null;
+                            $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+                        }
+
+                        $("div.ActionBar a.ExpressionsList").removeClass("Invalid");
+                        $("div.ActionBar a.ItemsList").removeClass("Invalid");
+
+                        if (callback)
+                            callback.call();
+                        else
+                            matematici.blip.ok();
+                    }
+                });
             };
-            update();
 
-            if (currentItemId) {
-                //restores current item
-                currentItem = null;
-                $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
-            }
-
-            if (callback)
-                callback.call();
-            else
-                matematici.blip.ok();
-        });
+        toBase64(array, handler);
     };
 
     prototype.delete = function () {
@@ -685,7 +862,7 @@
                 { name: "user", label: "User" },
                 { name: "approved", label: "Approved", align: "center" },
             ];
-            new matematici.CheckListGrid(result.steps,
+            new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result.steps,
                 function (grid, row) {
                     return sign(result.action, grid, result.steps, row);
                 },
@@ -746,9 +923,10 @@
 
                         $("td", tr).eq(0).addClass(rowIndex % 2 == 0 ? "Odd" : "Even");
                     }
+                    checkListGrid.refresh();
                     return true;
                 },
-                checkListGrid = new matematici.CheckListGrid(result, null, null, columns, rowRenderHandler),
+                checkListGrid = new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result, null, null, columns, rowRenderHandler),
                 parameters = checkListGrid.getParameters(),
                 attributes = { type: "text", readonly: "readonly" };
 
@@ -759,61 +937,8 @@
         });
     };
 
-    prototype.import = function () {
-        var handler = function () {
-            var oldModel = model;
-            try {
-                model = JSON.parse($("textarea", matematici.dialog.getElement()).val());
-                model.name = model.department = model.prototypeType = model.version = model.validFrom = model.validUntil = null;
-                model.state = prototypes.Prototype.states.draft;
-                update();
-                matematici.blip.ok();
-            } catch (error) {
-                matematici.dialog.error("Error", error);
-                model = oldModel;
-                update();
-                return true;
-            }
-        };
-
-        matematici.dialog.show({
-            title: "Prototype import",
-            content: "Beware, the current prototype properties and items will be replaced by the imported one:",
-            buttons: [{
-                textarea: true,
-                height: 300,
-            }, {
-                icon: "check",
-                text: "ok",
-                handler: handler
-            }, {
-                icon: "times",
-                text: "cancel",
-                cancelButton: true
-            }]
-        });
-    };
-
-    prototype.export = function () {
-        matematici.dialog.show({
-            title: "Click to copy",
-            buttons: [{
-                textarea: true,
-                val: JSON.stringify(model),
-                readOnly: true,
-                height: 300,
-                handler: function () {
-                    $(this).select();
-                    document.execCommand("copy");
-                    matematici.blip.ok(matematici.dialog.close());
-                }
-            }, {
-                hidden: true,
-                cancelButton: true
-            }]
-        });
-
-        matematici.dialog.setWidth(600);
+    prototype.scriptEditor = function () {
+        new matematici.ScriptEditor();
     };
 
     prototype.download = function () {
@@ -861,14 +986,39 @@
         Array.removeElement(imagesToDelete, key);
     };
 
+    prototype.toString = function () {
+        return "Prototype"
+    };
+
+    prototype.setModel = function (newModel) {
+        newModel.name = model.name;
+        newModel.department = model.department;
+        newModel.departmentName = model.departmentName;
+        newModel.prototypeType = model.prototypeType;
+        newModel.prototypeTypeName = model.prototypeTypeName;
+        newModel.version = model.version;
+        newModel.validFrom = model.validFrom;
+        newModel.validUntil = model.validUntil;
+        newModel.state = prototypes.Prototype.states.draft;
+        newModel.itemIDSequence = 0;
+        model = newModel;
+        update();
+        matematici.canClose = false;
+        prototype.verify(function (valid) { if (valid) matematici.blip.ok(); })
+    };
+
     prototype.getNewItemsId = getNewItemsId;
     prototype.setNewItemsId = setNewItemsId;
     prototypes.prototype = prototype;
+    prototype.selectById = selectById;
     prototype.select = select;
     prototype.completeModel = completeModel;
+    prototype.getCurrentItem = function () { return currentItem; };
+    prototype.getElements = getElements;
+    prototype.getElement = getElement;
 
     setup();
-}
+};
 
 prototypes.Prototype.states = {
     draft: "Draft",
@@ -879,4 +1029,4 @@ prototypes.Prototype.states = {
     approved: "Approved",
     active: "Active",
     obsolete: "Obsolete"
-}
+};

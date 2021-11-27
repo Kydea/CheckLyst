@@ -1,5 +1,9 @@
 ﻿div.TabContainer {
-  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 35px;
+  z-index: 30;
+  background: white;
   transition: height .3s;
   display: none;
   min-height: 40px; }
@@ -50,11 +54,11 @@
     width: 100%;
     opacity: 0;
     transition: opacity .5s;
-    z-index: 50;
+    z-index: 30;
     padding-right: 20px; }
     div.TabContainer .Tab.Selected {
       opacity: 1;
-      z-index: 51; }
+      z-index: 31; }
 
 div.ShadowPanel div.TabContainer {
   margin-bottom: 20px;

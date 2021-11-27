@@ -1,0 +1,24 @@
+﻿@import "_Library.scss";
+
+body.InstanceManager {
+    div.CheckListGrid {
+        div.Container {
+            &.ExternalSources {
+                &.MultiSelection {
+                    table {
+                        tr {
+                            > :first-child {
+                                width: 20px;
+                                padding: 10px;
+                            }
+                        }
+                    }
+                }
+
+                > div {
+                    position: relative;
+                }
+            }
+        }
+    }
+}

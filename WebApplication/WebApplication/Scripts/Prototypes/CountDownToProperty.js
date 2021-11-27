@@ -1,54 +1,67 @@
 ﻿prototypes.CountDownToProperty = function (model) {
     var
+        base,
         conditionSelect, valueSelect, offsetInput,
-        expressions,
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
+        expressionPropertyBase,
 
-        check = function () {
+        check = function (value, ignoreNull) {
             var
-                value = valueSelect.val(),
-                condition = !!value ? conditionSelect.val() : 0,
-                error;
+                condition = conditionSelect.val(),
+                error = null,
+                expressions = expressionPropertyBase.getExpressions();
 
             if (condition == 3) {
                 if (!value)
                     error = "select an expression";
+                else if (expressions[value] == undefined)
+                    error = "expression not found";
                 else if (expressions[value].error)
                     error = "the expression is not valid";
                 else if (!prototypes.propertyPanel.checkDataType(expressions[value], "DateTime"))
-                    error = "the expression result must be a date";
+                    error = "the expression result must be a date/time";
             } else if (condition == 6) {
                 if (!value)
                     error = "select a signature";
-            }
+                else if (prototypes.prototype.getElement(value, ["Signature"]) == null)
+                    error = "signature not found";
+            } else
+                base.setError(model.errors, "countdown", null);
 
             var offset = parseInt(offsetInput.val() || 0);
             offsetInput.val(offset)
 
-            if (error)
-                new matematici.dialog.error("error", error);
-            else {
-                model.countDownCondition = condition;
-                model.countDownToCode = condition > 0 ? value : null;
-                model.countDownOffset = condition > 0 ? offset : 0;
+            if (error) {
+                var autoComplete = matematici.AutoComplete.get(valueSelect[0]);
+                if (autoComplete)
+                    autoComplete.setError(value);
+                else
+                    valueSelect.attr("data-error", value);
             }
 
-            matematici.canClose = false;
+            model.countDownCondition = condition;
+            model.countDownToCode = condition > 0 ? value : null;
+            model.countDownOffset = condition > 0 ? offset : 0;
+
+            base.setError(model.errors, "countdown", error);
+            base.updateModel(model);
         },
 
-        toggleControls = function () {
-            var condition = conditionSelect.val();
+        toggleControls = function (checkValues) {
+            var
+                condition = conditionSelect.val(),
+                expressions = expressionPropertyBase.getExpressions();
 
             valueSelect.empty();
             if (condition == 3)
                 for (var expressionCode in expressions)
                     valueSelect.append($("<option />").attr({ value: expressionCode }).text(expressionCode));
             else if (condition == 6)
-                for (var signatureCode in prototypes.prototype.getModel().signatures)
+                for (var signatureCode in prototypes.prototype.getElements(["Signature"]))
                     valueSelect.append($("<option />").attr({ value: signatureCode }).text(signatureCode));
 
             setTimeout(function () {
-                var autoComplete = valueSelect.data("autoComplete");
+                var autoComplete = matematici.AutoComplete.get(valueSelect[0]);
                 valueSelect.toggleClass("ReadOnly", condition == 0);
                 autoComplete.setValue(model.countDownToCode);
                 autoComplete.refresh();
@@ -56,6 +69,8 @@
 
                 matematici.controls.setEditable(offsetInput, condition > 0);
                 offsetInput.val(model.countDownOffset)
+
+                if (checkValues && condition > 0) check(model.countDownToCode);
             }, 0);
         },
 
@@ -64,16 +79,20 @@
             model.countDownToCode = null;
             model.countDownOffset = 0;
 
-            toggleControls();
+            toggleControls(false);
+
+            base.setError();
         },
 
         valueChanged = function () {
-            check();
+            check(valueSelect.val());
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
+
         valuePanel.addClass("CountDown");
-        expressions = prototypes.prototype.getModel().expressions;
+        expressionPropertyBase = new prototypes.ExpressionPropertyBase(model, "countDownToCode", valuePanel, base, "countdown", true);
 
         if (editable) {
             conditionSelect = $("<select />")
@@ -85,8 +104,10 @@
 
             valueSelect = $("<select />")
                 .on("change", valueChanged)
-                .data("nullable", "-")
+                .attr("data-nullable", "-")
                 .appendTo(valuePanel);
+
+            expressionPropertyBase.setSelect(valueSelect);
 
             $("<label />")
                 .text("offset (seconds)")
@@ -99,14 +120,14 @@
                 .val(model.countDownOffset || "0")
                 .appendTo(valuePanel);
 
-            toggleControls();
+            toggleControls(true);
         } else {
             $("<input />")
                 .attr({ type: "text", readOnly: true })
                 .val(
                     model.countDownCondition == 0 && !model.countDownToCode ? "(not set)" :
-                    model.countDownCondition != 6 && !!model.countDownToCode ? "expression" :
-                    "signature"
+                        model.countDownCondition != 6 && !!model.countDownToCode ? "expression" :
+                            "signature"
                 )
                 .appendTo(valuePanel);
 
@@ -121,14 +142,27 @@
                 .appendTo(valuePanel);
 
             $("<input />")
-                .attr({ type: "text", readOnly: true  })
+                .attr({ type: "text", readOnly: true })
                 .val(model.countDownOffset || "0")
                 .appendTo(valuePanel);
         }
-    }
+    };
 
     this.hasChanges = function () {
         return !!model.countDownToCode;
-    }
-}
+    };
+
+    this.getExpressionsSelect = function () {
+        return valueSelect;
+    };
+
+    this.setExpressionCode = function (value) {
+        model.countDownCondition = 3;
+        model.countDownToCode = value;
+    };
+
+    this.setError = function (handler) {
+        handler(model.errors, "countdown");
+    };
+};
 

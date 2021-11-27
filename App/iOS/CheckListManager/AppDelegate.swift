@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        
         let navigationBarAppearace = UINavigationBar.appearance()
         
         UIApplication.shared.statusBarStyle = .lightContent
@@ -33,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             navBarAppearance.buttonAppearance = barButtonAppareance;
             
             navBarAppearance.backgroundColor = UIColor(red: 64.0/255, green: 64.0/255, blue: 64.0/255, alpha: 1.0)
-            
+                        
             navigationBarAppearace.standardAppearance = navBarAppearance
             navigationBarAppearace.compactAppearance = navBarAppearance
             navigationBarAppearace.scrollEdgeAppearance = navBarAppearance
@@ -46,22 +45,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             navigationBarAppearace.barTintColor = UIColor(red: 43.0/255, green: 43.0/255, blue: 43.0/255, alpha: 1.0)
         }
+                
+        UINavigationBar.appearance(whenContainedInInstancesOf: [UIDocumentBrowserViewController.self]).tintColor = UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)
         
-         navigationBarAppearace.tintColor = UIColor.white
+        navigationBarAppearace.tintColor = UIColor.white
         
         UITabBar.appearance().barTintColor = UIColor(red: 0.0/255, green: 150.0/255, blue: 136.0/255, alpha: 1.0)
         
         UITabBar.appearance().tintColor = UIColor.white
-        
-        Server.setupWithManagedObjectContext(managedObjectContext)
-        
 
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor.white], for:.selected)
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Flaticon", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
-
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font:UIFont (name: "Arial", size: 15)!,NSAttributedStringKey.foregroundColor: UIColor(red: 3.0/255, green: 195.0/255, blue: 177.0/255, alpha: 1.0)], for:UIControlState())
+                
+        //URLProtocol.registerClass(CustomUrlprotocol.self)
         
-        URLProtocol.registerClass(CustomUrlprotocol.self)
+        UpdateManager.shared.startUpdates()
         
         return true
     }
@@ -74,24 +73,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        
+        print("background")
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        
+        print("foreground")
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        
+        print("become active")
         (UIApplication.shared as! MyApplication).backFromBackGround()
         
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+        print("terminate")
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
     }
@@ -115,8 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         let url = self.applicationDocumentsDirectory.appendingPathComponent("CheckListManager.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
+        let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
         do {
-            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: options)
         } catch {
             // Report any error we got.
             var dict = [String: AnyObject]()
@@ -158,20 +159,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    //MARK: - Application URL Responder
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        
-        //print(url.path)
-        
         let mApp = (app as! MyApplication)
-        mApp.requestToOpenInstance = true
-        mApp.requestedUrlInfo = url.getParametersForInstance
-        if let logged = UserDefaults.standard.string(forKey: "logged") {
-            if (NSString(string:logged).boolValue) {
-               mApp.openInstance()
+        //print(url.path)
+        if (url.getCallType == .Create ||
+            url.getCallType == .Detail) {
+            mApp.requestToOpenInstance = true
+            mApp.requestedUrlInfo = url.getParametersForInstance
+            mApp.backFromBackGround()
+            if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
+                mApp.goToSearch()
             }
-        } else {
-            mApp.logoutAndGoToLogin()
         }
+
+        if (url.getCallType == .Setup) {
+            if let params = url.getParametersForInstance {
+                let server = "\(params["schema"]!)://\(url.host!)"
+                mApp.requestedUrlInfo = ["server" : server]
+                mApp.setupNewServer(server, managedObjectContext: managedObjectContext)
+            }
+        }
+        
+        if (url.getCallType == .Filters) {
+            mApp.requestToOpenSearch = true
+            mApp.backFromBackGround()
+            
+            if let params = url.queryParameters {
+                FilterManager.shared.clearFilters()
+                for param in params {
+                    FilterManager.shared.setFilter(name: param.key, value: param.value)
+                }
+            }
+            
+            if UserDefaults.standard.existKey("access_token") && !mApp.isTokenExpired && !mApp.isInactivityCatched {
+                mApp.openSearch()
+            }
+            
+        }
+        
         return true
     }
     

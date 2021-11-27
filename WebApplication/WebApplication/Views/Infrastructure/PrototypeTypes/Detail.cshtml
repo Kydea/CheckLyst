@@ -18,20 +18,20 @@
 		<input type="hidden" name="department" />
 		<label class="Clearing">
 			<span>Department</span>
-			<i class="Icon fal fa-industry" data-nullable="true" />
+			<i class="Icon fal fa-industry" data-nullable="-" />
 			<input type="text" name="departmentName" readonly="readonly" />
 		</label>
 
 		<label class="Clearing">
 			<span>Approval workflow</span>
 			<i class="Icon fal fa-file-certificate" />
-			<select type="text" name="approvationWorkFlow" data-nullable="true" />
+			<select type="text" name="approvationWorkFlow" data-nullable="" />
 		</label>
 
 		<label>
 			<span>Obsolescence workflow</span>
 			<i class="Icon fal fa-file-certificate" />
-			<select type="text" name="obsolescenceWorkFlow" data-nullable="true" />
+			<select type="text" name="obsolescenceWorkFlow" data-nullable="" />
 		</label>
 
 		<label>
@@ -73,9 +73,12 @@
         initHandler: function (detailPage) {
             var
                 sender = detailPage.getSender(),
-                form = detailPage.getForm();
+                form = detailPage.getForm(),
+                autoCompleteOptions = sender.getBindResult();
 
-            form.handleResult(sender.getBindResult());
+            if (autoCompleteOptions.fields && autoCompleteOptions.fields.name) delete autoCompleteOptions.fields.name;
+            if (autoCompleteOptions.fields && autoCompleteOptions.fields.department) delete autoCompleteOptions.fields.department;
+            form.handleResult(autoCompleteOptions);
         },
 
         completeHandler: function (detailPage) {

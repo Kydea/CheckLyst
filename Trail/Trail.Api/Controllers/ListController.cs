@@ -125,17 +125,19 @@ namespace CheckListManager.Trail.Api.Controllers
                 "Logged user code",
                 "Action",
                 "CheckList code",
+                "CheckList ID",
                 "Detail"
             };
 
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm =>
                 new string[] {
-                    tm.Id.ToString(),
+                    tm.ID.ToString(),
                     tm.Date.ToLocalTime(Data.TimeZone).ToString(),
                     tm.User,
                     tm.Action,
-                    tm.CheckList,
+                    tm.CheckListCode,
+                    tm.CheckListID.ToJson(),
                     tm.Information == null ? null : PrettifyObject(tm.Information, 0)
             }));
         }

@@ -30,7 +30,7 @@
 </div>
 
 <div class="PropertyPanel">
-    <div class="PropertyList"></div>
+    <div class="PropertyList"><table><tbody></tbody></table></div>
     <div class="PropertyValue"></div>
     <div class="Information"></div>
 </div>
@@ -62,8 +62,11 @@
                     new prototypes.SourcesList();
                 }, "Icon SourcesList")
                 .add("<i class='Icon fal fa-calculator'></i>", function () {
-                    new prototypes.ExpressionsList($(this));
-                }, "Icon ExpressionsList"),
+                    new prototypes.ExpressionsList();
+                }, "Icon ExpressionsList")
+                .add("<i class='Icon fa fa-cubes'></i>", function () {
+                    new prototypes.ItemsList();
+                }, "Icon ItemsList"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("Quit", function () {
@@ -72,15 +75,12 @@
                 .add("History", function () {
                     prototype.showHistory();
                 }, "History")
-                .add("Import", function () {
-                    prototype.import();
-                }, "Import")
+                .add("Script editor", function () {
+                    prototype.scriptEditor();
+                }, "ScriptEditor")
                 .add("Download", function () {
                     prototype.download();
                 }, "Download")
-                .add("Export", function () {
-                    prototype.export();
-                }, "Export")
                 .add("Preview", function () {
                     prototype.preview();
                 }, "Preview")
@@ -108,24 +108,6 @@
                 .add("Save", function () {
                     prototype.save();
                 }, "Save");
-
-        //Loads departments and prototype types
-        $.ajax({
-            type: "post",
-            url: "@BaseUrl/Infrastructure/PrototypeTypes/GetSyntheticData",
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                data: {
-                    name: "",
-                    functionGroup: "Prototypes",
-                    function: "Edit"
-                },
-                itemsPerPage: 1000
-            })
-        }).done(function (result) {
-            propertyPanel.setPrototypeTypesList(result.data);
-        });
 
         //Loads data sources
         $.ajax({

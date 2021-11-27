@@ -24,12 +24,11 @@ namespace CheckListManager.Common.Logic.Api
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
 		{
-			if (_message == null)
+            if (_message == null)
 			{
 				_message = new ResponseMessage();
 				_message.Messages.Add("An error has occurred.");
 			}
-
 			return Task.FromResult(_request.CreateResponse(HttpStatusCode.InternalServerError, _message));
 		}
 	}

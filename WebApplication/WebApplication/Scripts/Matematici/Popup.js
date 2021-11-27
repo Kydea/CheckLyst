@@ -1,5 +1,4 @@
 matematici.popup = function () {
-
 	var
 		element,
 		container,
@@ -10,7 +9,7 @@ matematici.popup = function () {
 
 		ajax = function () {
 			if (options.errorHandler)
-				options.aiax.suppressErrors = true;
+				options.ajax.suppressErrors = true;
 			$.ajax(options.ajax)
 				.done(function (result) {
 					options.content = result;
@@ -150,7 +149,11 @@ matematici.popup = function () {
 
 		getElement: function () {
 			return element;
-		},
+        },
+
+        getButtonsBar: function () {
+            return container.children("div.Buttons");
+        },
 
 		getResult: function () {
 			return result;
@@ -173,7 +176,7 @@ matematici.popup = function () {
 		},
 
 		center: function () {
-			autoCenter.center();
+			autoCenter && autoCenter.center();
 		},
 
 		addCloseButton: function (handler) {

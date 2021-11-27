@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +10,7 @@ using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Configuration;
 using CheckListManager.Common.Logic.Services;
+using RabbitMQ.Client;
 using SpecFlow.Autofac;
 
 namespace CheckListManager.AccessControl.Tests.Setup
@@ -40,20 +42,37 @@ namespace CheckListManager.AccessControl.Tests.Setup
 				.RegisterAssemblyTypes(typeof(DependencyInjection).Assembly)
 				.InstancePerLifetimeScope();
 
-			builder.RegisterType<AmazonSQSClient>()
-				.As<IAmazonSQS>()
-				.AsSelf()
-				.InstancePerLifetimeScope();
+			var useRabbitMq = "RabbitMQ".Equals(ConfigurationManager.AppSettings["QueueSystem"], StringComparison.InvariantCultureIgnoreCase);
+			if (useRabbitMq)
+			{
+				builder.RegisterType<ConnectionFactory>()
+					.As<IConnectionFactory>()
+					.AsSelf()
+					.SingleInstance()
+					.OnActivating(ConfigBase.OnConfiguringRabbitMq);
+				
+				builder.RegisterType<QueueServiceRabbitMq>()
+					.As<IQueueService>()
+					.AsSelf()
+					.InstancePerLifetimeScope();
+			}
+			else
+			{
+				builder.RegisterType<AmazonSQSConfig>()
+					.AsSelf()
+					.SingleInstance()
+					.OnActivating(ConfigBase.OnConfiguringSqs);
 
-			builder.RegisterType<AmazonSQSConfig>()
-				.AsSelf()
-				.SingleInstance()
-				.OnActivating(ConfigBase.OnConfiguringSqs);
-
-			builder.RegisterType<QueueServiceSqs>()
-				.As<IQueueService>()
-				.AsSelf()
-				.InstancePerLifetimeScope();
+				builder.RegisterType<AmazonSQSClient>()
+					.As<IAmazonSQS>()
+					.AsSelf()
+					.InstancePerLifetimeScope();
+				
+				builder.RegisterType<QueueServiceSqs>()
+					.As<IQueueService>()
+					.AsSelf()
+					.InstancePerLifetimeScope();
+			}
 
 			return builder;
 		}

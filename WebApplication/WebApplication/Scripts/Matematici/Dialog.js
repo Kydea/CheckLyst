@@ -11,35 +11,32 @@ matematici.dialog = function () {
 			if (button.textarea) {
 				var textArea = $("<textarea />").addClass("Textarea");
 				button.content = $("<div />");
-				button.content.prepend(textArea);
-				if (button.text) button.content.prepend($("<label />").text(button.text));
+                button.content.prepend(textArea);
 				if (button.val) textArea.val(button.val);
 				if (button.readOnly) textArea.prop("readonly", true).addClass("ReadOnly");
 				if (button.handler) textArea.on("click", button.handler);
 				if (button.height) textArea.height(button.height);
+                if (button.marginTop) textArea.css("margin-top", button.marginTop);
 				container.append(button.content);
 			} else if (button.text || button.hidden) {
 				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
-					if (button.handler) {
-						if (!button.handler.call(this, button.data)) {
-							matematici.dialog.close();
-						}
-					} else
+					if (!button.handler)
+                        matematici.dialog.close();
+				    else if (!button.handler.call(this, button.data)) {
 						matematici.dialog.close();
+					}
 				});
                 if (button.icon) button.content.prepend($("<i />").addClass("Icon " + (options.iconPrefix || "fa") + " fa-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton");
 				if (button.title) button.content.attr("title", button.title);
-				if (button.cancelButton) {
+				if (button.cancelButton) 
 					container
-						.append($("<a />").attr("href", "#").addClass("CloseButton")
+                        .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
                             .append($("<i />").addClass("fas fa-times-circle"))
 							.on("click", function () {
 								button.content.click();
 							}));
-					button.content.addClass("CancelButton");
-				}
 				if (button.id) button.content.attr("id");
 
 				buttons.prepend(button.content);
@@ -117,8 +114,8 @@ matematici.dialog = function () {
 		show: function (titleOrSettings, content, buttons) {
 			if (content || buttons) {
 				options.title = titleOrSettings;
-				options.content = content || "";
-				options.buttons = buttons || { text: "ok", icon: "check" };
+                options.content = content || "";
+                options.buttons = buttons || { text: "ok", icon: "check", defaultButton: true, cancelButton: true };
 			} else if (titleOrSettings)
 				options = titleOrSettings;
 
@@ -159,7 +156,7 @@ matematici.dialog = function () {
 
 		setCloseHandler: function (value) {
 			setCloseHandler(value);
-		}
+        }
 	};
 
 }();
@@ -209,6 +206,10 @@ matematici.dialog = function () {
 
     or:
         error(settings)
+        see show(...)
+
+    or: 
+        popupMenu(buttons)
         see show(...)
 
  */

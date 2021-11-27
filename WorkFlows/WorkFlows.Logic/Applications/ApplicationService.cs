@@ -77,8 +77,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion,
-            string State, DateTimeOffset Now)
+        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
@@ -94,24 +93,23 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.PrototypeStateChanged,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
-                    Information = JsonConvert.SerializeObject(new { State })
+                    CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListID = PrototypeVersion.Prototype,
+                    Information = State
                 });
             }
         }
 
-        private async Task Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        private async Task<bool> Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             var UtcNow = DateTimeOffset.UtcNow;
+            var Export = false;
 
             if (!PrototypeVersion.ValidFrom.HasValue)
                 PrototypeVersion.ValidFrom = UtcNow;
 
             var State =
-                PrototypeVersion.VersionState == VersionState.InApproval ? PrototypeVersion.ValidFrom > UtcNow
-                    ?
-                    VersionState.Approved
-                    : VersionState.Active :
+                PrototypeVersion.VersionState == VersionState.InApproval ? PrototypeVersion.ValidFrom > UtcNow ? VersionState.Approved : VersionState.Active :
                 PrototypeVersion.ValidUntil > UtcNow ? PrototypeVersion.VersionState : VersionState.Obsolete;
 
             if (State == VersionState.Active)
@@ -120,26 +118,35 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 PrototypeVersion.Prototypes.ModifiedOn = PrototypeVersion.ModifiedOn;
                 PrototypeVersion.Prototypes.ModifiedBy = PrototypeVersion.ModifiedBy;
 
-                var OldVersion =
-                    PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv =>
-                        pv.VersionState == VersionState.Active);
+                var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null)
+                {
                     await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete, UtcNow);
+                    OldVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
+                    {
+                        Date = DateTimeOffset.UtcNow,
+                        State = VersionState.Obsolete,
+                        User = identity.Code
+                    });
+                }
             }
 
-            if (State == VersionState.Active || State == VersionState.Obsolete)
-                await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
-                {
-                    Company = identity.CompanyId,
-                    Prototype = PrototypeVersion.Prototype,
-                    PrototypeName = PrototypeVersion.Prototypes.Name,
-                    Version = PrototypeVersion.Version,
-                    State = State,
-                    Path =
-                        $"{(PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? "")}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{(PrototypeVersion.Description?.Replace('#', '-') ?? "")}"
-                });
-
+            if (State == VersionState.Active || State == VersionState.Obsolete) Export = true;
             await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
+            return Export;
+        }
+
+        private async Task Export(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        {
+            await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
+            {
+                Company = identity.CompanyId,
+                Prototype = PrototypeVersion.Prototype,
+                PrototypeName = PrototypeVersion.Prototypes.Name,
+                Version = PrototypeVersion.Version,
+                State = PrototypeVersion.VersionState,
+                Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{(PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? "")}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
+            });
         }
 
         private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
@@ -162,23 +169,30 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 User = identity.Code,
                 Action = TrailAction.InstanceStateChanged,
                 Date = DateTimeOffset.UtcNow,
-                CheckList = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
+                CheckListCode = $"{Instance.Prototypes.Name}.{Instance.Version}.{Instance.Year}.{Instance.Number}",
+                CheckListID = Instance.ID,
                 Information = JsonConvert.SerializeObject(new { State })
             });
         }
 
-        private async Task Approve(DefaultIdentity identity, Instances Instance)
+        private async Task<bool> Approve(DefaultIdentity identity, Instances Instance)
         {
+            var Export = false;
             await SetInstanceState(identity, Instance, InstanceState.Confirmed);
 
-            if (!string.IsNullOrWhiteSpace(Instance.FileName))
-                await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
-                {
-                    Company = identity.CompanyId,
-                    ID = Instance.ID,
-                    Path = Instance.FileName,
-                    Code = $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}"
-                });
+            if (!string.IsNullOrWhiteSpace(Instance.FileName)) Export = true;
+            return Export;
+        }
+
+        private async Task Export(DefaultIdentity identity, Instances Instance)
+        {
+            await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
+            {
+                Company = identity.CompanyId,
+                ID = Instance.ID,
+                Path = Instance.FileName,
+                Code = $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}"
+            });
         }
 
         private async Task Reject(DefaultIdentity identity, Instances Instance)
@@ -186,7 +200,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             await SetInstanceState(identity, Instance, InstanceState.Deleted);
         }
 
-        public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request)
+        public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone)
         {
             PrototypeVersions PrototypeVersion = null;
             Instances Instance = null;
@@ -214,7 +228,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) &&
                     request.Approved)
                     throw new Exception("The prototype has a past validity end date");
-                if (!request.Approved && String.IsNullOrWhiteSpace(request.Comment))
+                if (!request.Approved && string.IsNullOrWhiteSpace(request.Comment))
                     throw new Exception("The comment is mandatory for the rejections");
 
                 await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
@@ -228,40 +242,47 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (PrototypeVersion != null)
                 {
                     var Granted = false;
-                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                        if (
-                            identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department,
-                                PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
-                            || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, null,
-                                Tag.Tag)
-                        )
-                        {
-                            Granted = true;
-                            break;
-                        }
+                    if (
+                        identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
+                        || identity.HasPermission("Prototypes", "Approve", PrototypeVersion.Prototypes.Department)
+                    )
+                        foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                            if (
+                                identity.HasPermission("PrototypeWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, Tag.Tag)
+                                || identity.HasPermission("PrototypeWorkFlowLevel", null, PrototypeVersion.Prototypes.Department, null, Tag.Tag)
+                                || identity.HasPermission("PrototypeWorkFlowLevel", null, null, null, Tag.Tag)
+                            )
+                            {
+                                Granted = true;
+                                break;
+                            }
 
-                    if (!Granted)
-                        throw new Exception("Permission denied");
+                    if (!Granted) throw new Exception("Permission denied");
                 }
                 else if (Instance != null)
                 {
                     var Granted = false;
-                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
-                        if (
-                            identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department,
-                                Instance.Prototypes.PrototypeType, Tag.Tag)
-                            || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, null, Tag.Tag)
-                        )
-                        {
-                            Granted = true;
-                            break;
-                        }
+                    if (
+                        identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department, Instance.Prototypes.PrototypeType)
+                        || identity.HasPermission("Instances", "Confirm", Instance.Prototypes.Department)
+                    )
+                        foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                            if (
+                                identity.HasPermission("InstanceWorkFlowLevel", null, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, Tag.Tag)
+                                || identity.HasPermission("InstanceWorkFlowLevel", null, Instance.Prototypes.Department, null, Tag.Tag)
+                                || identity.HasPermission("InstanceWorkFlowLevel", null, null, null, Tag.Tag)
+                            )
+                            {
+                                Granted = true;
+                                break;
+                            }
 
-                    if (!Granted)
-                        throw new Exception("Permission denied");
+                    if (!Granted) throw new Exception("Permission denied");
                 }
                 else
                     throw new InvalidOperationException();
+
+                bool ExportFTP = false;
 
                 if (request.Approved)
                 {
@@ -272,15 +293,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                         if (FirstSignature)
                         {
                             if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved)
-                                PrototypeVersion.ValidFrom =
-                                    request.ValidFromNow ? (DateTimeOffset?)null : request.ValidFrom.Value;
+                                PrototypeVersion.ValidFrom = request.ValidFromNow ? default(DateTimeOffset?) : request.ValidFrom.Value;
 
                             PrototypeVersion.ValidUntil = request.ValidUntilNow ? null : request.ValidUntil;
                         }
 
                         if (AllApproved)
                         {
-                            await Approve(identity, PrototypeVersion);
+                            ExportFTP = await Approve(identity, PrototypeVersion);
                             Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
                         }
                     }
@@ -288,7 +308,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         if (AllApproved)
                         {
-                            await Approve(identity, Instance);
+                            ExportFTP = await Approve(identity, Instance);
                             Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                         }
                     }
@@ -316,6 +336,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                 await _workFlowsRepository.SaveChangesAsync();
 
+                if (ExportFTP)
+                {
+                    if (PrototypeVersion != null)
+                        await Export(identity, PrototypeVersion);
+                    else if (Instance != null)
+                        await Export(identity, Instance);
+                }
+
                 if (PrototypeVersion != null)
                 {
                     SignResponse.State = PrototypeVersion.VersionState;
@@ -338,8 +366,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                 if (PrototypeVersion != null)
                 {
-                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
-                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                    information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
                 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -348,7 +376,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = checklistLabel,
+                    CheckListCode = checklistLabel,
+                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 
@@ -368,8 +397,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 
                 if (PrototypeVersion != null)
                 {
-                    information.Add("ValidFrom", SignResponse.ValidFrom ?? (object)"(now)");
-                    information.Add("ValidUntil", SignResponse.ValidUntil ?? (object)"(never expires)");
+                    information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
+                    information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
                 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -378,7 +407,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureFailed,
                     Date = DateTimeOffset.UtcNow,
-                    CheckList = checklistLabel,
+                    CheckListCode = checklistLabel,
+                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 
@@ -388,8 +418,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         public async Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request)
         {
-            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow,
-                request.Date, request.Prototype, request.Version, request.Instance, request.Action);
+            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow, request.Date, request.Prototype, request.Version, request.Instance, request.Action);
             await SendEmailsAsync(identity, workFlowApplication);
 
             return new CreateResponse
@@ -412,11 +441,11 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             var PrototypeVersion = workFlowApplicationStep.WorkFlowApplications.PrototypeVersions;
             var Users =
                 Instance == null
-                    ? await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes",
-                        "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType,
+                    ? await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes", "Approve", 
+                        PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
                         workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag))
                     : await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instances", "Confirm",
-                        Instance.Prototypes.Department, Instance.Prototypes.PrototypeType,
+                        Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
                         workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
             var webApplicationUrl = _configurationService.WebApplicationUrl;
 
@@ -440,7 +469,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                                     $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>"),
                             })
                         {
-                            TrailMessage = new EmailTrailMessage(identity.Code, checklistLabel, null)
+                            TrailMessage = new EmailTrailMessage(identity.Code, checklistLabel, Instance?.ID ?? PrototypeVersion.Prototype, null)
                         });
                 }
         }

@@ -1,4 +1,4 @@
-create schema "Configuration";
+ocreate schema "Configuration";
 
 create table "Configuration"."Configurations"
 (
@@ -27,9 +27,8 @@ create table "Configuration"."Settings"
 );
 
 insert into "Configuration"."Settings" ("Code") values
-	('InstancesFtpConnection'),
-	('PrototypesFtpConnection'),
 	('LDAPHost'),
+	('LDAPPort'),
 	('SmtpHost'),
 	('SmtpPort'),
 	('SmtpUsername'),
@@ -39,8 +38,18 @@ insert into "Configuration"."Settings" ("Code") values
 	('UserBlockWarningMessage'),
 	('SignatureMessage'),
 	('InstanceMessage'),
+	('NotificationMessage'),
 	('DecimalSeparator'),
-	('RequireUserReason');
+	('RequireUserReason'),
+	('PrototypesAttachmentMaxSizeBytes'),
+	('InstancesAttachmentMaxSizeBytes'),
+	('InactivityTimeoutSeconds'),
+	('MaximumNumberOfPasswordFailure'),
+	('MaximumNumberOfPINFailure'),
+	('PINDaysLife'),
+	('WarningUserInactivityDays'),
+	('MaximumUserInactivityDays');
+
 
 create table "Configuration"."SettingValues"
 (

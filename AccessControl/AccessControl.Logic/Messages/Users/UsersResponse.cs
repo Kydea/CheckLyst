@@ -7,6 +7,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
 		public string Code { get; set; }
         public string Description { get; set; }
 		public string Email { get; set; }
+		public string CorporateID { get; set; }
         public DateTimeOffset? LastLoginOn { get; set; }
         public bool Enabled { get; set; }
         public string AuthenticationCode { get; set; }

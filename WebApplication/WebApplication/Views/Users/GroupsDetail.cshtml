@@ -1,0 +1,73 @@
+﻿<div id="GroupsDetailPage" class="GrantsDetailPage">
+    <h2>Group</h2>
+
+    <form id="Detail" action="@BaseUrl/AccessControl/Groups">
+        <input type="hidden" name="reason" />
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#">General grants</a>
+                <a href="#">Prototype grants</a>
+                <a href="#">Instance grants</a>
+                <a href="#">Conflicts</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Group code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="code" autocomplete="off" maxlength="60" />
+                </label>
+
+                <label>
+                    <span>Description</span>
+                    <i class="Icon fal fa-id-card" />
+                    <input type="text" name="description" autocomplete="off" maxlength="100" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Role</span>
+                    <select class="GeneralRole" data-nullable="(custom)" />
+                </label>
+                <div class="Clearing"></div>
+
+                @Html.Partial("GeneralGrants")
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab Conflicts">
+                <div class="Control"></div>
+                <div class="Clearing"></div>
+            </div>
+        </div>
+    </form>
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    new matematici.GrantsDetailPage("form#Detail", "Groups");
+</script>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Terminal.Scheduler;
 using NLog;
@@ -14,7 +13,7 @@ namespace CheckListManager.Common.Logic.Terminal
 	{
 		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		private readonly List<ISchedulerStrategy> strategies = new List<ISchedulerStrategy>();
+		private readonly List<ISchedulerStrategy> _strategies = new List<ISchedulerStrategy>();
 
 		protected TimerWindowsService(TerminalConfig config) : base(config)
 		{
@@ -22,12 +21,12 @@ namespace CheckListManager.Common.Logic.Terminal
 
         protected void Add(ISchedulerStrategy strategy)
         {
-            strategies.Add(strategy);
+            _strategies.Add(strategy);
         }
 
 		protected override bool OnStart(HostControl hostControl)
 		{
-            foreach (var strategy in strategies)
+            foreach (var strategy in _strategies)
             {
                 strategy.ComputeNextExecutionTime();
 
@@ -48,7 +47,7 @@ namespace CheckListManager.Common.Logic.Terminal
 
 		protected override bool OnStop(HostControl hostControl)
 		{
-            foreach(var strategy in strategies)
+            foreach(var strategy in _strategies)
 			    strategy.Timer.Stop();
 
 			return true;

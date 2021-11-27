@@ -34,7 +34,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Right.Check(CheckList, Expression, IteratorStack);
         }
 
-        protected virtual TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue)
+        protected virtual TypedValue Evaluate(TypedValue LeftValue, TypedValue RightValue, string TimeZone)
         {
             return
                 LeftValue.Type == DataType.Error ? LeftValue :
@@ -42,9 +42,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 null;
         }
 
-        public override TypedValue GetValue(IElementsBranch ElementsBranch, string TimeZone)
+        public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
-            var Value = Evaluate(Left.GetValue(ElementsBranch, TimeZone), Right.GetValue(ElementsBranch, TimeZone));
+            var Value = Evaluate(Left.GetValue(ElementsBranch, IterationIndexes, TimeZone), Right.GetValue(ElementsBranch, IterationIndexes, TimeZone), TimeZone);
             if (Value == null) throw new NullReferenceException("Software design error");
             return Value;
         }

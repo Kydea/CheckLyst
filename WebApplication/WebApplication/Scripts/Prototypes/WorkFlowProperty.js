@@ -1,8 +1,7 @@
 ﻿prototypes.WorkFlowProperty = function (model, property, options) {
     var
+        base,
         input,
-        check,
-		expressions,
 
 		loadWorkFlows = function () {
 			$.ajax({
@@ -27,12 +26,13 @@
 
         change = function () {
 			model[property] = input.val();
-            matematici.canClose = false;
+            base.updateModel(model);
         };
 
-    this.create = function (valuePanel) {
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
         valuePanel.addClass("Expression");
-		input = $("<select />").data("nullable", true);
+		input = $("<select />").attr("data-nullable", "");
 		valuePanel.append(input);
 		loadWorkFlows();
 		if (options.readOnly)

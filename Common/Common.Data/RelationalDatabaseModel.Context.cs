@@ -45,7 +45,6 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<Configurations> Configurations { get; set; }
         public virtual DbSet<FunctionGroups> FunctionGroups { get; set; }
         public virtual DbSet<Functions> Functions { get; set; }
-        public virtual DbSet<Records> Records { get; set; }
         public virtual DbSet<Prototypes> Prototypes { get; set; }
         public virtual DbSet<PrototypeTypes> PrototypeTypes { get; set; }
         public virtual DbSet<WorkFlowApplications> WorkFlowApplications { get; set; }
@@ -54,11 +53,27 @@ namespace CheckListManager.Common.Data
         public virtual DbSet<WorkFlowSteps> WorkFlowSteps { get; set; }
         public virtual DbSet<Settings> Settings { get; set; }
         public virtual DbSet<SettingValues> SettingValues { get; set; }
-        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
         public virtual DbSet<Instances> Instances { get; set; }
         public virtual DbSet<InstancesHistory> InstancesHistory { get; set; }
         public virtual DbSet<PrototypeVersionsHistory> PrototypeVersionsHistory { get; set; }
         public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<FTPServers> FTPServers { get; set; }
+        public virtual DbSet<Records> Records { get; set; }
+        public virtual DbSet<InstanceRelations> InstanceRelations { get; set; }
+        public virtual DbSet<TimeZones> TimeZones { get; set; }
+        public virtual DbSet<GroupFunctions> GroupFunctions { get; set; }
+        public virtual DbSet<GroupRoles> GroupRoles { get; set; }
+        public virtual DbSet<Groups> Groups { get; set; }
+        public virtual DbSet<RoleFunctions> RoleFunctions { get; set; }
+        public virtual DbSet<Roles> Roles { get; set; }
+        public virtual DbSet<UserFunctions> UserFunctions { get; set; }
+        public virtual DbSet<UserGroups> UserGroups { get; set; }
+        public virtual DbSet<UserLevels> UserLevels { get; set; }
+        public virtual DbSet<UserRoles> UserRoles { get; set; }
+        public virtual DbSet<Reports> Reports { get; set; }
+        public virtual DbSet<ReportSources> ReportSources { get; set; }
+        public virtual DbSet<ReportColumns> ReportColumns { get; set; }
+        public virtual DbSet<ReportClauses> ReportClauses { get; set; }
+        public virtual DbSet<GroupConflicts> GroupConflicts { get; set; }
     }
 }

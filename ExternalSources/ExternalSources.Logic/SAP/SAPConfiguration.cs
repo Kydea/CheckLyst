@@ -31,16 +31,18 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
         public RfcConfigParameters GetParameters(string Code)
         {
-            var Parameters = new RfcConfigParameters();
             var SAPParameters = SourceParametersDictionary[Code];
-            Parameters.Add(RfcConfigParameters.Client, SAPParameters.Client);
-            Parameters.Add(RfcConfigParameters.MessageServerHost, SAPParameters.MessageServerHost);
-            Parameters.Add(RfcConfigParameters.MessageServerService, SAPParameters.MessageServerService);
-            Parameters.Add(RfcConfigParameters.SystemID, SAPParameters.SystemID);
-            Parameters.Add(RfcConfigParameters.LogonGroup, SAPParameters.LogonGroup);
-            Parameters.Add(RfcConfigParameters.User, SAPParameters.User);
-            Parameters.Add(RfcConfigParameters.Password, SAPParameters.Password);
-            Parameters.Add(RfcConfigParameters.Language, SAPParameters.Language);
+            var Parameters = new RfcConfigParameters
+            {
+                { RfcConfigParameters.Client, SAPParameters.Client },
+                { RfcConfigParameters.MessageServerHost, SAPParameters.MessageServerHost },
+                { RfcConfigParameters.MessageServerService, SAPParameters.MessageServerService },
+                { RfcConfigParameters.SystemID, SAPParameters.SystemID },
+                { RfcConfigParameters.LogonGroup, SAPParameters.LogonGroup },
+                { RfcConfigParameters.User, SAPParameters.User },
+                { RfcConfigParameters.Password, SAPParameters.Password },
+                { RfcConfigParameters.Language, SAPParameters.Language }
+            };
             return Parameters;
         }
     }

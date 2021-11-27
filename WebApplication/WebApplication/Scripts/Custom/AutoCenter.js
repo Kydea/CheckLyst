@@ -1,43 +1,53 @@
 ﻿matematici.AutoCenter = function (selector) {
-	var
-		autoCenter = this,
-		element = $(selector).data("autoCenter", autoCenter),
+    var
+        autoCenter = this,
+        element = $(selector).data("autoCenter", autoCenter),
+        scrollablePanel,
 
-		center = function () {
-			element.css("top", (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 760 ? 0 : Math.max(parseInt((element.parent().height() - element.outerHeight()) / 2), 0)); 
-		},
+        center = function () {
+            if (scrollablePanel) {
+                var occupiedHeight = 80; //padding + margin
+                scrollablePanel.siblings().map(function () {
+                    var sibling = $(this);
+                    if (sibling.css("position") != "absolute") 
+                        occupiedHeight += sibling.outerHeight();
+                });
+                scrollablePanel.css("max-height", "calc(100vh - " + occupiedHeight + "px)");
+                var fixedHeader = scrollablePanel.data("GridFixedHeader");
+                if (fixedHeader && fixedHeader.resize) fixedHeader.resize();
 
-		initialize = function () {
-			matematici.elements.window.on("resize", center);
-			center();
-			element.show();
-		},
+            }
+            element.css("top", (window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 760 ? 0 : Math.max(parseInt((element.parent().height() - element.outerHeight()) / 2), 0));
+        },
 
-		destroy = function () {
-			matematici.elements.window.off("resize", center);
-		};
+        initialize = function () {
+            matematici.elements.window.on("resize", center);
+            scrollablePanel = element.hasClass("Container") && element.parent().hasClass("CheckListGrid") ? $(".ScrollablePanel", element) : null;
+            if (scrollablePanel && scrollablePanel.length == 0) scrollablePanel = null;
+            center();
+            element.show();
+        },
 
-	this.initialize = function () {
-		setTimeout(initialize, 0);
-	};
+        destroy = function () {
+            matematici.elements.window.off("resize", center);
+        };
 
-	this.destroy = function () {
-		destroy();
-	};
+    this.initialize = function () {
+        setTimeout(initialize, 0);
+    };
 
-	this.center = function () {
-		center();
-	};
+    this.destroy = destroy;
+    this.center = center;
 }
 
 matematici.initializers.push(function (context) {
-	$(".AutoCenter", context).each(function () {
-		new matematici.AutoCenter(this).initialize();
-	});
+    $(".AutoCenter", context).each(function () {
+        new matematici.AutoCenter(this).initialize();
+    });
 });
 
 matematici.destroyers.push(function (context) {
-	$(".AutoCenter", context).each(function () {
-		$(this).data("autoCenter").destroy();
-	});
+    $(".AutoCenter", context).each(function () {
+        $(this).data("autoCenter").destroy();
+    });
 });

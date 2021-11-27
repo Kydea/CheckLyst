@@ -24,6 +24,7 @@ namespace CheckListManager.Common.Data
         public long ID { get; set; }
         public Nullable<long> Company { get; set; }
         public string Name { get; set; }
+        public string Protocol { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public string Folder { get; set; }
@@ -31,6 +32,7 @@ namespace CheckListManager.Common.Data
         public string Password { get; set; }
         public bool Passive { get; set; }
         public bool SSL { get; set; }
+        public string Key { get; set; }
         public bool PrototypesDefault { get; set; }
         public bool InstancesDefault { get; set; }
         public string CreatedBy { get; set; }

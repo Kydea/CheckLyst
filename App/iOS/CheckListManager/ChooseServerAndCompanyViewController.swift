@@ -9,15 +9,29 @@
 import Foundation
 import UIKit
 
-class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
     
     @IBOutlet var tableView: UITableView!
     
     @IBOutlet var okButton: UIButton!
     
-    var companyFieldsDictionary: [String:[String: String]]?
+    var companyFieldsDictionary: [CompanyShortJSON]?
     
-    var serverFieldsDictionary: [String:(api: String, frontEnd: String)]?
+    var filteredCompanyFields: [CompanyShortJSON] {
+        guard let text = searchController.searchBar.text, !text.isEmpty else {
+            return companyFieldsDictionary ?? []
+        }
+        return companyFieldsDictionary?.filter({$0.name.lowercased().contains(text.lowercased())}) ?? []
+    }
+    
+    var serverFieldsDictionary: [Server]?
+    
+    var filteredServerFields: [Server] {
+        guard let text = searchController.searchBar.text, !text.isEmpty else {
+            return serverFieldsDictionary ?? []
+        }
+        return serverFieldsDictionary?.filter({ ($0.serverFrontEndUrl?.lowercased().contains(text.lowercased()) ?? false) }) ?? []
+    }
     
     var rowIndex : Int?
     
@@ -35,20 +49,30 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
     
     @IBOutlet var fieldNameLabel: UILabel!
     
+    let context = ((UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
     
-    
-    
+    let searchController = UISearchController(searchResultsController: nil)
+        
     override func viewDidLoad() {
         
         fieldNameLabel?.text = fieldNameString
         
         okButton.isHidden = true
         
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        if #available(iOS 13.0, *) {
+            searchController.searchBar.searchTextField.backgroundColor = .white
+            searchController.searchBar.searchTextField.tintColor = .black
+        } else {
+            searchController.searchBar.barTintColor = .white
+            searchController.searchBar.tintColor = .black
+        }
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+        self.navigationItem.searchController = searchController
+        definesPresentationContext = true
+        searchController.obscuresBackgroundDuringPresentation = false
     }
-    
-    
-    
-    
     
     func numberOfSections(in tableView: UITableView) -> Int {
         
@@ -56,22 +80,16 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         
     }
     
-    
-    
-    
-    
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        
-        return (chooseServer ? serverFieldsDictionary?.count : companyFieldsDictionary?.count) ?? 1
+        return (chooseServer ? filteredServerFields.count : filteredCompanyFields.count)
+    
     }
     
     
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell")
         
@@ -80,7 +98,7 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         inputTextField = cell!.contentView.viewWithTag(2) as? UITextField
         
         
-        fieldLabel?.text = chooseServer ? Array(serverFieldsDictionary!.keys).reversed()[indexPath.row] : Array(companyFieldsDictionary!.keys)[indexPath.row]
+        fieldLabel?.text = chooseServer ? filteredServerFields[indexPath.row].serverFrontEndUrl : filteredCompanyFields[indexPath.row].name
         inputTextField?.isHidden = true
         
         
@@ -96,27 +114,29 @@ class ChooseServerAndCompanyViewController: UIViewController, UITableViewDelegat
         
         if(chooseServer!) {
             
+            let server = filteredServerFields[indexPath.row]
             
-            let url = serverFieldsDictionary![Array(serverFieldsDictionary!.keys).reversed()[indexPath.row]]!
+            loginViewController?.serverTextField.text = server.serverFrontEndUrl
             
-            loginViewController?.serverTextField.text = url.frontEnd
-            
-            Server.setNewServerUrl(url, managedObjectContext: (UIApplication.shared.delegate as! AppDelegate).managedObjectContext)
+            loginViewController?.textFieldDidEndEditing(loginViewController!.serverTextField)
             
         } else {
-            loginViewController?.companyTextField.text = Array(companyFieldsDictionary!.keys)[indexPath.row]
+            print(filteredCompanyFields.debugDescription)
+            print(indexPath.row)
+            let company = filteredCompanyFields[indexPath.row]
+            loginViewController?.companyTextField.text = company.name
             
-            let id = Int(companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!["id"]!)!
-            let name = Array(companyFieldsDictionary!.keys)[indexPath.row]
-            let inactivitySecondsTimeout = Int(companyFieldsDictionary![Array(companyFieldsDictionary!.keys)[indexPath.row]]!["inactivityTimeoutSeconds"]!)!
-            
-            loginViewController?.selectedCompany = Company(id: id, name: name, inactivityTimeoutSeconds: inactivitySecondsTimeout)
+            loginViewController?.selectedCompany = company
         }
         
         self.navigationController?.popViewController(animated: true)
         
     }
     
+    func updateSearchResults(for searchController: UISearchController) {
+        print(searchController.searchBar.text ?? "")
+        tableView.reloadData()
+    }
     
     override func viewWillDisappear(_ animated : Bool) {
         

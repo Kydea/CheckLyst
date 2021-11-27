@@ -54,6 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\InfrastructureController.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="Models\Help\Tab.cs" />
     <Compile Include="Models\Help\Field.cs" />
     <Compile Include="Models\Help\HelpPage.cs" />
+    <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Instance.cs" />
     <Compile Include="Models\Prototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,6 +85,7 @@
     <Content Include="Content\Media\Dashboard\Logout.jpg" />
     <Content Include="Content\Media\Dashboard\Pin.jpg" />
     <Content Include="Content\Media\Dashboard\Prototypes.jpg" />
+    <Content Include="Content\Media\Dashboard\Reports.jpg" />
     <Content Include="Content\Media\Logo.Big.png" />
     <Content Include="Content\Media\Logo.png" />
     <Content Include="Content\Media\LogoMobile.png" />
@@ -116,6 +120,15 @@
     <Content Include="Content\Theme\CheckListGrid.css">
       <DependentUpon>CheckListGrid.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ClausesList.css">
+      <DependentUpon>ClausesList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ColumnsList.css">
+      <DependentUpon>ColumnsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Companies.css">
+      <DependentUpon>Companies.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Content.css">
       <DependentUpon>Content.scss</DependentUpon>
     </Content>
@@ -134,13 +147,20 @@
     <Content Include="Content\Theme\Dialog.css">
       <DependentUpon>Dialog.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\ExpressionsList.css">
+      <DependentUpon>ExpressionsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ExternalSources.css">
+      <DependentUpon>ExternalSources.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\FixedHeader.css">
       <DependentUpon>FixedHeader.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.svg" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.svg" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.svg" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.svg" />
     <Content Include="Content\Theme\Fonts.css">
       <DependentUpon>Fonts.scss</DependentUpon>
     </Content>
@@ -150,8 +170,17 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.svg" />
+    <Content Include="Content\Theme\GrantsDetailPage.css">
+      <DependentUpon>GrantsDetailPage.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GridFiltersBar.css">
+      <DependentUpon>GridFiltersBar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GridFixedHeader.css">
+      <DependentUpon>GridFixedHeader.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Hamburger.css">
       <DependentUpon>Hamburger.scss</DependentUpon>
@@ -161,6 +190,9 @@
     </Content>
     <Content Include="Content\Theme\Instance.css">
       <DependentUpon>Instance.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ItemsList.css">
+      <DependentUpon>ItemsList.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\jQuery-UI.css">
       <DependentUpon>jQuery-UI.scss</DependentUpon>
@@ -208,32 +240,84 @@
     <Content Include="Content\Theme\Prototype.css">
       <DependentUpon>Prototype.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Report.css">
+      <DependentUpon>Report.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ReportEditor.css">
+      <DependentUpon>ReportEditor.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\ShadowPanel.css">
       <DependentUpon>ShadowPanel.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Signature.css">
       <DependentUpon>Signature.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\SourceEditor.css">
+      <DependentUpon>SourceEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\SourcesList.css">
+      <DependentUpon>SourcesList.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\Users.css">
-      <DependentUpon>Users.scss</DependentUpon>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Parameters.xml" />
-    <Content Include="Scripts\Controls\AutoComplete.js" />
+    <Content Include="Scripts\Ace\ace.js" />
+    <Content Include="Scripts\Ace\ext-beautify.js" />
+    <Content Include="Scripts\Ace\ext-code_lens.js" />
+    <Content Include="Scripts\Ace\ext-elastic_tabstops_lite.js" />
+    <Content Include="Scripts\Ace\ext-emmet.js" />
+    <Content Include="Scripts\Ace\ext-error_marker.js" />
+    <Content Include="Scripts\Ace\ext-keybinding_menu.js" />
+    <Content Include="Scripts\Ace\ext-language_tools.js" />
+    <Content Include="Scripts\Ace\ext-linking.js" />
+    <Content Include="Scripts\Ace\ext-modelist.js" />
+    <Content Include="Scripts\Ace\ext-options.js" />
+    <Content Include="Scripts\Ace\ext-prompt.js" />
+    <Content Include="Scripts\Ace\ext-rtl.js" />
+    <Content Include="Scripts\Ace\ext-searchbox.js" />
+    <Content Include="Scripts\Ace\ext-settings_menu.js" />
+    <Content Include="Scripts\Ace\ext-spellcheck.js" />
+    <Content Include="Scripts\Ace\ext-split.js" />
+    <Content Include="Scripts\Ace\ext-static_highlight.js" />
+    <Content Include="Scripts\Ace\ext-statusbar.js" />
+    <Content Include="Scripts\Ace\ext-textarea.js" />
+    <Content Include="Scripts\Ace\ext-themelist.js" />
+    <Content Include="Scripts\Ace\ext-whitespace.js" />
+    <Content Include="Scripts\Ace\keybinding-emacs.js" />
+    <Content Include="Scripts\Ace\keybinding-sublime.js" />
+    <Content Include="Scripts\Ace\keybinding-vim.js" />
+    <Content Include="Scripts\Ace\keybinding-vscode.js" />
+    <Content Include="Scripts\Ace\mode-json.js" />
+    <Content Include="Scripts\Ace\mode-sql.js" />
+    <Content Include="Scripts\Ace\snippets\expression.js" />
+    <Content Include="Scripts\Ace\mode-expression.js" />
+    <Content Include="Scripts\Ace\theme-custom.js" />
+    <Content Include="Scripts\Ace\worker-base.js" />
+    <Content Include="Scripts\Ace\worker-json.js" />
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
+    <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\SQLEditor.js" />
+    <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
     <Content Include="Scripts\Controls\DetailPage.js" />
     <Content Include="Scripts\Controls\SearchPage.js" />
     <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\GrantsDetailPage.js" />
+    <Content Include="Scripts\Custom\GridFixedHeader.js" />
+    <Content Include="Scripts\Custom\ScriptEditor.js" />
     <Content Include="Scripts\Custom\AutoCenter.js" />
     <Content Include="Scripts\Custom\Accordion.js" />
+    <Content Include="Scripts\Custom\GridFiltersBar.js" />
     <Content Include="Scripts\Custom\ImageViewer.js" />
+    <Content Include="Scripts\Controls\AutoComplete.js" />
+    <Content Include="Scripts\Instances\InstanceLink.js" />
+    <Content Include="Scripts\Libraries\pako.1.0.11.js" />
+    <Content Include="Scripts\Matematici\Profiler.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />
     <Content Include="Scripts\Custom\CheckListGrid.js" />
@@ -250,7 +334,7 @@
     <Content Include="Scripts\Instances\ElementInformation.js" />
     <Content Include="Scripts\Instances\Event.js" />
     <Content Include="Scripts\Instances\SignatureEmail.js" />
-    <Content Include="Scripts\Instances\ExternalSources.js" />
+    <Content Include="Scripts\Custom\ExternalSourcesSearchForm.js" />
     <Content Include="Scripts\Instances\Field.js" />
     <Content Include="Scripts\Instances\Group.js" />
     <Content Include="Scripts\Instances\Attachment.js" />
@@ -274,44 +358,10 @@
     <Content Include="Content\Theme\ShadowPanel.scss" />
     <Content Include="Content\Theme\Accordion.scss" />
     <Content Include="Content\Theme\Popup.scss" />
-    <Content Include="Content\Theme\Users.scss" />
+    <Content Include="Content\Theme\GrantsDetailPage.scss" />
     <Content Include="Content\Theme\ButtonGroup.scss" />
     <Content Include="Content\Theme\Blip.scss" />
     <Content Include="Content\Theme\Dashboard.scss" />
-    <Content Include="Content\Theme\FontAwesome\fa-brands.scss" />
-    <Content Include="Content\Theme\FontAwesome\fa-light.scss" />
-    <Content Include="Content\Theme\FontAwesome\fa-regular.scss" />
-    <Content Include="Content\Theme\FontAwesome\fa-solid.scss" />
-    <Content Include="Content\Theme\FontAwesome\fontawesome.scss" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.eot" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.ttf" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.woff" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-brands-400.woff2" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.eot" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.ttf" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.woff" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-light-300.woff2" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.eot" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.ttf" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.woff" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-regular-400.woff2" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.eot" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.ttf" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.woff" />
-    <Content Include="Content\Theme\FontAwesome\WebFonts.5.9.0\fa-solid-900.woff2" />
-    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
-    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
-    <Content Include="Content\Theme\FontAwesome\_core.scss" />
-    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
-    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
-    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
-    <Content Include="Content\Theme\FontAwesome\_list.scss" />
-    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
-    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
-    <Content Include="Content\Theme\FontAwesome\_screen-reader.scss" />
-    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
-    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
-    <Content Include="Content\Theme\FontAwesome\_shims.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff" />
@@ -334,6 +384,58 @@
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
     <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
+    <Content Include="Content\Theme\ExpressionsList.scss" />
+    <Content Include="Content\Theme\ItemsList.scss" />
+    <Content Include="Content\Theme\GridFiltersBar.scss" />
+    <Content Include="Content\Theme\ExternalSources.scss" />
+    <Content Include="Content\Theme\GridFixedHeader.scss" />
+    <Content Include="Content\Theme\SourcesList.scss" />
+    <Content Include="Content\Theme\SourceEditor.scss" />
+    <Content Include="Content\Theme\FontAwesome\brands.scss" />
+    <Content Include="Content\Theme\FontAwesome\duotone.scss" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome.scss" />
+    <Content Include="Content\Theme\FontAwesome\light.scss" />
+    <Content Include="Content\Theme\FontAwesome\regular.scss" />
+    <Content Include="Content\Theme\FontAwesome\solid.scss" />
+    <Content Include="Content\Theme\FontAwesome\v4-shims.scss" />
+    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
+    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
+    <Content Include="Content\Theme\FontAwesome\_core.scss" />
+    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
+    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
+    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
+    <Content Include="Content\Theme\FontAwesome\_list.scss" />
+    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
+    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
+    <Content Include="Content\Theme\FontAwesome\_screen-reader.scss" />
+    <Content Include="Content\Theme\FontAwesome\_shims.scss" />
+    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
+    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
+    <Content Include="Content\Theme\Companies.scss" />
+    <Content Include="Content\Theme\Report.scss" />
+    <Content Include="Content\Theme\ColumnsList.scss" />
+    <Content Include="Content\Theme\ClausesList.scss" />
+    <Content Include="Content\Theme\ReportEditor.scss" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
@@ -350,7 +452,6 @@
     <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
     <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
     <Content Include="Scripts\Libraries\moment-2.24.0.js" />
-    <Content Include="Scripts\Matematici\AnimationManager.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
     <Content Include="Scripts\Matematici\Clipboard.js" />
@@ -360,43 +461,55 @@
     <Content Include="Scripts\Matematici\Extensions.js" />
     <Content Include="Scripts\Matematici\Hamburger.js" />
     <Content Include="Scripts\Matematici\Loader.js" />
-    <Content Include="Scripts\Matematici\Matematici.js" />
     <Content Include="Scripts\Matematici\Menu.js" />
     <Content Include="Scripts\Matematici\Navigator.js" />
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
     <Content Include="Scripts\Matematici\Touch.js" />
+    <Content Include="Scripts\Prototypes\ParametersProperty.js" />
     <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
     <Content Include="Scripts\Prototypes\BooleanProperty.js" />
     <Content Include="Scripts\Custom\WorkFlowSignature.js" />
     <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\InstanceLink.js" />
+    <Content Include="Scripts\Prototypes\PrototypeProperty.js" />
+    <Content Include="Scripts\Prototypes\SourceEditor.js" />
+    <Content Include="Scripts\Prototypes\ExpressionEditor.js" />
+    <Content Include="Scripts\Prototypes\ExpressionPropertyBase.js" />
+    <Content Include="Scripts\Prototypes\ItemsList.js" />
     <Content Include="Scripts\Prototypes\Image.js" />
     <Content Include="Scripts\Prototypes\Attachment.js" />
     <Content Include="Scripts\Prototypes\Link.js" />
+    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
+    <Content Include="Scripts\Prototypes\TargetProperty.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
     <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
-    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
     <Content Include="Scripts\Prototypes\Field.js" />
     <Content Include="Scripts\Prototypes\Group.js" />
-    <Content Include="Scripts\Prototypes\HiddenProperty.js" />
     <Content Include="Scripts\Prototypes\Item.js" />
     <Content Include="Scripts\Prototypes\ListProperty.js" />
     <Content Include="Scripts\Prototypes\Property.js" />
     <Content Include="Scripts\Prototypes\PropertyPanel.js" />
     <Content Include="Scripts\Prototypes\Prototype.js" />
     <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
-    <Content Include="Scripts\Prototypes\ReadOnlyProperty.js" />
     <Content Include="Scripts\Prototypes\Signature.js" />
     <Content Include="Scripts\Prototypes\SignatureProperty.js" />
     <Content Include="Scripts\Prototypes\SimpleValueProperty.js" />
     <Content Include="Scripts\Prototypes\SourcesList.js" />
     <Content Include="Scripts\Prototypes\Text.js" />
-    <Content Include="Scripts\Prototypes\ValidProperty.js" />
     <Content Include="Scripts\Prototypes\ValueProperty.js" />
+    <Content Include="Scripts\Reports\ClausesList.js" />
+    <Content Include="Scripts\Reports\ClauseEditor.js" />
+    <Content Include="Scripts\Reports\GroupsList.js" />
+    <Content Include="Scripts\Reports\ColumnsList.js" />
+    <Content Include="Scripts\Reports\ColumnEditor.js" />
+    <Content Include="Scripts\Reports\Report.js" />
+    <Content Include="Scripts\Reports\ReportViewer.js" />
+    <Content Include="Scripts\Reports\ReportEditor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -412,8 +525,8 @@
     <Content Include="Views\Default\Loader.cshtml" />
     <Content Include="Views\Security\Login.cshtml" />
     <Content Include="Views\Prototypes\List.cshtml" />
-    <Content Include="Views\Users\List.cshtml" />
-    <Content Include="Views\Users\Detail.cshtml" />
+    <Content Include="Views\Users\UsersList.cshtml" />
+    <Content Include="Views\Users\UsersDetail.cshtml" />
     <Content Include="Views\Trail\Detail.cshtml" />
     <Content Include="Views\Trail\List.cshtml" />
     <Content Include="Views\Infrastructure\PrototypeTypes\List.cshtml" />
@@ -448,6 +561,30 @@
     <Content Include="Views\FTPServers\Detail.cshtml" />
     <Content Include="Views\FTPServers\List.cshtml" />
     <Content Include="Views\Trail\UsersList.cshtml" />
+    <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
+    <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
+    <Content Include="Views\Prototypes\SourceEditor.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\List.cshtml" />
+    <Content Include="Views\Users\RolesDetail.cshtml" />
+    <Content Include="Views\Users\RolesList.cshtml" />
+    <Content Include="Views\Users\GeneralGrants.cshtml" />
+    <Content Include="Views\Help\Companies.cshtml" />
+    <Content Include="Views\Help\Roles.cshtml" />
+    <Content Include="Views\Help\Groups.cshtml" />
+    <Content Include="Views\Help\FTPServers.cshtml" />
+    <Content Include="Views\Users\GroupsDetail.cshtml" />
+    <Content Include="Views\Users\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Editor.cshtml" />
+    <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\ColumnEditor.cshtml" />
+    <Content Include="Views\Reports\ClauseEditor.cshtml" />
+    <Content Include="Views\Reports\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Viewer.cshtml" />
+    <Content Include="Views\Reports\Report.cshtml" />
+    <Content Include="Views\Help\Reports.cshtml" />
+    <Content Include="Views\Help\ReportEditor.cshtml" />
+    <Content Include="Views\Help\ReportViewer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -560,6 +697,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>

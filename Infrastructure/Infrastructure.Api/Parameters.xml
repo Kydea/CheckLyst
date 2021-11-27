@@ -27,4 +27,10 @@
 	<parameter name="StorageSystem" description="StorageSystem" defaultValue="S3">
 		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='StorageSystem']/@value" />
 	</parameter>
-</parameters> 
+    <parameter name="System" description="System" defaultValue="X">
+        <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='System']/@value" />
+    </parameter>
+    <parameter name="Environment" description="Environment" defaultValue="X">
+        <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='Environment']/@value" />
+    </parameter>
+</parameters>
