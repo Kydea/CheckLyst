@@ -1129,11 +1129,9 @@ namespace CheckListManager.Instances.Logic.Services
                             case InstanceState.Draft:
                                 await _instanceCache.RemoveAsync(instance.Code);
                                 break;
-                            case InstanceState.Progress:
+                            default:
                                 await UpdateDataBaseAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
                                 break;
-                            default:
-                                throw new InstanceException($"Invalid state: {instance.InstanceState}");
                         }
                     else
                         await _instanceCache.RemoveAsync(code);
@@ -1273,7 +1271,7 @@ namespace CheckListManager.Instances.Logic.Services
             try
             {
                 lockObject = await _instanceCache.LockAsync(cacheObject.Code);
-                cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
+                cacheObject = await GetCacheObjectForEditAsync(identity, cacheObject.Code, true);
                 if (cacheObject.InstanceState == InstanceState.Progress && cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                 {
                     UnlockPages(cacheObject.Instance, identity.Code);
