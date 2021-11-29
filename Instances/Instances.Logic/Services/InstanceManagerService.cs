@@ -1126,11 +1126,11 @@ namespace CheckListManager.Instances.Logic.Services
                     if (instance.NeedToSave)
                         switch (instance.InstanceState)
                         {
-                            case InstanceState.Draft:
-                                await _instanceCache.RemoveAsync(instance.Code);
+                            case InstanceState.Progress:
+                                await UpdateDataBaseAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
                                 break;
                             default:
-                                await UpdateDataBaseAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
+                                await _instanceCache.RemoveAsync(instance.Code);
                                 break;
                         }
                     else
