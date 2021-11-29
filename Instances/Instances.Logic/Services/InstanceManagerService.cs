@@ -1266,26 +1266,25 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region events
 
-        public async Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
+        public async Task<InstanceCacheObject> GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject)
         {
-            if (cacheObject.InstanceState == InstanceState.Progress)
+            LockObject lockObject = null;
+            Page page;
+            try
             {
-                LockObject lockObject = null;
-                Page page;
-                if (cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
-                    try
-                    {
-                        lockObject = await _instanceCache.LockAsync(cacheObject.Code);
-                        cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
-                        UnlockPages(cacheObject.Instance, identity.Code);
-                        page.Lock = new Lock(identity.Code);
-                        cacheObject.NeedToCache = true;
-                        await SaveCacheObjectAsync(cacheObject);
-                    }
-                    finally
-                    {
-                        lockObject?.Dispose();
-                    }
+                lockObject = await _instanceCache.LockAsync(cacheObject.Code);
+                cacheObject = await _instanceCache.GetAsync(cacheObject.Code, true);
+                if (cacheObject.InstanceState == InstanceState.Progress && cacheObject.Instance.Pages.Any() && (page = (Page)cacheObject.Instance.Pages.First()).Lock == null && HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
+                {
+                    UnlockPages(cacheObject.Instance, identity.Code);
+                    page.Lock = new Lock(identity.Code);
+                    cacheObject.NeedToCache = true;
+                    await SaveCacheObjectAsync(cacheObject);
+                }
+            }
+            finally
+            {
+                lockObject?.Dispose();
             }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -1297,6 +1296,8 @@ namespace CheckListManager.Instances.Logic.Services
                 CheckListCode = cacheObject.InstanceCode,
                 CheckListID = cacheObject.ID
             });
+
+            return cacheObject;
         }
 
         private static void UnlockPages(ICheckList instance, string userCode)

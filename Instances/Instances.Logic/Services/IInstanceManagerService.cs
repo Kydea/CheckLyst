@@ -16,7 +16,7 @@ namespace CheckListManager.Instances.Logic.Services
 	{
         Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData);
         Task<InstanceCacheObject> GetCacheObjectForEditAsync(IDefaultIdentity identity, string code, bool includeData);
-        Task GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
+        Task<InstanceCacheObject> GetInstanceAsync(IDefaultIdentity identity, InstanceCacheObject cacheObject);
         Task<GetPrototypeResponse> CheckCreationGrantsAsync(IDefaultIdentity identity, long prototype, int? version);
         Task<InstanceCacheObject> CreateInstanceAsync(IDefaultIdentity identity, bool saveCache, long prototype, int? version, Dictionary<string, string> parameters, string parentInstanceCode, int? parentInstanceLinkID);
 		Task<InstanceCacheObject> OpenInstanceAsync(InstanceCacheObject cacheObject, string code, IDefaultIdentity identity);
