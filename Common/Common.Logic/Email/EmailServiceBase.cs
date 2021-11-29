@@ -113,8 +113,8 @@ namespace CheckListManager.Common.Logic.Email
 
         private async Task<long?> GetCompanyId()
         {
-            var company = (await _commonRepository.GetCompaniesAsync()).FirstOrDefault();
-            return company?.ID;
+            var companies = await _commonRepository.GetCompaniesAsync();
+            return companies.FirstOrDefault(x => x.ID == 1)?.ID ?? companies.FirstOrDefault()?.ID;
         }
 
         public async Task LogInfoAsync(string subject, string content)
@@ -142,9 +142,7 @@ namespace CheckListManager.Common.Logic.Email
         public async Task LogErrorAsync(Exception exception, string subject = null)
         {
             if (exception == null)
-            {
                 return;
-            }
             
             try
             {
