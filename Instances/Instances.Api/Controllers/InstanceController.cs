@@ -310,7 +310,7 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             var Data = await _redisCache.GetAsync<InstanceRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
-            var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(Data.CompanyId.Value, Data.Code, true);
+            var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(Data.CompanyId.Value, Data.Code, false);
             var PDF = new InstancePDF(Data.CompanyId.Value, Data.CompanyName, Data.TimeZone, _configurationService.PublicRepositoryUrl, cacheObject, _instancesRepository, _storageService, _configurationService);
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

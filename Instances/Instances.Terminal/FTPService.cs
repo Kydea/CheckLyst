@@ -24,6 +24,7 @@ namespace CheckListManager.Instances.Terminal
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
         private readonly IInstanceManagerService _instanceManagerService;
+        private readonly IInstanceCacheService _instanceCache;
         private readonly ICommonRepository _commonRepository;
         private readonly IInstancesRepository _instancesRepository;
         private readonly IConfigurationService _configurationService;
@@ -34,6 +35,7 @@ namespace CheckListManager.Instances.Terminal
             IQueueService queueService,
             ISettingService settingService,
             IInstanceManagerService instanceManagerService,
+            IInstanceCacheService instanceCache,
             ICommonRepository commonRepository,
             IInstancesRepository instancesRepository,
             IConfigurationService configurationService,
@@ -43,6 +45,7 @@ namespace CheckListManager.Instances.Terminal
             _queueService = queueService;
             _settingService = settingService;
             _instanceManagerService = instanceManagerService;
+            _instanceCache = instanceCache;
             _commonRepository = commonRepository;
             _instancesRepository = instancesRepository;
             _configurationService = configurationService;
@@ -125,6 +128,7 @@ namespace CheckListManager.Instances.Terminal
             string code = await _instancesRepository.GetCodeAsync(message.Company, message.ID);
             var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(message.Company, code, true);
             if (cacheObject.InstanceState != InstanceState.Confirmed) throw new InvalidOperationException($"Instance {message.ID} is in state {cacheObject.InstanceState}");
+            await _instanceCache.RemoveAsync(cacheObject.Code);
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetInstancesFTPServerAsync(message.Company, cacheObject.PrototypeType);
             if (FTPServer == null)

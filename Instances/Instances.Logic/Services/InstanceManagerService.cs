@@ -92,16 +92,16 @@ namespace CheckListManager.Instances.Logic.Services
 
         #region cache object task
 
-        public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool includeData)
+        public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool ignoreCache)
         {
-            var cacheObject = await GetCacheObjectAsync(company, code, includeData);
+            var cacheObject = await GetCacheObjectAsync(company, code, true, ignoreCache);
             cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState, false);
             return cacheObject;
         }
 
         public async Task<InstanceCacheObject> GetCacheObjectForEditAsync(IDefaultIdentity identity, string code, bool includeData)
         {
-            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, includeData);
+            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, includeData, false);
             if (includeData)
             {
                 cacheObject.Instance.ReadOnly =
@@ -113,9 +113,9 @@ namespace CheckListManager.Instances.Logic.Services
             return cacheObject;
         }
 
-        private async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData)
+        private async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData, bool ignoreCache)
         {
-            var cacheObject = await _instanceCache.GetAsync(code, includeData);
+            var cacheObject = ignoreCache ? default(InstanceCacheObject) : await _instanceCache.GetAsync(code, includeData);
             if (cacheObject == null)
             {
                 var instance = await _instancesRepository.GetAsync(company, code);
@@ -641,16 +641,22 @@ namespace CheckListManager.Instances.Logic.Services
                         WorkFlowApplication = WorkFlowApplicationId
                     });
                 }
-                if (close)
-                    await Task.WhenAll(
-                        _instancesRepository.SaveChangesAsync(),
-                        _instanceCache.RemoveAsync(cacheObject.Code)
-                    );
-                else
+                if (complete)
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.SetAsync(cacheObject)
                     );
+                else if(close)
+                    await Task.WhenAll(
+                        _instancesRepository.SaveChangesAsync(),
+                        _instanceCache.RemoveAsync(cacheObject.Code)
+                    );
+                else 
+                    await Task.WhenAll(
+                        _instancesRepository.SaveChangesAsync(),
+                        _instanceCache.TouchAsync(cacheObject.Code)
+                    );
+
 
                 if (ExportFTP)
                     await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
@@ -1009,7 +1015,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity)
         {
-            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true);
+            var cacheObject = await GetCacheObjectAsync(identity.CompanyId, code, true, false);
             if (!HasPermission(identity, "View", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                 throw new InstanceException("Access denied");
 
@@ -1019,7 +1025,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (cacheObject.Instance.ParentInstanceCode != null && cacheObject.Instance.ParentInstanceLinkID.HasValue && !list.Any(r => r.Code == cacheObject.Instance.ParentInstanceCode))
                 try
                 {
-                    var parentCacheObject = await GetCacheObjectAsync(identity.CompanyId, cacheObject.Instance.ParentInstanceCode, true);
+                    var parentCacheObject = await GetCacheObjectAsync(identity.CompanyId, cacheObject.Instance.ParentInstanceCode, true, false);
                     list.Add(new InstanceRelation
                     {
                         Prototype = parentCacheObject.PrototypeName,
