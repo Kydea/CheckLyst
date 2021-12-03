@@ -116,9 +116,9 @@ namespace CheckListManager.WorkFlows.Data
             WorkFlowApplications WorkFlowApplication = null;
 
             if (Instance != null)
-                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Instance == Instance.ID && (a.Approved == null || a.Approved == true));
+                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Instance == Instance.ID && a.Approved == null);
             if (PrototypeVersion != null)
-                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Prototype == PrototypeVersion.Prototype && Instance.ID == PrototypeVersion.Version && (a.Approved == null || a.Approved == true));
+                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Prototype == PrototypeVersion.Prototype && Instance.ID == PrototypeVersion.Version && a.Approved == null);
 
             if (WorkFlowApplication != null)
             {
