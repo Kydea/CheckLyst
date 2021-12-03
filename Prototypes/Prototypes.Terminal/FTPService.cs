@@ -126,6 +126,7 @@ namespace CheckListManager.Prototypes.Terminal
         {
             var PrototypeVersion = await _prototypesRepository.GetPrototypeVersionAsync(message.Company, message.Prototype, message.Version);
 
+            if (PrototypeVersion.VersionState != VersionState.Active && PrototypeVersion.VersionState != VersionState.Obsolete) throw new InvalidOperationException($"Prototype {message.Prototype}.{message.Version} is in state {PrototypeVersion.VersionState}");
             FTPConnectionSettings Settings;
             var FTPServer = await _commonRepository.GetPrototypesFTPServerAsync(message.Company, PrototypeVersion.Prototypes.PrototypeType);
             if (FTPServer == null)
