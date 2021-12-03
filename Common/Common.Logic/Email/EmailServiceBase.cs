@@ -114,7 +114,8 @@ namespace CheckListManager.Common.Logic.Email
         private async Task<long?> GetCompanyId()
         {
             var companies = await _commonRepository.GetCompaniesAsync();
-            return companies.FirstOrDefault(x => x.ID == 1)?.ID ?? companies.FirstOrDefault()?.ID;
+            //return companies.FirstOrDefault(x => x.ID == 1)?.ID ?? companies.FirstOrDefault()?.ID;
+            return companies.FirstOrDefault()?.ID;
         }
 
         public async Task LogInfoAsync(string subject, string content)
