@@ -649,7 +649,7 @@ namespace CheckListManager.Instances.Logic.Services
                 else
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
-                        _instanceCache.TouchAsync(cacheObject.Code)
+                        _instanceCache.SetAsync(cacheObject)
                     );
 
                 if (ExportFTP)
