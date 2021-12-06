@@ -386,7 +386,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                if (cacheObject.NeedToSave) await UpdateDataBaseAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
+                if (cacheObject.NeedToSave)
+                    await UpdateDataBaseAsync(cacheObject, identity, false, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
             }
             catch (InstanceException)
             {
@@ -407,7 +408,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject = await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
+                cacheObject = 
+                    await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -1120,18 +1122,18 @@ namespace CheckListManager.Instances.Logic.Services
             foreach (var code in codes)
                 try
                 {
-                    var instance = await _instanceCache.GetAsync(code, false);
-                    if (instance == null)
+                    var cacheObject = await _instanceCache.GetAsync(code, false);
+                    if (cacheObject == null)
                         continue;
 
-                    if (instance.NeedToSave)
-                        switch (instance.InstanceState)
+                    if (cacheObject.NeedToSave)
+                        switch (cacheObject.InstanceState)
                         {
                             case InstanceState.Progress:
-                                await UpdateDataBaseAsync(instance, null, true, false, false, instance.ModifiedBy, instance.ModifiedOn);
+                                await UpdateDataBaseAsync(cacheObject, null, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                                 break;
                             default:
-                                await _instanceCache.RemoveAsync(instance.Code);
+                                await _instanceCache.RemoveAsync(cacheObject.Code);
                                 break;
                         }
                     else
