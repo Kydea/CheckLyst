@@ -407,7 +407,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject = await UpdateDataBaseAsync(cacheObject, identity, false, true, false, identity.Code, DateTimeOffset.UtcNow);
+                cacheObject = await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
@@ -641,17 +641,12 @@ namespace CheckListManager.Instances.Logic.Services
                         WorkFlowApplication = WorkFlowApplicationId
                     });
                 }
-                if (complete)
-                    await Task.WhenAll(
-                        _instancesRepository.SaveChangesAsync(),
-                        _instanceCache.SetAsync(cacheObject)
-                    );
-                else if(close)
+                if (close)
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.RemoveAsync(cacheObject.Code)
                     );
-                else 
+                else
                     await Task.WhenAll(
                         _instancesRepository.SaveChangesAsync(),
                         _instanceCache.TouchAsync(cacheObject.Code)
