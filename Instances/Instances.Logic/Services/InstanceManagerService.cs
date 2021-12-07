@@ -1961,6 +1961,9 @@ namespace CheckListManager.Instances.Logic.Services
             if (page == null)
                 throw new InstanceException("Page not found");
 
+            if (cacheObject.Instance.ReadOnly)
+                return;
+
             page.Lock = new Lock(userCode);
 
             TrackChanges(cacheObject, userCode);
