@@ -1129,12 +1129,14 @@ namespace CheckListManager.Instances.Logic.Services
                     if (cacheObject.NeedToSave)
                         switch (cacheObject.InstanceState)
                         {
+                            case InstanceState.Draft:
+                                await _instanceCache.RemoveAsync(cacheObject.Code);
+                                break;
                             case InstanceState.Progress:
                                 await UpdateDataBaseAsync(cacheObject, null, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                                 break;
                             default:
-                                await _instanceCache.RemoveAsync(cacheObject.Code);
-                                break;
+                                throw new InstanceException($"Invalid state: {cacheObject.InstanceState}");
                         }
                     else
                         await _instanceCache.RemoveAsync(code);
