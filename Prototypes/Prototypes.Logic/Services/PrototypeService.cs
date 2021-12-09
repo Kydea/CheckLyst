@@ -392,12 +392,16 @@ namespace CheckListManager.Prototypes.Logic.Services
             if (setStateResult.HasInstancesDeleted)
                 await DeleteAttachmentFromInstancesAsync(identity, instances);
             if (setStateResult.HasToInvalidateCache)
-                await _instancesService.InvalidateCacheAsync(new InvalidateCacheRequest(
-                    PrototypeVersion.Prototype,
-                    PrototypeVersion.Version,
-                    instances.Select(i => i.Code).ToList(),
-                    setStateResult.HasInstancesDeleted
-                ));
+            {
+                var instanceCodes = instances.Select(i => i.Code).ToList();
+                if (instanceCodes.Any())
+                    await _instancesService.InvalidateCacheAsync(new InvalidateCacheRequest(
+                        PrototypeVersion.Prototype,
+                        PrototypeVersion.Version,
+                        instanceCodes,
+                        setStateResult.HasInstancesDeleted
+                    ));
+            }
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
                 await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage

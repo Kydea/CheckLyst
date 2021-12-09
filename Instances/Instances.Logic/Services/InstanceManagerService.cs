@@ -1191,8 +1191,8 @@ namespace CheckListManager.Instances.Logic.Services
                         if (cacheObject.Prototype != request.Prototype || cacheObject.Version != request.Version)
                             Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {cacheObject.Prototype}-{cacheObject.Version}");
 
-                        if (cacheObject.Year.HasValue && cacheObject.Year != 0)
-                            Logger.Warn($"Invalid year for instance {cacheObject.Code}: {cacheObject.Year}");
+                        if (cacheObject.Year != 0)
+                            Logger.Warn($"Invalid year for instance {cacheObject.Code}: {cacheObject.Year?.ToString() ?? "?"}");
 
                         var prototypeVersion = await _instancesRepository.GetPrototypeVersionAsync(request.Prototype, request.Version);
                         if (
