@@ -1191,7 +1191,21 @@ namespace CheckListManager.Instances.Logic.Services
                         if (cacheObject.Prototype != request.Prototype || cacheObject.Version != request.Version)
                             Logger.Warn($"Incongruent instance prototype and version: Received {request.Prototype}-{request.Version}, expected: {cacheObject.Prototype}-{cacheObject.Version}");
 
-                        if (cacheObject.NeedToSave)
+                        if (cacheObject.Year.HasValue && cacheObject.Year != 0)
+                            Logger.Warn($"Invalid year for instance {cacheObject.Code}: {cacheObject.Year}");
+
+                        var prototypeVersion = await _instancesRepository.GetPrototypeVersionAsync(request.Prototype, request.Version);
+                        if (
+                            !identity.HasPermission("Prototypes", "Preview", prototypeVersion.Prototypes.Department) &&
+                            !identity.HasPermission("Prototypes", "Preview", prototypeVersion.Prototypes.Department, prototypeVersion.Prototypes.PrototypeType) &&
+                            !identity.HasPermission("Prototypes", "Edit", prototypeVersion.Prototypes.Department) &&
+                            !identity.HasPermission("Prototypes", "Edit", prototypeVersion.Prototypes.Department, prototypeVersion.Prototypes.PrototypeType)
+                        )
+                            throw new UnauthorizedAccessException();
+
+                        if (request.OnlyDeletion || !cacheObject.NeedToSave)
+                            await _instanceCache.RemoveAsync(cacheObject.Code);
+                        else
                             await UpdateDataBaseAsync(cacheObject, identity, true, false, false, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                     }
                 }

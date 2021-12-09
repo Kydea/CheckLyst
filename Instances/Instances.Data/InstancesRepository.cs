@@ -283,5 +283,8 @@ namespace CheckListManager.Instances.Data
                 new Parameter("_ItemsByLabel", itemsByLabel),
                 new Parameter("_Expressions", expressions)
             );
+
+        public async Task<PrototypeVersions> GetPrototypeVersionAsync(long prototype, int version) =>
+            await Entities.PrototypeVersions.SingleOrDefaultAsync(p => p.Prototype == prototype && p.Version == version);
     }
 }

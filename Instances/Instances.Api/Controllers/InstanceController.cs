@@ -421,7 +421,7 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("InvalidateCache")]
-        [Authorize(Roles = "Prototypes#Edit")]
+        [Authorize(Roles = "Prototypes#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> InvalidateCache(InvalidateCacheRequest request)
         {
             await _instanceManagerService.InvalidateCacheAsync(Identity, request);

@@ -395,7 +395,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 await _instancesService.InvalidateCacheAsync(new InvalidateCacheRequest(
                     PrototypeVersion.Prototype,
                     PrototypeVersion.Version,
-                    instances.Select(i => i.Code).ToList()
+                    instances.Select(i => i.Code).ToList(),
+                    setStateResult.HasInstancesDeleted
                 ));
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow

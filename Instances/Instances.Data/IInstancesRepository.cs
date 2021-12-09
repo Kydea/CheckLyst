@@ -32,5 +32,6 @@ namespace CheckListManager.Instances.Data
         Task DeleteRelation(long parent, int item);
         void AddRelation(long parent, int item, long child);
         Task UpdateJSONFieldsAsync(long instance, long company, string itemsByCode, string itemsByLabel, string expressions);
+        Task<PrototypeVersions> GetPrototypeVersionAsync(long prototype, int version);
     }
 }
