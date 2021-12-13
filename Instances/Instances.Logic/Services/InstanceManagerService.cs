@@ -922,8 +922,8 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Unable to retrieve the external source data");
-                throw new InstanceException("Unable to retrieve the external source data", e);
+                Logger.Error(e, "Unable to retrieve the instance link parameters");
+                throw new InstanceException("Unable to retrieve the instance link parameters", e);
             }
         }
 
