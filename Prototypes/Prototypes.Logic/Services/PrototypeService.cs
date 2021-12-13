@@ -538,6 +538,9 @@ namespace CheckListManager.Prototypes.Logic.Services
                         }
                     }
 
+                    await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
+                    await _prototypeRepository.SaveChangesAsync();
+
                     await _queueService.SendObjectAsync(QueueName.PrototypesFTP, new PrototypesFTPMessage
                     {
                         Company = PrototypeVersion.Prototypes.Company,
@@ -547,9 +550,6 @@ namespace CheckListManager.Prototypes.Logic.Services
                         State = State,
                         Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
                     }, CancellationToken);
-
-                    await SetPrototypeVersionState(PrototypeVersion, State, UtcNow);
-                    await _prototypeRepository.SaveChangesAsync();
                 }
                 catch (Exception Exception)
                 {
