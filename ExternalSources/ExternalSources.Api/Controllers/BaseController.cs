@@ -57,7 +57,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.PrepareMetaData(out var OperationTime);
-                    Logger.Info($"ExternalSource/GetMetaData {OperationNumber} time:\n {OperationTime}");
+                    Logger.Info($"ExternalSource/GetMetaData {OperationNumber} time (ms): {OperationTime}");
                     return Ok(new
                     {
                         Code = request.code,
@@ -84,7 +84,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                 {
                     Source.Open();
                     var Result = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
-                    Logger.Info($"ExternalSource/GetData time:\n {OperationTime}");
+                    Logger.Info($"ExternalSource/GetData {OperationNumber} time (ms): {OperationTime}");
                     return Ok(new
                     {
                         Rows = request.page > 4 ? //limited to maximum 5 pages
@@ -120,7 +120,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                         Source.GetData(Parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
                         TotalOperationTime += OperationTime;
                     }
-                    Logger.Info($"ExternalSource/Export {OperationNumber} time:\n {TotalOperationTime}");
+                    Logger.Info($"ExternalSource/Export {OperationNumber} time (ms): {TotalOperationTime}");
 
                     return Ok();
                 }
