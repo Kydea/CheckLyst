@@ -343,7 +343,7 @@ declare
 	"_ItemsByLabelJSON" jsonb := "_ItemsByLabel"::jsonb;
 	"_ExpressionsJSON" jsonb := "_Expressions"::jsonb;
 begin
-	insert into "CheckLists"."InstanceData" ("Instance", "Company", "ItemsByLabel", "ItemsByCode", "Expressions")
+	insert into "CheckLists"."InstanceData" ("Instance", "Company", "ItemsByCode", "ItemsByLabel", "Expressions")
 	values ("_Instance", "_Company", "_ItemsByCodeJSON", "_ItemsByLabelJSON", "_ExpressionsJSON")
 	on conflict ("Instance") do update set
 		"ItemsByCode" = "_ItemsByCodeJSON", 
