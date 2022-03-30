@@ -78,36 +78,34 @@ namespace CheckListManager.Common.Logic.Api.PDF
             return paragraph;
         }
 
-        public static Image AddImage(this Paragraph paragraph, byte[] image)
+        public static Image AddImage(this Paragraph paragraph, byte[] buffer)
         {
-            Image img = paragraph.AddImage($"base64:{Convert.ToBase64String(image)}");
-            return img;
+            Image image = paragraph.AddImage($"base64:{Convert.ToBase64String(buffer)}");
+            return image;
         }
 
         public static Image AddImage(this Paragraph paragraph, Uri uri)
         {
-            Image img = null;
+            Image image = null;
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
             try
             {
                 using (WebResponse response = request.GetResponse())
+                using (BinaryReader reader = new BinaryReader(response.GetResponseStream()))
                 {
-                    using (BinaryReader reader = new BinaryReader(response.GetResponseStream()))
+                    const int BUFFER_SIZE = 4096;
+
+                    using (var ms = new MemoryStream())
                     {
-                        const int BUFFER_SIZE = 4096;
+                        int count;
+                        byte[] buffer = new byte[BUFFER_SIZE];
 
-                        using (var ms = new MemoryStream())
-                        {
-                            int count;
-                            byte[] buffer = new byte[BUFFER_SIZE];
+                        while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
+                            ms.Write(buffer, 0, count);
 
-                            while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
-                                ms.Write(buffer, 0, count);
-
-                            img = paragraph.AddImage(ms.ToArray());
-                        }
+                        image = paragraph.AddImage(ms.ToArray());
                     }
                 }
             }
@@ -116,12 +114,12 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 HttpWebResponse response = e.Response as HttpWebResponse;
 
                 if (response?.StatusCode == HttpStatusCode.NotFound)
-                    paragraph.AddText(String.Format("Image \"{0}\" not found.", uri));
+                    paragraph.AddText($"Image \"{uri}\" not found.");
                 else
                     paragraph.AddText($"Error: {e.Message}");
             }
 
-            return img;
+            return image;
         }
     }
 }

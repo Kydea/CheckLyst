@@ -8,7 +8,7 @@ declare
 begin
 	select "ID" into CompanyID from "Infrastructure"."Companies" where "ID" = CompanyID and "Name" = CompanyName;
 	if CompanyID is null then
-		raise exception  'Company not found' using hint = 'Please check the CompanyID and the CompnanyName provided';
+		raise exception  'Company not found' using hint = 'Please check the CompanyID and the CompanyName provided';
 	end if;
 	
 	delete from "Security"."Users" where "Company" = CompanyID;
