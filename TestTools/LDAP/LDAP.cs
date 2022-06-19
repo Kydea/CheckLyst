@@ -46,11 +46,11 @@ namespace LDAP
 
                 OutputTextBox.AppendText($"User {UserTextBox.Text}/{PasswordTextBox.Text} is valid\n\n");
 
-                List<string> CodeParts = PasswordTextBox.Text.Split('\\').ToList();
+                List<string> CodeParts = UserTextBox.Text.Split('\\').ToList();
                 if (CodeParts.Count == 1)
-                    CodeParts = PasswordTextBox.Text.Split('@').Reverse().ToList();
+                    CodeParts = UserTextBox.Text.Split('@').Reverse().ToList();
                 if (CodeParts.Count != 2)
-                    throw new Exception("Invalid user code use format domain\\user or user@domain");
+                    throw new Exception($"Invalid user code {UserTextBox.Text} use format domain\\user or user@domain");
 
 
                 OutputTextBox.AppendText($"Accessing in LDAP://{HostTextBox.Text} with {UserTextBox.Text}/{PasswordTextBox.Text}\n\n");
