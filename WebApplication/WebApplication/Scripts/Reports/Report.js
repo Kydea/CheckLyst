@@ -20,7 +20,7 @@
                     if (row[j] instanceof Date)
                         innerValue = row[j].toLocaleString();
                     var result = innerValue.replace(/"/g, '""');
-                    if (result.search(/("|,|\n)/g) >= 0)
+                    if (result.search(/("|;|\n)/g) >= 0)
                         result = "\"" + result + "\"";
                     if (j > 0)
                         finalValue += ";";
