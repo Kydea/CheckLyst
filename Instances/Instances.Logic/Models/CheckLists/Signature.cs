@@ -174,9 +174,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        public override void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
-            base.UpdateReadOnly(userCode, readOnlyInstance);
+            base.UpdateReadOnly(userCode, readOnlyInstance, ParentCountDownToValue);
             ReadOnly |= Signed && !Cancelable;
         }
     }

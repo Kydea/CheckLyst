@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CheckLyst tools | Instances analysis</title>
+    <link href="../../Styles/Theme.min.css" rel="stylesheet" />
+    <script src="../../JavaScript/base.js"></script>
+    <script src="../../JavaScript/intancesAnalysis.js"></script>
+</head>
+<body>
+    <h1><a href="../../">CheckLyst tools</a> | Instances analysis</h1>
+    <h2>Controls</h2>
+    <div id="controls">
+        <button class="hidden" id="start" onclick="matematici.instancesAnalysis.go()">start</button>
+        <button class="hidden" id="stop" onclick="matematici.instancesAnalysis.stop()">stop</button>
+    </div>
+
+    <h2>Status</h2>
+    <div id="status">
+        <label>state</label>
+        <input type="text" name="status" value="wait..." readonly="readonly" />
+        <label>started on</label>
+        <input type="text" name="initialTime" readonly="readonly" />
+        <label>completed on</label>
+        <input type="text" name="finalTime" readonly="readonly" />
+        <label>elapsed time</label>
+        <input type="text" name="elapsedTime" readonly="readonly" />
+        <label>estimated missing time</label>
+        <input type="text" name="missingTime" readonly="readonly" />
+        <label>record count</label>
+        <input type="text" name="recordCount" readonly="readonly" />
+        <label>current record index</label>
+        <input type="text" name="recordIndex" readonly="readonly" />
+    </div>
+
+    <h2>Result totals</h2>
+    <div id="totals">n/a</div>
+
+    <h2>Errors list</h2>
+    <button id="copy" class="hidden" onclick="matematici.instancesAnalysis.copy()">copy</button>
+    <div id="detail">n/a</div>
+</body>
+</html>

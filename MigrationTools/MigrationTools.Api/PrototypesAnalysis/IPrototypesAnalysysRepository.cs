@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace CheckListManager.Prototypes.Data.Analysis
+namespace CheckListManager.Prototypes.Data.PrototypesAnalysis
 {
-    public interface IAnalysisRepository
+    public interface IPrototypesAnalysisRepository
     {
         IQueryable<PrototypeVersions> GetPrototypeVersions();
     }

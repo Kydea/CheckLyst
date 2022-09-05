@@ -1,6 +1,6 @@
 ﻿var
     matematici = {
-        version: "v. 2.0.0"
+        version: "v. 2.1.0"
     };
 
 window.addEventListener("DOMContentLoaded", function () {

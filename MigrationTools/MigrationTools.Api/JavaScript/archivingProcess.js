@@ -119,7 +119,7 @@
 
         stop: function () {
             var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "../../Analysis/Abort", true);
+            xhttp.open("GET", "../../Archiving/Abort", true);
             xhttp.send();
         },
 

@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Prototypes.Logic.Analysis
+namespace CheckListManager.Prototypes.Logic.PrototypesAnalysis
 {
-    public interface IAnalysisService : IService
+    public interface IPrototypesAnalysisService : IService
     {
-        Task PrototypesAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, AnalysisRequest request);
+        Task StartAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, PrototypesAnalysisRequest request);
         InstanceCacheObject CreateInstanceAsync(PrototypeVersions prototypeVersion);
     }
 }

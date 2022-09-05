@@ -160,8 +160,10 @@
     <Content Include="Index.html" />
     <Content Include="JavaScript\base.js" />
     <Content Include="JavaScript\archivingProcess.js" />
+    <Content Include="JavaScript\intancesAnalysis.js" />
     <Content Include="JavaScript\prototypesAnalysis.js" />
     <Content Include="Pages\ArchivingProcess\Index.html" />
+    <Content Include="Pages\InstancesAnalysis\Index.html" />
     <Content Include="Pages\PrototypeAnalysis\Index.html" />
     <Content Include="Parameters.xml" />
     <Content Include="ReadMe.txt" />
@@ -181,18 +183,25 @@
     <Compile Include="Archiving\ArchivingRepository.cs" />
     <Compile Include="Archiving\IArchivingService.cs" />
     <Compile Include="Archiving\IArchivingRepository.cs" />
+    <Compile Include="Controllers\InstancesAnalysisController.cs" />
     <Compile Include="PrototypeJsonConverter.cs" />
     <Compile Include="InstanceJsonConverter.cs" />
-    <Compile Include="Analysis\ValidationException.cs" />
+    <Compile Include="InstancesAnalysis\IInstancesAnalysisService.cs" />
+    <Compile Include="InstancesAnalysis\IInstancesAnalysysRepository.cs" />
+    <Compile Include="InstancesAnalysis\InstancesAnalysisRequest.cs" />
+    <Compile Include="InstancesAnalysis\InstancesAnalysisService.cs" />
+    <Compile Include="InstancesAnalysis\InstancesAnalysysRepository.cs" />
+    <Compile Include="InstancesAnalysis\ValidationException.cs" />
+    <Compile Include="PrototypesAnalysis\ValidationException.cs" />
     <Compile Include="Controllers\ArchivingController.cs" />
     <Compile Include="Monitor.cs" />
-    <Compile Include="Analysis\AnalysisRequest.cs" />
-    <Compile Include="Analysis\AnalysisService.cs" />
-    <Compile Include="Analysis\IAnalysisService.cs" />
+    <Compile Include="PrototypesAnalysis\PrototypesAnalysisRequest.cs" />
+    <Compile Include="PrototypesAnalysis\PrototypesAnalysisService.cs" />
+    <Compile Include="PrototypesAnalysis\IPrototypesAnalysisService.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AnalysisController.cs" />
-    <Compile Include="Analysis\IAnalysysRepository.cs" />
-    <Compile Include="Analysis\AnalysysRepository.cs" />
+    <Compile Include="Controllers\PrototypesAnalysisController.cs" />
+    <Compile Include="PrototypesAnalysis\IPrototypesAnalysysRepository.cs" />
+    <Compile Include="PrototypesAnalysis\PrototypesAnalysysRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

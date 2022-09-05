@@ -32,6 +32,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public int FontSize { get; set; }
         public string Color { get; set; }
         public bool Removed { get; set; }
+        [JsonIgnore]
+        public DateTimeOffset? WorseCountDownToValue { get; set; }
 
         public override bool Setup()
         {
@@ -117,12 +119,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
 
-        public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
+            WorseCountDownToValue = !ParentCountDownToValue.HasValue || CountDownToValue > ParentCountDownToValue ? CountDownToValue : ParentCountDownToValue;
+
             if (Removed || readOnlyInstance || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
                 ReadOnly = true;
             else
-                base.UpdateReadOnly(userCode, readOnlyInstance);
+                UpdateReadOnly(userCode, readOnlyInstance);
         }
 
         public Item FindIteratorModelItem()

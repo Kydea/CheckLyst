@@ -101,7 +101,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
         protected virtual bool IsReadOnlyByDefault() => false;
-        public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        public void UpdateReadOnly(string userCode, bool readOnlyInstance)
 		{
 			if (readOnlyInstance)
 			{

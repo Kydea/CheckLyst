@@ -253,7 +253,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public void UpdateReadOnly(string userCode, string state, bool ignoreNullLock)
         {
-            ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft);
+            ((Group)Header).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Draft, null);
             foreach (var page in Pages)
                 ((Page)page).UpdateReadOnly(userCode, ReadOnly || state != InstanceState.Progress, ignoreNullLock);
         }

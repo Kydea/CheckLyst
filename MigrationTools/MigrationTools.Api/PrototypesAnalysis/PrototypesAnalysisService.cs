@@ -17,29 +17,29 @@ using CheckListManager.Instances.Logic.Exceptions;
 using CheckListManager.Instances.Data;
 using CheckListManager.Prototypes.Data;
 using CheckListManager.Prototypes.Logic.Models.CheckLists;
-using CheckListManager.Prototypes.Data.Analysis;
+using CheckListManager.Prototypes.Data.PrototypesAnalysis;
 using CheckListManager.Instances.Logic.Models;
 using CheckListManager.Instances.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.CheckLists;
-using CheckListManager.MigrationTools.Api.Analysis;
+using CheckListManager.MigrationTools.Api.PrototypesAnalysis;
 using CheckListManager.Prototypes.Api;
 
-namespace CheckListManager.Prototypes.Logic.Analysis
+namespace CheckListManager.Prototypes.Logic.PrototypesAnalysis
 {
-    public class AnalysisService : IAnalysisService
+    public class PrototypesAnalysisService : IPrototypesAnalysisService
     {
         private readonly ICommonRepository _commonRepository;
-        private readonly IAnalysisRepository _analysisRepository;
+        private readonly IPrototypesAnalysisRepository _prototypesAnalysisRepository;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly IInstancesRepository _instancesRepository;
         private readonly IInstanceManagerService _instanceManagerService;
         private readonly JsonConverter[] _prototypeConverters;
         private readonly JsonConverter[] _instanceConverters;
 
-        public AnalysisService(CustomJsonConverter[] converters, ICommonRepository commonRepository, IAnalysisRepository analysisRepository, IPrototypesRepository prototypesRepository, IInstancesRepository instancesRepository, IInstanceManagerService instanceManagerService)
+        public PrototypesAnalysisService(CustomJsonConverter[] converters, ICommonRepository commonRepository, IPrototypesAnalysisRepository prototypesAnalysisRepository, IPrototypesRepository prototypesRepository, IInstancesRepository instancesRepository, IInstanceManagerService instanceManagerService)
         {
             _commonRepository = commonRepository;
-            _analysisRepository = analysisRepository;
+            _prototypesAnalysisRepository = prototypesAnalysisRepository;
             _prototypesRepository = prototypesRepository;
             _instancesRepository = instancesRepository;
             _instanceManagerService = instanceManagerService;
@@ -55,14 +55,14 @@ namespace CheckListManager.Prototypes.Logic.Analysis
             };
         }
 
-        public async Task PrototypesAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, AnalysisRequest request)
+        public async Task StartAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, PrototypesAnalysisRequest request)
         {
             try
             {
                 monitor.Counts.Clear();
                 monitor.Errors.Clear();
 
-                var query = _analysisRepository.GetPrototypeVersions()
+                var query = _prototypesAnalysisRepository.GetPrototypeVersions()
                     .Take(100)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                     ;

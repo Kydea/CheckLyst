@@ -72,12 +72,12 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 		{
             var PageUnlocked = ignoreNullLock && Lock == null || Lock?.User == userCode;
             if (PageUnlocked && !ReadOnlyInstance)
-                base.UpdateReadOnly(userCode, false);
+                UpdateReadOnly(userCode, false);
             else
                 ReadOnly = true;
 
             foreach (var group in Groups)
-				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance);
+				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance, CountDownToValue);
 		}
 
         public override void BuildDependencies()

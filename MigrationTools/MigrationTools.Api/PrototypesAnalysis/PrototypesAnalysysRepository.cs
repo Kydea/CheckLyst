@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace CheckListManager.Prototypes.Data.Analysis
+namespace CheckListManager.Prototypes.Data.PrototypesAnalysis
 {
-    public class AnalysisRepository: Repository, IAnalysisRepository
+    public class PrototypesAnalysisRepository : Repository, IPrototypesAnalysisRepository
     {
-        public AnalysisRepository(RelationalDatabaseEntities entities) : base(entities)
+        public PrototypesAnalysisRepository (RelationalDatabaseEntities entities) : base(entities)
         {
         }
 

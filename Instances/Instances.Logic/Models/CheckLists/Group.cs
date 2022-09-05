@@ -168,16 +168,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public override void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        public override void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
-            base.UpdateReadOnly(userCode, readOnlyInstance);
+            base.UpdateReadOnly(userCode, readOnlyInstance, ParentCountDownToValue);
 
             if (Iterator)
                 foreach (var iteration in Iterations)
-                    ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance);
+                    ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance, WorseCountDownToValue);
             else
                 foreach (var item in Items)
-                    ((Item)item).UpdateReadOnly(userCode, readOnlyInstance);
+                    ((Item)item).UpdateReadOnly(userCode, readOnlyInstance, WorseCountDownToValue);
 
         }
 

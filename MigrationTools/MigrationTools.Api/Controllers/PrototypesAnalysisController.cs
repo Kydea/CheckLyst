@@ -1,7 +1,7 @@
 ﻿using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.MigrationTools.Api;
-using CheckListManager.Prototypes.Logic.Analysis;
+using CheckListManager.Prototypes.Logic.PrototypesAnalysis;
 using CheckListManager.Prototypes.Logic.List;
 using System;
 using System.Collections.Generic;
@@ -12,22 +12,22 @@ using System.Web.Http;
 namespace CheckListManager.Prototypes.Api.Controllers
 {
     [AllowAnonymous]
-    [RoutePrefix("Analysis")]
-    public class AnalysisController : BaseApiController
+    [RoutePrefix("PrototypesAnalysis")]
+    public class PrototypesAnalysisController : BaseApiController
     {
-        private readonly IAnalysisService _analysisService;
+        private readonly IPrototypesAnalysisService _prototypesAnalysisService;
         private static readonly Monitor _monitor = new Monitor();
 
-        public AnalysisController(IAnalysisService analysisService)
+        public PrototypesAnalysisController(IPrototypesAnalysisService prototypesAnalysisService)
         {
-            _analysisService = analysisService;
+            _prototypesAnalysisService = prototypesAnalysisService;
         }
 
         [HttpGet]
-        [Route("Prototypes")]
-        public async Task<IHttpActionResult> Prototypes()
+        [Route("Start")]
+        public async Task<IHttpActionResult> Start()
         {
-            await _analysisService.PrototypesAsync(Identity, _monitor, null);
+            await _prototypesAnalysisService.StartAsync(Identity, _monitor, null);
             return Ok();
         }
 

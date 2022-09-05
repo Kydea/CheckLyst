@@ -37,7 +37,7 @@
 
         ping = function () {
             var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "../../Analysis/Monitor", true);
+            xhttp.open("GET", "../../PrototypesAnalysis/Monitor", true);
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     if (this.status == 200) {
@@ -74,13 +74,13 @@
             errors = document.getElementById("totals").innerHTML = document.getElementById("detail").innerHTML = "n/a";
             document.getElementById("copy").classList.add("hidden");
             document.getElementById("start").classList.add("hidden");
-            xhttp.open("GET", "../../Analysis/Prototypes", true);
+            xhttp.open("GET", "../../PrototypesAnalysis/Start", true);
             xhttp.send();
         },
 
         stop: function () {
             var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "../../Analysis/Abort", true);
+            xhttp.open("GET", "../../PrototypesAnalysis/Abort", true);
             xhttp.send();
         },
 
