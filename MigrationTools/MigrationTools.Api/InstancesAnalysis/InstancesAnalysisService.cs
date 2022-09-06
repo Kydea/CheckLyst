@@ -64,13 +64,11 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                 var query = _instancesAnalysisRepository.GetInstances()
                     //.Take(10)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
+                    //.Where(i => i.Prototype == 82)
                     ;
                 monitor.Start(query.Count());
 
                 var list = await query
-
-                    .Where (i => i.Prototype == 82)
-                    
                     .OrderBy(i => i.Company).ThenBy(i => i.Prototype).ThenBy(i => i.Version).ThenBy(i => i.Year).ThenBy(i => i.Number).ThenBy(i => i.ID)
                     .Select(i => new { i.Code, i.Company, i.PrototypeName, i.Version, i.Year, i.Number, i.InstanceState})
                     .ToListAsync();
@@ -94,8 +92,14 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                         var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(record.Company, record.Code, true);
                         var errors = new List<string>();
                         foreach (Item item in cacheObject.Instance.Items.Values)
-                            if (item is Signature signature && item.WorseCountDownToValue > signature.SignedOn)
-                                errors.Add($"Emissione firma: {signature.SignedOn.Format(company.TimeZone)}, count down: {item.WorseCountDownToValue?.Format(company.TimeZone)}");
+                            if (
+                                item is Signature signature 
+                                && item.WorseCountDownToValue > signature.SignedOn
+                            )
+                                errors.Add($"Item: {item.TypeName} {item.Id} {item.Code ?? "-"}, firma: {signature.SignedOn.Format(company.TimeZone)}, count down: {item.WorseCountDownToValue?.Format(company.TimeZone)}");
+
+                        if (errors.Any())
+                            throw new ValidationException(errors);
 
                         if (!monitor.Counts.TryGetValue("Intances", out var count))
                             monitor.Counts["Intances"] = count = new MigrationTools.Api.Monitor.CountRecord();
