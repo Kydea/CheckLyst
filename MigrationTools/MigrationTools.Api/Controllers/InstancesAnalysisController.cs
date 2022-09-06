@@ -27,7 +27,7 @@ namespace CheckListManager.Instances.Api.Controllers
         [Route("Start")]
         public async Task<IHttpActionResult> Start()
         {
-            await _instancesAnalysisService.StartAsync(Identity, _monitor, null);
+            await _instancesAnalysisService.StartAsync(_monitor, null);
             return Ok();
         }
 

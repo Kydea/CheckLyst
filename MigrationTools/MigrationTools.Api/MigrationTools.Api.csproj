@@ -160,11 +160,11 @@
     <Content Include="Index.html" />
     <Content Include="JavaScript\base.js" />
     <Content Include="JavaScript\archivingProcess.js" />
-    <Content Include="JavaScript\intancesAnalysis.js" />
+    <Content Include="JavaScript\instancesAnalysis.js" />
     <Content Include="JavaScript\prototypesAnalysis.js" />
     <Content Include="Pages\ArchivingProcess\Index.html" />
     <Content Include="Pages\InstancesAnalysis\Index.html" />
-    <Content Include="Pages\PrototypeAnalysis\Index.html" />
+    <Content Include="Pages\PrototypesAnalysis\Index.html" />
     <Content Include="Parameters.xml" />
     <Content Include="ReadMe.txt" />
     <Content Include="Styles\Theme.css">
@@ -184,6 +184,7 @@
     <Compile Include="Archiving\IArchivingService.cs" />
     <Compile Include="Archiving\IArchivingRepository.cs" />
     <Compile Include="Controllers\InstancesAnalysisController.cs" />
+    <Compile Include="DefaultIdentityHelper.cs" />
     <Compile Include="PrototypeJsonConverter.cs" />
     <Compile Include="InstanceJsonConverter.cs" />
     <Compile Include="InstancesAnalysis\IInstancesAnalysisService.cs" />

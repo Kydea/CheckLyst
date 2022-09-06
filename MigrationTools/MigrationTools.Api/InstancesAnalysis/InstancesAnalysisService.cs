@@ -54,7 +54,7 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
             };
         }
 
-        public async Task StartAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, InstancesAnalysisRequest request)
+        public async Task StartAsync(MigrationTools.Api.Monitor monitor, InstancesAnalysisRequest request)
         {
             try
             {
@@ -62,13 +62,21 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                 monitor.Errors.Clear();
 
                 var query = _instancesAnalysisRepository.GetInstances()
-                    .Take(10)
+                    //.Take(10)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                     ;
                 monitor.Start(query.Count());
 
                 var list = await query
-                    .OrderBy(p => p.Prototypes.Company).ThenBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
+
+                    .Where (i => i.Prototype == 82)
+                    
+                    .OrderBy(i => i.Company).ThenBy(i => i.Prototype).ThenBy(i => i.Version).ThenBy(i => i.Year).ThenBy(i => i.Number).ThenBy(i => i.ID)
+                    .Select(i => new { i.Code, i.Company, i.PrototypeName, i.Version, i.Year, i.Number, i.InstanceState})
+                    .ToListAsync();
+
+                IDefaultIdentity identity = null;
+                Companies company = null;
 
                 foreach (var record in list)
                 {
@@ -77,13 +85,16 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                         if (monitor.Aborted) break;
                         monitor.Inc();
 
-                        var company = await _commonRepository.GetCompanyAsync(monitor.CompanyID);
-                        var cacheObject = await _instanceManagerService.OpenInstanceAsync(null, record.Code, identity);
-                        cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, true);
+                        if (company?.ID != record.Company)
+                        {
+                            company = await _commonRepository.GetCompanyAsync(record.Company);
+                            identity = new DefaultIdentityHelper(company.ID);
+                        }
 
+                        var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(record.Company, record.Code, true);
                         var errors = new List<string>();
                         foreach (Item item in cacheObject.Instance.Items.Values)
-                            if (item is Signature signature && item.CountDownToValue > signature.SignedOn)
+                            if (item is Signature signature && item.WorseCountDownToValue > signature.SignedOn)
                                 errors.Add($"Emissione firma: {signature.SignedOn.Format(company.TimeZone)}, count down: {item.WorseCountDownToValue?.Format(company.TimeZone)}");
 
                         if (!monitor.Counts.TryGetValue("Intances", out var count))

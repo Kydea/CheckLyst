@@ -12,6 +12,6 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
 {
     public interface IInstancesAnalysisService : IService
     {
-        Task StartAsync(DefaultIdentity identity, MigrationTools.Api.Monitor monitor, InstancesAnalysisRequest request);
+        Task StartAsync(MigrationTools.Api.Monitor monitor, InstancesAnalysisRequest request);
     }
 }

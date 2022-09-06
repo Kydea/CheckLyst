@@ -38,7 +38,7 @@
 
         setup = function () {
             var oldCountDown = parent.removeClass("CountDownOn").data("CountDown");
-			if (oldCountDown)  oldCountDown.clear();
+			if (oldCountDown) oldCountDown.clear();
 
 			if (date > matematici.clock.getTime()) {
 				parent.data("CountDown", countDown).addClass("CountDownOn");

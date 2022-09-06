@@ -1,4 +1,4 @@
-﻿matematici.intancesAnalysis = function () {
+﻿matematici.instancesAnalysis = function () {
     var
         setTotals = function (records) {
             var html = "";
