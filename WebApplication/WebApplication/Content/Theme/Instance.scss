@@ -278,6 +278,11 @@ div.Instance {
             height: 163px !important;
             border: none;
             overflow: hidden;
+
+            > *:not(.CountDown)
+            {
+                display: none;
+            }
         }
     }
 

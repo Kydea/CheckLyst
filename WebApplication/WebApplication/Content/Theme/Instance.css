@@ -171,6 +171,8 @@ div.Instance .Group.CountDownOn {
   height: 163px !important;
   border: none;
   overflow: hidden; }
+  div.Instance .Group.CountDownOn > *:not(.CountDown) {
+    display: none; }
 
 div.Instance .Item label span.Label {
   padding-left: 8px; }

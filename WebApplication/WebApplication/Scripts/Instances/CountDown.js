@@ -21,10 +21,9 @@
             lastHours = hours;
             // /\ debug /\
              
-            if (milliseconds < -1000) { //after an extra delay of 1s
+            if (milliseconds < -1000) //after an extra delay of 1s
                 new instances.Event(instances.Events.countDown, itemId).trigger();
-                clear();
-            } else {
+            else {
                 $("span.Interval", element).html("<i class='fa fa-long-arrow-down'></i>" + matematici.dateFormatter.both(serverTime) + "<br />" + matematici.dateFormatter.both(date));
 				$("span.Time", element).text(milliseconds >= 0 ? (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds) : "00:00");
             }

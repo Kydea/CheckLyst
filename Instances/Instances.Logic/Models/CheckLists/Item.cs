@@ -123,7 +123,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         {
             WorseCountDownToValue = !ParentCountDownToValue.HasValue || CountDownToValue > ParentCountDownToValue ? CountDownToValue : ParentCountDownToValue;
 
-            if (Removed || readOnlyInstance || Group != null && Group.ReadOnly || Page != null && Page.ReadOnly)
+            if (
+                Removed 
+                || readOnlyInstance 
+                || Group != null && Group.ReadOnly 
+                || Page != null && Page.ReadOnly
+                || WorseCountDownToValue > DateTime.UtcNow
+            )
                 ReadOnly = true;
             else
                 UpdateReadOnly(userCode, readOnlyInstance);

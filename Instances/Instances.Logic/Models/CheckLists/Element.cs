@@ -110,8 +110,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 			}
 
             var expressionValue = CheckList?.GetExpressionValue(ReadOnlyExpressionCode, this)?.Value as bool? == true;
-			ReadOnly = (Signature?.Signed ?? false) ||
-				ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
+			ReadOnly = 
+                (Signature?.Signed ?? false) ||
+                ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
 				ReadOnlyCondition == Conditions.Expression && expressionValue ||
 				ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||
 				ReadOnlyCondition == Conditions.ExpressionAndDefault && expressionValue && IsReadOnlyByDefault() ||
