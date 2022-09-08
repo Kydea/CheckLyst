@@ -32,7 +32,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public int FontSize { get; set; }
         public string Color { get; set; }
         public bool Removed { get; set; }
-        [JsonIgnore]
         public DateTimeOffset? WorseCountDownToValue { get; set; }
 
         public override bool Setup()
