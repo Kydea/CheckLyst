@@ -128,7 +128,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 || readOnlyInstance 
                 || Group != null && Group.ReadOnly 
                 || Page != null && Page.ReadOnly
-                || WorseCountDownToValue > DateTime.UtcNow
+                || WorseCountDownToValue > DateTime.UtcNow //active countdown at some level
             )
                 ReadOnly = true;
             else
