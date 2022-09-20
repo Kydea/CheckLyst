@@ -22,11 +22,14 @@ using CheckListManager.Instances.Logic.Models.CheckLists;
 using CheckListManager.MigrationTools.Api.PrototypesAnalysis;
 using CheckListManager.Prototypes.Api;
 using CheckListManager.Common.Core.Helpers;
+using NLog;
 
 namespace CheckListManager.Instances.Logic.InstancesAnalysis
 {
     public class InstancesAnalysisService : IInstancesAnalysisService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly ICommonRepository _commonRepository;
         private readonly IInstancesAnalysisRepository _instancesAnalysisRepository;
         private readonly IPrototypesRepository _prototypesRepository;
@@ -107,6 +110,7 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                     }
                     catch (Exception e)
                     {
+                        Logger.Error(e, "Unable to save the instance");
                         var Key = $"{record.Company}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}.{record.InstanceState}";
                         if (!monitor.Errors.TryGetValue(Key, out var error))
                             monitor.Errors[Key] = error = new List<string>();
@@ -117,6 +121,7 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
 
                         if (!monitor.Counts.TryGetValue("Intances", out var count))
                             monitor.Counts["Intances"] = count = new MigrationTools.Api.Monitor.CountRecord();
+
                         ++count.ko;
                     }
                 }
