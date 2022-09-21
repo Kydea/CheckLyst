@@ -12,6 +12,9 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
 {
     public interface IInstancesAnalysisService : IService
     {
-        Task StartAsync(MigrationTools.Api.Monitor monitor, InstancesAnalysisRequest request);
+        Task ContinueAsync();
+        Task RestartAsync();
+        Task StopAsync();
+        Task<dynamic> UpdateAsync();
     }
 }

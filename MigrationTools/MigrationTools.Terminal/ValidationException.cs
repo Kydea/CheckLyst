@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace CheckListManager.MigrationTools.Api.InstancesAnalysis
+namespace CheckListManager.MigrationTools.Terminal
 {
     public class ValidationException: Exception
     {

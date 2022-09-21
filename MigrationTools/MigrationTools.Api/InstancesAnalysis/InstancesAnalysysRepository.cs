@@ -3,6 +3,7 @@ using CheckListManager.Instances.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -14,14 +15,26 @@ namespace CheckListManager.Instances.Data.InstancesAnalysis
         {
         }
 
-        public async Task<IEnumerable<InstanceListItem>> GetInstances(string ToolState)
+        public async Task ContinueAsync()
         {
-            if (ToolState != null) return new List<InstanceListItem>(0);
-            return await Read<InstanceListItem>(
-                "select i.\"Code\", i.\"Company\", i.\"PrototypeName\", i.\"Version\", i.\"Year\", i.\"Number\", i.\"InstanceState\" " + Environment.NewLine +
-                "from \"CheckLists\".\"Instances\" i " + Environment.NewLine +
-                //$"where {(ToolState == null ? "i.\"ToolState\" is null" : $"not i.\"ToolState\" = '{ToolState}'")} " + Environment.NewLine +
-                "order by i.\"Company\", i.\"Prototype\", i.\"Version\", i.\"Year\", i.\"Number\", i.\"ID\" ", null);
+            await Call<int>("\"Tools\".\"InstancesAnalysisContinue\"", null);
+        }
+
+        public async Task RestartAsync()
+        {
+            await Call<int>("\"Tools\".\"InstancesAnalysisRestart\"", null);
+        }
+
+        public async Task StopAsync()
+        {
+            await Call<int>("\"Tools\".\"InstancesAnalysisStop\"", null);
+        }
+
+        public async Task<InstancesAnalysisState> UpdateAsync()
+        {
+            var result = (await Read<InstancesAnalysisState>("select * from \"Tools\".\"InstancesAnalysis\" limit 1", null)).SingleOrDefault();
+            result.Errors = (await Read<InstancesAnalysisState.Error>("select \"Key\", \"Message\" from \"Tools\".\"InstancesAnalysisLog\"", null)).ToList();
+            return result;
         }
     }
 }

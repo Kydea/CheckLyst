@@ -185,7 +185,7 @@
     <Compile Include="Archiving\IArchivingRepository.cs" />
     <Compile Include="Controllers\InstancesAnalysisController.cs" />
     <Compile Include="DefaultIdentityHelper.cs" />
-    <Compile Include="InstancesAnalysis\InstanceListItem.cs" />
+    <Compile Include="InstancesAnalysis\InstancesAnalysisState.cs" />
     <Compile Include="PrototypeJsonConverter.cs" />
     <Compile Include="InstanceJsonConverter.cs" />
     <Compile Include="InstancesAnalysis\IInstancesAnalysisService.cs" />
@@ -193,7 +193,6 @@
     <Compile Include="InstancesAnalysis\InstancesAnalysisRequest.cs" />
     <Compile Include="InstancesAnalysis\InstancesAnalysisService.cs" />
     <Compile Include="InstancesAnalysis\InstancesAnalysysRepository.cs" />
-    <Compile Include="InstancesAnalysis\ValidationException.cs" />
     <Compile Include="PrototypesAnalysis\ValidationException.cs" />
     <Compile Include="Controllers\ArchivingController.cs" />
     <Compile Include="Monitor.cs" />

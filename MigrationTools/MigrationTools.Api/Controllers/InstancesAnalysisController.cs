@@ -24,26 +24,36 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpGet]
-        [Route("Start")]
-        public async Task<IHttpActionResult> Start()
+        [Route("Continue")]
+        public async Task<IHttpActionResult> Continue()
         {
-            await _instancesAnalysisService.StartAsync(_monitor, null);
+            await _instancesAnalysisService.ContinueAsync();
             return Ok();
         }
 
         [HttpGet]
-        [Route("Monitor")]
-        public IHttpActionResult Monitor()
+        [Route("Restart")]
+        public async Task<IHttpActionResult> Restart()
         {
-            return Json(_monitor.Dump());
+            await _instancesAnalysisService.RestartAsync();
+            return Ok();
         }
 
         [HttpGet]
-        [Route("Abort")]
-        public IHttpActionResult Abort()
+        [Route("Stop")]
+        public async Task<IHttpActionResult> Stop()
         {
-            _monitor.Abort();
+            await _instancesAnalysisService.StopAsync();
             return Ok();
         }
+
+        [HttpGet]
+        [Route("Update")]
+        public async Task<IHttpActionResult> Update()
+        {
+            var state = await _instancesAnalysisService.UpdateAsync();
+            return Json(state);
+        }
+
     }
 }
