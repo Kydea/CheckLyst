@@ -115,5 +115,4 @@ $$
 language plpgsql;
 
 --alter table "CheckLists"."Instances" drop column "ToolState" 
-
---http://localhost/API/MigrationTools/Pages/InstancesAnalysis/
+--drop schema "Tools" cascade
