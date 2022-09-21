@@ -64,17 +64,25 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                 monitor.Counts.Clear();
                 monitor.Errors.Clear();
 
-                var query = _instancesAnalysisRepository.GetInstances()
+                var list = await _instancesAnalysisRepository.GetInstances("OK");
+                var okCount = list.Count();
+
+                list = await _instancesAnalysisRepository.GetInstances("KO");
+                var koCount = list.Count();
+
+                list = await _instancesAnalysisRepository.GetInstances(null)
                     //.Take(10)
                     //.Where(p => p.Prototypes.Name == "A8630_Line_Clearance" && p.Version == 1)
                     //.Where(i => i.Prototype == 82)
                     ;
-                monitor.Start(query.Count());
+                monitor.Start(okCount + koCount + list.Count());
 
-                var list = await query
-                    .OrderBy(i => i.Company).ThenBy(i => i.Prototype).ThenBy(i => i.Version).ThenBy(i => i.Year).ThenBy(i => i.Number).ThenBy(i => i.ID)
-                    .Select(i => new { i.Code, i.Company, i.PrototypeName, i.Version, i.Year, i.Number, i.InstanceState})
-                    .ToListAsync();
+                monitor.Counts.Add("Instances", new MigrationTools.Api.Monitor.CountRecord {
+                    ok = okCount,
+                    ko = koCount
+                });
+
+                monitor.Inc(okCount + koCount);
 
                 IDefaultIdentity identity = null;
                 Companies company = null;
@@ -104,14 +112,20 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                         if (errors.Any())
                             throw new ValidationException(errors);
 
-                        if (!monitor.Counts.TryGetValue("Intances", out var count))
-                            monitor.Counts["Intances"] = count = new MigrationTools.Api.Monitor.CountRecord();
-                        ++count.ok;
+                        ++monitor.Counts["Instances"].ok;
+
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                    catch (OutOfMemoryException)
+                    {
+                        throw;
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Unable to save the instance");
                         var Key = $"{record.Company}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}.{record.InstanceState}";
+                        Logger.Error(e, $"Migration tool instance error ({Key})");
+
                         if (!monitor.Errors.TryGetValue(Key, out var error))
                             monitor.Errors[Key] = error = new List<string>();
                         if (e is ValidationException validationException)
@@ -119,12 +133,21 @@ namespace CheckListManager.Instances.Logic.InstancesAnalysis
                         else
                             error.Add(e.Message);
 
-                        if (!monitor.Counts.TryGetValue("Intances", out var count))
-                            monitor.Counts["Intances"] = count = new MigrationTools.Api.Monitor.CountRecord();
+                        if (!monitor.Counts.TryGetValue("Instances", out var count))
+                            monitor.Counts["Instances"] = count = new MigrationTools.Api.Monitor.CountRecord();
 
-                        ++count.ko;
+                        ++monitor.Counts["Instances"].ko;
                     }
                 }
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e, "Migration tool system error");
+                var Key = $"System";
+                if (!monitor.Errors.TryGetValue(Key, out var error))
+                    monitor.Errors[Key] = error = new List<string>();
+                else
+                    error.Add(e.Message);
             }
             finally
             {

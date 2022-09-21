@@ -42,10 +42,10 @@ namespace CheckListManager.MigrationTools.Api
             CurrentRecordIndex = 0;
         }
 
-        public void Inc()
+        public void Inc(int Value = 1)
         {
             IterationTime = IterationTime ?? DateTime.Now;
-            ++CurrentRecordIndex;
+            CurrentRecordIndex += Value;
         }
 
         public void Stop()
