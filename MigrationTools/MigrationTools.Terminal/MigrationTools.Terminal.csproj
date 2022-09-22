@@ -135,10 +135,10 @@
     <Compile Include="ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Common\ConnectionStrings.config">
+    <Content Include="..\..\Common\ConnectionStrings.config">
       <Link>ConnectionStrings.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="..\..\Common\NLog.config">
       <Link>NLog.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
