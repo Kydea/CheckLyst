@@ -30,11 +30,6 @@ namespace CheckListManager.MigrationTools.Terminal.InstancesAnalysis
             return result;
         }
 
-        public async Task IncrementAsync()
-        {
-            await Call<int>("\"Tools\".\"InstancesAnalysisIncrement\"", null);
-        }
-
         public async Task StopAsync()
         {
             await Call<int>("\"Tools\".\"InstancesAnalysisStop\"", null);

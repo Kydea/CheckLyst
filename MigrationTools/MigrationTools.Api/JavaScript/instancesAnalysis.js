@@ -9,7 +9,7 @@
             var html = "<table><tr><th>company</th><th>prototype</th><th>version</th><th>year</th><th>number</th><th>state</th><th>error</th></tr>";
             for (var index in records) {
                 var tokens = records[index].Key.split(".");
-                html += "<tr><td>" + tokens[0] + "</td><td>" + tokens[1] + "</td><td>" + tokens[2] + "</td><td>" + tokens[3] + "</td><td>" + tokens[4] + "</td><td>" + tokens[5] + "</td><td>" + records[index].Message + "</td></tr>";
+                html += "<tr><td>" + tokens[0] + "</td><td>" + (tokens[1] || "") + "</td><td>" + (tokens[2] || "") + "</td><td>" + (tokens[3] || "") + "</td><td>" + (tokens[4] || "") + "</td><td>" + (tokens[5] || "") + "</td><td>" + records[index].Message + "</td></tr>";
             }
             html += "</table>";
             detail.innerHTML = html;
