@@ -38,8 +38,8 @@ namespace CheckListManager.Common.Logic.Terminal
 			}
 			catch (Exception exception)
 			{
-				NotifyAsync($"{GetType().Name} Failed to START", exception).Wait();
-				Logger.Fatal(exception);
+                Logger.Fatal(exception);
+                NotifyAsync($"{GetType().Name} Failed to START", exception).Wait();
 				return false;
 			}
 		}
