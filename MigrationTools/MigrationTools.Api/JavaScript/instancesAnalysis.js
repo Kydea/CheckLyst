@@ -6,10 +6,18 @@
         },
 
         setErrors = function (records) {
-            var html = "<table><tr><th>company</th><th>prototype</th><th>version</th><th>year</th><th>number</th><th>state</th><th>error</th></tr>";
+            var html = "<table><tr><th>company</th><th>id</th><th>prototype</th><th>version</th><th>year</th><th>number</th><th>state</th><th>offset(seconds)</th><th>error</th></tr>";
             for (var index in records) {
                 var tokens = records[index].Key.split(".");
-                html += "<tr><td>" + tokens[0] + "</td><td>" + (tokens[1] || "") + "</td><td>" + (tokens[2] || "") + "</td><td>" + (tokens[3] || "") + "</td><td>" + (tokens[4] || "") + "</td><td>" + (tokens[5] || "") + "</td><td>" + records[index].Message + "</td></tr>";
+                var rows = records[index].Message.split("<br />");
+                for (var messageIndex in rows) {
+                    var
+                        messageTokens = rows[messageIndex].split(" | "),
+                        message = messageTokens.length == 2 ? messageTokens[1] : messageTokens[0],
+                        offset = messageTokens.length == 2 ? messageTokens[0] : "";
+
+                    html += "<tr><td>" + tokens[0] + "</td><td>" + (tokens[1] || "") + "</td><td>" + (tokens[2] || "") + "</td><td>" + (tokens[3] || "") + "</td><td>" + (tokens[4] || "") + "</td><td>" + (tokens[5] || "") + "</td><td>" + (tokens[6] || "") + "</td><td>" + (offset || "") + "</td><td>" + (message || "") + "</td></tr>";
+                }
             }
             html += "</table>";
             detail.innerHTML = html;

@@ -12,6 +12,13 @@ namespace CheckListManager.MigrationTools.Terminal
             this.Messages = Messages;
         }
 
+        public ValidationException(List<Tuple<string, int>> MessagesWithOffset)
+        {
+            this.MessagesWithOffset = MessagesWithOffset;
+        }
+
         public List<string> Messages { get; }
+
+        public List<Tuple<string, int>> MessagesWithOffset { get; }
     }
 }

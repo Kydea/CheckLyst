@@ -74,13 +74,14 @@ namespace CheckListManager.MigrationTools.Terminal.InstancesAnalysis
 
                         currentInstance = record.ID;
                         var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(record.Company, record.Code, true);
-                        var errors = new List<string>();
+                        var errors = new List<Tuple<string, int>>();
                         foreach (Item item in cacheObject.Instance.Items.Values)
                             if (
                                 item is Signature signature
+                                && signature.Signed
                                 && item.WorseCountDownToValue > signature.SignedOn
                             )
-                                errors.Add($"Item: {item.TypeName} {item.Id} {item.Code ?? "-"}, firma: {signature.SignedOn.Format(company.TimeZone)}, count down: {item.WorseCountDownToValue?.Format(company.TimeZone)}");
+                                errors.Add(new Tuple<string, int>($"Item: {item.TypeName} {item.Id} {item.Code ?? "-"}, firma: {signature.SignedOn.Format(company.TimeZone)}, count down: {item.WorseCountDownToValue?.Format(company.TimeZone)}", (int?)(item.WorseCountDownToValue - signature.SignedOn)?.TotalSeconds ?? -1));
 
                         if (errors.Any())
                             throw new ValidationException(errors);
@@ -107,18 +108,16 @@ namespace CheckListManager.MigrationTools.Terminal.InstancesAnalysis
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, $"Migration tool instance error (code {record.Company}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}, state {record.InstanceState})");
+                        Logger.Error(e, $"Migration tool instance error (id {record.ID}, code {record.Company}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}, state {record.InstanceState})");
 
-                        var errors = new List<string>();
-                        if (e is ValidationException validationException)
-                            errors.AddRange(validationException.Messages);
-                        else
-                            errors.Add(e.Message);
+                        string error = 
+                            e is ValidationException validationException ?
+                                string.Join("<br />", validationException.MessagesWithOffset.Select(m => $"{m.Item2} | {m.Item1}")) :
+                                e.Message;
 
-                        var error = string.Join("<br />", errors);
                         try
                         {
-                            await _instancesAnalysisRepository.ErrorAsync($"{record.Company}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}.{record.InstanceState}", error, currentInstance);
+                            await _instancesAnalysisRepository.ErrorAsync($"{record.Company}.{record.ID}.{record.PrototypeName}.{record.Version}.{record.Year}.{record.Number}.{record.InstanceState}", error, currentInstance);
                         }
                         catch (Exception Exception)
                         {
