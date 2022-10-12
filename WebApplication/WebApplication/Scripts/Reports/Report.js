@@ -9,8 +9,10 @@
         noRecord,
         hamburger,
         parameters = [],
-        tr,
+        currentRow,
+        currentRange,
         startedOn = new Date(),
+        renderTimeout,
 
         createCSV = function (fileName, columns, rows) {
             var processRow = function (row) {
@@ -53,19 +55,18 @@
             }
         },
 
-        toggleRow = function () {
-            var newRow = $(this);
+        toggleRow = function (newRow) {
             if (newRow.hasClass("Current")) {
-                tr.removeClass("Current");
-                tr.prev().removeClass("CurrentPrevious")
-                tr = null;
+                currentRow.removeClass("Current");
+                currentRow.prev().removeClass("CurrentPrevious")
+                currentRow = null;
             } else {
-                if (tr) {
-                    tr.removeClass("Current");
-                    tr.prev().removeClass("CurrentPrevious")
+                if (currentRow) {
+                    currentRow.removeClass("Current");
+                    currentRow.prev().removeClass("CurrentPrevious")
                 }
-                tr = newRow.addClass("Current");
-                tr.prev().addClass("CurrentPrevious")
+                currentRow = newRow.addClass("Current");
+                currentRow.prev().addClass("CurrentPrevious")
             }
         },
 
@@ -117,40 +118,92 @@
             ]);
         },
 
+        renderRows = function (firstRowIndex) {
+            if (reports.disableRendering) return; //just for debug
+
+            if (renderTimeout)
+                clearTimeout(renderTimeout);
+            else
+                matematici.loader.show();
+
+            renderTimeout = setTimeout(function (firstRowIndex) {
+                var rowsCount = Math.floor(window.innerHeight / 40) + 1;
+                if (currentRange && currentRange.firstRowIndex == Math.max(0, firstRowIndex) && currentRange.firstRowIndex == firstRowIndex + rowsCount)
+                    return; //nothing to redraw
+
+                //clear previous range
+                if (currentRange)
+                    for (var rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
+                        var tr = tableBody.children[rowIndex];
+                        while (tr.children.length > 1 && tr.removeChild(tr.children[1]));
+                    }
+
+                //render new range
+                currentRange = { firstRowIndex: Math.max(0, firstRowIndex), lastRowIndex: firstRowIndex + rowsCount }
+                for (var rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
+                    var
+                        tr = tableBody.children[rowIndex],
+                        row = model.rows[rowIndex];
+                    for (var columnIndex in row.record) {
+                        td = document.createElement("td")
+                        td.innerHTML = row.record[columnIndex];
+                        tr.appendChild(td);
+                    }
+                }
+
+                matematici.loader.hide();
+                renderTimeout = null;
+            }, 10, firstRowIndex)
+        },
+
         loadHandler = function (result) {
+            console.log("Query time: " + (new Date() - startedOn) + "ms");
             model = result;
             if (initialized)
-                tableBody.empty();
+                while (tableBody.firstChild && tableBody.removeChild(tableBody.firstChild));
             else {
                 h1.html(h1.html() + result.code + " - " + result.description);
                 hamburger = new matematici.Hamburger(selector + " h1 button", showMenu)
 
-                var tr = $("<tr />").appendTo(tableHead);
-                $("<th />").appendTo(tr).text("");
-                for (var columnIndex in result.columns)
-                    $("<th />").appendTo(tr).text(result.columns[columnIndex]);
+                var tr = document.createElement("tr");
+                tableHead.appendChild(tr);
+                var th = document.createElement("th");
+                tr.appendChild(th);
+                for (var columnIndex in result.columns) {
+                    var th = document.createElement("th");
+                    th.innerHTML = result.columns[columnIndex];
+                    tr.appendChild(th);
+                }
                 noRecord.children().eq(0).attr("colspan", (result.columns.length || 1) + 1)
                 initialized = true;
             }
 
             detailRowIndex = 1;
-            if (result.rows.length)
+            if (result.rows.length) {
+                var td;
                 for (var rowIndex in result.rows) {
                     var
                         row = result.rows[rowIndex],
-                        tr = $("<tr />").appendTo(tableBody);
+                        tr = document.createElement("tr");
+
+                    tableBody.appendChild(tr);
                     if (row.total) {
-                        tr.addClass("Total");
-                        $("<td />").appendTo(tr).text("");
-                    } else 
-                        $("<td />").appendTo(tr).text(detailRowIndex++);
-                    for (var columnIndex in row.record)
-                        $("<td />").appendTo(tr).text(row.record[columnIndex]);
+                        tr.className("Total");
+                        td = document.createElement("td")
+                        tr.appendChild(td);
+                    } else {
+                        td = document.createElement("td")
+                        td.innerHTML = detailRowIndex++;
+                        tr.appendChild(td);
+                    }
                 }
+
+                renderRows(0);
+            }
             else
                 noRecord.appendTo(tableBody);
 
-            console.log("Elapsed time: " + (new Date() - startedOn) + "ms");
+            console.log("Total time: " + (new Date() - startedOn) + "ms");
         },
 
         load = function () {
@@ -175,6 +228,19 @@
             });
         },
 
+        scrollHandler = function () {
+            if (!tableHead.children) return;
+
+            if (currentRow) toggleRow(currentRow);
+
+            var
+                tableTop = tableBody.children[0].getBoundingClientRect().top + window.pageYOffset,
+                rowHeight = tableBody.children[0].offsetHeight,
+                firstRowIndex = Math.floor((window.scrollY - tableTop) / 40);
+
+            renderRows(firstRowIndex);
+        },
+
         setup = function () {
             var tokens = window.location.search.substring(1).split('&');
             for (var index in tokens) {
@@ -185,9 +251,12 @@
 
                 if (code) parameters.push({ code: code, value: decodeURIComponent(value) });
             }
+            window.onscroll = scrollHandler;
             h1 = $("h1", selector);
-            tableHead = $("table thead", selector);
-            tableBody = $("table tbody", selector).on("click", "tr", toggleRow);
+            tableHead = $("table thead", selector)[0];
+            tableBody = $("table tbody", selector).on("click", "tr", function () {
+                toggleRow($(this));
+            })[0];
             noRecord = $("tr.NoRecord", selector).remove();
             load(1);
         };
