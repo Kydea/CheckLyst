@@ -145,8 +145,17 @@
                         tr = tableBody.children[rowIndex],
                         row = model.rows[rowIndex];
                     for (var columnIndex in row.record) {
-                        td = document.createElement("td")
-                        td.innerHTML = row.record[columnIndex];
+                        var value = row.record[columnIndex];
+                        td = document.createElement("td");
+                        if (value.startsWith("https://") || value.startsWith("http://")) {
+                            var anchor = document.createElement("a");
+                            anchor.innerText = value;
+                            anchor.setAttribute("href", value);
+                            anchor.setAttribute("target", "_blank");
+                            anchor.className = "Standard";
+                            td.appendChild(anchor);
+                        } else
+                            td.innerText = value;
                         tr.appendChild(td);
                     }
                 }
@@ -154,6 +163,13 @@
                 matematici.loader.hide();
                 renderTimeout = null;
             }, 10, firstRowIndex)
+        },
+
+        clickHandler = function () {
+            var
+                cell = $(this),
+                content = cell.html();
+            toggleRow(cell.parent());
         },
 
         loadHandler = function (result) {
@@ -171,7 +187,7 @@
                 tr.appendChild(th);
                 for (var columnIndex in result.columns) {
                     var th = document.createElement("th");
-                    th.innerHTML = result.columns[columnIndex];
+                    th.innerText = result.columns[columnIndex];
                     tr.appendChild(th);
                 }
                 noRecord.children().eq(0).attr("colspan", (result.columns.length || 1) + 1)
@@ -193,7 +209,7 @@
                         tr.appendChild(td);
                     } else {
                         td = document.createElement("td")
-                        td.innerHTML = detailRowIndex++;
+                        td.innerText = detailRowIndex++;
                         tr.appendChild(td);
                     }
                 }
@@ -254,9 +270,7 @@
             window.onscroll = scrollHandler;
             h1 = $("h1", selector);
             tableHead = $("table thead", selector)[0];
-            tableBody = $("table tbody", selector).on("click", "tr", function () {
-                toggleRow($(this));
-            })[0];
+            tableBody = $("table tbody", selector).on("click", "td", clickHandler)[0];
             noRecord = $("tr.NoRecord", selector).remove();
             load(1);
         };
