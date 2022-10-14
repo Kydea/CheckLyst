@@ -14,6 +14,10 @@
 		backButton,
 		history,
 
+		updateSpecialContent = function () {
+			$("span#DecimalSeparator", content).text(localStorage.decimalSeparator);	
+		},
+
 		scroll = function (paragraph) {
 			if (paragraph) element.animate({ scrollTop: $("#" + paragraph, content).offset().top }, 300);
 		},
@@ -31,6 +35,7 @@
 				}).done(function (result, status, request) {
 					content.html(result);
 					scroll(paragraph);
+					updateSpecialContent();
 				});
 				currentPage = page;
 			}
@@ -59,9 +64,9 @@
 		},
 
 		setup = function () {
-			helpButton = $("a#HelpButton", matematici.elements.header).on("click", function (e) {
+			helpButton = $("a#HelpButton", "header, footer").on("click", function (e) {
 				e.preventDefault();
-				show();
+				show($(this).data("page"), $(this).data("paragraph"));
 			});
 
 			element = matematici.elements.body.children("div.Help");
