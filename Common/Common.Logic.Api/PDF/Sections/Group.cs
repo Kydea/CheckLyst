@@ -21,6 +21,8 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             var GroupElement = (ICheckListGroup)Element;
             var Description = CheckListPDF.GetItemDescription(GroupElement);
 
+            if (!CheckListPDF.IsPrototype() && Element.Hidden) return;
+
             if (!string.IsNullOrEmpty(Description))
                 DrawText(Description, Indentation == 1 ? PDFBase.TitleFont1 : Indentation == 2 ? PDFBase.TitleFont2 : PDFBase.TitleFont3, 10);
 
@@ -30,7 +32,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
 
         public override async Task RenderChildrenAsync()
         {
-            var Group = ((ICheckListGroup)Element);
+            var Group = (ICheckListGroup)Element;
             var CheckList = ((CheckListPDF)PDFBase).Model;
 
             CheckListPDF.RenderGroup(Group);

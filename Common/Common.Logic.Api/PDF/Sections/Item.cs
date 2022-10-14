@@ -77,7 +77,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             if (Element is ICheckListItem CheckListItem)
                 Description = CheckListPDF.GetItemDescription(CheckListItem);
 
-            if (Element is ICheckListText Text)
+            if (Element is ICheckListText)
             {
                 if (!string.IsNullOrEmpty(Description))
                     DrawText(Description, null, 10);
