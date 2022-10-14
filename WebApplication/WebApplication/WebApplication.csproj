@@ -585,6 +585,7 @@
     <Content Include="Views\Help\Reports.cshtml" />
     <Content Include="Views\Help\ReportEditor.cshtml" />
     <Content Include="Views\Help\ReportViewer.cshtml" />
+    <Content Include="Views\Help\StandardFormats.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
