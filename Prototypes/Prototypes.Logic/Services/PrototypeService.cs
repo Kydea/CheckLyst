@@ -437,12 +437,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private async Task DeleteAttachmentFromInstancesAsync(IDefaultIdentity identity, List<Instances> instances)
         {
             foreach (var instance in instances)
-            {
-                await _storageService.DeleteRecursiveAsync(
-                    _configurationService.InstancesStorageBucket,
-                    $"{identity.CompanyId}/{instance.Code}/"
-                );
-            }
+                await _storageService.DeleteRecursiveAsync(_configurationService.InstancesStorageBucket, $"{identity.CompanyId}/{instance.Code}/");
         }
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, PrototypeRequest request)
