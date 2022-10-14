@@ -8,7 +8,7 @@ namespace CheckListManager.Infrastructure.Terminal
 		{
 			HostFactory.Run(x =>
 			{
-				x.Service(settings => new InfrastructureWindowsService(new InfrastructureTerminalConfig()));
+				x.Service(settings => new ReportsWindowsService(new InfrastructureTerminalConfig()));
 
 				x.SetDisplayName("CheckListManager - Reports Service");
 				x.SetDescription("CheckListManager - Reports Service");

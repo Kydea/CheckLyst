@@ -6,9 +6,9 @@ using CheckListManager.Common.Logic.Terminal.Scheduler;
 
 namespace CheckListManager.Infrastructure.Terminal
 {
-	public class InfrastructureWindowsService : TimerWindowsService
+	public class ReportsWindowsService : TimerWindowsService
 	{
-		public InfrastructureWindowsService(TerminalConfig config) : base(config)
+		public ReportsWindowsService(TerminalConfig config) : base(config)
 		{
             Add(new IntervalSchedulerStrategy(RunAsync, 10));
 		}
