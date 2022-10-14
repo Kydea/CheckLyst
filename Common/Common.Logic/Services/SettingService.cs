@@ -163,7 +163,7 @@ namespace CheckListManager.Common.Logic.Services
 
         public Task<int> MaximumNumberOfPINFailureAsync(long companyId)
         {
-            const string code = "MaximumNumberOfPasswordFailure";
+            const string code = "MaximumNumberOfPINFailure";
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
