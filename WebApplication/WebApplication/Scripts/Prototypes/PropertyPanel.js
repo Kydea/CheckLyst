@@ -35,7 +35,8 @@
             $("input:not(.ReadOnly)", propertyValue).change();
             currentProperty && currentProperty.getType().destroy && currentProperty.getType().destroy();
 
-            prototypes.prototype.verify(options && options.okHandler);
+            if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+                prototypes.prototype.verify(options && options.okHandler);
         };
 
     propertyPanel.confirm = confirm;
