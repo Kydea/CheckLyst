@@ -9,6 +9,11 @@
         public const string UserCreated = "User created";
         public const string UserEdited = "User edited";
         public const string UserDeleted = "User deleted";
+        public const string UserBanned = "User banned";
+        public const string UserDisabled = "User disabled";
+
+        public const string PINBanned = "PIN banned";
+        public const string PINDisabled = "PIN disabled";
 
         public const string GroupCreated = "Group created";
         public const string GroupEdited = "Group edited";

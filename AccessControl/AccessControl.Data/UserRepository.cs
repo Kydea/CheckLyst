@@ -151,8 +151,9 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public async Task UserPasswordFailedAsync(Users user)
+        public async Task<bool> UserPasswordFailedAsync(Users user)
         {
+            bool forgiven = true;
             if (user != null)
             {
                 ++user.NumberOfPasswordAttempts;
@@ -161,14 +162,16 @@ namespace CheckListManager.AccessControl.Data
                 int MaximumNumberOfPasswordFailure = await _settingsService.MaximumNumberOfPasswordFailureAsync(user.Company);
 
                 if (MaximumNumberOfPasswordFailure > 0 && user.NumberOfPasswordAttempts >= MaximumNumberOfPasswordFailure)
-                    user.Enabled = false;
+                    forgiven = user.Enabled = false;
 
                 await SaveChangesAsync();
             }
+            return forgiven;
         }
 
-        public async Task UserPINFailedAsync(Users user)
+        public async Task<bool> UserPINFailedAsync(Users user)
         {
+            bool forgiven = true;
             if (user != null)
             {
                 ++user.NumberOfPINAttempts;
@@ -176,10 +179,14 @@ namespace CheckListManager.AccessControl.Data
                 int MaximumNumberOfPINFailure = await _settingsService.MaximumNumberOfPINFailureAsync(user.Company);
 
                 if (MaximumNumberOfPINFailure > 0 && user.NumberOfPINAttempts >= MaximumNumberOfPINFailure)
+                {
+                    forgiven = true;
                     user.PIN = null;
+                }
 
                 await SaveChangesAsync();
             }
+            return forgiven;
         }
 
         public async Task<List<Users>> GetUsersToDisableAsync(long company)

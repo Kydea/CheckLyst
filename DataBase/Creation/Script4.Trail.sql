@@ -17,6 +17,11 @@ values
 	('User created'),
 	('User edited'),
 	('User deleted'),
+	('User banned'),
+	('User disabled'),
+	
+	('PIN banned'),
+	('PIN disabled');	
 
 	('Group created'),
 	('Group edited'),

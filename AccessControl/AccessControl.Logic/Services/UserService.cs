@@ -14,6 +14,7 @@ using CheckListManager.AccessControl.Logic.Messages.Users;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataEngine;
@@ -97,17 +98,26 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (AuthenticationException authenticationException)
             {
-                await Task.WhenAll(
-                    _userRepository.UserPasswordFailedAsync(user),
-                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                var forgiven = await _userRepository.UserPasswordFailedAsync(user);
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = companyId.Value,
+                    User = code,
+                    Action = TrailAction.LoginFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    Information = authenticationException.Message
+                });
+
+                if (!forgiven)
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = companyId.Value,
-                        User = code,
-                        Action = TrailAction.LoginFailed,
+                        User = "(system)",
+                        Action = TrailAction.UserBanned,
                         Date = DateTimeOffset.UtcNow,
-                        Information = authenticationException.Message
-                    })
-                );
+                        Information = user.Code
+                    }); 
+
                 throw;
             }
 
@@ -185,7 +195,16 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
             catch (AuthenticationException)
             {
-                await _userRepository.UserPINFailedAsync(user);
+                if (!await _userRepository.UserPINFailedAsync(user))
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = companyId.Value,
+                        User = "(system)",
+                        Action = TrailAction.PINBanned,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = user.Code
+                    });
+
                 throw;
             }
         }
@@ -733,6 +752,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                 foreach (var user in users)
                 {
                     user.Enabled = false;
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = company,
+                        User = "(system)",
+                        Action = TrailAction.UserDisabled,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = user.Code
+                    }, cancellationToken);
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
                             new EmailMessage(user.Company, "User disabled",
@@ -778,8 +805,17 @@ namespace CheckListManager.AccessControl.Logic.Services
             {
                 var users = await _userRepository.GetUsersWithExpiredPin(company);
                 foreach (var user in users)
+                {
                     user.PIN = null;
-
+                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    {
+                        Company = company,
+                        User = "(system)",
+                        Action = TrailAction.PINDisabled,
+                        Date = DateTimeOffset.UtcNow,
+                        Information = user.Code
+                    }, cancellationToken);
+                }
                 await _userRepository.SaveChangesAsync();
             }
             catch (Exception e)

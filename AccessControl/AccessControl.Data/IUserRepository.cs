@@ -17,8 +17,8 @@ namespace CheckListManager.AccessControl.Data
         Task<List<ExportRow>> GetGroupsForExportAsync(long companyId, string code, string description, string user, string role);
 
 		Task UserLoginCompleteAsync(Users user);
-		Task UserPasswordFailedAsync(Users user);
-		Task UserPINFailedAsync(Users user);
+		Task<bool> UserPasswordFailedAsync(Users user);
+		Task<bool> UserPINFailedAsync(Users user);
 		Task<List<Users>> GetUsersToDisableAsync(long company);
 		Task<List<Users>> GetUsersDisableWarningAsync(long company);
 		Task<List<Users>> GetUsersWithExpiredPin(long company);
