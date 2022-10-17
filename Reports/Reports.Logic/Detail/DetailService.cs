@@ -265,7 +265,7 @@ namespace CheckListManager.Reports.Logic.Detail
                             Editable = c.Editable,
                             ParameterName = c.ParameterName,
                             ParameterType = c.ParameterType,
-                            ClauseType = c.ClauseType
+                            ClauseType = c.ClauseType,
                         }).ToList()
                     };
                     if (request.ID.HasValue)
@@ -330,10 +330,7 @@ namespace CheckListManager.Reports.Logic.Detail
         public async Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query, Dictionary<string, string> parameters)
         {
             using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query, parameters))
-            {
-                var reportColumns = dataTable.Columns.Cast<DataColumn>().OrderBy(c => c.Ordinal).Select(c => c.ColumnName).ToList();
-                return reportColumns;
-            }
+                return dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, DetailRequest record)

@@ -13,13 +13,14 @@ namespace CheckListManager.Reports.Logic.Detail
         public string ParameterName { get; set; }
         public string ParameterType { get; set; }
         public string ClauseType { get; set; }
-
+        
         public class ClauseRecord
         {
             public string Column { get; set; }
             public string Sign { get; set; }
             public string Value { get; set; }
             public string Custom { get; set; }
+            public bool CaseInsensitive { get; set; }
         }
     }
 }

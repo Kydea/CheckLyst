@@ -139,7 +139,7 @@
                     }
 
                 //render new range
-                currentRange = { firstRowIndex: Math.max(0, firstRowIndex), lastRowIndex: firstRowIndex + rowsCount }
+                currentRange = { firstRowIndex: Math.max(0, firstRowIndex), lastRowIndex: Math.min(firstRowIndex + rowsCount, model.rows.length - 1) }
                 for (var rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
                     var
                         tr = tableBody.children[rowIndex],

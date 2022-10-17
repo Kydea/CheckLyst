@@ -20,6 +20,8 @@
         signSelect,
         valueLabel,
         valueTypeInput,
+        caseInsensitiveLabel,
+        caseInsensitiveInput,
         customLabel,
 
         toggleControls = function () {
@@ -41,6 +43,7 @@
             signLabel.toggle(clauseType == "filter");
             valueLabel.toggle(clauseType != "custom");
             customLabel.toggle(clauseType == "custom");
+            caseInsensitiveLabel.toggle(parameterType == "Text");
 
             matematici.popup.center();
 
@@ -89,6 +92,7 @@
                 column: columnLabel.is(":visible") ? columnSelect.val() : null,
                 sign: signLabel.is(":visible") ? signSelect.val() : null,
                 value: valueLabel.is(":visible") ? valueTypeInput.getValue() : null,
+                caseInsensitive: caseInsensitiveLabel.is(":visible") ? caseInsensitiveInput[0].checked : false,
                 custom: customLabel.is(":visible") ? editor.getValue() : null
             };
 
@@ -144,6 +148,8 @@
             signLabel = $("label#SignLabel", form);
             signSelect = $("select#Sign", form).on("change", toggleControls);
             valueLabel = $("label#ValueLabel", form);
+            caseInsensitiveLabel = $("label#CaseInsensitiveLabel", form);
+            caseInsensitiveInput = $("input#CaseInsensitive", form);
             customLabel = $("label#CustomLabel", form);
 
             for (var fieldIndex in columns) {
@@ -169,6 +175,7 @@
                 columnSelect.val(clause.clause.column || "");
                 signSelect.val(clause.clause.sign || "");
                 editor.setValue(clause.clause.custom || "");
+                caseInsensitiveInput[0].checked = clause.clause.caseInsensitive;
                 toggleControls();
                 valueTypeInput && valueTypeInput.setValue(clause.clause.value || "");
             } 

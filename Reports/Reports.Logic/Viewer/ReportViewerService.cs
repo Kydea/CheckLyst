@@ -55,11 +55,16 @@ namespace CheckListManager.Reports.Logic.Viewer
         }
 
         private string ParseFilter(ReportClause.ClauseRecord Clause, string ParameterName, object Value) =>
-            Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
-            Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
             Clause.Sign == "0" ? Value as bool? == true ? $"q.\"{Clause.Column}\" is null" : null :
             Clause.Sign == "!0" ? Value as bool? == true ? $"not q.\"{Clause.Column}\" is null" : null :
-            $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
+            Clause.CaseInsensitive ?
+                Clause.Sign == "c" ? $"upper(q.\"{Clause.Column}\") like '%' || upper(@{ParameterName}) || '%'" :
+                Clause.Sign == "!c" ? $"not upper(q.\"{Clause.Column}\") like '%' || upper(@{ParameterName}) || '%'" :
+                $"upper(q.\"{Clause.Column}\") {Clause.Sign} upper(@{ParameterName}) " :
+
+                Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
+                Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
+                $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
 
         private string ParseClause(ReportClauses ReportClause, ReportClause.ClauseRecord Clause, object Value)
         {
@@ -83,7 +88,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             StringBuilder.AppendLine($"with q as (");
             StringBuilder.AppendLine(report.ReportSource == null ? report.Query : report.ReportSources.Query);
             StringBuilder.AppendLine($")");
-            StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.Select(c => $"{c.Column} \"{c.Label}\""))}");
+            StringBuilder.AppendLine($"select {string.Join(", ", report.ReportColumns.OrderBy(rc => rc.ID).Select(c => $"{c.Column} \"{c.Label}\""))}");
             StringBuilder.AppendLine($"from q");
             StringBuilder.AppendLine($"where");
             StringBuilder.AppendLine($"    1 = 1");
