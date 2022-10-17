@@ -331,10 +331,7 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query, parameters))
             {
-                var reportColumns = new List<string>(dataTable.Columns.Count);
-                foreach (DataColumn column in dataTable.Columns)
-                    reportColumns.Add(column.ColumnName);
-
+                var reportColumns = dataTable.Columns.Cast<DataColumn>().OrderBy(c => c.Ordinal).Select(c => c.ColumnName).ToList();
                 return reportColumns;
             }
         }
