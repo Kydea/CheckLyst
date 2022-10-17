@@ -34,7 +34,7 @@
                 return this.applyAnyDelta(delta);
             }
 
-            document.$maxLength = 10000;
+            document.$maxLength = 50000;
         };
 
     this.setReadOnly = function (value) {
