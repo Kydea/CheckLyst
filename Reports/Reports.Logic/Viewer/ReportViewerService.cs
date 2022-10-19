@@ -60,10 +60,14 @@ namespace CheckListManager.Reports.Logic.Viewer
             Clause.CaseInsensitive ?
                 Clause.Sign == "c" ? $"upper(q.\"{Clause.Column}\") like '%' || upper(@{ParameterName}) || '%'" :
                 Clause.Sign == "!c" ? $"not upper(q.\"{Clause.Column}\") like '%' || upper(@{ParameterName}) || '%'" :
+                Clause.Sign == "s" ? $"upper(q.\"{Clause.Column}\") like upper(@{ParameterName}) || '%'" :
+                Clause.Sign == "!s" ? $"not upper(q.\"{Clause.Column}\") like upper(@{ParameterName}) || '%'" :
                 $"upper(q.\"{Clause.Column}\") {Clause.Sign} upper(@{ParameterName}) " :
 
                 Clause.Sign == "c" ? $"q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
                 Clause.Sign == "!c" ? $"not q.\"{Clause.Column}\" like '%' || @{ParameterName} || '%'" :
+                Clause.Sign == "s" ? $"q.\"{Clause.Column}\" like @{ParameterName} || '%'" :
+                Clause.Sign == "!s" ? $"not q.\"{Clause.Column}\" like @{ParameterName} || '%'" :
                 $"q.\"{Clause.Column}\" {Clause.Sign} @{ParameterName} ";
 
         private string ParseClause(ReportClauses ReportClause, ReportClause.ClauseRecord Clause, object Value)
