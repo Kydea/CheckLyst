@@ -13,6 +13,7 @@
         currentRange,
         startedOn = new Date(),
         renderTimeout,
+        scrollTop = 0,
 
         createCSV = function (fileName, columns, rows) {
             var processRow = function (row) {
@@ -127,23 +128,24 @@
                 matematici.loader.show();
 
             renderTimeout = setTimeout(function (firstRowIndex) {
-                var rowsCount = Math.floor(window.innerHeight / 40) + 1;
-                if (currentRange && currentRange.firstRowIndex == Math.max(0, firstRowIndex) && currentRange.firstRowIndex == firstRowIndex + rowsCount)
+                var
+                    rowIndex, td, row,
+                    rowsCount = Math.floor(window.innerHeight / 40) + 1;
+                if (currentRange && currentRange.firstRowIndex === Math.max(0, firstRowIndex) && currentRange.firstRowIndex === firstRowIndex + rowsCount)
                     return; //nothing to redraw
 
                 //clear previous range
                 if (currentRange)
-                    for (var rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
+                    for (rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
                         var tr = tableBody.children[rowIndex];
                         while (tr.children.length > 1 && tr.removeChild(tr.children[1]));
                     }
 
                 //render new range
                 currentRange = { firstRowIndex: Math.max(0, firstRowIndex), lastRowIndex: Math.min(firstRowIndex + rowsCount, model.rows.length - 1) }
-                for (var rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
-                    var
-                        tr = tableBody.children[rowIndex],
-                        row = model.rows[rowIndex];
+                for (rowIndex = currentRange.firstRowIndex; rowIndex <= currentRange.lastRowIndex; ++rowIndex) {
+                    tr = tableBody.children[rowIndex];
+                    row = model.rows[rowIndex];
                     for (var columnIndex in row.record) {
                         var value = row.record[columnIndex];
                         td = document.createElement("td");
@@ -175,18 +177,19 @@
         loadHandler = function (result) {
             console.log("Query time: " + (new Date() - startedOn) + "ms");
             model = result;
+            var tr, th, td;
             if (initialized)
                 while (tableBody.firstChild && tableBody.removeChild(tableBody.firstChild));
             else {
                 h1.html(h1.html() + result.code + " - " + result.description);
                 hamburger = new matematici.Hamburger(selector + " h1 button", showMenu)
 
-                var tr = document.createElement("tr");
+                tr = document.createElement("tr");
                 tableHead.appendChild(tr);
-                var th = document.createElement("th");
+                th = document.createElement("th");
                 tr.appendChild(th);
                 for (var columnIndex in result.columns) {
-                    var th = document.createElement("th");
+                    th = document.createElement("th");
                     th.innerText = result.columns[columnIndex];
                     tr.appendChild(th);
                 }
@@ -196,15 +199,13 @@
 
             detailRowIndex = 1;
             if (result.rows.length) {
-                var td;
                 for (var rowIndex in result.rows) {
-                    var
-                        row = result.rows[rowIndex],
-                        tr = document.createElement("tr");
+                    var row = result.rows[rowIndex];
+                    tr = document.createElement("tr");
 
                     tableBody.appendChild(tr);
                     if (row.total) {
-                        tr.className("Total");
+                        tr.className = "Total";
                         td = document.createElement("td")
                         tr.appendChild(td);
                     } else {
@@ -244,8 +245,9 @@
             });
         },
 
-        scrollHandler = function () {
-            if (!tableHead.children) return;
+        scrollHandler = function (e) {
+            if (!tableHead.children || scrollTop === window.scrollY) return;
+            scrollTop = window.scrollY;
 
             if (currentRow) toggleRow(currentRow);
 
@@ -254,6 +256,7 @@
                 rowHeight = tableBody.children[0].offsetHeight,
                 firstRowIndex = Math.floor((window.scrollY - tableTop) / 40);
 
+            console.log(e);
             renderRows(firstRowIndex);
         },
 

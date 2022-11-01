@@ -161,7 +161,7 @@ namespace CheckListManager.AccessControl.Data
 
                 int MaximumNumberOfPasswordFailure = await _settingsService.MaximumNumberOfPasswordFailureAsync(user.Company);
 
-                if (MaximumNumberOfPasswordFailure > 0 && user.NumberOfPasswordAttempts >= MaximumNumberOfPasswordFailure)
+                if (MaximumNumberOfPasswordFailure > 0 && user.NumberOfPasswordAttempts >= MaximumNumberOfPasswordFailure && user.Enabled)
                     forgiven = user.Enabled = false;
 
                 await SaveChangesAsync();
@@ -178,9 +178,9 @@ namespace CheckListManager.AccessControl.Data
 
                 int MaximumNumberOfPINFailure = await _settingsService.MaximumNumberOfPINFailureAsync(user.Company);
 
-                if (MaximumNumberOfPINFailure > 0 && user.NumberOfPINAttempts >= MaximumNumberOfPINFailure)
+                if (MaximumNumberOfPINFailure > 0 && user.NumberOfPINAttempts >= MaximumNumberOfPINFailure && user.PIN != null)
                 {
-                    forgiven = true;
+                    forgiven = false;
                     user.PIN = null;
                 }
 

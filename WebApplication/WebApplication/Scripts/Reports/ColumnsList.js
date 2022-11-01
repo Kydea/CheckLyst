@@ -128,7 +128,7 @@
         },
 
         prettify = function (name) {
-            return name.split("\"").join("").replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+            return name.split("\"").join("").replace(/([a-z0-9])([A-Z])/g, "$1 $2").substring(0, 50);;
         },
 
         generate = function () {
@@ -150,7 +150,7 @@
                 replaceColumns = function () {
                     for (var index = list.length - 1; index >= 0; --index)
                         remove(index);
-                    for (var index = 0; index < options.columns.length; ++index) {
+                    for (index = 0; index < options.columns.length; ++index) {
                         var queryColumn = options.columns[index];
                         insert({
                             label: prettify(queryColumn),
