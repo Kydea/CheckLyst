@@ -752,6 +752,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 foreach (var user in users)
                 {
                     user.Enabled = false;
+
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = company,
