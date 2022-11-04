@@ -8,6 +8,7 @@ using System;
 using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.AccessControl.Data.Models;
+using CheckListManager.Common.Data.ListItems;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -214,7 +215,7 @@ namespace CheckListManager.AccessControl.Data
         public async Task<List<Users>> GetUsersWithExpiredPin(long company)
         {
             var Threshold = DateTime.UtcNow.AddDays(-await _settingsService.PINDaysLifeAsync(company));
-            return await Entities.Users.Where(x => x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
+            return await Entities.Users.Where(x => x.Company == company && x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
 
         private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role)

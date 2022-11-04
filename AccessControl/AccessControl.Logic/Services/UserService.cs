@@ -806,7 +806,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 var users = await _userRepository.GetUsersWithExpiredPin(company);
                 foreach (var user in users)
                 {
-                    user.PIN = new byte[] { 1, 2, 3 };
+                    user.PIN = null;
                     await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
                     {
                         Company = company,
