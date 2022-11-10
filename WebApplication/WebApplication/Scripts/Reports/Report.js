@@ -256,7 +256,7 @@
                 rowHeight = tableBody.children[0].offsetHeight,
                 firstRowIndex = Math.floor((window.scrollY - tableTop) / 40);
 
-            console.log(e);
+            //console.log(e);
             renderRows(firstRowIndex);
         },
 
