@@ -43,7 +43,7 @@
             signLabel.toggle(clauseType == "filter");
             valueLabel.toggle(clauseType != "custom");
             customLabel.toggle(clauseType == "custom");
-            caseInsensitiveLabel.toggle(parameterType == "Text");
+            caseInsensitiveLabel.toggle(parameterType == "Text" && clauseType == "filter");
 
             matematici.popup.center();
 
