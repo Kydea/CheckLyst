@@ -65,7 +65,7 @@ create table "WorkFlows"."WorkFlowApplications"
 	"Document" bigint, 
 	"DocumentVersion" int,
 	check("Document" is null and "DocumentVersion" is null or not "Document" is null and not "DocumentVersion" is null),
-	--the followin constraint is added in the script Script8.Documents.sql
+	--the following constraint is added in the script Script8.Documents.sql
 	--constraint "WorkFlowApplications_DocumentVersion" foreign key ("Document", "Version") references "Documents"."DocumentVersions" on delete cascade,
 
 	constraint Check_WorkFlowApplications_Target check
