@@ -1,0 +1,177 @@
+@model CheckListManager.WebApplication.Models.Login
+
+<div class="Login">
+    <div class="Box AutoCenter">
+        <form>
+            @if (Request["m"] != null)
+            {
+                <div class="Message">
+                    Your session has expired. Please login again.
+                </div>
+            }
+
+            <input type="hidden" name="grant_type" value="password" />
+
+            <label class="FullWidth">
+                <span>@(Model.Administration ? "Administration company" : "Company")</span>
+                <i class="Icon fal fa-industry"></i>
+                <select name="companyId"></select>
+            </label>
+
+            <label class="FullWidth Controls2">
+                <span>User code / Password</span>
+                <i class="Icon fal fa-user"></i>
+                <input type="text" name="username" placeholder="username" maxlength="60" />
+                <i class="Icon fal fa-key"></i>
+                <input type="password" name="password" placeholder="password" />
+            </label>
+
+            <div class="Errors"></div>
+
+            <div class="Buttons">
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="Icon fas fa-chevron-circle-right"></i>LOGIN</a>
+            </div>
+        </form>
+    </div>
+    <div class="Version">Version: @CheckListManager.WebApplication.Code.Version.Get()</div>
+</div>
+
+<script type="text/javascript">
+    matematici.isLoginPage = true;
+
+    matematici.events.onPageLoad = function (callback) {
+        matematici.clock.stop();
+
+        var
+            administration = @(Model.Administration ? "true" : "false"),
+			form = $("form"),
+			error = $("div.Errors", form),
+			companyList = $("select[name=companyId]", form),
+			userCode = $("input[name=username]", form),
+			password = $("input[name=password]", form),
+
+			showError = function (message) {
+				error.html(" " + message).prepend($("<i />").addClass("fas fa-exclamation-triangle")).show()
+			},
+
+            getSettings = function (callback) {
+				$.ajax(matematici.urls.infrastructure.companies.getSettings, {
+					type: "get",
+					suppressErrors: true
+				}).done(function (result) {
+					localStorage.companySettings = JSON.stringify(result);
+					callback.call();
+				}).fail(function (jqXhr, textStatus, errorThrown) {
+					showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+				});
+			};
+
+        new matematici.Page({
+            name: "Login",
+            initializers: []
+        });
+
+        new matematici.Login("div.Login", function () {
+            error.empty().hide();
+
+            var result =
+            {
+                "access_token": "f46NpOixuA3p8X7sx_mC7firznmMNeUs4J6waTraMbE-il_XkiX9XQpOrkzpJNDqJv5gCopBJRGXJNKz2PDhp4p7g5srmHVxaUGX6TlwiYf5zHqq85fcsRtE4uLSZiE_3zfj6ST03RRxI7N3HVPKaqaVcdhK9yDBKD3IXZMsG-WDTxKcvzpAeEUfLSeOLx4wQNm0EIYWkMgPaaUczeVKzcksgNInGo0ANx7u_kx_D1N-kQvilkOl_dbTXMb85cAD_hIztk0lPeBbnLXqysrcvJxtkKmI-LbH_Eds6UngfkjfAbCy5YTFYH8eh6QbhoXRSpu90AfBn1_JrOMB966pwTHJNJvfrGygpQhCtT9XjXT7vMPtxGa0wmv-hh-N07n_BL23rK4yaKVhZrD7_aBJK4I-1_KBggfIDikN5KoFVDJF_mmSd2gFsesANFaFXZLXIAgXBssh1Wy-FofH4m-x8zQp5NeOLweIEwHd23Rkx1zZmVRNTdi2XElSxSJ_uN8WZRnQA19aMiRbYHA5qPI9KyzT7ghTa5cYer1SfJhweTNCE8NbRjp5a2hwFr3d73M9KNHzSfpG-LZe55PNzvlD8DTTFPpvgvBUuBwwgnu1xCwoXKFn61mYSd6VIDrABdqnmN7aAsk4m-JFxhkUWAXCye1GOzul2jbOo_KGBy-f3jjltuYkJ-DhjrUdV9DMmMj6HbV4M_xf_w3irYJXrh6nXZwLNsmUyuBtgp0IkHrkIc5GvEjWOlJ_-f-x9ntol31wo1aMZlau73dPH5tR4IuADQYTIG6FCdL3kznDH3qhAutsmoiuTTEuNS3faJN0Mmsey0RL-Gqi-6NwTfGyu4LcFf0mmK2Akm7sc2yBm1PUFxmH_n-oVWscoeRPs6jvFdn0BFDnVoSNwCUhQEKGZ-498rP7ebBHRwQItlvfLRVFYT5TU-YZ-2naOJawmnT5S1OZuFqz9hjRMKwPfsEzHHWCp9jRc-T1a36Dt1nFjruZx4tqO4gOUBtyjHiX55o3XiuV3st54c2yDnvDl1yOOEKKOVOg4zXEsX2Jy3Gqth0v1uLRntWAiUqNPGOffdV9P5Lr7R3YEOnu4aKZviwNj80fDDuPSOg6sP8ivcBEuhNKFe6-SpgIG_ukO0umYxgSVnFHTNg0MXv-DLVY4jKvk5BQw6Jmnzyri3Jy3CT4t6jyX6b81ryznb4oxryZdMVjWXh6HuRnY_Mu9NjeH8A9o3eQ7dA0jGZl57n7uozoLtkyaPkHY025QtA7ZL7GT1DC2k1UCKDjEDan3xdfcnjU4PMSmepmOIVy9kjH0LfyTSUl3LFMzCDkXYBRQIz0-Y8HKzhNL0nFB9KLVX7bQP-o8RmqiWlBIdpRjMk7sdPeSA9x3V14quzL6eyqEX_cEcrC33tIw4HdMiPq2n58urL1Y9rK_MxKP_16_0r58M-E3F-3XBmCjbOo2cVHuGiL9MA_bybZNMgBrc2TVtOEk1Gbk8PmwuuYqbQfnH40J_Mq6Z6-vxAZneFBq99nG0UxbzFz7VYkjpNf4gmduaXcvh8dSoUDZeWDlbfwbVKM7fJRUGOOp4ofsQ6E1bse6ZxugozO0qMVE_yDxYQOkYOpUy-H3FVOP0dCgc0",
+                "token_type": "bearer",
+                "expires_in": 1799,
+                "refresh_token": "ZBMTLHA4XP3MYKLS3UNOB84GW7FFWZZSZGDTPNSE2NA=",
+                "company": "2",
+                "decimalSeparator": ".",
+                "code": "CheckListManager",
+                "name": "System administrator",
+                "timeZone": "W. Europe Standard Time",
+                "roles": "DataSources#Edit#,FunctionGroup#DataSources#,DataSources#View#,Companies#Edit#,FunctionGroup#Companies#,Companies#View#,Departments#Edit#,FunctionGroup#Departments#,Departments#View#,PrototypeTypes#Edit#,FunctionGroup#PrototypeTypes#,PrototypeTypes#View#,Reports#Edit#,FunctionGroup#Reports#,Reports#View#,Trail#View#,FunctionGroup#Trail#,Users#Edit#,FunctionGroup#Users#,Users#View#,WorkFlows#Edit#,FunctionGroup#WorkFlows#,WorkFlows#View#,FTPServers#Edit#,FunctionGroup#FTPServers#,FTPServers#View#,Prototypes#Approve#2##,Prototypes#Approve#,FunctionGroup#Prototypes#,Prototypes#Edit#2##,Prototypes#Edit#,Prototypes#Preview#2##,Prototypes#Preview#,Prototypes#View#2##,Prototypes#View#,Prototypes#Approve#1##,Prototypes#Edit#1##,Prototypes#Preview#1##,Prototypes#View#1##,Prototypes#Approve#3##,Prototypes#Edit#3##,Prototypes#Preview#3##,Prototypes#View#3##,Prototypes#Approve#425#451#,Prototypes#Edit#425#451#,Prototypes#Preview#425#451#,Prototypes#View#425#451#,Prototypes#Approve#713##,Prototypes#Edit#713##,Prototypes#Preview#713##,Prototypes#View#713##,Prototypes#Approve#867##,Prototypes#Edit#867##,Prototypes#Preview#867##,Prototypes#View#867##,Prototypes#Edit#62##,Prototypes#Preview#62##,Prototypes#View#62##,Instances#Confirm#1##,Instances#Confirm#,FunctionGroup#Instances#,Instances#Create#1##,Instances#Create#,Instances#Delete#1##,Instances#Delete#,Instances#Edit#1##,Instances#Edit#,Instances#Unsign#1##,Instances#Unsign#,Instances#View#1##,Instances#View#,Instances#Confirm#62##,Instances#Create#62##,Instances#Delete#62##,Instances#Edit#62##,Instances#Unsign#62##,Instances#View#62##,SignatureLevel##2##Revisor#,PrototypeWorkFlowLevel##2##Approver#,InstanceWorkFlowLevel##2##Revisor#,PrototypeWorkFlowLevel##1##Revisor#,InstanceWorkFlowLevel##1##Approver#,PrototypeWorkFlowLevel##867##Approver#",
+                ".refresh": "True",
+                ".issued": "Mon, 30 Jan 2023 13:49:21 GMT",
+                ".expires": "Mon, 30 Jan 2023 14:19:21 GMT"
+            };
+            matematici.navigator.open(matematici.urls.dashboard);
+            return;
+
+            if (companyList.val() == null)
+                showError("select a company");
+            else if (userCode.val() == "")
+                showError("select a user code");
+            else if (password.val() == "")
+                showError("select a password");
+            else 
+                $.ajax(matematici.urls.accessControl.token, {
+                    data: form.serialize(),
+                    type: "post",
+                    suppressErrors: true
+                }).done(function (result) {
+                    localStorage.companyName = companyList.next().val();
+                    matematici.tokenManager.login(result);
+					matematici.clock.resume();
+
+                    getSettings(function () {
+                        var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl != "undefined" && localStorage.redirectUrl != "/undefined" && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;
+                        localStorage.removeItem("redirectUrl");
+                        localStorage.removeItem("redirectTime");
+						matematici.navigator.open(redirectUrl || matematici.urls.dashboard);
+					});
+
+                }).fail(function (jqXhr, textStatus, errorThrown) {
+                    showError(jqXhr.responseJSON && jqXhr.responseJSON.error_description || jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+                });
+        });
+
+        var savedValues = {};
+        if (localStorage.redirectUrl && localStorage.redirectTime && new Date() - new Date(localStorage.redirectTime) < 10000) {
+            savedValues.redirectUrl = localStorage.redirectUrl;
+            savedValues.redirectTime = localStorage.redirectTime;
+        }
+        matematici.tokenManager.notifyLogout();
+        localStorage.redirectUrl = savedValues.redirectUrl;
+        localStorage.redirectTime = savedValues.redirectTime;
+
+        //closes all the possibile pending light boxes
+        matematici.popup.close();
+        matematici.dialog.close();
+        matematici.blip.close();
+        matematici.elements.body.removeClass("CheckListGrid");
+        matematici.elements.body.children("div.CheckListGrid").remove();
+
+        matematici.loader.checkInitialCurtain();
+
+        //load the companies
+        var result = [{
+            "id": 1,
+            "name": "Demo company"
+        }];
+        for (var index in result) {
+            var company = result[index];
+            if (administration && company.id == 1 || !administration)
+                companyList.append($("<option />").attr("value", company.id).text(company.name));
+        }
+        callback.call();
+        return;
+
+        /*
+        $.ajax(matematici.urls.infrastructure.companies.getSyntheticData, {
+            type: "post",
+            suppressErrors: true,
+        }).done(function (result) {
+            for (var index in result) {
+                var company = result[index];
+                if (administration && company.id == 1 || !administration)
+                    companyList.append($("<option />").attr("value", company.id).text(company.name));
+            }
+            callback.call();
+            matematici.AutoComplete.get(companyList[0]).setValue(administration ? 1 : localStorage.company);
+        }).fail(function (jqXhr, textStatus, errorThrown) {
+            showError(jqXhr.responseJSON && jqXhr.responseJSON && jqXhr.responseJSON.messages && jqXhr.responseJSON.messages.join(' ') || errorThrown);
+        });
+        */
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.isLoginPage = false;
+        callback.call();
+    }
+</script>

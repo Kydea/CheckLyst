@@ -1,0 +1,89 @@
+@{
+    var Title = "Therapy types";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapyTypes")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "name", icon: "key", value: "cart" },
+                        { label: "version", icon: "key", value: "1", editable: false }
+                    ]
+                },
+                {
+                    fields: [
+                        { label: "description", value: "Car-T", cssClass: "Width300" },
+                        { label: "manufacturing type", values: ["made-to-stock", "made-to-order", "assembled-to-order", "finish-to-order"], selectedIndex: 1, cssClass: "Clearing" },
+                        { label: "donation type", values: ["n/a", "allogeneic", "autologous"], selectedIndex: 2 },
+                        { label: "price", value: "350.000,00", um: "&euro;" }
+                    ]
+                },
+                {
+                    fields: [
+                        { label: "validity start" },
+                        { label: "validity end" },
+                        { label: "active", value: false, editable: false },
+                        { label: "approve", icon: "arrow-right", handler: function () { console.log("to do")} }
+                    ]
+                },
+                {
+                    fields: [
+                        { label: "approval signature user", editable: false },
+                        { label: "approval signature date", editable: false },
+                        { label: "expiration signature user", editable: false },
+                        { label: "expiration signature date", editable: false }
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapyTypes: matematici.data.therapyTypes(false)
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "@(Title.ToLower())", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapy-types-phases" },
+                        { label: "payment plan", url: "/therapy-types-payment-plan" },
+                        { label: "shippings", url: "/therapy-types-shippings" },
+                        { label: "process", url: "/therapy-types-process" }
+                     ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

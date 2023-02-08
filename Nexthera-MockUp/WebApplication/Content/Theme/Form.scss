@@ -1,0 +1,262 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+div.Toolbar {
+    height: 30px;
+    line-height: 30px;
+    z-index: $Depth-Header;
+    position: fixed;
+    width: calc(100% - 70px);
+    top: 0;
+    left: 70px;
+    background-color: $Color-Silver-Light;
+    border-bottom: solid 1px $Color-Grey-Light;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: smaller;
+
+    i {
+        margin-left: 2px;
+        border: solid 1px $Color-Grey-Regular;
+        font-size: unset;
+        padding: 2px 0;
+        text-align: center;
+        width: 18px;
+        height: 18px;
+        color: $Color-Grey-Dark;
+
+        &.Separator {
+            margin-left: 10px;
+        }
+    }
+
+    div.Right {
+        position: absolute;
+        right: 15px;
+        height: 100%;
+        top: 0;
+    }
+}
+
+div.Tables {
+    z-index: 900;
+    position: fixed;
+    left: 70px;
+    bottom: 0;
+    right: 0;
+    background: white;
+    border-top: solid 1px $Color-Grey-Light;
+    padding: 0 20px;
+
+    div.Table {
+
+        div.Label {
+            position: relative;
+            margin: 15px 0 5px;
+
+            span.RowsCount {
+                color: $Color-Grey-Regular;
+            }
+
+            div.WindowControls {
+                position: absolute;
+                right: 0;
+                top: 0;
+
+                i {
+                    cursor: pointer;
+                    color: $Color-Grey-Regular;
+                    margin-right: 5px;
+                    font-size: smaller;
+                }
+            }
+
+            i.fa-filter {
+                font-size: smaller;
+                color: $Color-Grey-Regular;
+            }
+        }
+
+        form.Filters {
+            margin-bottom: 20px;
+            display: none;
+
+            label {
+                margin-top: 0 !important;
+
+                i {
+                    margin-top: 14px;
+                    cursor: pointer;
+                }
+            }
+
+            &:not(.Added) {
+                div.Filter {
+                    label + label {
+                        display: none;
+                    }
+
+                    i {
+                        display: none;
+                    }
+                }
+
+                div.Fake {
+                    display: none;
+                }
+            }
+        }
+
+        div.Data {
+            position: relative;
+            overflow: auto;
+            max-height: 250px;
+
+            a.TableMenu {
+                i {
+                    color: white !important;
+                }
+            }
+
+            td span.Note {
+                color: $Color-Grey-Regular;
+            }
+        }
+
+        &:not(.Compact):not(.Extended) {
+            div.WindowControls {
+                i.fa-window-restore {
+                    color: $Color-Silver-Dark;
+                }
+            }
+
+            table {
+                thead {
+                    tr {
+                        th {
+                            &.Filtered::after {
+                                content: fa-content($fa-var-key);
+                                font-family: "Font Awesome 5 Pro";
+                                font-weight: lighter;
+                                color: $Color-Grey-Dark;
+                                position: absolute;
+                                right: 5px;
+                                padding: 0 5px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.Compact {
+            div.WindowControls {
+                i.fa-window-minimize {
+                    color: $Color-Silver-Dark;
+                }
+            }
+
+            form.Filters {
+                display: none;
+            }
+
+            table {
+                thead {
+                    background-color: unset;
+
+                    tr {
+                        th {
+                            color: $Color-Grey-Regular;
+                            height: unset;
+                            font-size: 10px;
+                            padding: 0 20px 5px 5px;
+                            border: none !important;
+                            font-weight: normal;
+
+                            &:first-child {
+                                display: none;
+                            }
+
+                            &:nth-child(2) {
+                                padding-left: 0;
+                            }
+
+                            br {
+                                display: inline-block;
+                                width: 5px;
+                            }
+
+                            &.Down {
+                                &::after {
+                                    content: none !important;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                tbody {
+                    tr:not(.Selected) {
+                        display: none;
+                    }
+
+                    tr.Selected {
+                        background-color: white !important;
+
+                        td {
+                            padding: 5px 5px;
+                            height: unset;
+                            background-color: $Color-Silver-Light;
+                            border-color: white;
+
+                            &:first-child {
+                                display: none;
+                            }
+
+                            &:nth-child(2) {
+                                border-left: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.Extended {
+            position: fixed;
+            height: 100%;
+            width: calc(100% - 70px);
+            top: 0;
+            background: white;
+            left: 70px;
+            padding: 15px;
+            z-index: 1;
+
+            div.WindowControls {
+                i.fa-window-maximize {
+                    color: $Color-Silver-Dark;
+                }
+            }
+
+            div.Label {
+                margin-top: 0;
+            }
+
+            div.Data {
+                max-height: unset;
+            }
+        }
+
+        &.Filters {
+            form.Filters {
+                display: block;
+            }
+        }
+
+        &.Filtered {
+            i.fa-filter {
+                font-weight: bold;
+            }
+        }
+    }
+}

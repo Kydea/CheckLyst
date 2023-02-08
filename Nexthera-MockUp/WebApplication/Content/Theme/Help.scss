@@ -1,0 +1,240 @@
+﻿@import "_Library.scss";
+
+div.Help {
+    display: none;
+}
+
+body.Help {
+    overflow: hidden;
+
+    div.Help {
+        display: block;
+        overflow: auto;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Popup;
+        background-color: rgba(102, 102, 102, .7);
+
+        div.Container {
+            padding: 20px;
+            background-color: white;
+            position: relative;
+
+            h2 {
+                margin: -20px -20px 20px;
+                background: $Color-Yellow-Regular;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
+
+            div.TOC {
+                line-height: 1.3;
+
+                h3 {
+                    margin: 0 0 15px;
+                }
+
+                div.Back {
+                    border-top: solid 1px white;
+                    border-bottom: solid 1px white;
+                    padding: 10px 20px;
+                    margin: 20px -20px 20px;
+
+                    a {
+                        color: $Color-Grey-Dark;
+                        font-weight: bold;
+                        display: inline-block;
+                        height: 16px;
+                        line-height: 16px;
+                        padding-left: 20px;
+                        position: relative;
+
+                        i {
+                            left: 0;
+                            position: absolute;
+                            font-size: 12px;
+                            color: white;
+                            background: $Color-Green-Regular;
+                            border-radius: 50%;
+                            display: inline-block;
+                            line-height: 16px;
+                            height: 16px;
+                            width: 16px;
+                            text-align: center;
+                        }
+
+                        &:hover {
+                            color: $Color-Green-Light;
+
+                            i {
+                                background: $Color-Green-Light;
+                            }
+                        }
+                    }
+                }
+            }
+
+            ul {
+                color: $Color-Green-Regular;
+                margin: 0 !important;
+                padding: 0 0 0 20px;
+
+                li {
+                    margin: 0 !important;
+                }
+
+                ul {
+                    li {
+                    }
+                }
+            }
+
+            a.CloseButton {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                color: white;
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                text-align: center;
+
+                i {
+                    font-size: 30px;
+                }
+
+                &:hover {
+                    color: $Color-Grey-Dark;
+                }
+            }
+        }
+
+        @media #{$Media-Extended} {
+            div.Container {
+                box-shadow: $Box-Shadow;
+                max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
+                min-height: calc(100vh - #{2 * $Metric-Separator-Extended});
+                margin: 0 auto $Metric-Separator-Extended;
+                border-radius: 15px;
+                top: $Metric-Separator-Extended;
+
+                div.TOC {
+                    float: left;
+                    width: 200px;
+                    background: $Color-Silver-Dark;
+                    position: absolute;
+                    top: 64px;
+                    left: 0;
+                    bottom: 0;
+                    border-radius: 0 0 0 15px;
+                    padding: $Metric-Separator-Extended $Metric-Control-Space;
+                }
+
+                h2 {
+                    border-radius: 15px 15px 0 0;
+                }
+
+                div.Content {
+                    margin-left: 200px;
+                }
+            }
+        }
+
+        @media #{$Media-Mobile} {
+            div.Container {
+                width: 100% !important;
+                min-height: 100vh;
+
+                a.TOC {
+                    float: right;
+                    margin-top: 10px;
+                }
+
+                h2 {
+                    background: $Color-Yellow-Regular;
+                    padding: 20px;
+                    color: white;
+                    text-transform: uppercase;
+                    font-weight: normal;
+                }
+            }
+        }
+    }
+}
+
+body.OnlyHelp  {
+    background-color: white;
+
+    div#Breadcrumbs {
+        display: none !important;
+    }
+}
+
+body.Help div.Help div.Content, body.OnlyHelp {
+    h3 {
+        margin: 30px 0 .5em;
+        color: $Color-Green-Regular;
+    }
+
+    h4 {
+        margin: 1.5em 0 .5em;
+        color: $Color-Green-Regular;
+    }
+
+    h5 {
+        margin: 1em 0 .5em;
+        color: black;
+        font-size: 14px;
+    }
+
+    ul {
+        margin: 0 0 1em !important;
+        color: black;
+    }
+
+    p {
+        margin: 0 0 1em;
+    }
+
+    i.fa, i.fal {
+        font-size: unset;
+    }
+
+    a {
+        display: inline;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+
+        td {
+            padding: 10px;
+            border-bottom: solid 1px white;
+            border-left: solid 1px white;
+            background: $Color-Silver-Dark;
+            width: 100%;
+
+            span.Note {
+                margin-left: 10px;
+                color: $Color-Yellow-Regular;
+
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+
+            &:first-child {
+                min-width: 150px;
+                width: unset;
+                border-left: none;
+                font-weight: bold;
+            }
+        }
+    }
+}

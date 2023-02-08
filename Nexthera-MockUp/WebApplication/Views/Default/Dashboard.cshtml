@@ -1,0 +1,88 @@
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<h1>Dashboard</h1>
+
+<div class="Dashboard">
+    @*<a href="@Url.Action("List", "Prototypes")" class="DashboardItem" id="PrototypesDashboardItem">
+        <img src="~/Content/Media/Dashboard/Prototypes.jpg?1" />
+        <i class="fal fa-file-invoice"></i>
+        <span>Prototypes</span>
+    </a>
+
+    <a href="@Url.Action("List", "Instances")" class="DashboardItem" id="InstancesDashboardItem">
+        <img src="~/Content/Media/Dashboard/Instances.jpg?1" />
+        <i class="fal fa-layer-group"></i>
+        <span>Instances</span>
+    </a>
+
+    <a href="#" class="DashboardItem" id="PinDashBoardItem">
+        <img src="~/Content/Media/Dashboard/Pin.jpg?1" />
+        <i class="fal fa-key"></i>
+        <span>Change PIN</span>
+    </a>
+
+    <a href="@Url.Action("Login", "Security")" class="DashboardItem Standard" id="LogoutDashboardItem">
+        <img src="~/Content/Media/Dashboard/Logout.jpg?1" />
+        <i class="fal fa-sign-out"></i>
+        <span>Logout</span>
+    </a>
+
+    <a href="@Url.Action("List", "Reports")" class="DashboardItem Standard" id="ReportsDashboardItem">
+        <img src="~/Content/Media/Dashboard/Reports.jpg" />
+        <i class="fal fa-file-chart-line"></i>
+        <span>Reports</span>
+    </a>
+
+    <a href="#" class="DashboardItem" id="HelpDashboardItem">
+        <img src="~/Content/Media/Dashboard/Help.jpg?1" />
+        <i class="fal fa-question"></i>
+        <span>Help</span>
+    </a>*@
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Dashboard",
+            helpPage: "Dashboard",
+            initializers: [
+            ],
+            breadcrumbs: [
+                { content: "dashboard" },
+            ]
+        });
+
+        var count = 3;
+
+        if (matematici.tokenManager.checkRole("Prototypes#View#"))
+            ++count;
+        else
+            $("#PrototypesDashboardItem").hide();
+
+        if (matematici.tokenManager.checkRole("Instances#View#"))
+            ++count;
+        else
+            $("#InstancesDashboardItem").hide();
+
+        if (matematici.tokenManager.checkRole("Reports#View#"))
+            ++count;
+        else
+            $("#ReportsDashboardItem").hide();
+
+        $("#PinDashBoardItem").on("click", function () {
+            matematici.userPanel.profile();
+        });
+
+        $("#HelpDashboardItem").on("click", function () {
+            matematici.help.show("Index");
+        });
+
+        $(".Dashboard").addClass("Controls" + count);
+
+        callback.call();
+    };
+</script>

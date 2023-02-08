@@ -1,0 +1,20 @@
+﻿<div id="GroupsList">
+    <h2>Granted groups</h2>
+
+    <form id="Detail">
+        <label>
+            <span>Restricted</span>
+            <input type="checkbox" name="restricted" />
+        </label>
+
+        <div class="Clearing Control" style="padding-top: 20px;"></div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        grupsList = matematici.popup.getData(),
+        form = $("div#GroupsList form#Detail");
+
+    grupsList.fill(form);
+</script>

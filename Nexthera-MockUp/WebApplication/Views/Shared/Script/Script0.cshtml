@@ -1,0 +1,81 @@
+﻿<script type="text/javascript">
+    var
+        matematici = {
+            cacheVersion: 1,
+            canClose: true,
+            appClientId: "@(ViewBag.AppClientId ?? string.Empty)",
+            elements: {},
+            events: {},
+            actions: {},
+            pages: {},
+            urls: {
+                webApplication: window.location.origin,
+
+                api: "@BaseUrl",
+                accessControl: {
+                    login: "@Url.Action("Login", "Security")",
+                    token: "@BaseUrl/AccessControl/Access/Token",
+                    logout: "@BaseUrl/AccessControl/Access/Logout",
+                    setPIN: "@BaseUrl/AccessControl/Access/SetPIN",
+                    signature: "@Url.Action("Signature", "Security")"
+                },
+                dashboard: "@Url.Action("Dashboard", "Default")",
+                dataSources: {
+                    api: "@BaseUrl/DataSources"
+                },
+                infrastructure: {
+                    companies: {
+                        getSyntheticData: "@BaseUrl/Infrastructure/Companies/GetSyntheticData",
+                        getSettings: "@BaseUrl/Infrastructure/Companies/GetSettings"
+                    },
+                    clock: "@BaseUrl/Infrastructure/Information/Clock"
+                },
+                workflows: {
+                    signature: "@Url.Action("Signature", "WorkFlows")"
+                },
+                instances: {
+                    api: "@BaseUrl/Instances/Instance",
+                    detail: "/Instances/Detail",
+                    create: "/Instances/Create"
+                },
+                prototypes: {
+                    api: "@BaseUrl/Prototypes/Prototype",
+                    detail: "@Url.Action("Detail", "Prototypes")",
+                    expressionEditor: "@Url.Action("ExpressionEditor", "Prototypes")",
+                    sourceEditor: "@Url.Action("SourceEditor", "Prototypes")",
+                    scriptEditor: "@Url.Action("ScriptEditor", "Prototypes")"
+                },
+                reports: {
+                    api: "@BaseUrl/Reports",
+                    columnEditor: "@Url.Action("ColumnEditor", "Reports")",
+                    clauseEditor: "@Url.Action("ClauseEditor", "Reports")",
+                    groupsList: "@Url.Action("GroupsList", "Reports")"
+                },
+                help: "@Url.Action("Index", "Help")",
+            },
+            signatureActions: {
+                toApprove: "Prototype – state to Approved/Active",
+                toObsolete: "Prototype – state to Obsolete"
+            },
+            profiles: [
+                "Revisor",
+                "Deputy approver",
+                "Approver",
+                "Deputy final approver",
+                "Final approver"
+            ],
+            initializers: [],
+            destroyers: [],
+            codeRegularExpression: /^[$A-Z_][0-9A-Z_$]*$/i,
+            isLoginPage: false
+        },
+        instances = {},
+        prototypes = {},
+        reports = {};
+
+	if (typeof console === "undefined") console = {};
+	if (typeof console.log === "undefined") console.log = function () { };
+    if (typeof console.dir === "undefined") console.dir = console.log;
+    if (typeof console.warn === "undefined") console.warn = console.log;
+    if (typeof console.info === "undefined") console.warn = console.log;
+</script>

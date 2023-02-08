@@ -1,0 +1,66 @@
+﻿<div id="TrailDetailPage">
+    <h2>Record</h2>
+
+    <form id="Detail">
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Data</a>
+                <a href="#">Detail</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>ID</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="id" readonly="readonly" />
+                </label>
+
+                <label>
+                    <span>Date</span>
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="date" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Clearing Width200">
+                    <span>Logged user code</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="user" readonly="readonly" />
+                </label>
+
+                <label class="Clearing Width200">
+                    <span>Action</span>
+                    <i class="Icon fal fa-cogs" />
+                    <input type="text" name="action" readonly="readonly" />
+                </label>
+
+                <label class="Clearing Width200">
+                    <span>Checklist code</span>
+                    <i class="Icon fal fa-layer-group" />
+                    <input type="text" name="checkListCode" readonly="readonly" />
+                </label>
+
+                <label class="Clearing Width200">
+                    <span>Checklist ID</span>
+                    <i class="Icon fal fa-layer-group" />
+                    <input type="text" name="checkListID" readonly="readonly" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label class="Clearing Width200">
+                    <textarea type="text" name="information" readonly="readonly" data-type="JSON" style="margin-top: -18px; height: 358px" />
+                </label>
+            </div>
+        </div>
+    </form>
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    tab = new matematici.Tab("div.TabContainer", {
+        fixedHeight: true
+    }),
+
+    new matematici.DetailPage({
+        formSelector: "form#Detail"
+    });
+</script>

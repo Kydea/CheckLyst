@@ -1,0 +1,94 @@
+﻿<div id="AuditTrailPage">
+    <h1>Audit Trail</h1>
+
+    <div class="ActionBar">
+        <a id="ExportButton" class="Button" href="#">Export<i class="Icon fa fa-caret-down"></i></a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Trail/List">
+            <label class="Controls2">
+                <span>Date range</span>
+                <input type="text" name="from" class="DatePicker" />
+                <input type="text" name="to" class="DatePicker" />
+            </label>
+            <label class="Clearing">
+                <span>Logged user code</span>
+                <i class="Icon fal fa-user" />
+                <input type="text" name="user" />
+            </label>
+            <label>
+                <span>Action</span>
+                <i class="Icon fal fa-cogs" />
+                <input type="text" name="action" />
+            </label>
+            <label>
+                <span>CheckList code</span>
+                <i class="Icon fal fa-layer-group" />
+                <input type="text" name="checkListCode" />
+            </label>
+            <label>
+                <span>CheckList ID</span>
+                <i class="Icon fal fa-layer-group" />
+                <input type="text" name="checkListID" />
+            </label>
+            <label>
+                <span>Detail</span>
+                <i class="Icon fal fa-align-left" />
+                <input type="text" name="information" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Logged user code</th>
+                    <th>Action</th>
+                    <th>CheckList code</th>
+                    <th>CheckList ID</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="date" data-type="DateTimeOffset"></td>
+                    <td data-column="user"></td>
+                    <td data-column="action"></td>
+                    <td data-column="checkListCode"></td>
+                    <td data-column="checkListID"></td>
+                    <td data-column="shortInformation"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Trail",
+            detailUrl: "@Url.Action("Detail")",
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            breadCrumbs: [
+                { content: "audit trail" }
+            ]
+        });
+
+        $("a#ExportButton").on("click", function () {
+            var form = searchPage.getForm();
+            form.trigger("Export", function (result) {
+                location = form.getElement().attr("action") + "/Export?Token=" + result.token;
+            })
+        });
+
+        callback.call();
+    };
+</script>

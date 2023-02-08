@@ -1,0 +1,102 @@
+﻿prototypes.UploadProperty = function (model, property, options) {
+    var
+        base,
+		input,
+		previewButton,
+		deleteButton,
+		change = function () {
+			if (!input[0].files.length) 
+				return;
+
+            var prototypeKey = prototypes.prototype.getPrototypeKey();
+            if (prototypeKey.version > 0) {
+                var formData = new FormData();
+                formData.append("attachment", input[0].files[0]);
+                formData.append("id", prototypeKey.id);
+                formData.append("version", prototypeKey.version);
+				if (!model.cloned && model.imageName) formData.append("code", model.imageName);
+
+                $.ajax({
+                    url: prototypes.prototype.getElement().data("action") + "UploadAttachment",
+                    type: 'POST',
+
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                }).done(function (result) {
+					model.cloned = false;
+					model.imageName = result.imageName;
+                    model[property] = result.key;
+                    previewButton.toggle(true);
+                    deleteButton.toggle(true);
+                    base.updateModel(model);
+                }).always(function () {
+                    input.val('');
+                });
+            } else
+                matematici.dialog.error("erorr", "Save the prototype to create the record and enable the images upload");
+		},
+
+		deleteImage = function () {
+            model[property] = null;
+            model.cloned = false;
+            previewButton.toggle(false);
+            deleteButton.toggle(false);
+            base.updateModel(model);
+		},
+
+		preview = function () {
+			var prototypeKey = prototypes.prototype.getPrototypeKey();
+            var url =
+                prototypes.prototype.getElement().data("action") + "DownloadAttachment?" +
+			    "id=" + prototypeKey.id +
+			    "&version=" + prototypeKey.version +
+			    "&key=" + model[property] +
+			    "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
+
+			matematici.imageViewer.show("Preview", url);
+		};
+
+    this.create = function (valuePanel, baseClass) {
+        base = baseClass;
+		valuePanel.addClass("Upload");
+		options = options || {};
+		input = $("<input />").attr({ type: "file", readOnly: options.readOnly, accept: "image/*"  });
+        var form = $("<form />").attr("enctype", "multipart/form-data");
+
+        if (!options.readOnly)
+            form.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.click(); }));
+
+        form.append(previewButton = $("<a />")
+            .attr("href", "#")
+            .addClass("Button")
+            .text("preview")
+            .append($("<i />").addClass("Icon fa fa-image"))
+            .on("click", preview)
+            .toggle(!!model[property])
+        );
+
+        if (!options.readOnly)
+            form.append(deleteButton = $("<a />")
+                .attr("href", "#")
+                .addClass("Button")
+                .text("delete")
+                .append($("<i />").addClass("Icon fa fa-trash-alt"))
+                .on("click", deleteImage)
+                .toggle(!!model[property])
+            );
+
+		form.append(input);
+        valuePanel.append(form);
+		input.on("change", change);
+	};
+
+	this.hasChanges = function () {
+		return !!model[property];
+	};
+
+	this.setReadOnly = function (value) {
+		options.readOnly = value;
+	};
+};

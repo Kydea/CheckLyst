@@ -1,0 +1,33 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Prototypes",
+    RecordsName = "prototypes",
+    ReadOnly = true,
+
+    Buttons = new Field[]
+    {
+        new Field("New empty prototype", "Creates a new empty the prototype."),
+        new Field("Open", "Opens the prototype.", Field.POPUP_MENU),
+        new Field("Use as template", "Creates a new prototype using the clicked one as template.", Field.POPUP_MENU),
+        new Field("New version", "Creates a new version of the clicked prototype.", Field.POPUP_MENU),
+    },
+    Filters = new Field[] 
+    {
+        new Field("Department / prototype type", "The department and prototype type of the prototype."),
+        new Field("Prototype name", "The name of the prototype or part of it."),
+        new Field("Prototype ID",Field.ID),
+        new Field("Changing state", "Include, exclude or limit to prototypes which have a changing state workflow in progress."),
+        new Field("State", "The state of the prototype.")
+    },
+    Columns = new Field[]
+    {
+        new Field("ID", Field.ID),
+        new Field("Name", "The name that identifies the prototype."),
+        new Field("Department", "The department of the prototype."),
+        new Field("Prototype type", "The type of the prototype."),
+        new Field("Description", "The description of the prototype."),
+        new Field("Version", "The version number."),
+        new Field("State", "The state of the prototype."),
+        new Field("Validity start", "The date and time when the prototype has become active."),
+        new Field("Validity end", "The date and time when the prototype will become obsolete.")
+    }
+})

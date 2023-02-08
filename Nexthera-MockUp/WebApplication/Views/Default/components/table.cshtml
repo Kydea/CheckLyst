@@ -1,0 +1,24 @@
+@model string
+
+<div id="@Model" class="Table">
+    <div class="Label">
+        <span class="Title"></span>
+        <i class="fal fa-filter"></i>
+        <div class="WindowControls">
+            <i class="fal fa-window-minimize"></i>
+            <i class="fal fa-window-restore"></i>
+            <i class="fal fa-window-maximize"></i>
+        </div>
+    </div>
+    @Html.Partial("components/filters")
+    <div class="Data">
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th class="Tight"><a href="#" class="TableMenu"><i class="fa fa-bars"></i></a></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

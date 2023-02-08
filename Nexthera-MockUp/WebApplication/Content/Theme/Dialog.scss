@@ -1,0 +1,321 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+body.Dialog {
+    overflow: hidden;
+}
+
+div.Dialog {
+    display: none;
+    overflow: auto;
+
+    div.Container {
+        padding: 20px;
+        background-color: white;
+        box-shadow: $Box-Shadow;
+
+        p {
+            line-height: 1.6;
+        }
+
+        h2 {
+            margin: -20px -20px 20px;
+            background: $Color-Green-Regular;
+            padding: $Metric-Control-Space;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        div.Content {
+            overflow: auto;
+
+            label {
+                margin-bottom: 5px;
+            }
+        }
+
+        div.Buttons {
+            margin-top: $Metric-Control-Space - 10px;
+
+            a {
+                min-width: 100px;
+                float: right;
+                margin-left: 10px;
+                margin-top: 10px;
+
+                &:last-child {
+                    margin-left: 0;
+                }
+            }
+
+            textarea {
+                min-height: 60px;
+                resize: vertical;
+                padding-top: 10px;
+            }
+
+            &::after {
+                content: "";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
+        }
+
+        a.CloseButton {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Light;
+            }
+        }
+    }
+
+    &.PopupMenu {
+        div.Container {
+            padding: 0 !important;
+
+            h2 {
+                display: none;
+            }
+
+            div.Buttons {
+                margin-top: 0 !important;
+
+                a.Button {
+                    cursor: pointer;
+                    width: 100%;
+                    height: 40px;
+                    color: black;
+                    background-color: white;
+                    position: relative;
+                    border-bottom: solid 1px $Color-Grey-Light;
+                    margin-top: 0;
+                    padding: 0;
+                    box-shadow: none;
+                    border-radius: 0;
+                    text-transform: unset;
+                    margin: 0;
+
+                    i {
+                        background: none;
+                        position: absolute;
+                        left: 10px;
+                        top: 7px;
+                        margin: 0;
+                    }
+
+                    &::after {
+                        content: none;
+                    }
+
+                    &:hover {
+                        background-color: $Color-Green-Regular;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    &.Error {
+        h2 {
+            background-color: $Color-Red-Regular !important;
+        }
+
+        div.Error {
+            color: black;
+
+            i {
+                color: $Color-Red-Regular;
+            }
+        }
+
+        div.Buttons {
+            a {
+                background-color: $Color-Red-Regular !important;
+
+                i {
+                    color: $Color-Red-Regular;
+                }
+
+                &:hover {
+                    background-color: $Color-Red-Light !important;
+
+                    i {
+                        color: $Color-Red-Light !important;
+                    }
+                }
+            }
+        }
+    }
+
+    &.ImageViewer {
+        div.Container {
+            h2 {
+                display: none;
+            }
+
+            div.Content {
+                max-height: calc(100vh - 40px);
+
+                img {
+                    display: block;
+                    position: relative;
+                    margin: auto;
+                }
+            }
+
+            div.ViewButtons {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+
+                a {
+                    float: left;
+                    margin-top: 10px;
+                    margin-left: 10px;
+                    color: white;
+                    border-radius: 50%;
+                    background: $Color-Green-Regular;
+                    height: 30px;
+                    width: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    opacity: .5;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            a.CloseButton {
+                right: 30px;
+                top: 30px;
+                border-radius: 50%;
+                background: $Color-Green-Regular;
+                opacity: .5;
+
+                i {
+                    font-size: 20px;
+                    color: white;
+                    line-height: 30px;
+
+                    &::before {
+                        content: fa-content($fa-var-times) !important;
+                    }
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            div.Buttons {
+                display: none;
+            }
+        }
+
+        &.Maximized {
+        }
+    }
+
+    div.Array {
+        padding-bottom: 10px;
+
+        span.Index {
+            float: left;
+            clear: both;
+            color: $Color-Grey-Light;
+        }
+
+        div.Value {
+            float: left;
+            margin-left: 25px;
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    @media #{$Media-Extended} {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Dialog;
+        background-color: rgba(102, 102, 102, .7);
+
+        div.Container {
+            position: relative;
+            width: 420px;
+            margin: 0 auto;
+            border-radius: 15px;
+            max-width: calc(100% - #{2 * $Metric-Separator-Extended});
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+
+        &.PopupMenu {
+            div.Container {
+                width: 240px !important;
+                border-radius: 10px;
+
+                div.Buttons {
+                    margin-top: 0 !important;
+
+                    a.Button {
+                        &:first-child {
+                            border-radius: 10px 10px 0 0;
+                        }
+
+                        &:last-child {
+                            border-radius: 0 0 10px 10px;
+                            border-bottom: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $Depth-Dialog;
+            width: unset !important;
+
+            h2 {
+                background: $Color-Green-Regular;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
+        }
+    }
+}

@@ -1,0 +1,371 @@
+﻿<div id="DataSourcesDetailPage">
+    <h2>Data Source</h2>
+
+    <form id="Detail" action="@BaseUrl/DataSources/List">
+        <input type="hidden" name="reason" />
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#" class="Parameters SAP">Parameters</a>
+                <a href="#" class="Parameters SQL">Connection</a>
+                <a href="#" class="Parameters SQL">Parameters</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="code" maxlength="30" class="Code" />
+                </label>
+
+                <label>
+                    <span>Source class</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <select class="AutoComplete SourceClass" name="class">
+                        <option value="SAP">SAP</option>
+                        <option value="SQL">SQL</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Description</span>
+                    <i class="Icon fal fa-align-left" />
+                    <input type="text" name="description" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>User</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="user" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" maxlength="50" />
+                </label>
+
+                <label>
+                    <span>Query</span>
+                    <i class="Icon fal fa-cogs" />
+                    <select class="AutoComplete" name="functionName" data-nullable="-">
+                        <option value="PO Header">PO Header</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Client</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="client" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Message server host</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="messageServerHost" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Message server service</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="messageServerService" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>System ID</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="systemID" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Logon group</span>
+                    <i class="Icon fal fa-users" />
+                    <input type="text" name="logonGroup" maxlength="200" />
+                </label>
+
+                <label>
+                    <span>Language</span>
+                    <i class="Icon fal fa-align-left" />
+                    <input type="text" name="language" maxlength="200" />
+                </label>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>DBMS</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <select class="AutoComplete" name="dbms">
+                        <option value="SQL Server">SQL Server</option>
+                        <option value="Oracle">Oracle</option>
+                        <option value="Postgres">Postgres</option>
+                    </select>
+                </label>
+
+                <label class="Width300">
+                    <span>Connection string</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="connectionString" maxlength="500" />
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" maxlength="50" />
+                </label>
+
+                <label class="Width300">
+                    <span>Query</span>
+                    <pre id="AceEditor" style="height: 200px"></pre>
+                </label>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Clearing"></div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        formSelector = "form#Detail",
+        formElement = $(formSelector),
+        codeInput = $("input.Code", formElement),
+        classSelect = $("select.SourceClass", formElement),
+        editor,
+
+        parameterTypes = [
+            "Text",
+            "Number",
+            "Boolean",
+            "Date",
+            "DateTime",
+            "Time"
+        ],
+
+        fixQueryParameters = function (tabIndex) {
+            resize();
+        },
+
+        resize = function () {
+            tab.resize();
+            setTimeout(function () {
+                matematici.popup.center();
+            }, 500);
+        },
+
+        addQueryParameter = function (tabIndex) {
+            var
+                tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
+                div = $("<div />").addClass("QueryParameter").insertBefore(tabItem.tab.children("div.Clearing"));
+
+            var input1 = $("<input />").attr("type", "text");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(input1, false);
+            $("<label />").appendTo(div).append($("<span />").text("Name")).append(input1).css("width", "144px");
+
+            var input2 = $("<input />").attr("type", "text");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(input2, false);
+            $("<label />").appendTo(div).append($("<span />").text("Label")).append(input2);
+
+            var select = $("<select />");
+            if (detailPage.isReadOnly()) matematici.controls.setEditable(select, false);
+            $("<label />").appendTo(div).append($("<span />").text("Type")).append(select);
+            for (var index in parameterTypes)
+                select.append($("<option />").text(parameterTypes[index]).attr("value", parameterTypes[index]));
+            var autoComplete = new matematici.AutoComplete(select[0]);
+            autoComplete.initialize();
+
+            setTimeout(function () {
+                autoComplete.refresh();
+            }, 0);
+
+            if (!detailPage.isReadOnly())
+                $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fal fa-minus")).on("click", function () {
+                    div.remove();
+                    fixQueryParameters(tabIndex);
+                }).appendTo(div);
+
+            fixQueryParameters(tabIndex);
+
+            return {
+                name: input1,
+                label: input2,
+                parameterType: select
+            }
+        },
+
+        tab = new matematici.Tab(formSelector + " div.TabContainer", {
+            fixedHeight: true
+        }),
+
+        parametersPrepare = function () {
+            var
+                parameters = {},
+                visibleTabs = tab.getLabels().filter(".Parameters:visible"),
+                queryParameters = [],
+                password;
+
+            visibleTabs.each(function (index) {
+                var tabPage = tab.getItem(visibleTabs.eq(index).prevAll().length);
+                $("*[name]", tabPage.tab).each(function () {
+                    var field = $(this);
+                    parameters[field.attr("name")] = field.val();
+                });
+                password = password || $("*[type=password]", tabPage.tab).val();
+            });
+
+            if (classSelect.val() == "SQL")
+                parameters.query = editor.getValue();
+
+            $("div.QueryParameter", tab.getItem(3).tab).each(function () {
+                var
+                    record = {},
+                    inputs = $("input", this),
+                    selects = $("select", this);
+
+                record.name = inputs.eq(0).val();
+                record.label = inputs.eq(1).val();
+                record.parameterType = selects.val();
+                queryParameters.push(record);
+            });
+
+            if (queryParameters.length > 0)
+                parameters.queryParameters = queryParameters;
+
+            return {
+                data: {
+                    parameters: JSON.stringify(parameters),
+                    password: password
+                }
+            };
+        },
+
+        completeHandler = function (detailPage) {
+            matematici.controls.setEditable($("input[name=code]", detailPage.getElement()), detailPage.isNew());
+            toggleTabs();
+            var
+                data = matematici.popup.getData(),
+                parameters = data && data.parameters && JSON.parse(data.parameters);
+
+            tab.getLabels().filter(".Parameters." + classSelect.val()).each(function () {
+                var tabPage = tab.getItem($(this).prevAll().size());
+                $("*[name]", tabPage.tab).each(function () {
+                    var field = $(this);
+                    field.val(parameters && parameters[field.attr("name")] || "");
+                });
+            });
+
+            if (parameters) {
+                if (parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
+                if (parameters.query) {
+                    justLoaded = true;
+                    editor.setValue(parameters.query, -1);
+                }
+            }
+
+            editor.setChangeHandler(function () {
+                detailPage.getForm().onChange($(this));
+            });
+        },
+
+        testHandler = function () {
+            var action = function () {
+                new matematici.ExternalSourcesSearchForm(null, codeInput.val(), false);
+            }
+
+            if (matematici.canClose)
+                action();
+            else
+                matematici.dialog.show("warning", "There are unsaved changes.", [
+                    {
+                        text: "save", icon: "check", handler: function () {
+                            setTimeout(function () {
+                                matematici.save(action, true);
+                            }, 0);
+                        }
+                    },
+                    { text: "cancel", icon: "times", cancelButton: true }
+                ]);
+
+
+            return true;
+        },
+
+        detailPage = new matematici.DetailPage({
+            takeOpenOnSave: true,
+            formSelector: formSelector,
+            completeHandler: completeHandler,
+            parametersPrepareHandler: parametersPrepare,
+            width: "770px",
+
+            buttons: [{
+                icon: "cog",
+                text: "test",
+                ahidden: true,
+                id: "TestButton",
+                handler: testHandler
+            }, {
+                icon: "plus",
+                text: "parameter",
+                hidden: true,
+                id: "AddQueryParameter",
+                handler: function () {
+                    addQueryParameter(3);
+                    fixQueryParameters(tab.getCurrentItem().index);
+                    return true;
+                }
+            }]
+        }),
+
+        buildQueryParameters = function (queryParameters) {
+            for (var index in queryParameters) {
+                var
+                    record = queryParameters[index],
+                    row = addQueryParameter(3);
+
+                row.name.val(record.name);
+                row.label.val(record.label);
+                row.parameterType.val(record.parameterType);
+            }
+        },
+
+        addQueryParameterButton = $("a#AddQueryParameter", matematici.popup.getElement()),
+
+        toggleTabs = function () {
+            $(".TabLabels a.Parameters", tab.getElement()).hide().filter("." + classSelect.val()).show();
+        };
+
+    classSelect.on("change", toggleTabs);
+
+    formElement.on("change", "input, select", function () {
+        detailPage.getForm().onChange($(this));
+    });
+
+    if (detailPage.isReadOnly()) {
+        $("div.Buttons a.Button", detailPage.getElement()).hide();
+        $("input, select", detailPage.getElement()).each(function () {
+            var field = $(this);
+            matematici.controls.setEditable(field, false);
+        });
+    } else
+        tab.addHandler(function (item) {
+            addQueryParameterButton.toggle(item.index > 2);
+        });
+
+    editor = new matematici.SQLEditor("AceEditor");
+</script>

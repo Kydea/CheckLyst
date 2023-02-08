@@ -1,0 +1,92 @@
+﻿div.Graph {
+  position: relative;
+}
+div.Graph > div.Path {
+  position: absolute;
+}
+div.Graph > div.Path.Horizontal {
+  border-top: solid 1px black;
+  height: 1px;
+}
+div.Graph > div.Path.Vertical {
+  border-right: solid 1px black;
+  width: 1px;
+}
+div.Graph > div.Arrow {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+}
+div.Graph > div.Arrow.ToT {
+  margin-left: -4px;
+  margin-top: -9px;
+  border-top: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.Graph > div.Arrow.ToR {
+  margin-top: -4px;
+  border-right: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.Graph > div.Arrow.ToB {
+  margin-left: -4px;
+  border-bottom: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.Graph > div.Arrow.ToL {
+  margin-left: -9px;
+  margin-top: -4px;
+  border-left: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.Graph > div.Column {
+  float: left;
+}
+div.Graph > div.Column > div.Node {
+  border: solid 1px #009688;
+  background: white;
+  padding: 10px;
+  margin: 0 auto;
+  max-width: 200px;
+}
+div.Graph > div.Column > div.Node span {
+  display: block;
+  text-align: center;
+}
+div.Graph > div.Column > div.Node span + span {
+  margin-top: 10px;
+}
+div.Graph > div.Column > div.Node span.Label {
+  font-weight: bold;
+  color: #00877a;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #999;
+}
+div.Graph > div.Column > div.Node.FirstColumn {
+  left: 0;
+}
+div.Graph > div.Column > div.Node.LastColumn {
+  right: 0;
+}
+div.Graph > div.Column > div.Node.CentralColumn {
+  margin: 0 auto;
+}
+div.Graph > div.Column > div.Node + .Node {
+  margin-top: 30px;
+}
+div.Graph.Columns3 > div.Column {
+  width: 33.33%;
+}
+div.Graph.Columns3 > div.Column:first-child {
+  padding-right: 30px;
+}
+div.Graph.Columns3 > div.Column:nth-child(2) {
+  padding: 0 15px;
+}
+div.Graph.Columns3 > div.Column:last-child {
+  padding-left: 30px;
+}

@@ -1,0 +1,150 @@
+﻿body.CheckListGrid {
+  overflow: hidden;
+}
+
+div.CheckListGrid div.Container {
+  background-color: white;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+}
+div.CheckListGrid div.Container > div {
+  position: relative;
+}
+div.CheckListGrid div.Container div.ScrollablePanel {
+  overflow: auto;
+  position: relative;
+  border: solid 1px #999;
+}
+div.CheckListGrid div.Container h2 {
+  margin: -20px -20px 20px;
+  background: #009688;
+  padding: 20px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+div.CheckListGrid div.Container div.Parameters {
+  clear: both;
+  margin-left: -20px;
+  margin-top: -20px;
+  padding-bottom: 20px;
+}
+div.CheckListGrid div.Container div.Parameters label {
+  margin: 20px 0 0 20px;
+  width: 230px;
+}
+div.CheckListGrid div.Container div.Parameters input {
+  margin-top: 5px;
+}
+div.CheckListGrid div.Container table.Grid {
+  clear: both;
+  margin-top: 0;
+}
+div.CheckListGrid div.Container table.Grid tr th {
+  text-align: center;
+}
+div.CheckListGrid div.Container table.Grid tr th:first-child {
+  border-left: none !important;
+}
+div.CheckListGrid div.Container table.Grid tr.Selected td {
+  font-weight: bold;
+}
+div.CheckListGrid div.Container table.Grid tr.Selected td i {
+  display: block;
+}
+div.CheckListGrid div.Container div.Buttons {
+  padding-top: 10px;
+}
+div.CheckListGrid div.Container div.Buttons a {
+  float: right;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+div.CheckListGrid div.Container a.CloseButton {
+  position: absolute;
+  top: 15px;
+  right: 0;
+  color: white;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+div.CheckListGrid div.Container a.CloseButton i {
+  font-size: 30px;
+}
+div.CheckListGrid div.Container a.CloseButton:hover {
+  color: #ccc;
+}
+div.CheckListGrid div.Container div.OrderBar {
+  position: absolute;
+  right: 0;
+  top: 124px;
+  bottom: 56px;
+  width: 20px;
+}
+div.CheckListGrid div.Container div.OrderBar a {
+  position: absolute;
+  top: 50%;
+  border: solid 1px #009688;
+  width: 20px;
+  height: 20px;
+  display: block;
+  text-align: center;
+}
+div.CheckListGrid div.Container div.OrderBar a i {
+  font-size: 16px;
+  color: #009688 !important;
+}
+div.CheckListGrid div.Container div.OrderBar a.Off {
+  opacity: 0.3;
+}
+div.CheckListGrid div.Container div.OrderBar a:hover:not(.Off) {
+  background-color: #ebebeb;
+}
+div.CheckListGrid div.Container div.OrderBar a:first-child {
+  margin-top: -20px;
+  border-radius: 3px 3px 0 0;
+  border-bottom: 0;
+}
+div.CheckListGrid div.Container div.OrderBar a:last-child {
+  border-radius: 0 0 3px 3px;
+}
+@media only screen and (min-width: 760px) {
+  div.CheckListGrid {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 104;
+    background-color: rgba(102, 102, 102, 0.7);
+  }
+  div.CheckListGrid div.Container {
+    position: relative;
+    margin: auto;
+    width: calc(100vw - 60px);
+    border-radius: 15px 15px 0 0;
+  }
+  div.CheckListGrid div.Container h2 {
+    border-radius: 15px 15px 0 0;
+  }
+  div.CheckListGrid div.Container div.Buttons::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  div.CheckListGrid div.ScrollablePanel {
+    max-height: calc(100vh - 240px);
+  }
+}
+@media only screen and (max-width: 759px) {
+  div.CheckListGrid div.Container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 104;
+  }
+}

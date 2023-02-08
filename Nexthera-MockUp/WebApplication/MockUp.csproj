@@ -1,0 +1,782 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E99D4C60-E150-478D-9634-A42FD855AAC0}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CheckListManager.WebApplication</RootNamespace>
+    <AssemblyName>CheckListManager.WebApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44325</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\AuthorizationConfig.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Code\DefaultAuthorizeAttribute.cs" />
+    <Compile Include="Code\DefaultViewPage.cs" />
+    <Compile Include="Code\Version.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\FTPServersController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\InfrastructureController.cs" />
+    <Compile Include="Controllers\InstancesController.cs" />
+    <Compile Include="Controllers\DataSourcesController.cs" />
+    <Compile Include="Controllers\WorkFlowsController.cs" />
+    <Compile Include="Controllers\TrailController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\PrototypesController.cs" />
+    <Compile Include="Controllers\SecurityController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Help\Tab.cs" />
+    <Compile Include="Models\Help\Field.cs" />
+    <Compile Include="Models\Help\HelpPage.cs" />
+    <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\Instance.cs" />
+    <Compile Include="Models\Prototype.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Media\Dashboard\Help.jpg" />
+    <Content Include="Content\Media\Dashboard\Instances.jpg" />
+    <Content Include="Content\Media\Dashboard\Logout.jpg" />
+    <Content Include="Content\Media\Dashboard\Pin.jpg" />
+    <Content Include="Content\Media\Dashboard\Prototypes.jpg" />
+    <Content Include="Content\Media\Dashboard\Reports.jpg" />
+    <Content Include="Content\Media\Logo.Big.png" />
+    <Content Include="Content\Media\Logo.png" />
+    <Content Include="Content\Media\LogoMobile.png" />
+    <Content Include="Content\Media\Sintlogo.png" />
+    <Content Include="Content\Theme\Accordion.css">
+      <DependentUpon>Accordion.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ActionBar.css">
+      <DependentUpon>ActionBar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\AppMode.css">
+      <DependentUpon>AppMode.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\AutoComplete.css">
+      <DependentUpon>AutoComplete.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Blip.css">
+      <DependentUpon>Blip.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Breadcrumbs.css">
+      <DependentUpon>Breadcrumbs.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ButtonGroup.css">
+      <DependentUpon>ButtonGroup.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Calendar.css">
+      <DependentUpon>Calendar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\CheckList.css">
+      <DependentUpon>CheckList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\CheckListGrid.css">
+      <DependentUpon>CheckListGrid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ClausesList.css">
+      <DependentUpon>ClausesList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ColumnsList.css">
+      <DependentUpon>ColumnsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Companies.css">
+      <DependentUpon>Companies.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Content.css">
+      <DependentUpon>Content.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Controls.css">
+      <DependentUpon>Controls.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Dashboard.css">
+      <DependentUpon>Dashboard.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\DataSourcesEditor.css">
+      <DependentUpon>DataSourcesEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\DatePicker.css">
+      <DependentUpon>DatePicker.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Dialog.css">
+      <DependentUpon>Dialog.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ExpressionsList.css">
+      <DependentUpon>ExpressionsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ExternalSources.css">
+      <DependentUpon>ExternalSources.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\FixedHeader.css">
+      <DependentUpon>FixedHeader.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.svg" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.svg" />
+    <Content Include="Content\Theme\Fonts.css">
+      <DependentUpon>Fonts.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.svg" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.svg" />
+    <Content Include="Content\Theme\Form.css">
+      <DependentUpon>Form.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GrantsDetailPage.css">
+      <DependentUpon>GrantsDetailPage.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Graph.css">
+      <DependentUpon>Graph.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Grid.css">
+      <DependentUpon>Grid.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GridFiltersBar.css">
+      <DependentUpon>GridFiltersBar.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\GridFixedHeader.css">
+      <DependentUpon>GridFixedHeader.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Hamburger.css">
+      <DependentUpon>Hamburger.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Help.css">
+      <DependentUpon>Help.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Instance.css">
+      <DependentUpon>Instance.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ItemsList.css">
+      <DependentUpon>ItemsList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\jQuery-UI.css">
+      <DependentUpon>jQuery-UI.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_222222_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_454545_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_888888_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\Theme\Layout.css">
+      <DependentUpon>Layout.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Layout\Header.jpg" />
+    <Content Include="Content\Theme\Loader.css">
+      <DependentUpon>Loader.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Login.css">
+      <DependentUpon>Login.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Login\Background.jpg" />
+    <Content Include="Content\Theme\Matematici.css">
+      <DependentUpon>Matematici.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Matematici\Matematici..Black.png" />
+    <Content Include="Content\Theme\Matematici\Matematici.White.png" />
+    <Content Include="Content\Theme\Menu.css">
+      <DependentUpon>Menu.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Paginator.css">
+      <DependentUpon>Paginator.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Popup.css">
+      <DependentUpon>Popup.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\PropertyPanel.css">
+      <DependentUpon>PropertyPanel.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Prototype.css">
+      <DependentUpon>Prototype.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Report.css">
+      <DependentUpon>Report.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ReportEditor.css">
+      <DependentUpon>ReportEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\ShadowPanel.css">
+      <DependentUpon>ShadowPanel.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Signature.css">
+      <DependentUpon>Signature.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\SourceEditor.css">
+      <DependentUpon>SourceEditor.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\SourcesList.css">
+      <DependentUpon>SourcesList.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\Theme\Tab.css">
+      <DependentUpon>Tab.scss</DependentUpon>
+    </Content>
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Parameters.xml" />
+    <Content Include="Scripts\Ace\ace.js" />
+    <Content Include="Scripts\Ace\ext-beautify.js" />
+    <Content Include="Scripts\Ace\ext-code_lens.js" />
+    <Content Include="Scripts\Ace\ext-elastic_tabstops_lite.js" />
+    <Content Include="Scripts\Ace\ext-emmet.js" />
+    <Content Include="Scripts\Ace\ext-error_marker.js" />
+    <Content Include="Scripts\Ace\ext-keybinding_menu.js" />
+    <Content Include="Scripts\Ace\ext-language_tools.js" />
+    <Content Include="Scripts\Ace\ext-linking.js" />
+    <Content Include="Scripts\Ace\ext-modelist.js" />
+    <Content Include="Scripts\Ace\ext-options.js" />
+    <Content Include="Scripts\Ace\ext-prompt.js" />
+    <Content Include="Scripts\Ace\ext-rtl.js" />
+    <Content Include="Scripts\Ace\ext-searchbox.js" />
+    <Content Include="Scripts\Ace\ext-settings_menu.js" />
+    <Content Include="Scripts\Ace\ext-spellcheck.js" />
+    <Content Include="Scripts\Ace\ext-split.js" />
+    <Content Include="Scripts\Ace\ext-static_highlight.js" />
+    <Content Include="Scripts\Ace\ext-statusbar.js" />
+    <Content Include="Scripts\Ace\ext-textarea.js" />
+    <Content Include="Scripts\Ace\ext-themelist.js" />
+    <Content Include="Scripts\Ace\ext-whitespace.js" />
+    <Content Include="Scripts\Ace\keybinding-emacs.js" />
+    <Content Include="Scripts\Ace\keybinding-sublime.js" />
+    <Content Include="Scripts\Ace\keybinding-vim.js" />
+    <Content Include="Scripts\Ace\keybinding-vscode.js" />
+    <Content Include="Scripts\Ace\mode-json.js" />
+    <Content Include="Scripts\Ace\mode-sql.js" />
+    <Content Include="Scripts\Ace\snippets\expression.js" />
+    <Content Include="Scripts\Ace\mode-expression.js" />
+    <Content Include="Scripts\Ace\theme-custom.js" />
+    <Content Include="Scripts\Ace\worker-base.js" />
+    <Content Include="Scripts\Ace\worker-json.js" />
+    <Content Include="Scripts\Controls\Calendar.js" />
+    <Content Include="Scripts\Controls\Controls.js" />
+    <Content Include="Scripts\Controls\DatePicker.js" />
+    <Content Include="Scripts\Controls\Graph.js" />
+    <Content Include="Scripts\Controls\Nexthera.js" />
+    <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\SQLEditor.js" />
+    <Content Include="Scripts\Custom\ExpressionEditor.js" />
+    <Content Include="Scripts\Controls\Grid.js" />
+    <Content Include="Scripts\Controls\DetailPage.js" />
+    <Content Include="Scripts\Controls\SearchPage.js" />
+    <Content Include="Scripts\Controls\ButtonGroup.js" />
+    <Content Include="Scripts\Custom\GrantsDetailPage.js" />
+    <Content Include="Scripts\Custom\GridFixedHeader.js" />
+    <Content Include="Scripts\Custom\ScriptEditor.js" />
+    <Content Include="Scripts\Custom\AutoCenter.js" />
+    <Content Include="Scripts\Custom\Accordion.js" />
+    <Content Include="Scripts\Custom\GridFiltersBar.js" />
+    <Content Include="Scripts\Custom\ImageViewer.js" />
+    <Content Include="Scripts\Controls\AutoComplete.js" />
+    <Content Include="Scripts\Instances\InstanceLink.js" />
+    <Content Include="Scripts\Libraries\pako.1.0.11.js" />
+    <Content Include="Scripts\Matematici\Profiler.js" />
+    <Content Include="Scripts\Custom\TokenManager.js" />
+    <Content Include="Scripts\Custom\ActionBar.js" />
+    <Content Include="Scripts\Custom\CheckListGrid.js" />
+    <Content Include="Scripts\Custom\Clock.js" />
+    <Content Include="Scripts\Custom\DateFormatter.js" />
+    <Content Include="Scripts\Custom\FixedHeader.js" />
+    <Content Include="Scripts\Custom\Help.js" />
+    <Content Include="Scripts\Custom\Login.js" />
+    <Content Include="Scripts\Custom\Paginator.js" />
+    <Content Include="Scripts\Custom\Scroller.js" />
+    <Content Include="Scripts\Custom\UserPanel.js" />
+    <Content Include="Scripts\Controls\Form.js" />
+    <Content Include="Scripts\Instances\CountDown.js" />
+    <Content Include="Scripts\Instances\ElementInformation.js" />
+    <Content Include="Scripts\Instances\Event.js" />
+    <Content Include="Scripts\Instances\SignatureEmail.js" />
+    <Content Include="Scripts\Custom\ExternalSourcesSearchForm.js" />
+    <Content Include="Scripts\Instances\Field.js" />
+    <Content Include="Scripts\Instances\Group.js" />
+    <Content Include="Scripts\Instances\Attachment.js" />
+    <Content Include="Scripts\Instances\Instance.js" />
+    <Content Include="Scripts\Instances\Item.js" />
+    <Content Include="Scripts\Instances\Image.js" />
+    <Content Include="Scripts\Instances\PageLock.js" />
+    <Content Include="Scripts\Instances\Signature.js" />
+    <Content Include="Scripts\Instances\Link.js" />
+    <Content Include="Scripts\Instances\Text.js" />
+    <Content Include="Content\Theme\Calendar.scss" />
+    <Content Include="Content\Theme\DatePicker.scss" />
+    <Content Include="Content\Theme\Hamburger.scss" />
+    <Content Include="Content\Theme\Hamburger\_Spin.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.otf" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.ttf" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\MyriadPro-Semibold.woff" />
+    <Content Include="Content\Theme\AutoComplete.scss" />
+    <Content Include="Content\Theme\ShadowPanel.scss" />
+    <Content Include="Content\Theme\Accordion.scss" />
+    <Content Include="Content\Theme\Popup.scss" />
+    <Content Include="Content\Theme\GrantsDetailPage.scss" />
+    <Content Include="Content\Theme\ButtonGroup.scss" />
+    <Content Include="Content\Theme\Blip.scss" />
+    <Content Include="Content\Theme\Dashboard.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\Myriad Pro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Bold\MyriadPro-Bold.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\Myriad Pro Cond.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Cond\MyriadPro-Cond.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\Myriad Pro Light Cond.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\LightCond\MyriadPro-LightCond.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\Myriad Pro Light.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Light\MyriadPro-Light.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\MyriadPro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\Myriad Pro.scss" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.eot" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Regular\MyriadPro-Regular.woff2" />
+    <Content Include="Content\Theme\Fonts\MyriadPro\Semibold\Myriad Pro Semibold.scss" />
+    <Content Include="Content\Theme\ExpressionsList.scss" />
+    <Content Include="Content\Theme\ItemsList.scss" />
+    <Content Include="Content\Theme\GridFiltersBar.scss" />
+    <Content Include="Content\Theme\ExternalSources.scss" />
+    <Content Include="Content\Theme\GridFixedHeader.scss" />
+    <Content Include="Content\Theme\SourcesList.scss" />
+    <Content Include="Content\Theme\SourceEditor.scss" />
+    <Content Include="Content\Theme\FontAwesome\brands.scss" />
+    <Content Include="Content\Theme\FontAwesome\duotone.scss" />
+    <Content Include="Content\Theme\FontAwesome\fontawesome.scss" />
+    <Content Include="Content\Theme\FontAwesome\light.scss" />
+    <Content Include="Content\Theme\FontAwesome\regular.scss" />
+    <Content Include="Content\Theme\FontAwesome\solid.scss" />
+    <Content Include="Content\Theme\FontAwesome\v4-shims.scss" />
+    <Content Include="Content\Theme\FontAwesome\_animated.scss" />
+    <Content Include="Content\Theme\FontAwesome\_bordered-pulled.scss" />
+    <Content Include="Content\Theme\FontAwesome\_core.scss" />
+    <Content Include="Content\Theme\FontAwesome\_fixed-width.scss" />
+    <Content Include="Content\Theme\FontAwesome\_icons.scss" />
+    <Content Include="Content\Theme\FontAwesome\_larger.scss" />
+    <Content Include="Content\Theme\FontAwesome\_list.scss" />
+    <Content Include="Content\Theme\FontAwesome\_mixins.scss" />
+    <Content Include="Content\Theme\FontAwesome\_rotated-flipped.scss" />
+    <Content Include="Content\Theme\FontAwesome\_screen-reader.scss" />
+    <Content Include="Content\Theme\FontAwesome\_shims.scss" />
+    <Content Include="Content\Theme\FontAwesome\_stacked.scss" />
+    <Content Include="Content\Theme\FontAwesome\_variables.scss" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-regular-400.woff2" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.eot" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.ttf" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff" />
+    <Content Include="Content\Theme\FontAwesome\WebFonts\fa-solid-900.woff2" />
+    <Content Include="Content\Theme\Companies.scss" />
+    <Content Include="Content\Theme\Report.scss" />
+    <Content Include="Content\Theme\ColumnsList.scss" />
+    <Content Include="Content\Theme\ClausesList.scss" />
+    <Content Include="Content\Theme\ReportEditor.scss" />
+    <Content Include="Content\Theme\Form.scss" />
+    <Content Include="Content\Theme\Graph.scss" />
+    <None Include="packages.config" />
+    <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
+    <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
+    <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
+    <Content Include="Scripts\Libraries\jquery.activity-indicator-1.0.0.js" />
+    <Content Include="Scripts\Libraries\jquery.address-1.6.js" />
+    <Content Include="Scripts\Libraries\jquery.cookie.js" />
+    <Content Include="Scripts\Libraries\jquery.keyfilter.js" />
+    <Content Include="Scripts\Libraries\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\Libraries\jquery.unveil.js" />
+    <None Include="Scripts\Libraries\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Libraries\jquery.validate.js" />
+    <Content Include="Scripts\Libraries\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
+    <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
+    <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Libraries\moment-2.24.0.js" />
+    <Content Include="Scripts\Matematici\Breadcrumbs.js" />
+    <Content Include="Scripts\Matematici\Blip.js" />
+    <Content Include="Scripts\Matematici\Clipboard.js" />
+    <Content Include="Scripts\Matematici\Popup.js" />
+    <Content Include="Scripts\Matematici\Dialog.js" />
+    <Content Include="Scripts\Matematici\Easings.js" />
+    <Content Include="Scripts\Matematici\Extensions.js" />
+    <Content Include="Scripts\Matematici\Hamburger.js" />
+    <Content Include="Scripts\Matematici\Loader.js" />
+    <Content Include="Scripts\Matematici\Menu.js" />
+    <Content Include="Scripts\Matematici\Navigator.js" />
+    <Content Include="Scripts\Matematici\Page.js" />
+    <Content Include="Scripts\Matematici\Tab.js" />
+    <Content Include="Scripts\Matematici\Touch.js" />
+    <Content Include="Scripts\Prototypes\ParametersProperty.js" />
+    <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
+    <Content Include="Scripts\Prototypes\EmailProperty.js" />
+    <Content Include="Scripts\Prototypes\BooleanProperty.js" />
+    <Content Include="Scripts\Custom\WorkFlowSignature.js" />
+    <Content Include="Scripts\Prototypes\DateProperty.js" />
+    <Content Include="Scripts\Prototypes\InstanceLink.js" />
+    <Content Include="Scripts\Prototypes\PrototypeProperty.js" />
+    <Content Include="Scripts\Prototypes\SourceEditor.js" />
+    <Content Include="Scripts\Prototypes\ExpressionEditor.js" />
+    <Content Include="Scripts\Prototypes\ExpressionPropertyBase.js" />
+    <Content Include="Scripts\Prototypes\ItemsList.js" />
+    <Content Include="Scripts\Prototypes\Image.js" />
+    <Content Include="Scripts\Prototypes\Attachment.js" />
+    <Content Include="Scripts\Prototypes\Link.js" />
+    <Content Include="Scripts\Prototypes\ExpressionProperty.js" />
+    <Content Include="Scripts\Prototypes\TargetProperty.js" />
+    <Content Include="Scripts\Prototypes\UploadProperty.js" />
+    <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
+    <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
+    <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
+    <Content Include="Scripts\Prototypes\ExpressionsList.js" />
+    <Content Include="Scripts\Prototypes\Field.js" />
+    <Content Include="Scripts\Prototypes\Group.js" />
+    <Content Include="Scripts\Prototypes\Item.js" />
+    <Content Include="Scripts\Prototypes\ListProperty.js" />
+    <Content Include="Scripts\Prototypes\Property.js" />
+    <Content Include="Scripts\Prototypes\PropertyPanel.js" />
+    <Content Include="Scripts\Prototypes\Prototype.js" />
+    <Content Include="Scripts\Prototypes\PrototypeTypeProperty.js" />
+    <Content Include="Scripts\Prototypes\Signature.js" />
+    <Content Include="Scripts\Prototypes\SignatureProperty.js" />
+    <Content Include="Scripts\Prototypes\SimpleValueProperty.js" />
+    <Content Include="Scripts\Prototypes\SourcesList.js" />
+    <Content Include="Scripts\Prototypes\Text.js" />
+    <Content Include="Scripts\Prototypes\ValueProperty.js" />
+    <Content Include="Scripts\Reports\ClausesList.js" />
+    <Content Include="Scripts\Reports\ClauseEditor.js" />
+    <Content Include="Scripts\Reports\GroupsList.js" />
+    <Content Include="Scripts\Reports\ColumnsList.js" />
+    <Content Include="Scripts\Reports\ColumnEditor.js" />
+    <Content Include="Scripts\Reports\Report.js" />
+    <Content Include="Scripts\Reports\ReportViewer.js" />
+    <Content Include="Scripts\Reports\ReportEditor.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Security\Login.cshtml" />
+    <Content Include="Views\Prototypes\List.cshtml" />
+    <Content Include="Views\Users\UsersList.cshtml" />
+    <Content Include="Views\Users\UsersDetail.cshtml" />
+    <Content Include="Views\Trail\Detail.cshtml" />
+    <Content Include="Views\Trail\List.cshtml" />
+    <Content Include="Views\Infrastructure\PrototypeTypes\List.cshtml" />
+    <Content Include="Views\Instances\List.cshtml" />
+    <Content Include="Views\WorkFlows\List.cshtml" />
+    <Content Include="Views\DataSources\List.cshtml" />
+    <Content Include="Views\Infrastructure\PrototypeTypes\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Departments\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Departments\List.cshtml" />
+    <Content Include="Views\WorkFlows\Detail.cshtml" />
+    <Content Include="Views\DataSources\Detail.cshtml" />
+    <Content Include="Views\Prototypes\Detail.cshtml" />
+    <Content Include="Views\WorkFlows\Signature.cshtml" />
+    <Content Include="Views\Instances\Detail.cshtml" />
+    <Content Include="Views\Security\Signature.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\Help\TOC.cshtml" />
+    <Content Include="Views\Help\Instances.cshtml" />
+    <Content Include="Views\Help\Dashboard.cshtml" />
+    <Content Include="Views\Help\MainForm.cshtml" />
+    <Content Include="Views\Help\App.cshtml" />
+    <Content Include="Views\Help\Departments.cshtml" />
+    <Content Include="Views\Help\SearchPage.cshtml" />
+    <Content Include="Views\Help\PrototypeTypes.cshtml" />
+    <Content Include="Views\Help\WorkFlows.cshtml" />
+    <Content Include="Views\Help\Users.cshtml" />
+    <Content Include="Views\Help\Trail.cshtml" />
+    <Content Include="Views\Help\DataSources.cshtml" />
+    <Content Include="Views\Help\Prototypes.cshtml" />
+    <Content Include="Views\Help\InstanceManager.cshtml" />
+    <Content Include="Views\Help\PrototypeEditor.cshtml" />
+    <Content Include="Views\FTPServers\Detail.cshtml" />
+    <Content Include="Views\FTPServers\List.cshtml" />
+    <Content Include="Views\Trail\UsersList.cshtml" />
+    <Content Include="Views\Prototypes\ExpressionEditor.cshtml" />
+    <Content Include="Views\Prototypes\ScriptEditor.cshtml" />
+    <Content Include="Views\Prototypes\SourceEditor.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\Detail.cshtml" />
+    <Content Include="Views\Infrastructure\Companies\List.cshtml" />
+    <Content Include="Views\Users\RolesDetail.cshtml" />
+    <Content Include="Views\Users\RolesList.cshtml" />
+    <Content Include="Views\Users\GeneralGrants.cshtml" />
+    <Content Include="Views\Help\Companies.cshtml" />
+    <Content Include="Views\Help\Roles.cshtml" />
+    <Content Include="Views\Help\Groups.cshtml" />
+    <Content Include="Views\Help\FTPServers.cshtml" />
+    <Content Include="Views\Users\GroupsDetail.cshtml" />
+    <Content Include="Views\Users\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Editor.cshtml" />
+    <Content Include="Views\Reports\List.cshtml" />
+    <Content Include="Views\Reports\ColumnEditor.cshtml" />
+    <Content Include="Views\Reports\ClauseEditor.cshtml" />
+    <Content Include="Views\Reports\GroupsList.cshtml" />
+    <Content Include="Views\Reports\Viewer.cshtml" />
+    <Content Include="Views\Reports\Report.cshtml" />
+    <Content Include="Views\Help\Reports.cshtml" />
+    <Content Include="Views\Help\ReportEditor.cshtml" />
+    <Content Include="Views\Help\ReportViewer.cshtml" />
+    <Content Include="Views\Help\StandardFormats.cshtml" />
+    <Content Include="Views\Default\therapy-types.cshtml" />
+    <Content Include="Views\Default\therapies.cshtml" />
+    <Content Include="Views\Default\therapy-types-phases.cshtml" />
+    <Content Include="Views\Default\Dashboard.cshtml" />
+    <Content Include="Views\Default\Loader.cshtml" />
+    <Content Include="Views\Default\components\filters.cshtml" />
+    <Content Include="Views\Default\components\table.cshtml" />
+    <Content Include="Views\Default\therapy-types-payment-plan.cshtml" />
+    <Content Include="Views\Default\therapy-types-shippings.cshtml" />
+    <Content Include="Views\Default\components\toolbar.cshtml" />
+    <Content Include="Views\Default\therapies-payment-plan.cshtml" />
+    <Content Include="Views\Default\therapies-phases.cshtml" />
+    <Content Include="Views\Default\therapies-shippings.cshtml" />
+    <Content Include="Views\Default\therapies-payments.cshtml" />
+    <Content Include="Views\Default\therapies-history.cshtml" />
+    <Content Include="Views\Default\therapies-coi-coc.cshtml" />
+    <Content Include="Views\Default\therapy-types-process.cshtml" />
+    <Content Include="Views\Default\therapies-process.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\Theme\ActionBar.scss" />
+    <Content Include="Content\Theme\AppMode.scss" />
+    <Content Include="Content\Theme\Breadcrumbs.scss" />
+    <Content Include="Content\Theme\CheckList.scss" />
+    <Content Include="Content\Theme\CheckListGrid.scss" />
+    <Content Include="Content\Theme\Content.scss" />
+    <Content Include="Content\Theme\DataSourcesEditor.scss" />
+    <Content Include="Content\Theme\Dialog.scss" />
+    <Content Include="Content\Theme\FixedHeader.scss" />
+    <Content Include="Content\Theme\Fonts.scss" />
+    <Content Include="Content\Theme\Grid.scss" />
+    <Content Include="Content\Theme\Help.scss" />
+    <Content Include="Content\Theme\Instance.scss" />
+    <Content Include="Content\Theme\jQuery-UI.scss" />
+    <Content Include="Content\Theme\Layout.scss" />
+    <Content Include="Content\Theme\Loader.scss" />
+    <Content Include="Content\Theme\Login.scss" />
+    <Content Include="Content\Theme\Matematici.scss" />
+    <Content Include="Content\Theme\Matematici\Matematici.psd" />
+    <Content Include="Content\Theme\Menu.scss" />
+    <Content Include="Content\Theme\Controls.scss" />
+    <Content Include="Content\Theme\Paginator.scss" />
+    <Content Include="Content\Theme\PropertyPanel.scss" />
+    <Content Include="Content\Theme\Prototype.scss" />
+    <Content Include="Content\Theme\Signature.scss" />
+    <Content Include="Content\Theme\Tab.scss" />
+    <Content Include="Content\Theme\_Library.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Layout.cshtml" />
+    <Content Include="Views\Shared\Layout\Footer.cshtml" />
+    <Content Include="Views\Shared\Layout\Header.cshtml" />
+    <Content Include="Views\Shared\Layout\Help.cshtml" />
+    <Content Include="Views\Shared\Layout\Matematici.cshtml" />
+    <Content Include="Views\Shared\Script\Script0.cshtml" />
+    <Content Include="Views\Shared\Script\Script1.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Scripts\Libraries\jquery-2.1.4.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="CheckListManager.Common.Core.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a1fbf37334e2842e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\CheckListManager.Common.Core.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.3.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>19536</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:19536/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

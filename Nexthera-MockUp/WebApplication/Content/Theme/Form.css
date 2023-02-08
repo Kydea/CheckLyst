@@ -1,0 +1,182 @@
+﻿div.Toolbar {
+  height: 30px;
+  line-height: 30px;
+  z-index: 1000;
+  position: fixed;
+  width: calc(100% - 70px);
+  top: 0;
+  left: 70px;
+  background-color: #f5f5f5;
+  border-bottom: solid 1px #ccc;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: smaller;
+}
+div.Toolbar i {
+  margin-left: 2px;
+  border: solid 1px #999;
+  font-size: unset;
+  padding: 2px 0;
+  text-align: center;
+  width: 18px;
+  height: 18px;
+  color: #666;
+}
+div.Toolbar i.Separator {
+  margin-left: 10px;
+}
+div.Toolbar div.Right {
+  position: absolute;
+  right: 15px;
+  height: 100%;
+  top: 0;
+}
+
+div.Tables {
+  z-index: 900;
+  position: fixed;
+  left: 70px;
+  bottom: 0;
+  right: 0;
+  background: white;
+  border-top: solid 1px #ccc;
+  padding: 0 20px;
+}
+div.Tables div.Table div.Label {
+  position: relative;
+  margin: 15px 0 5px;
+}
+div.Tables div.Table div.Label span.RowsCount {
+  color: #999;
+}
+div.Tables div.Table div.Label div.WindowControls {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+div.Tables div.Table div.Label div.WindowControls i {
+  cursor: pointer;
+  color: #999;
+  margin-right: 5px;
+  font-size: smaller;
+}
+div.Tables div.Table div.Label i.fa-filter {
+  font-size: smaller;
+  color: #999;
+}
+div.Tables div.Table form.Filters {
+  margin-bottom: 20px;
+  display: none;
+}
+div.Tables div.Table form.Filters label {
+  margin-top: 0 !important;
+}
+div.Tables div.Table form.Filters label i {
+  margin-top: 14px;
+  cursor: pointer;
+}
+div.Tables div.Table form.Filters:not(.Added) div.Filter label + label {
+  display: none;
+}
+div.Tables div.Table form.Filters:not(.Added) div.Filter i {
+  display: none;
+}
+div.Tables div.Table form.Filters:not(.Added) div.Fake {
+  display: none;
+}
+div.Tables div.Table div.Data {
+  position: relative;
+  overflow: auto;
+  max-height: 250px;
+}
+div.Tables div.Table div.Data a.TableMenu i {
+  color: white !important;
+}
+div.Tables div.Table div.Data td span.Note {
+  color: #999;
+}
+div.Tables div.Table:not(.Compact):not(.Extended) div.WindowControls i.fa-window-restore {
+  color: #ebebeb;
+}
+div.Tables div.Table:not(.Compact):not(.Extended) table thead tr th.Filtered::after {
+  content: "\f084";
+  font-family: "Font Awesome 5 Pro";
+  font-weight: lighter;
+  color: #666;
+  position: absolute;
+  right: 5px;
+  padding: 0 5px;
+}
+div.Tables div.Table.Compact div.WindowControls i.fa-window-minimize {
+  color: #ebebeb;
+}
+div.Tables div.Table.Compact form.Filters {
+  display: none;
+}
+div.Tables div.Table.Compact table thead {
+  background-color: unset;
+}
+div.Tables div.Table.Compact table thead tr th {
+  color: #999;
+  height: unset;
+  font-size: 10px;
+  padding: 0 20px 5px 5px;
+  border: none !important;
+  font-weight: normal;
+}
+div.Tables div.Table.Compact table thead tr th:first-child {
+  display: none;
+}
+div.Tables div.Table.Compact table thead tr th:nth-child(2) {
+  padding-left: 0;
+}
+div.Tables div.Table.Compact table thead tr th br {
+  display: inline-block;
+  width: 5px;
+}
+div.Tables div.Table.Compact table thead tr th.Down::after {
+  content: none !important;
+}
+div.Tables div.Table.Compact table tbody tr:not(.Selected) {
+  display: none;
+}
+div.Tables div.Table.Compact table tbody tr.Selected {
+  background-color: white !important;
+}
+div.Tables div.Table.Compact table tbody tr.Selected td {
+  padding: 5px 5px;
+  height: unset;
+  background-color: #f5f5f5;
+  border-color: white;
+}
+div.Tables div.Table.Compact table tbody tr.Selected td:first-child {
+  display: none;
+}
+div.Tables div.Table.Compact table tbody tr.Selected td:nth-child(2) {
+  border-left: none;
+}
+div.Tables div.Table.Extended {
+  position: fixed;
+  height: 100%;
+  width: calc(100% - 70px);
+  top: 0;
+  background: white;
+  left: 70px;
+  padding: 15px;
+  z-index: 1;
+}
+div.Tables div.Table.Extended div.WindowControls i.fa-window-maximize {
+  color: #ebebeb;
+}
+div.Tables div.Table.Extended div.Label {
+  margin-top: 0;
+}
+div.Tables div.Table.Extended div.Data {
+  max-height: unset;
+}
+div.Tables div.Table.Filters form.Filters {
+  display: block;
+}
+div.Tables div.Table.Filtered i.fa-filter {
+  font-weight: bold;
+}

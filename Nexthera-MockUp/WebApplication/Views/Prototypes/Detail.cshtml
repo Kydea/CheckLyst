@@ -1,0 +1,139 @@
+﻿@model CheckListManager.WebApplication.Models.Prototype
+
+<div 
+    id="PrototypesDetailPage" 
+    class="Prototype CheckList Loading" 
+    data-api="@BaseUrl"
+    data-action="@BaseUrl/Prototypes/Prototype/"
+>
+    <h1>Prototype Editor</h1>
+
+    <div class="ActionBar">
+        <span class="ButtonGroup" data-text="Actions"></span>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="HeaderContainer">
+            <h2><span>(prototype)</span></h2>
+
+            <div id="Header" class="Group Locked Header"></div>
+        </div>
+
+        <div class="TabContainer MultiLine">
+            <div class="TabLabels">
+                <a href="#">(new page)</a>
+            </div>
+        </div>
+
+        <div class="Page"></div>
+    </div>
+</div>
+
+<div class="PropertyPanel">
+    <div class="PropertyList"><table><tbody></tbody></table></div>
+    <div class="PropertyValue"></div>
+    <div class="Information"></div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "PrototypeEditor",
+            cssClass: "PrototypeEditor CheckList",
+            breadcrumbs: [
+                { content: "prototype editor" }
+            ],
+        });
+
+        var
+            propertyPanel = new prototypes.PropertyPanel(".PropertyPanel"),
+
+            prototype = new prototypes.Prototype("#PrototypesDetailPage", {
+                id: "@Model.Id",
+                version: "@Model.Version",
+                action: "@Model.Action",
+                detailUrl: "/Prototypes/Detail",
+                listUrl: "@Url.Action("List")",
+                previewUrl: "/Instances/Create"
+            }),
+
+            actionBar = new matematici.ActionBar("div.ActionBar")
+                .add("<i class='Icon fal fa-database'></i>", function () {
+                    new prototypes.SourcesList();
+                }, "Icon SourcesList")
+                .add("<i class='Icon fal fa-calculator'></i>", function () {
+                    new prototypes.ExpressionsList();
+                }, "Icon ExpressionsList")
+                .add("<i class='Icon fa fa-cubes'></i>", function () {
+                    new prototypes.ItemsList();
+                }, "Icon ItemsList"),
+
+            buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
+                .add("Quit", function () {
+                    prototype.quit();
+                }, "Quit")
+                .add("History", function () {
+                    prototype.showHistory();
+                }, "History")
+                .add("Script editor", function () {
+                    prototype.scriptEditor();
+                }, "ScriptEditor")
+                .add("Download", function () {
+                    prototype.download();
+                }, "Download")
+                .add("Preview", function () {
+                    prototype.preview();
+                }, "Preview")
+                .add("Start simulation", function () {
+                    prototype.setState(prototypes.Prototype.states.simulation, false);
+                }, "StartSimulation")
+                .add("Cancel simulation", function () {
+                    prototype.setState(prototypes.Prototype.states.draft, false);
+                }, "CancelSimulation")
+                .add("Delete", function () {
+                    prototype.delete();
+                }, "Delete")
+                .add("Submit for approval", function () {
+                    prototype.setState(prototypes.Prototype.states.approved, true);
+                }, "SubmitForApproval")
+                .add("Approve", function () {
+                    prototype.loadSignatureBook(matematici.signatureActions.toApprove);
+                }, "Approve")
+                .add("Submit for obsol.", function () {
+                    prototype.setState(prototypes.Prototype.states.obsolete, true);
+                }, "SubmitForObsolescence")
+                .add("Obsolete", function () {
+                    prototype.loadSignatureBook(matematici.signatureActions.toObsolete);
+                }, "Obsolete")
+                .add("Save", function () {
+                    prototype.save();
+                }, "Save");
+
+        //Loads data sources
+        $.ajax({
+            type: "post",
+            url: "@BaseUrl/DataSources/Data/GetDataSources",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                data: {
+                    code: "",
+                    description: ""
+                },
+                itemsPerPage: 1000
+            })
+        }).done(function (result) {
+            prototype.setDataSources(result.data);
+        });
+
+        matematici.save = prototype.save;
+
+        matematici.events.onPageUnload = function (callback) {
+            matematici.canClose = true;
+            matematici.save = undefined;
+            callback();
+        };
+
+        callback.call();
+    };
+</script>

@@ -1,0 +1,37 @@
+﻿<h3>Instance manager</h3>
+
+<p>
+    The <strong>Instance manager</strong> can be used to display, follow and fill in instances of checklists.
+</p>
+<p>
+    Basing on the corresponding <strong>prototype</strong>, an instance is composed by the <strong>header</strong> and one or more <strong>pages</strong>, containing <strong>groups</strong>. Each group can contain other groups (subgroups) itself, <strong>text</strong>, <strong>fields</strong> and <strong>signatures</strong>. And so on.
+</p>
+<p>
+    The <strong>header</strong> usually contains the information that qualifies the instance. For example for a business process ruled by the instance, about an object, the header will contain the identifier of this object. Once the header is valid, the instance can be saved, changes the state from <strong>draft</strong> to <strong>in progress</strong> and get a progressive number, depending on the year.
+</p>
+<p>
+    The <strong>header</strong> of instances in state <strong>in progress</strong> are not editable. On the other hand, the <strong>pages</strong> are editable only for instances with state <strong>in progress</strong>.
+</p>
+<p>
+    Once all the pages are valid, the instance can be completed. If a confirmation workflow is expected, it will be created and the instance will take the state <strong>completed</strong>.
+</p>
+<p>
+    If a confirmation workflow is not expected or the confirmation workflow is approved, the instance takes the state <strong>confirmed</strong>.
+</p>
+<p>
+    If the confirmation workflow is rejected, the instance takes the state <strong>canceled</strong>.
+</p>
+
+<h4>Actions</h4>
+
+<table>
+    <tr><td>Confirm</td><td>Shows the confirmation workflow steps.</td></tr>
+    <tr><td>Complete</td><td>Changes the state of the instance to <strong>completed</strong> (if a confirmation workflow is present) or <strong>confirmed</strong> (otherwise).</td></tr>
+    <tr><td>Delete</td><td>If the instance has the state <strong>draft</strong>, is a test instance or is a simulation, deletes the instance. Otherwise, changes the state of the instance to <strong>deleted</strong>.</td></tr>
+    <tr><td>Save</td><td>Saves the instance.</td></tr>
+    <tr><td>Download</td><td>Creates a PDF version of the instance.</td></tr>
+    <tr><td>History</td><td>Shows the history of the instance.</td></tr>
+    <tr><td>Quit</td><td>Closes the instance manager and returns to the page instance list.</td></tr>
+    <tr><td><i class="fas fa-sitemap"></i></td><td>Shows the relations list.</td></tr>
+    <tr><td><i class="fa fa-calculator"></i></td><td>Shows the expressions of the instance and their value.</td></tr>
+</table>

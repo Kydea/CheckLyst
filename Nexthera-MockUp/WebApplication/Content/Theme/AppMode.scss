@@ -1,0 +1,28 @@
+﻿@import "_Library.scss";
+
+body.AppMode {
+    header {
+        display: none !important;
+    }
+
+    footer {
+        display: none !important;
+    }
+
+    div#Breadcrumbs {
+        //display: none !important;
+    }
+
+    div#Content {
+        margin: $Metric-Control-Height 0 !important;
+        min-height: unset !important;
+    }
+
+    div.Instance .Item.Field .Copy {
+        display: none !important;
+    }
+
+    div#Breadcrumbs {
+        margin-left: 0 !important;
+    }
+}

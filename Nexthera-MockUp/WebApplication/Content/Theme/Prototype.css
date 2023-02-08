@@ -1,0 +1,158 @@
+﻿div.Prototype h2 {
+  cursor: pointer;
+}
+div.Prototype a.Add.Button {
+  float: right;
+}
+div.Prototype div.Commands {
+  position: absolute;
+  z-index: 28;
+  right: 0;
+  top: 0;
+  margin: 20px !important;
+  background: white;
+  border: solid 1px #009688;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+  font-size: 0 !important;
+  border-radius: 3px;
+}
+div.Prototype div.Commands a.MiniIcon {
+  margin-top: 0;
+  line-height: 20px !important;
+  height: 20px !important;
+  width: 20px !important;
+  border-radius: 3px 0 0 3px !important;
+}
+div.Prototype div.Commands a.MiniIcon i.fa, div.Prototype div.Commands a.MiniIcon i.fal {
+  font-size: 12px !important;
+  line-height: 20px !important;
+  height: 20px !important;
+  width: 20px !important;
+  color: #00877a !important;
+}
+div.Prototype div.Commands a.MiniIcon + a.MiniIcon {
+  border-left: solid 1px #009688;
+  border-radius: 0 3px 3px 0 !important;
+}
+div.Prototype div.Commands a.MiniIcon:hover {
+  background: #ebebeb;
+}
+div.Prototype div.Commands a.MiniIcon:hover i.fa, div.Prototype div.Commands a.MiniIcon:hover i.fal {
+  color: #00877a !important;
+}
+div.Prototype div.HeaderContainer > div.Commands a.Up, div.Prototype div.HeaderContainer > div.Commands a.Down, div.Prototype div.HeaderContainer > div.Commands a.Add, div.Prototype div.HeaderContainer > div.Commands a.Remove {
+  display: none;
+}
+div.Prototype div.TabLabels {
+  margin-top: 20px;
+}
+div.Prototype div.TabLabels div.Commands {
+  margin: 0;
+}
+div.Prototype div.TabLabels div.Commands a.Add {
+  display: none;
+}
+div.Prototype div.TabLabels > a.Selected {
+  cursor: pointer !important;
+}
+div.Prototype div.TabLabels > a.Current {
+  background-color: #fce6e8;
+}
+div.Prototype div.TabLabels > a:first-of-type + div.Commands a.Up {
+  display: none;
+}
+div.Prototype div.TabLabels > a:first-of-type + div.Commands:nth-last-child(2) a.Remove {
+  display: none;
+}
+div.Prototype div.TabLabels > a:nth-last-of-type(2) + div.Commands a.Down {
+  display: none;
+}
+div.Prototype div.TabLabels > a.Add {
+  background-color: #ffba00;
+  margin: 2px;
+  height: 34px;
+  line-height: 34px;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+div.Prototype div.Group {
+  cursor: pointer;
+}
+div.Prototype div.Group > div.Commands {
+  margin: 10px !important;
+}
+div.Prototype div.Group.Current {
+  background-color: #fce6e8;
+}
+div.Prototype div.Item {
+  cursor: pointer;
+}
+div.Prototype div.Item label {
+  cursor: pointer;
+}
+div.Prototype div.Item input {
+  cursor: pointer;
+  outline: none;
+}
+div.Prototype div.Item a.Placeholder {
+  cursor: pointer;
+}
+div.Prototype div.Item.Field div.Input {
+  width: 100% !important;
+}
+div.Prototype div.Item.Text p {
+  position: relative;
+}
+div.Prototype div.Item.Text p.Ellipsis::after {
+  content: "...";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+div.Prototype div.Item.Link a {
+  position: relative;
+}
+div.Prototype div.Item.Current::before {
+  content: "";
+  position: absolute;
+  background-color: #fce6e8;
+  left: -10px;
+  right: -10px;
+  top: -10px;
+  bottom: -10px;
+}
+div.Prototype div.Item > div.Commands {
+  margin: 0 !important;
+}
+div.Prototype div.Item > div.Commands a.Add {
+  display: none;
+}
+div.Prototype div.Item > div.Commands a.Paste {
+  display: none !important;
+}
+div.Prototype div.Element:first-of-type > div.Commands a.Up {
+  display: none;
+}
+div.Prototype div.Element:last-of-type > div.Commands a.Down {
+  display: none;
+}
+div.Prototype.Current h2 {
+  position: relative;
+  color: #999 !important;
+}
+div.Prototype.Current h2::before {
+  content: "";
+  position: absolute;
+  background-color: #fce6e8;
+  left: -10px;
+  right: -10px;
+  top: -10px;
+  bottom: -10px;
+}
+div.Prototype.Current h2 span {
+  position: relative;
+}
+div.Prototype.Locked > div.Commands a.Remove, div.Prototype.Locked > div.Commands a.Up, div.Prototype.Locked > div.Commands a.Down, div.Prototype .Locked > div.Commands a.Remove, div.Prototype .Locked > div.Commands a.Up, div.Prototype .Locked > div.Commands a.Down {
+  display: none;
+}

@@ -1,0 +1,160 @@
+﻿<div id="PrototypesListPage">
+    <h1>Prototypes List</h1>
+
+    <div class="ActionBar">
+        <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New empty prototype</a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Prototypes/List">
+            <label class="Controls1-2">
+                <span>Department / prototype type</span>
+                <i class="Icon fal fa-industry" />
+                <select name="department" class="Trigger" data-nullable="(all)" />
+                <i class="Icon fal fa-folder" />
+                <select name="prototypeType" data-nullable="(all)" />
+            </label>
+            <label class="Clearing">
+                <span>Prototype name</span>
+                <i class="Icon fal fa-file-invoice" />
+                <input type="text" name="name" />
+            </label>
+            <label>
+                <span>Prototype ID</span>
+                <i class="Icon fal fa-key" />
+                <input type="text" name="id" class="mask-pint" maxlength="18" />
+            </label>
+            <label class="Width200 Clearing">
+                <span>Changing state</span>
+                <i class="Icon fal fa-tasks" />
+                <select name="pending">
+                    <option value="Include">Include prototypes changing state</option>
+                    <option value="Exclude">Exclude prototypes changing state</option>
+                    <option value="Filter">Only prototypes changing state</option>
+                </select>
+            </label>
+            <label>
+                <span>State</span>
+                <i class="Icon fal fa-tasks" />
+                <select name="state" data-nullable="(all)" />
+            </label>
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Prototype type</th>
+                    <th>Description</th>
+                    <th>Version</th>
+                    <th>State</th>
+                    <th>Validity start date</th>
+                    <th>Validity end date</th>
+                    <th>Created by</th>
+                    <th>Created on</th>
+                    <th>Modified by</th>
+                    <th>Modified on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="name"></td>
+                    <td data-column="departmentName"></td>
+                    <td data-column="prototypeTypeName"></td>
+                    <td data-column="description"></td>
+                    <td data-column="version"></td>
+                    <td data-column="state"></td>
+                    <td data-column="validityFrom" data-type="DateTimeOffset"></td>
+                    <td data-column="validityUntil" data-type="DateTimeOffset"></td>
+                    <td data-column="createdBy"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="modifiedBy"></td>
+                    <td data-column="modifiedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var
+        createNewVersionHandler = function (data) {
+            $.ajax({
+                url: matematici.urls.api + "/Prototypes/Prototype/CheckNewVersion",
+                type: "post",
+                data: {
+                    id: data.id,
+                }
+            }).done(function (result) {
+                if (result.error)
+                    matematici.dialog.error("error", result.error);
+                else
+                    matematici.navigator.open("@Url.Action("Version")/" + data.id + "/" + data.version);
+            });
+        },
+
+        openPrototypeHandler = function (data) {
+            matematici.navigator.open("@Url.Action("Detail")/" + data.id + "/" + data.version);
+        },
+
+        useAsTemplateHandler = function (data) {
+            matematici.navigator.open("@Url.Action("Clone")/" + data.id + "/" + data.version);
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        var
+            editor = matematici.tokenManager.checkRole("Prototypes#Edit#"),
+            searchPage = new matematici.SearchPage({
+                pageName: "Prototypes",
+                filterFormSelector: "form#Filters",
+                resultGridSelector: "div#Content table.Grid",
+                bindEvent: "Bind",
+                readOnly: true,
+                breadCrumbs: [
+                    { content: "prototypes" }
+                ],
+
+                rowClickHandler: function (row) {
+                    if (editor) {
+                        var
+                            buttons = [],
+                            state = row.data("values").state;
+                        buttons.push({ text: "cancel", icon: "times", cancelButton: true });
+                        if (
+                            state != prototypes.Prototype.states.draft
+                            && state != prototypes.Prototype.states.simulation
+                            && state != prototypes.Prototype.states.approval
+                            && (
+                                matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "##")
+                                || matematici.tokenManager.checkRole("Prototypes#Edit#" + row.data("values").department + "#" + row.data("values").prototypeType)
+                            )
+                        )
+                            buttons.push({ text: "new version", icon: "file", handler: createNewVersionHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "use as template", icon: "clone", handler: useAsTemplateHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+                        buttons.push({ text: "open", icon: "folder-open", handler: openPrototypeHandler, data: { id: row.data("values").id, version: row.data("values").version } });
+
+                        matematici.dialog.popupMenu(buttons);
+                    } else
+                        openPrototypeHandler({ id: row.data("values").id, version: row.data("values").version });
+                }
+            }),
+
+            addButton = $("#AddButton").on("click", function (e) {
+                matematici.navigator.open("@Url.Action("Create")");
+            });
+
+        $("input[name=id]").keyfilter(/[\d]/);
+
+        if (!editor)
+            addButton.remove();
+
+        callback.call();
+    };
+</script>

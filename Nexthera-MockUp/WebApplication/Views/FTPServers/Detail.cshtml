@@ -1,0 +1,184 @@
+﻿<div id="UsersDetailPage">
+    <h2>FTP Servers</h2>
+
+    <form id="Detail" action="@BaseUrl/Infrastructure/FTPServers">
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Detail</a>
+                <a href="#">Key</a>
+            </div>
+            <div class="Tab">
+                <input type="hidden" name="reason" />
+                <label>
+                    <span>ID</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" id="ID" name="id" readonly="readonly" placeholder="(new record)" />
+                </label>
+
+                <label>
+                    <span>Name</span>
+                    <i class="Icon fal fa-id-card" />
+                    <input type="text" name="name" maxlength="50" />
+                </label>
+
+                <label>
+                    <span>Protocol</span>
+                    <i class="Icon fal fa-cogs" />
+                    <select name="protocol" class="AutoComplete">
+                        <option value="FTP">FTP</option>
+                        <option value="SFTP">SFTP</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Host</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="host" maxlength="500" />
+                </label>
+
+                <label>
+                    <span>Port</span>
+                    <i class="Icon fal fa-chart-network" />
+                    <input type="text" name="port" class="mask-pint" maxlength="5" />
+                </label>
+
+                <label>
+                    <span>Folder</span>
+                    <i class="Icon fal fa-folder" />
+                    <input type="text" name="folder" maxlength="500" />
+                </label>
+
+                <label class="Clearing">
+                    <span>User name</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="userName" maxlength="100" />
+                </label>
+
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" name="password" maxlength="100" />
+                </label>
+
+                <label class="Clearing">
+                    <span>Passive</span>
+                    <input type="checkbox" name="passive" />
+                </label>
+
+                <label>
+                    <span>SSL</span>
+                    <input type="checkbox" name="ssl" />
+                </label>
+
+                <label>
+                    <span>Prototypes default</span>
+                    <input type="checkbox" name="prototypesDefault" />
+                </label>
+
+                <label>
+                    <span>Instances Default</span>
+                    <input type="checkbox" name="instancesDefault" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+            </div>
+            <div class="Tab" style="height: calc(100% - 40px)">
+                <label class="Clearing Width200" style="height: 100%;">
+                    <textarea type="text" name="key" style="margin-top: -18px; height: 100%;" />
+                </label>
+            </div>
+        </div>
+    </form>
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    var
+        formSelector = "form#Detail",
+        protocolChange = function (select) {
+            var
+                ftp = select.val() == "FTP",
+                passive = $("input[name=passive]", formSelector),
+                ssl = $("input[name=ssl]", formSelector),
+                key = $("textarea[name=key]", formSelector);
+            matematici.controls.setEditable(passive, ftp);
+            matematici.controls.setEditable(ssl, ftp);
+            matematici.controls.setEditable(key, !ftp);
+            if (ftp) 
+                key.val("");
+            else {
+                passive.prop("checked", false);
+                ssl.prop("checked", false);
+            }
+        };
+
+    new matematici.Tab("div.TabContainer", {
+        fixedHeight: true
+    }),
+
+    new matematici.DetailPage({
+        formSelector: formSelector,
+        initHandler: function () {
+            $("input[name=port]").keyfilter(/[\d]/);
+
+            $(formSelector).on("change", "select[name=protocol]", function () { protocolChange($(this)); });
+        },
+        completeHandler: function () {
+            protocolChange($("select[name=protocol]", formSelector));
+        },
+        buttons: [{
+            icon: "cog",
+            text: "test",
+            id: "TestButton",
+            handler: function () {
+                var action = function () {
+                    $.ajax({
+                        type: "post",
+                        url: "@BaseUrl/Infrastructure/FTPServers/Test",
+                        data: { id: $("input#ID", formSelector).val() }
+                    }).done(function (result) {
+                        var
+                            div = $("<div />"),
+                            rows = result.split("\n");
+                        for (var index in rows) {
+                            var row = rows[index]
+                            if (row && row.trim() && row.trim() != "\r")
+                                div.append($("<div />").css("white-space", "nowrap").text((1 + parseInt(index)) + ": " + row));
+                        }
+                        matematici.dialog.show("Folder content", div);
+                    });
+                }
+                if (matematici.canClose)
+                    action();
+                else
+                    matematici.dialog.show("warning", "There are unsaved changes.", [
+                        {
+                            text: "save", icon: "check", handler: function () {
+                                return matematici.save(action, true);
+                            }
+                        },
+                        { text: "cancel", icon: "times", cancelButton: true }
+                    ]);
+
+
+                return true;
+            }
+        }]
+    });
+</script>

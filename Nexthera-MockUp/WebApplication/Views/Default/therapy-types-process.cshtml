@@ -1,0 +1,102 @@
+@{
+    var Title = "Therapy type process";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Graph"></div>
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapyTypes")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            tables: {
+                therapyTypes: matematici.data.therapyTypes(true),
+                therapyTypeShippings: {
+                    label: "shippings",
+                    columns: [
+                        { label: "path", cssClass: "Down", centered: true },
+                        { label: "carriers" },
+                        { label: "deliverable" },
+                    ],
+                    rows: [
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "genetic vectors - gv321 (2 cc)"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                    ]
+                }
+            }
+        },
+        graphData = {
+            columns: [
+                {
+                    nodes: [
+                        { id: 1, label: "collection", center: "Hospital 1" },
+                        { id: 6, label: "treatment", center: "Hospital 1" },
+                        { id: 7, label: "follow up", center: "Hospital 1" },
+                        { id: 8, label: "follow up", center: "Hospital 1" },
+                        { id: 9, label: "follow up", center: "Hospital 1" }
+                    ]
+                },
+                {
+                    nodes: [
+                        { id: 2, label: "cell-preprocessing", center: "Nearby Center" },
+                        { id: 5, label: "cell manufacturing", center: "Pharma center 1" },
+                    ]
+                },
+                {
+                    label: "",
+                    nodes: [
+                        { id: 3, label: "plasmid manufacturing", center: "Pharma center 1<br />Pharma center 2" },
+                        { id: 4, label: "genetic vector manufacturing", center: "Pharma center 1<br />Pharma center 2" },
+                    ]
+                }
+            ],
+            paths: [
+                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l" },
+                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t" },
+                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r" },
+                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r" },
+                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r" },
+                { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t" },
+                { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t" },
+                { sourceId: 8, destinationId: 9, sourcePosition: "b", destinationPosition: "t" },
+            ]
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data),
+                new matematici.Graph(".Graph", graphData)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapy types", url: "/therapy-types-types", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapy-types-phases" },
+                        { label: "payment plan", url: "/therapy-types-payment-plan" },
+                        { label: "shippings", url: "/therapy-types-shippings" },
+                        { label: "process", url: "/therapy-types-process", selected: true }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

@@ -1,0 +1,252 @@
+﻿body.Dialog {
+  overflow: hidden;
+}
+
+div.Dialog {
+  display: none;
+  overflow: auto;
+}
+div.Dialog div.Container {
+  padding: 20px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+}
+div.Dialog div.Container p {
+  line-height: 1.6;
+}
+div.Dialog div.Container h2 {
+  margin: -20px -20px 20px;
+  background: #009688;
+  padding: 20px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+div.Dialog div.Container div.Content {
+  overflow: auto;
+}
+div.Dialog div.Container div.Content label {
+  margin-bottom: 5px;
+}
+div.Dialog div.Container div.Buttons {
+  margin-top: 10px;
+}
+div.Dialog div.Container div.Buttons a {
+  min-width: 100px;
+  float: right;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+div.Dialog div.Container div.Buttons a:last-child {
+  margin-left: 0;
+}
+div.Dialog div.Container div.Buttons textarea {
+  min-height: 60px;
+  resize: vertical;
+  padding-top: 10px;
+}
+div.Dialog div.Container div.Buttons::after {
+  content: "";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
+}
+div.Dialog div.Container a.CloseButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: white;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+div.Dialog div.Container a.CloseButton i {
+  font-size: 30px;
+}
+div.Dialog div.Container a.CloseButton:hover {
+  color: #ccc;
+}
+div.Dialog.PopupMenu div.Container {
+  padding: 0 !important;
+}
+div.Dialog.PopupMenu div.Container h2 {
+  display: none;
+}
+div.Dialog.PopupMenu div.Container div.Buttons {
+  margin-top: 0 !important;
+}
+div.Dialog.PopupMenu div.Container div.Buttons a.Button {
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+  color: black;
+  background-color: white;
+  position: relative;
+  border-bottom: solid 1px #ccc;
+  margin-top: 0;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  text-transform: unset;
+  margin: 0;
+}
+div.Dialog.PopupMenu div.Container div.Buttons a.Button i {
+  background: none;
+  position: absolute;
+  left: 10px;
+  top: 7px;
+  margin: 0;
+}
+div.Dialog.PopupMenu div.Container div.Buttons a.Button::after {
+  content: none;
+}
+div.Dialog.PopupMenu div.Container div.Buttons a.Button:hover {
+  background-color: #009688;
+  color: white;
+}
+div.Dialog.Error h2 {
+  background-color: #cc0000 !important;
+}
+div.Dialog.Error div.Error {
+  color: black;
+}
+div.Dialog.Error div.Error i {
+  color: #cc0000;
+}
+div.Dialog.Error div.Buttons a {
+  background-color: #cc0000 !important;
+}
+div.Dialog.Error div.Buttons a i {
+  color: #cc0000;
+}
+div.Dialog.Error div.Buttons a:hover {
+  background-color: #ff3333 !important;
+}
+div.Dialog.Error div.Buttons a:hover i {
+  color: #ff3333 !important;
+}
+div.Dialog.ImageViewer div.Container h2 {
+  display: none;
+}
+div.Dialog.ImageViewer div.Container div.Content {
+  max-height: calc(100vh - 40px);
+}
+div.Dialog.ImageViewer div.Container div.Content img {
+  display: block;
+  position: relative;
+  margin: auto;
+}
+div.Dialog.ImageViewer div.Container div.ViewButtons {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+div.Dialog.ImageViewer div.Container div.ViewButtons a {
+  float: left;
+  margin-top: 10px;
+  margin-left: 10px;
+  color: white;
+  border-radius: 50%;
+  background: #009688;
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  text-align: center;
+  opacity: 0.5;
+}
+div.Dialog.ImageViewer div.Container div.ViewButtons a:hover {
+  opacity: 1;
+}
+div.Dialog.ImageViewer div.Container a.CloseButton {
+  right: 30px;
+  top: 30px;
+  border-radius: 50%;
+  background: #009688;
+  opacity: 0.5;
+}
+div.Dialog.ImageViewer div.Container a.CloseButton i {
+  font-size: 20px;
+  color: white;
+  line-height: 30px;
+}
+div.Dialog.ImageViewer div.Container a.CloseButton i::before {
+  content: "\f00d" !important;
+}
+div.Dialog.ImageViewer div.Container a.CloseButton:hover {
+  opacity: 1;
+}
+div.Dialog.ImageViewer div.Container div.Buttons {
+  display: none;
+}
+div.Dialog div.Array {
+  padding-bottom: 10px;
+}
+div.Dialog div.Array span.Index {
+  float: left;
+  clear: both;
+  color: #ccc;
+}
+div.Dialog div.Array div.Value {
+  float: left;
+  margin-left: 25px;
+}
+div.Dialog div.Array::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+@media only screen and (min-width: 760px) {
+  div.Dialog {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 990;
+    background-color: rgba(102, 102, 102, 0.7);
+  }
+  div.Dialog div.Container {
+    position: relative;
+    width: 420px;
+    margin: 0 auto;
+    border-radius: 15px;
+    max-width: calc(100% - 60px);
+  }
+  div.Dialog div.Container h2 {
+    border-radius: 15px 15px 0 0;
+  }
+  div.Dialog.PopupMenu div.Container {
+    width: 240px !important;
+    border-radius: 10px;
+  }
+  div.Dialog.PopupMenu div.Container div.Buttons {
+    margin-top: 0 !important;
+  }
+  div.Dialog.PopupMenu div.Container div.Buttons a.Button:first-child {
+    border-radius: 10px 10px 0 0;
+  }
+  div.Dialog.PopupMenu div.Container div.Buttons a.Button:last-child {
+    border-radius: 0 0 10px 10px;
+    border-bottom: none;
+  }
+}
+@media only screen and (max-width: 759px) {
+  div.Dialog div.Container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 990;
+    width: unset !important;
+  }
+  div.Dialog div.Container h2 {
+    background: #009688;
+    padding: 20px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: normal;
+  }
+}

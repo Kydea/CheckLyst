@@ -1,0 +1,67 @@
+@{
+    var Title = "Therapy history";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapies")
+    @Html.Partial("components/table", "therapyHistory")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            tables: {
+                therapies: matematici.data.therapies(true),
+                therapyHistory: {
+                    log: false,
+                    extended: true,
+                    label: "history",
+                    columns: [
+                        { label: "date", cssClass: "Down", centered: true },
+                        { label: "state" },
+                        { label: "signature" },
+                        { label: "reason" }
+                    ],
+                    rows: [
+                        ["2023-01-01", "Proposed", "Mario Rossi"],
+                        ["2023-01-01", "In progress", "John Smith"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapies", url: "/therapies", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapies-phases" },
+                        { label: "payment plan", url: "/therapies-payment-plan" },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "shippings", url: "/therapies-shippings" },
+                        { label: "history", url: "/therapies-history", selected: true },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

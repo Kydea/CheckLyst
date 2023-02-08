@@ -1,0 +1,53 @@
+﻿@import "Library";
+
+$Page-Width: 20px;
+
+.Paginator {
+    float: right;
+    cursor: default;
+
+    &:not(:empty) {
+        margin: 20px 0 0 0;
+    }
+
+    a {
+        text-align: center;
+        min-width: $Page-Width;
+        height: $Page-Width;
+        line-height: $Page-Width;
+        color: $Color-Green-Dark;
+        text-decoration: none !important;
+
+        font-weight: bold;
+
+        &:not(.Current) {
+            cursor: pointer;
+        }
+
+        &.Current {
+            color: white;
+            background-color: $Color-Green-Dark;
+        }
+    }
+
+    a, span {
+        display: inline-block;
+
+        &:not(:first-child) {
+            position: relative;
+            margin-left: 16px;
+
+            &::before {
+                border-left: 2px solid $Color-Grey-Light;
+                display: inline-block;
+                position: absolute;
+                margin-top: 3px;
+                content: "";
+                color: black;
+                width: 0px;
+                height: 1em;
+                left: -8px;
+            }
+        }
+    }
+}

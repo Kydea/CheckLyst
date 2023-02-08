@@ -1,0 +1,188 @@
+﻿@import "_Library.scss";
+
+body.CheckListGrid {
+    overflow: hidden;
+}
+
+div.CheckListGrid {
+
+    div.Container {
+        background-color: white;
+        padding: 20px;
+        box-shadow: $Box-Shadow;
+
+        > div {
+            position: relative;
+        }
+
+        div.ScrollablePanel {
+            overflow: auto;
+            position: relative;
+            border: solid 1px $Color-Grey-Regular;
+        }
+
+        h2 {
+            margin: -20px -20px 20px;
+            background: $Color-Green-Regular;
+            padding: $Metric-Control-Space;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        div.Parameters {
+            clear: both;
+            margin-left: -$Metric-Control-Space;
+            margin-top: -$Metric-Control-Space;
+            padding-bottom: $Metric-Control-Space;
+
+            label {
+                margin: 20px 0 0 20px;
+                width: 230px;
+            }
+
+            input {
+                margin-top: 5px;
+            }
+        }
+
+        table.Grid {
+            clear: both;
+            margin-top: 0;
+
+            tr {
+                th {
+                    text-align: center;
+
+                    &:first-child {
+                        border-left: none !important;
+                    }
+                }
+
+                &.Selected {
+                    td {
+                        font-weight: bold;
+
+                        i {
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+
+        div.Buttons {
+            padding-top: 10px;
+
+            a {
+                float: right;
+                margin-left: 10px;
+                margin-top: 10px;
+            }
+        }
+
+        a.CloseButton {
+            position: absolute;
+            top: 15px;
+            right: 0;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Light;
+            }
+        }
+
+        div.OrderBar {
+            position: absolute;
+            right: 0;
+            top: 124px;
+            bottom: 56px;
+            width: 20px;
+
+            a {
+                position: absolute;
+                top: 50%;
+                border: solid 1px $Color-Green-Regular;
+                width: 20px;
+                height: 20px;
+                display: block;
+                text-align: center;
+
+                i {
+                    font-size: 16px;
+                    color: $Color-Green-Regular !important;
+                }
+
+                &.Off {
+                    opacity: .3;
+                }
+
+                &:hover:not(.Off) {
+                    background-color: $Color-Silver-Dark;
+                }
+
+                &:first-child {
+                    margin-top: -20px;
+                    border-radius: 3px 3px 0 0;
+                    border-bottom: 0;
+                }
+
+                &:last-child {
+                    border-radius: 0 0 3px 3px;
+                }
+            }
+        }
+    }
+
+    @media #{$Media-Extended} {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-CheckListGrid;
+        background-color: rgba(102, 102, 102, .7);
+
+        div.Container {
+            position: relative;
+            margin: auto;
+            width: calc(100vw - 60px);
+            border-radius: 15px 15px 0 0;
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
+
+            div.Buttons {
+                &::after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+            }
+        }
+
+        div.ScrollablePanel {
+            max-height: calc(100vh - 240px); //overridden by js (autoCenter.js)
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $Depth-CheckListGrid;
+        }
+    }
+}

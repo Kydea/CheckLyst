@@ -1,0 +1,86 @@
+﻿<div id="RolesDetailPage" class="GrantsDetailPage">
+    <h2>Role</h2>
+
+    <form id="Detail" action="@BaseUrl/AccessControl/Roles">
+        <input type="hidden" name="reason" />
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">Details</a>
+                <a href="#">General grants</a>
+                <a href="#">Prototype grants</a>
+                <a href="#">Instance grants</a>
+            </div>
+            <div class="Tab">
+                <label>
+                    <span>Code</span>
+                    <i class="Icon fal fa-key" />
+                    <input type="text" name="code" maxlength="60" autocomplete="off" />
+                </label>
+
+                <label>
+                    <span>Function group</span>
+                    <i class="Icon fal fa-cog" />
+                    <select name="functionGroup" data-nullable="(general)">
+                        <option value="Prototypes">Prototypes</option>
+                        <option value="Instances">Instances</option>
+                    </select>
+                </label>
+
+                <label class="Clearing Controls2">
+                    <span>Creation</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="createdBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <label class="Controls2">
+                    <span>Last edit</span>
+                    <i class="Icon fal fa-user" />
+                    <input type="text" name="modifiedBy" readonly="readonly" />
+                    <i class="Icon fal fa-calendar-alt" />
+                    <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                </label>
+
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                @Html.Partial("GeneralGrants")
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div class="Clearing"></div>
+            </div>
+        </div>
+    </form>
+
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    var
+        formSelector = "form#Detail",
+
+        functionGroupSelect = $("select[name=functionGroup]", formSelector),
+
+        onFunctionGroupChanged = function () {
+            var
+                tabLabels = $(".TabLabels a"),
+                functionGroup = $(this).val();
+
+            tabLabels.eq(1).toggle(functionGroup == null);
+            tabLabels.eq(2).toggle(functionGroup == "Prototypes");
+            tabLabels.eq(3).toggle(functionGroup == "Instances");
+        },
+
+        loadHandler = function (detailPage) {
+            if (detailPage.isNew()) matematici.AutoComplete.get(functionGroupSelect[0]).setValue(null);
+            onFunctionGroupChanged.call(functionGroupSelect);
+        };
+
+    new matematici.GrantsDetailPage(formSelector, "Roles", loadHandler);
+    functionGroupSelect.on("change", onFunctionGroupChanged);
+</script>

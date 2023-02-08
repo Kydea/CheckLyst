@@ -1,0 +1,314 @@
+﻿@import "_Library.scss";
+
+div.PropertyPanel {
+    height: 400px;
+    background-color: white;
+    display: none;
+    position: relative;
+    margin-bottom: -$Metric-Control-Space;
+
+    div.PropertyList {
+        position: absolute;
+        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: auto;
+        width: 50%;
+        height: 100%;
+        border-top: solid 1px $Color-Grey-Light;
+        border-left: solid 1px $Color-Grey-Light;
+        border-bottom: solid 1px $Color-Grey-Light;
+        background: $Color-Silver-Light;
+        padding-top: 1px;
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+
+            tbody tr {
+                background: white;
+                border-bottom: solid 1px $Color-Grey-Light;
+
+                td {
+                    a {
+                        display: block;
+                        padding: 4px 10px;
+                        text-decoration: none;
+                        white-space: nowrap;
+
+                        i.fa-caret-right {
+                            visibility: hidden;
+                            padding-right: 5px;
+                            font-size: 12px;
+                        }
+
+                        &:hover {
+                            text-decoration: none !important;
+                        }
+
+                        &.Selected {
+                            i.fa-caret-right {
+                                visibility: visible;
+                            }
+                        }
+
+                        &.Changed {
+                            font-weight: bold;
+
+                            &:not(.Error) {
+                                color: $Color-Green-Dark !important;
+                            }
+                        }
+
+                        &.Error {
+                            color: $Color-Red-Regular !important;
+                        }
+                    }
+
+                    &:first-child {
+                        width: 100%;
+                        border-right: solid 1px $Color-Grey-Light;
+                    }
+
+                    &:last-child {
+                        max-width: 180px;
+                        overflow: hidden;
+
+                        a {
+                            color: $Color-Grey-Dark;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    div.PropertyValue {
+        position: absolute;
+        width: calc(50% - #{$Metric-Control-Space});
+        left: 50%;
+        height: calc(60% - #{$Metric-Control-Space / 2});
+        padding: 10px;
+        background: $Color-Silver-Dark;
+        margin-left: $Metric-Control-Space;
+
+        label {
+            margin: 0;
+            padding-top: 0;
+            width: calc(100%);
+
+            &:first-child {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+            }
+
+            &:nth-child(2) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+            }
+
+            &:nth-child(3) {
+                position: absolute;
+
+                input {
+                    margin-top: 0;
+                }
+
+                top: $Metric-Control-Height + $Metric-Control-Space;
+                left: calc(50% + 10px);
+                width: calc(50% - 20px) !important;
+            }
+        }
+
+        input[type=text], input[type=checkbox], select, a.Button, label {
+            display: block;
+
+            &[type=checkbox] {
+                width: 100%;
+            }
+        }
+
+        textarea {
+            height: 100%;
+        }
+
+        &.Value {
+            textarea {
+                height: 100px !important;
+            }
+
+            label {
+                margin-top: 10px;
+                width: 50%;
+
+                span {
+                    position: relative;
+                }
+            }
+        }
+
+        &.Upload {
+            form {
+                margin: 0 !important;
+
+                input[type=file] {
+                    display: none;
+                }
+
+                a.Button {
+                    margin: 0 0 10px 0 !important;
+                    clear: both;
+                    min-width: 200px;
+                }
+            }
+        }
+
+        &.CountDown {
+            label {
+                margin-top: $Metric-Control-Space;
+                position: static !important;
+                top: unset !important;
+                left: unset !important;
+                width: unset !important;
+            }
+        }
+
+        &.ValueType {
+            label.Precision {
+                bottom: 75px;
+                position: absolute;
+                width: calc(100% - 20px);
+            }
+
+            label.DefaultValue {
+                bottom: 10px;
+                position: absolute;
+            }
+        }
+
+        &.Signature {
+            label.DumpExternalDataSource {
+                position: absolute;
+                bottom: 10px;
+                top: unset;
+
+                span {
+                    position: static !important;
+                }
+            }
+        }
+
+        &.Link {
+            label {
+                display: block;
+                position: static;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+
+        &.Parameters {
+            padding: 0;
+            overflow: auto;
+
+            table {
+                tbody {
+                    tr {
+                        td:last-child {
+                            width: 20px;
+                            text-align: center;
+                        }
+
+                        &:last-child {
+                            a {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        table.Grid {
+            margin-top: 0;
+            font-size: 12px;
+            border: solid 1px $Color-Grey-Light;
+
+            thead {
+                tr {
+                    th {
+                        padding: 2px 10px;
+                        height: 25px;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    td {
+                        position: relative;
+                        padding: 0;
+
+                        input, select {
+                            font-size: 12px;
+                        }
+                    }
+                }
+            }
+
+            i.fa, i.fal, i.fab {
+                font-size: 14px;
+            }
+        }
+
+        div.ButtonsPanel {
+            position: absolute;
+            width: calc(100% - 20px);
+            bottom: 0;
+
+            a {
+                margin-bottom: 10px;
+                margin-left: 10px;
+                float: right;
+            }
+        }
+    }
+
+    div.Information {
+        position: absolute;
+        overflow: auto;
+        height: calc(40% - #{$Metric-Control-Space / 2});
+        width: 50%;
+        left: 50%;
+        top: calc(60% + #{$Metric-Control-Space / 2});
+        padding: 10px;
+        line-height: 1.4;
+        background: $Color-Silver-Dark;
+        width: calc(50% - #{$Metric-Control-Space});
+        margin-left: $Metric-Control-Space;
+
+        p.Error {
+            color: $Color-Red-Regular;
+            margin: 0 0 1em 0;
+
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+}
+
+div.Popup div.PropertyPanel {
+    display: block;
+}

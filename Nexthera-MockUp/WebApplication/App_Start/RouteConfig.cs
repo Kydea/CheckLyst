@@ -1,0 +1,28 @@
+﻿using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace CheckListManager.WebApplication
+{
+    public class RouteConfig
+    {
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+                "Login",
+                "Security/Login",
+                new { Controller = "Security", Action = "Login" }
+            );
+
+            routes.MapRoute(
+                "Loader",
+                "{*Url}",
+                new { Controller = "Default", Action = "Loader" },
+                new { HTTPMethod = new HttpMethodConstraint("GET") }
+            );
+
+            routes.MapMvcAttributeRoutes();
+        }
+    }
+}

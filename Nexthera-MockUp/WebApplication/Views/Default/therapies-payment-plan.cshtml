@@ -1,0 +1,82 @@
+@{
+    var Title = "Therapy payment plan";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapies")
+    @Html.Partial("components/table", "therapyPaymentPlan")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "date", value: "2023-01-01" },
+                        { label: "expected amount", value: "150.000,00" }
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapies: matematici.data.therapies(true),
+                therapyPaymentPlan: {
+                    label: "payment plan",
+                    columns: [
+                        { label: "date", cssClass: "Down" },
+                        { label: "expected amount", um: "&euro" }
+                    ],
+                    rows: [
+                        ["2023-01-01", "150.000,00"],
+                        ["2023-01-15", "100.000,00"],
+                        ["2023-05-01", "50.000,00"],
+                        ["2023-07-01", "50.000,00"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapies", url: "/therapies", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapies-phases" },
+                        { label: "payment plan", url: "/therapies-payment-plan", selected: true },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "shippings", url: "/therapies-shippings" },
+                        { label: "history", url: "/therapies-history" },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

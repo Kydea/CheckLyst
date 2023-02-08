@@ -1,0 +1,63 @@
+﻿<div id="ExpressionEditor">
+    <h2>Expression Editor</h2>
+
+    <form id="Detail">
+        <label class="Width300">
+            <span>Code</span>
+            <i class="Icon fal fa-key" />
+            <input type="text" name="code" autocomplete="off" maxlength="50" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Description</span>
+            <i class="Icon fal fa-calendar-alt" />
+            <input type="text" name="description" autocomplete="off" maxlength="100" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Unique</span>
+            <i class="Icon fal fa-key" />
+            <select name="unique">
+                <option value="0">no</option>
+                <option value="1">unique over in progress instances</option>
+                <option value="2">unique over instances in any state</option>
+            </select>
+        </label>
+
+        <label class="Clearing">
+            <span>Exception</span>
+            <input type="checkbox" name="exception" />
+        </label>
+
+        <label>
+            <span>Notification</span>
+            <input type="checkbox" name="notification" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Notification email</span>
+            <i class="Icon fal fa-envelope" />
+            <input type="text" name="notificationEmail" autocomplete="off" maxlength="200" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Notification note</span>
+            <i class="Icon fal fa-edit" />
+            <input type="text" name="notificationNote" autocomplete="off" maxlength="200" />
+        </label>
+
+        <label class="Clearing Width300">
+            <span>Expression</span>
+
+            <pre id="AceExpressionEditor" style="width: 100%; height: 300px;"></pre>
+        </label>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        expressionEditor = matematici.popup.getData(),
+        form = $("div#ExpressionEditor form#Detail");
+
+    expressionEditor.fill(form);
+</script>

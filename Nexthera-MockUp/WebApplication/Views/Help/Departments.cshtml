@@ -1,0 +1,20 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Departments",
+    RecordsName = "departments",
+
+    Filters = new Field[] {
+        new Field("Department name", "The name of the department or part of it.")
+    },
+
+    Columns = new Field[]
+    {
+        new Field("Department ID", Field.ID),
+        new Field("Department name", "The name of the department.")
+    },
+
+    DetailFields = new Field[]
+    {
+        new Field("ID", Field.ID, Field.READ_ONLY),
+        new Field("Department name", "The name of the department.", Field.MANDATORY)
+    }
+})

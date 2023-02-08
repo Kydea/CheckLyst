@@ -1,0 +1,76 @@
+﻿@Html.Partial("SearchPage", new HelpPage {
+    Title = "Data sources",
+    RecordsName = "data sources",
+    ReadOnly = true,
+
+    Buttons = new Field[]
+    {   
+        new Field("ADD", "Creates a new record."),
+        new Field("DELETE", "Deletes the record.",Field.DETAILS_PAGE),
+        new Field("TEST", "Tests the Datasource connection.",Field.DETAILS_PAGE),
+        new Field("SAVE", "Saves the record.",Field.DETAILS_PAGE),
+        new Field("PARAMETER","Adds a new parameter.","Parameters page (when Source class is SQL)")
+    },
+    Filters = new Field[] 
+    {
+        new Field("Code", "The code of the data source or part of it."),
+        new Field("Description", "The description of the data source or part of it."),
+    },
+    Columns = new Field[]
+    {
+        new Field("Code", Field.ID),
+        new Field("Description", "The description of the data source."),
+    },
+    DetailTabs = new Tab[]
+    {
+        new Tab("Details") 
+        {
+            Fields = new Field[] 
+            {
+            new Field("Code", Field.ID, Field.FINAL),
+            new Field("Source Class","The source class of the DataSource, that can be SAP or SQL .",Field.MANDATORY),
+            new Field("Description", "The description of the data source.", Field.MANDATORY),
+            },
+        IncludeLogFields = true,
+        },
+        new Tab("Parameters (when Source class is SAP)")
+        {
+            Fields = new Field[] 
+            {
+            new Field("User","The username the system will use to authenticate to SAP."),
+            new Field("Password","The password the system will use to authenticate to SAP."),
+            new Field("Query","The list of predefined queries to search SAP data."),
+            new Field("Client","The SAP client."),
+            new Field("Message server host","The SAP Message server host."),
+            new Field("Message server service","The SAP Message server service."),
+            new Field("System ID","The SAP System ID."),
+            new Field("Logon group","The SAP Logon group."),
+            new Field("Language","The SAP Language (i.e. EN)."),
+            },
+        },
+        new Tab("Connection (available when Source class is SQL)")
+        {
+            Fields = new Field[] 
+            {
+            new Field("DBMS","The Database Management System, that can be SQL server, Oracle, Postgres.", Field.MANDATORY),
+            new Field("Connection","The string containing the parameters that Data Source will use to connect to the target."),
+            new Field("String","Database."),
+            new Field("Password","The password the system will use to authenticate to SAP."),
+            new Field("Query","The query to search SAP data."),
+            new Field("Message server host","SAP Message server host."),
+            },
+        },
+        new Tab("Parameters (when Source class is SQL)")
+        {
+            Fields = new Field[] 
+            {
+            new Field("Name","The name of the parameter (filter) as specified in the query."),
+            new Field("Label","The description of the filter shown in the external source during the instance execution."),
+            new Field("Type","The parameter type that can be Text, Number, Boolean, Date, DateTime and Time."),
+            new Field("-","The button used to remove the parameter."),
+            },
+
+        },
+    },   
+})
+   

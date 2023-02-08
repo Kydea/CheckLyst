@@ -1,0 +1,125 @@
+﻿@import "_Library.scss";
+
+div#Breadcrumbs {
+    padding-top: 20px;
+    font-size: 13px;
+
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    @media #{$Media-Extended} {
+        visibility: hidden;
+        margin-left: $Metric-Header-Height;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    @media #{$Media-Mobile} {
+        padding-left: $Metric-Separator-Mobile;
+        padding-right: $Metric-Separator-Mobile;
+    }
+
+    div {
+        clear: left;
+        float: left;
+
+        a, span {
+            color: $Color-Grey-Dark;
+            display: inline-block;
+            position: relative;
+
+            &:not(:last-child) {
+                margin-right: 20px;
+            }
+
+            &.Strong {
+                font-weight: bold;
+                color: $Color-Grey-Darker;
+            }
+        }
+
+        &:not(:last-child) {
+            padding-bottom: 10px;
+
+            ::after {
+                position: absolute;
+                content: "";
+                border-left: solid 1px $Color-Grey-Light;
+                height: 8px;
+                bottom: -10px;
+                left: 50%;
+            }
+        }
+
+        &:not(:first-child) {
+            &:not(.OneChild) {
+                padding-top: 10px;
+            }
+
+            &.OneChild {
+                padding-top: 2px;
+            }
+
+            &.ManyChildren {
+                :first-child::before {
+                    position: absolute;
+                    content: "";
+                    border-top: solid 1px $Color-Grey-Light;
+                    height: 1px;
+                    top: -10px;
+                    left: 50%;
+                    width: 50%;
+                }
+
+                :not(:first-child):not(:last-child)::before {
+                    position: absolute;
+                    content: "";
+                    border-top: solid 1px $Color-Grey-Light;
+                    height: 1px;
+                    top: -10px;
+                    left: -20px;
+                    width: 100%;
+                    padding: 0 20px;
+                }
+
+                :last-child::before {
+                    position: absolute;
+                    content: "";
+                    border-top: solid 1px $Color-Grey-Light;
+                    height: 1px;
+                    top: -10px;
+                    right: 50%;
+                    width: 50%;
+                }
+            }
+
+            ::after {
+                position: absolute;
+                content: "";
+                height: 9px;
+                border-left: solid 1px $Color-Grey-Light;
+                top: -10px;
+                left: 50%;
+            }
+        }
+    }
+
+    &.Fixed {
+        position: absolute;
+        visibility: visible;
+
+        &.Visible {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            z-index: $Depth-Header;
+            position: fixed;
+            width: 100%;
+            top: 30px;
+            background-color: white;
+            border-bottom: solid 1px $Color-Grey-Regular;
+        }
+    }
+}

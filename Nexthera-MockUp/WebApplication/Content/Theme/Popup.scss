@@ -1,0 +1,117 @@
+﻿@import "_Library.scss";
+
+body.Popup {
+    overflow: hidden;
+}
+
+div.Popup {
+    display: none;
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $Depth-Popup;
+    background-color: rgba(102, 102, 102, .7);
+    padding: 20px;
+
+    div.Container {
+        padding: 20px;
+        background-color: white;
+        position: relative;
+
+        p {
+            line-height: 1.6;
+        }
+
+        h2 {
+            margin: -20px -20px 20px;
+            background: $Color-Yellow-Regular;
+            padding: 20px;
+            color: white;
+            text-transform: uppercase;
+            font-weight: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        div.Buttons {
+            margin-top: $Metric-Control-Space;
+
+            a {
+                min-width: 100px;
+                float: right;
+                margin-left: $Metric-Control-Space;
+                margin-top: $Metric-Control-Space;
+            }
+
+            textarea {
+                min-height: 60px;
+                resize: vertical;
+            }
+
+            &::after {
+                content: "";
+                visibility: hidden;
+                display: block;
+                height: 0;
+                clear: both;
+            }
+        }
+
+        a.CloseButton {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+
+            i {
+                font-size: 30px;
+            }
+
+            &:hover {
+                color: $Color-Grey-Dark;
+            }
+        }
+
+        form {
+            border: none;
+            padding-bottom: 0;
+            margin: -20px;
+            background: none;
+        }
+    }
+
+    @media #{$Media-Extended} {
+        div.Container {
+            box-shadow: $Box-Shadow;
+            max-width: calc(100vw - #{2 * $Metric-Separator-Extended});
+            margin: 0 auto;
+            border-radius: 15px;
+
+            h2 {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    }
+
+    @media #{$Media-Mobile} {
+        div.Container {
+            width: 100% !important;
+            min-height: 1vh;
+
+            h2 {
+                background: $Color-Yellow-Regular;
+                padding: 20px;
+                color: white;
+                text-transform: uppercase;
+                font-weight: normal;
+            }
+        }
+    }
+}

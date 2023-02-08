@@ -1,0 +1,41 @@
+@model string
+
+<div id="LoaderPage">
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "Loader",
+            helpPage: "",
+            initializers: [],
+            breadcrumbs: []
+        });
+
+        var
+            url,
+            appMode = "@(ViewBag.AppMode)" == "True",
+            instanceManager = "@(Model.StartsWith("Instances/Detail") || Model.StartsWith("Instances/Create") || Model.StartsWith("Instances/List"))" == "True",
+            search = window.location.search,
+            iPad =
+                (navigator.userAgent.match(/(iPad)/) /* iOS pre 13 */ ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) /* iPad OS 13 */);
+
+        if (!appMode && iPad && instanceManager) {
+            url = "checklyst://" + window.location.host + "/" + window.location.pathname + search;
+            window.location = url;
+        } else {
+            var appUser = "@Html.Raw(ViewBag.AppMode ? "AppUser=" + ViewBag.AppUser : string.Empty)";
+            if (appUser != "") search = search == "" ? "?" + appUser : search + "&" + appUser;
+            url = "@Model" + search;
+            matematici.navigator.open(url);
+        }
+
+        callback.call();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.loader.checkInitialCurtain();
+        callback.call();
+    }
+</script>

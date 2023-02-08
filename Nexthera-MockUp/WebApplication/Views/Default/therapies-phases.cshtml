@@ -1,0 +1,117 @@
+@{
+    var Title = "Therapy phases";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapies")
+    @Html.Partial("components/table", "therapyPhases")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "order", icon: "key", value: "1", editable: false }
+                    ]
+                },
+                {
+                    fields: [
+                        { label: "manufacturing phase", values: ["collection", "sequencing", "cell pre-processing", "plasmid manufacturing", "genetic vector manufacturing", "cell manufacturing", "treatment", "follow up"], editable: false },
+                        { label: "center", values: ["Hospital 1", "Pharma Center 1", "Pharma Center 2", "Uncommon Center", "Nearby Center"], editable: false },
+                        { label: "duration", value: "0", um: "days", editable: false },
+                        { label: "payment threeshold", value: "150.000,00", um: "&euro;", editable: false },
+                        { label: "note", value: "", class: "Clearing", area: true, cssClass: "Width400", editable: false }
+                    ]
+                },
+                {
+                    fields: [
+                        { label: "started", value: true, editable: false, cssClass: "Clearing" },
+                        { label: "started by", value: "John Smith", editable: false },
+                        { label: "started on", value: "2023-01-01 17:10:08", editable: false },
+                        { label: "expires on", value: "2023-01-03 17:10:08", editable: false },
+                        { label: "completed", value: true, editable: false, editable: false, cssClass: "Clearing" },
+                        { label: "completed by", value: "John Smith", editable: false },
+                        { label: "completed on", value: "2023-01-02 14:00:08", editable: false },
+                        { label: "aborted", value: false, editable: false, cssClass: "Clearing" },
+                        { label: "completed by", editable: false },
+                        { label: "aborted on", editable: false },
+                        { label: "abortion reason", editable: false }
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapies: matematici.data.therapies(true),
+                therapyPhases: {
+                    label: "phases",
+                    columns: [
+                        { label: "", cssClass: "Down" },
+                        { label: "manufacturing phase" },
+                        { label: "center" },
+                        { label: "duration", um: "days" },
+                        { label: "started on" },
+                        { label: "completed on" },
+                        { label: "aborted on" },
+                        { label: "payment threeshold", um: "&euro;", cellCssClass: "Right" },
+                        { label: "note", cssClass: "Tight", centered: true }
+                    ],
+                    rows: [
+                        ["1", "collection", "Hospital 1", "0", "2023-02-01 10:50:18", "2023-02-01 10:50:18", "", "150.000,00", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["2", "cell pre-processing", "Close pharma center", "1", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["3", "plasmid manufacturing", "Pharma center 2", "0", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["4", "genetic vector manufacturing", "Pharma center 1", "0", "", "", "", "150.000,00", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["5", "cell manufacturing", "Pharma center 1", "2", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["6", "treatment", "Hospital 1", "1", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["7", "follow up", "Hospital 1", "2", "", "", "", "250.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["8", "follow up", "Hospital 1", "1", "", "", "", "300.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["9", "follow up", "Hospital 1", "1", "", "", "", "350.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapies", url: "/therapies", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapies-phases", selected: true },
+                        { label: "payment plan", url: "/therapies-payment-plan" },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "shippings", url: "/therapies-shippings" },
+                        { label: "history", url: "/therapies-history" },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

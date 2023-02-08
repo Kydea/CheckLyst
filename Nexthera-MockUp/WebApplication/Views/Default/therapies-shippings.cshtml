@@ -1,0 +1,97 @@
+@{
+    var Title = "Therapy shippings";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapies")
+    @Html.Partial("components/table", "therapyShippings")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "source", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"] },
+                        { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
+                        { label: "carrier", values: ["SDA", "FedEx"], selectedIndex: 0, cssClass: "Clearing Width200" },
+                        { label: "shipped on", value: "2023-01-01", cssClass: "Clearing", editable: false },
+                        { label: "shipping signature", value: "Karl Von Fersen", editable: false },
+                        { label: "mark as shipped", icon: "arrow-right", handler: function () { console.log("to do") } },
+                        { label: "arrived on", value: "", cssClass: "Clearing", editable: false },
+                        { label: "arrival signature", value: "", editable: false },
+                        { label: "mark as arrived", icon: "arrow-right", handler: function () { console.log("to do") } },
+                        { label: "deliverable", value: "blood", cssClass: "Clearing", editable: false },
+                        { label: "deliverable code", value: "", editable: false },
+                        { label: "unit of measure", value: "cc", editable: false },
+                        { label: "quantity", value: "150", editable: false }
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapies: matematici.data.therapies(true),
+                therapyShippings: {
+                    label: "shippings",
+                    columns: [
+                        { label: "path", cssClass: "Down", centered: true },
+                        { label: "carriers" },
+                        { label: "deliverable" },
+                        { label: "shipped on" },
+                        { label: "arrived on" }
+                    ],
+                    rows: [
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)", "2023-01-01"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "genetic vectors - gv321 (2 cc)"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapies", url: "/therapies", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapies-phases" },
+                        { label: "payment plan", url: "/therapies-payment-plan" },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "shippings", url: "/therapies-shippings", selected: true },
+                        { label: "history", url: "/therapies-history" },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>

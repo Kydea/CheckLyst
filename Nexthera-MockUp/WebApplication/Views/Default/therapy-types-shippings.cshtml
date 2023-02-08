@@ -1,0 +1,88 @@
+@{
+    var Title = "Therapy type shippings";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapyTypes")
+    @Html.Partial("components/table", "therapyTypeShippings")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "source", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"] },
+                        { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
+                        { label: "deliverable", values: ["blood", "tissue"], cssClass: "Clearing" },
+                        { label: "deliverable code", value: "" },
+                        { label: "deliverable code editable", value: false },
+                        { label: "unit of measure", value: "cc"},
+                        { label: "quantity", value: "150"},
+                        { label: "carriers", values: ["SDA", "FedEx"], selectedIndexes: [0, 1], cssClass: "Clearing Width200" }
+
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapyTypes: matematici.data.therapyTypes(true),
+                therapyTypeShippings: {
+                    label: "shippings",
+                    columns: [
+                        { label: "path", cssClass: "Down", centered: true },
+                        { label: "carriers" },
+                        { label: "deliverable" },
+                    ],
+                    rows: [
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "genetic vectors - gv321 (2 cc)"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapy types", url: "/therapy-types", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapy-types-phases" },
+                        { label: "payment plan", url: "/therapy-types-payment-plan" },
+                        { label: "shippings", url: "/therapy-types-shippings", selected: true },
+                        { label: "process", url: "/therapy-types-process" }
+                    ]
+                }
+            ]
+        });
+
+        callback.call();
+    };
+</script>
