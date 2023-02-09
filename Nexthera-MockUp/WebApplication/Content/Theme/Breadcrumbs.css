@@ -40,7 +40,7 @@ div#Breadcrumbs div a.Strong, div#Breadcrumbs div span.Strong {
 div#Breadcrumbs div:not(:last-child) {
   padding-bottom: 10px;
 }
-div#Breadcrumbs div:not(:last-child) ::after {
+div#Breadcrumbs div:not(:last-child) .Strong::after {
   position: absolute;
   content: "";
   border-left: solid 1px #ccc;

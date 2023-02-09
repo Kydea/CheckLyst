@@ -44,7 +44,7 @@ div#Breadcrumbs {
         &:not(:last-child) {
             padding-bottom: 10px;
 
-            ::after {
+            .Strong::after {
                 position: absolute;
                 content: "";
                 border-left: solid 1px $Color-Grey-Light;
