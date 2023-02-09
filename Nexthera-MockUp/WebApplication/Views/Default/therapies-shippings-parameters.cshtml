@@ -1,0 +1,118 @@
+@{
+    var Title = "Therapy shippings";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapies")
+    @Html.Partial("components/table", "therapyShippings")
+    @Html.Partial("components/table", "therapyShippingParameters")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "parameter", values: ["temperature", "pressure", "shock"] },
+                        { label: "unit of measure", value: "kelvin", editable: false },
+                        { label: "lower bound", value: "253", cssClass: "Clearing Width200", editable: false },
+                        { label: "upper bound", value: "283", editable: false },
+                        { label: "lower value", value: "273" },
+                        { label: "upper bound", value: "278" },
+                        { label: "signed by", value: "", cssClass: "Clearing", editable: false },
+                        { label: "signed on", value: "", editable: false },
+                        { label: "sign", icon: "arrow-right", handler: function () { console.log("to do") } }
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapies: matematici.data.therapies(true),
+                therapyShippings: {
+                    compact: true,
+                    label: "shippings",
+                    columns: [
+                        { label: "path", cssClass: "Down", centered: true },
+                        { label: "carriers" },
+                        { label: "deliverable" },
+                        { label: "shipped on" },
+                        { label: "arrived on" }
+                    ],
+                    rows: [
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "SDA", "blood (150 cc)", "2023-01-01"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "genetic vectors - gv321 (2 cc)"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                    ]
+                },
+                therapyShippingParameters: {
+                    label: "paramters",
+                    columns: [
+                        { label: "parameter", cssClass: "Down" },
+                        { label: "unit of measure" },
+                        { label: "lower bound" },
+                        { label: "upper bound" },
+                        { label: "lower value" },
+                        { label: "upper value" },
+                        { label: "signed by" },
+                        { label: "signed on" }
+                    ],
+                    rows: [
+                        ["temperature", "Kelvin", "253", "283", "273", "278", "", ""],
+                        ["pressure", "pascal", "101200", "101400", "101325", "101327", "John Snow", "2023-02-01 12:20:01"],
+                        ["shock", "Ns", "-2.2e5", "+2.2e5", "-1.2e5", "+1.8e5", "John Snow", "2023-02-01 12:20:01"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [
+                {
+                    items: [
+                        { label: "therapies", url: "/therapies", selected: true }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "phases", url: "/therapies-phases" },
+                        { label: "payment plan", url: "/therapies-payment-plan" },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "shippings", url: "/therapies-shippings", selected: true },
+                        { label: "history", url: "/therapies-history" },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                },
+                {
+                    items: [
+                        { label: "parameters", url: "/therapies-shippings-parameters", selected: true }
+                    ]
+                },
+            ]
+        });
+
+        callback.call();
+    };
+</script>
