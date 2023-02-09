@@ -26,8 +26,9 @@
                 {
                     label: "COI",
                     nodes: [
-                        { id: 1, label: "collection", center: "blood - A0001-23-00123", date: "2023-02-01 10:50:18", shape: "ArrowDown" },
-                        { id: 2, label: "cell manufacturing", center: "plasmids - pl123<br />genetic vectors - gv321", shape: "ArrowDown", future: true },
+                        { id: 1, position: 1, label: "collection", center: "blood - A0001-23-00123", date: "2023-02-01 10:50:18", shape: "ArrowDown" },
+                        { id: 2, position: 3, label: "cell pre-processing", center: "dimethyl sulfoxide - dimsul62", date: "2023-02-01 12:50:18", shape: "ArrowDown" },
+                        { id: 3, position: 5, label: "cell manufacturing", center: "plasmids - pl123<br />genetic vectors - gv321", shape: "ArrowDown", future: true },
                     ]
                 },
                 {
@@ -38,9 +39,13 @@
                 {
                     label: "COC",
                     nodes: [
-                        { id: 3, label: "collection", center: "Hospital 1<br/>FIN: A0001", date: "2023-02-01 10:50:18", shape: "ArrowUp" },
-                        { id: 4, label: "cell manufacturing", center: "Pharma center 1<br/>FIN: C0XYZ", shape: "ArrowUp", future: true },
-                        { id: 3, label: "collection", center: "Hospital <br/>FIN: A0001", shape: "ArrowUp", future: true }
+                        { id: 4, position: 1, label: "collection", center: "Hospital 1<br/>FIN: A0001", date: "2023-02-01 10:50:18", shape: "ArrowUp" },
+                        { id: 5, position: 2, label: "tansport", center: "FedEx<br/>FIN: C0XYZ-FED1", date: "2023-02-01 10:50:18", shape: "ArrowUp" },
+                        { id: 6, position: 3, label: "cell pre-processing", center: "Nearby Center<br/>FIN: C0XYZ", date: "2023-02-01 12:50:18", shape: "ArrowUp" },
+                        { id: 7, position: 4, label: "tansport", center: "SDA<br/>FIN: C0XYZ-SDA1", date: "2023-02-01 15:50:18", shape: "ArrowUp" },
+                        { id: 8, position: 5, label: "cell manufacturing", center: "Pharma center 1<br/>FIN: C0XYZ", shape: "ArrowUp", future: true },
+                        { id: 9, position: 6, label: "tansport", center: "SDA<br/>FIN: C0XYZ-SDA1", shape: "ArrowUp", future: true },
+                        { id: 10, position: 7, label: "treatment", center: "Hospital <br/>FIN: A0001", shape: "ArrowUp", future: true }
                     ]
                 }
             ],

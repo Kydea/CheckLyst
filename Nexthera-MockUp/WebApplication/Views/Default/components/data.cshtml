@@ -1,0 +1,90 @@
+<script type="text/javascript">
+    matematici.data = {
+        therapies: function (compact) {
+            return {
+                filters: !compact,
+                extended: !compact,
+                compact: compact,
+                label: "therapies",
+                columns: [
+                    { label: "id", cssClass: "Down", width: 170 },
+                    { label: "therapy type", width: 300 },
+                    { label: "donor", width: 170 },
+                    { label: "patient", width: 170 },
+                    { label: "manufacturing type", width: 170 },
+                    { label: "donation type" },
+                    { label: "state", width: 120 },
+                    { label: "current phase", width: 160 },
+                    { label: "price" },
+                    { label: "amount paid" },
+                    { label: "started by", width: 200 },
+                    { label: "started on", width: 200 },
+                    { label: "aborted by", width: 200 },
+                    { label: "aborted on", width: 200 },
+                ],
+                rows: [
+                    ["CHA0001-23-00123", "cart.1 - Car-T", "A0001-23-00AA01", "A0001-23-00AA01", "made-to-order", "autologous", "in progress", "cell manufacturing", "350.000,00", "", "", false, "2023-01-01 15:10:08", "John Smith", "Ann Clark", "2023-02-01 10:50:18", "John Smith", "2023-01-01 15:10:08"],
+                    ["CHA0001-23-00124", "carnk-1 - Car-NK", "A0001-23-00AA01", "A0001-23-000N04", "made-to-stock", "allogeneic", "completetd", "", "250.000,00", "", "", true, "2023-02-01 10:50:18", "Ann Clark", "Giovanni Bianchi", "2023-02-01 10:50:18"],
+                    ["CHA0001-23-00125", "cart.1 - Car-T", "A0001-23-00CK36", "A0001-23-00CK36", "made-to-order", "autologous", "proposed", "", "350.000,00", "", "", false, "2023-01-01 15:10:08", "John Smith", "Ann Clark", "2023-02-01 10:50:18", "John Smith", "2023-01-01 15:10:08"],
+                    ["CHA0001-23-00126", "aav-8a1.1 - adeno-associated virus 8a1", "A0001-23-00JJ86", "", "made-to-stock", "n/a", "proposed", "", "50.000,00", "", "", true, "2022-12-01 15:10:18", "Mario Rossi", "Juan Lopez", "2023-02-01 10:50:18"],
+                    ["CHA0001-23-00127", "pcv.1 - personalized cancer vaccin", "A0001-23-00CX43", "A0001-23-00CX43", "made-to-order", "autologous", "proposed", "", "315.000,00", "", "", false, "2023-02-10 14:41:50", "Giovanni Bianchi", "Juan Lopez", "2023-02-01 10:50:18"],
+                    ["CHA0001-23-00128", "mrna-7z4.1 - mRNA therapy 7z4", "A0001-23-00CX63", "", "assembled-to-order", "n/a", "in progress", "cell manufacturing", "155.000,00", "", "", true, "2022-12-15 11:40:08", "Juan Lopez", "Giovanni Bianchi", "2023-02-01 10:50:18"]
+                ]
+            };
+        },
+
+        therapyTypes: function (compact) {
+            return {
+                filters: !compact,
+                extended: !compact,
+                compact: compact,
+                label: "therapy types",
+                columns: [
+                    { label: "id", cssClass: "Down" },
+                    { label: "description" },
+                    { label: "manutacturing type" },
+                    { label: "donation type" },
+                    { label: "price", um: "&euro;" },
+                    { label: "validity start" },
+                    { label: "validity end" },
+                    { label: "active", cssClass: "Tight", centered: true }
+                ],
+                rows: [
+                    ["carnk.1", "Car-NK", "made-to-stock", "allogeneic", "250.000,00", "", "", true, "2023-02-01 10:50:18", "Ann Clark"],
+                    ["cart.1", "Car-T", "made-to-order", "autologous", "350.000,00", "", "", false, "2023-01-01 15:10:08", "John Smith"],
+                    ["aav-8a1.1", "adeno-associated virus 8a1", "made-to-stock", "n/a", "50.000,00", "", "", true, "2022-12-01 15:10:18", "Mario Rossi"],
+                    ["mrna-7z4.1", "mRNA therapy 7z4", "assembled-to-order", "n/a", "155.000,00", "", "", true, "2022-12-15 11:40:08", "Juan Lopez"],
+                    ["pcv.1", "personalized cancer vaccin", "made-to-order", "autologous", "315.000,00", "", "", false, "2023-02-10 14:41:50", "Giovanni Bianchi"],
+                ],
+                selectedIndex: 1
+            }
+        },
+
+        personRecords: function (compact) {
+            return {
+                filters: !compact,
+                extended: !compact,
+                compact: compact,
+                label: "persons",
+                columns: [
+                    { label: "id", cssClass: "Down" },
+                    { label: "name" },
+                    { label: "surname" },
+                    { label: "date of birth" },
+                    { label: "date of death" },
+                    { label: "sex" },
+                    { label: "blood group" },
+                    { label: "validity end" }
+                ],
+                rows: [
+                    ["carnk.1", "Car-NK", "made-to-stock", "allogeneic", "250.000,00", "", "", true, "2023-02-01 10:50:18", "Ann Clark"],
+                    ["cart.1", "Car-T", "made-to-order", "autologous", "350.000,00", "", "", false, "2023-01-01 15:10:08", "John Smith"],
+                    ["aav-8a1.1", "adeno-associated virus 8a1", "made-to-stock", "n/a", "50.000,00", "", "", true, "2022-12-01 15:10:18", "Mario Rossi"],
+                    ["mrna-7z4.1", "mRNA therapy 7z4", "assembled-to-order", "n/a", "155.000,00", "", "", true, "2022-12-15 11:40:08", "Juan Lopez"],
+                    ["pcv.1", "personalized cancer vaccin", "made-to-order", "autologous", "315.000,00", "", "", false, "2023-02-10 14:41:50", "Giovanni Bianchi"],
+                ],
+                selectedIndex: 1
+            }
+        }
+    };
+</script>

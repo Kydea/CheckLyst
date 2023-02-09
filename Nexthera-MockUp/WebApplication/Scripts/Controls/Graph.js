@@ -6,9 +6,12 @@
         paths = [],
 
         addNode = function (pipe, nodeData) {
-            var node = $("<div />").addClass("Node" + (nodeData.shape ? " " + nodeData.shape : "") + (nodeData.future ? " Future" : ""));
+            var
+                node = $("<div />").addClass("Node Container" + (nodeData.shape ? " " + nodeData.shape : "") + (nodeData.future ? " Future" : ""));
             node.append($("<span />").addClass("Label").html(nodeData.label));
             node.append($("<span />").addClass("Center").html(nodeData.center));
+            if (nodeData.position) 
+                node.css("left", 230 * (nodeData.position - 1) + "px");
             if (nodeData.date)
                 node.append($("<span />").addClass("Date").text(nodeData.date));
             else if (nodeData.madeToStock)

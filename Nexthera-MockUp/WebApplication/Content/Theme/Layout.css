@@ -19,6 +19,16 @@ html, body {
   }
 }
 
+i.Point {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: solid 2px red;
+  margin-left: -5px;
+  margin-top: -5px;
+}
+
 ul.Plain {
   margin: 0;
   padding: 0;

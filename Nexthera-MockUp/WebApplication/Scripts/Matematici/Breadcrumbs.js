@@ -24,17 +24,18 @@
 				line = lines[lineIndex],
 				count = line.items && line.items.length || 0,
 				container = $("<div />").appendTo(element).addClass(count == 0 ? "" : count == 1 ? "OneChild" : count == 2 ? "TwoChildren" : "ManyChildren");
+			//$("<i />").addClass("Point").appendTo(container).css({ left: position, top: 0 }).text("note");
 
 			for (itemIndex in line.items) {
 				var
 					item = line.items[itemIndex],
 					label = (item.url ? $("<a />").attr("href", item.url) : $("<span />")).html(item.label);
 				container.append(label);
-				if (count == 1 && position != null)
-					label.css("left", position - label.outerWidth() / 2 + "px");
-				if (item.selected) {
-					label.addClass("Strong");
-					position = label.offset().left - 100 + label.outerWidth() / 2;
+				if (count == 1 && position != null) {
+					label.css("left", position - 15 - label.outerWidth() / 2  + "px");
+				} if (item.selected) {
+					label.addClass("Strong " + label.outerWidth());
+					position = label.offset().left - 70 + label.outerWidth() / 2;
 				}
 			}
 		}

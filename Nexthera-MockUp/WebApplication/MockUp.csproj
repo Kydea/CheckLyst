@@ -613,6 +613,8 @@
     <Content Include="Views\Default\therapies-coi-coc.cshtml" />
     <Content Include="Views\Default\therapy-types-process.cshtml" />
     <Content Include="Views\Default\therapies-process.cshtml" />
+    <Content Include="Views\Default\person-records.cshtml" />
+    <Content Include="Views\Default\components\data.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
