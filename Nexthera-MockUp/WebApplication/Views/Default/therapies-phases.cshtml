@@ -25,6 +25,7 @@
                     fields: [
                         { label: "manufacturing phase", values: ["collection", "sequencing", "cell pre-processing", "plasmid manufacturing", "genetic vector manufacturing", "cell manufacturing", "treatment", "follow up"], editable: false },
                         { label: "center", values: ["Hospital 1", "Pharma Center 1", "Pharma Center 2", "Uncommon Center", "Nearby Center"], editable: false },
+                        { label: "made to stock", value: false, editable: false },
                         { label: "duration", value: "0", um: "days", editable: false },
                         { label: "payment threeshold", value: "150.000,00", um: "&euro;", editable: false },
                         { label: "note", value: "", class: "Clearing", area: true, cssClass: "Width400", editable: false }
@@ -63,6 +64,7 @@
                         { label: "", cssClass: "Down" },
                         { label: "manufacturing phase" },
                         { label: "center" },
+                        { label: "made to stock" },
                         { label: "duration", um: "days" },
                         { label: "started on" },
                         { label: "completed on" },
@@ -71,15 +73,15 @@
                         { label: "note", cssClass: "Tight", centered: true }
                     ],
                     rows: [
-                        ["1", "collection", "Hospital 1", "0", "2023-02-01 10:50:18", "2023-02-01 10:50:18", "", "150.000,00", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["2", "cell pre-processing", "Close pharma center", "1", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["3", "plasmid manufacturing", "Pharma center 2", "0", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["4", "genetic vector manufacturing", "Pharma center 1", "0", "", "", "", "150.000,00", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["5", "cell manufacturing", "Pharma center 1", "2", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["6", "treatment", "Hospital 1", "1", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["7", "follow up", "Hospital 1", "2", "", "", "", "250.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["8", "follow up", "Hospital 1", "1", "", "", "", "300.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
-                        ["9", "follow up", "Hospital 1", "1", "", "", "", "350.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"]
+                        ["1", "collection", "Hospital 1", false, "0", "2023-02-01 10:50:18", "2023-02-01 11:05:18", "", "150.000,00", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["2", "cell pre-processing", "Close pharma center", false, "1", "2023-02-02 18:50:18", "2023-02-01 07:51:38", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["3", "plasmid manufacturing", "Pharma center 2", true, "-", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["4", "genetic vector manufacturing", "Pharma center 1", true, "-", "", "", "", "", "<i class=\"fa fa-notes-medical\"></i>", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["5", "cell manufacturing", "Pharma center 1", false, "2", "2023-03-01 11:35:24", "", "", "150.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["6", "treatment", "Hospital 1", false, "1", "", "", "", "-", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["7", "follow up", "Hospital 1", false, "2", "", "", "", "250.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["8", "follow up", "Hospital 1", false, "1", "", "", "", "300.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"],
+                        ["9", "follow up", "Hospital 1", false, "1", "", "", "", "350.000,00", "", "Juan Lopez", "2023-02-01 10:50:18"]
                     ]
                 }
             }

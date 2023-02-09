@@ -9,11 +9,19 @@ div.Graph {
         &.Horizontal {
             border-top: solid 1px black;
             height: 1px;
+
+            &.Dashed {
+                border-top-style: dashed;
+            }
         }
 
         &.Vertical {
             border-right: solid 1px black;
             width: 1px;
+
+            &.Dashed {
+                border-right-style: dashed;
+            }
         }
     }
 
@@ -53,21 +61,18 @@ div.Graph {
         }
     }
 
-    > div.Column {
-        float: left;
-
+    > div.Pipe {
         > div.Node {
             border: solid 1px $Color-Green-Regular;
             background: white;
             padding: 10px;
-            margin: 0 auto;
             max-width: 200px;
 
-            span {
+            > span {
                 display: block;
                 text-align: center;
 
-                + span {
+                + span:not(.NoMargin) {
                     margin-top: 10px;
                 }
 
@@ -78,42 +83,177 @@ div.Graph {
                     border-bottom: solid 1px $Color-Grey-Regular;
                 }
 
-                &.Center {
+                &.Date {
+                    font-weight: bold;
+                }
+
+                &.Grey {
+                    color: $Color-Grey-Regular;
+                }
+
+                &.Yellow {
+                    color: $Color-Yellow-Dark !important;
                 }
             }
+        }
 
-            &.FirstColumn {
-                left: 0;
-            }
+        > div.Shape {
+            &.TimeLine {
+                height: 60px;
+                line-height: 60px;
+                color: white;
+                font-size: 30px;
+                font-weight: bold;
+                position: relative;
+                background-color: $Color-Green-Regular;
+                width: calc(100% - 30px);
+                padding-left: 20px;
 
-            &.LastColumn {
-                right: 0;
-            }
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: -30px;
+                    top: 0;
+                    border-left: solid 30px transparent;
+                    border-top: solid 30px $Color-Green-Regular;
+                    border-bottom: solid 30px $Color-Green-Regular;
+                }
 
-            &.CentralColumn {
-                margin: 0 auto;
-            }
-
-            + .Node {
-                margin-top: 30px;
+                &::after {
+                    content: "";
+                    position: absolute;
+                    right: -30px;
+                    top: 0;
+                    border-left: solid 30px $Color-Green-Regular;
+                    border-top: solid 30px transparent;
+                    border-bottom: solid 30px transparent;
+                }
             }
         }
     }
 
-    &.Columns3 {
-        > div.Column {
-            width: 33.33%;
+    &.Vertical {
+        > div.Pipe {
+            float: left;
 
-            &:first-child {
-                padding-right: 30px;
+            > div.Node {
+                margin: 0 auto;
+
+                + .Node {
+                    margin-top: 30px;
+                }
+            }
+        }
+
+        &.Pipes3 {
+            > div.Pipe {
+                width: 33.33%;
+
+                &:first-child {
+                    padding-right: 30px;
+                }
+
+                &:nth-child(2) {
+                    padding: 0 15px;
+                }
+
+                &:last-child {
+                    padding-left: 30px;
+                }
+            }
+        }
+    }
+
+    &.Horizontal {
+        > div.Pipe {
+            position: relative;
+            margin-left: 30px;
+
+            > div.Label {
+                color: black;
+                font-weight: bold;
+                transform-origin: 0% 0%;
+                transform: rotate(-90deg);
+                position: absolute;
+                top: 100%;
+                text-align: center;
+                font-size: 20px;
+                left: -30px;
             }
 
-            &:nth-child(2) {
-                padding: 0 15px;
+            > div.Node {
+                float: left;
+                position: relative;
+
+                + .Node {
+                    margin-left: 30px;
+                }
+
+                &.ArrowDown {
+                    padding-bottom: 40px;
+                    width: 200px;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        bottom: -31px;
+                        left: 0;
+                        border-left: solid 100px transparent;
+                        border-right: solid 100px transparent;
+                        border-top: solid 30px $Color-Green-Dark;
+                    }
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        bottom: -30px;
+                        left: 0;
+                        border-left: solid 100px transparent;
+                        border-right: solid 100px transparent;
+                        border-top: solid 30px white;
+                    }
+                }
+
+                &.ArrowUp {
+                    padding-top: 40px;
+                    width: 200px;
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        top: -31px;
+                        left: 0;
+                        border-left: solid 100px transparent;
+                        border-right: solid 100px transparent;
+                        border-bottom: solid 30px $Color-Green-Dark;
+                    }
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        top: -30px;
+                        left: 0;
+                        border-left: solid 100px transparent;
+                        border-right: solid 100px transparent;
+                        border-bottom: solid 30px white;
+                    }
+                }
+
+                &.Future {
+                    background-color: $Color-Silver-Dark;
+
+                    &.ArrowDown::after {
+                        border-top: solid 30px $Color-Silver-Dark;
+                    }
+
+                    &.ArrowUp::after {
+                        border-bottom: solid 30px $Color-Silver-Dark;
+                    }
+                }
             }
 
-            &:last-child {
-                padding-left: 30px;
+            + .Pipe {
+                margin-top: 40px;
             }
         }
     }

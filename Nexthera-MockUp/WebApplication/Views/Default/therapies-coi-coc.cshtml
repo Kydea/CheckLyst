@@ -5,6 +5,8 @@
 
 <h1>@Title</h1>
 
+<div class="Graph"></div>
+
 @Html.Partial("components/toolbar")
 
 <div class="Tables">
@@ -17,6 +19,33 @@
             tables: {
                 therapies: matematici.data.therapies(true)
             }
+        },
+        graphData = {
+            orientation: "Horizontal",
+            pipes: [
+                {
+                    label: "COI",
+                    nodes: [
+                        { id: 1, label: "collection", center: "blood - A0001-23-00123", date: "2023-02-01 10:50:18", shape: "ArrowDown" },
+                        { id: 2, label: "cell manufacturing", center: "plasmids - pl123<br />genetic vectors - gv321", shape: "ArrowDown", future: true },
+                    ]
+                },
+                {
+                    shapes: [
+                        { id: 0, class: "TimeLine", label: "BLOCKCHAIN - COI/COC Identifier: CHA0001-23-00123" }
+                    ]
+                },
+                {
+                    label: "COC",
+                    nodes: [
+                        { id: 3, label: "collection", center: "Hospital 1<br/>FIN: A0001", date: "2023-02-01 10:50:18", shape: "ArrowUp" },
+                        { id: 4, label: "cell manufacturing", center: "Pharma center 1<br/>FIN: C0XYZ", shape: "ArrowUp", future: true },
+                        { id: 3, label: "collection", center: "Hospital <br/>FIN: A0001", shape: "ArrowUp", future: true }
+                    ]
+                }
+            ],
+            paths: [
+            ]
         };
 
     matematici.events.onPageLoad = function (callback) {
@@ -24,7 +53,8 @@
             name: "@Title",
             helpPage: "@Title",
             initializers: [
-                new matematici.Nexthera(data)
+                new matematici.Nexthera(data),
+                new matematici.Graph(".Graph", graphData)
             ],
             breadcrumbs: [
                 {

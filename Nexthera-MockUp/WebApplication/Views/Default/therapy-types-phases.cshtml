@@ -24,6 +24,7 @@
                 {
                     fields: [
                         { label: "manufacturing phase", values: ["collection", "sequencing", "cell pre-processing", "plasmid manufacturing", "genetic vector manufacturing", "cell manufacturing", "treatment", "follow up"] },
+                        { label: "made to stock", value: false },
                         { label: "starting", value: "0", um: "days" },
                         { label: "duration", value: "0", um: "days" },
                         { label: "payment threeshold", value: "150.000,00", um: "&euro;" },
@@ -48,6 +49,7 @@
                     columns: [
                         { label: "", cssClass: "Down" },
                         { label: "manufacturing phase" },
+                        { label: "made to stock", cssClass: "Tight" },
                         { label: "starting", um: "days" },
                         { label: "duration", um: "days" },
                         { label: "note", cssClass: "Tight" },
@@ -55,15 +57,15 @@
                         { label: "centers" }
                     ],
                     rows: [
-                        ["1", "collection", "0", "0", "", "150.000,00", "Hospital 1"],
-                        ["2", "cell pre-processing", "1", "1", "", "-", "Nearby Center"],
-                        ["3", "plasmid manufacturing", "0", "0", "", "-", "<span class=\"counter\">2</span> Pharma center 1, Pharma center 2"],
-                        ["4", "genetic vector manufacturing", "0", "0", "", "150.000,00", "<span class=\"counter\">3</span> Pharma center 1, Pharma center 2, Uncommon center"],
-                        ["5", "cell manufacturing", "4", "2", "", "-", "Pharma center 1"],
-                        ["6", "treatment", "8", "1", "", "-", "Hospital 1"],
-                        ["7", "follow up", "30", "2", "", "250.000,00", "Hospital 1"],
-                        ["8", "follow up", "150", "1", "", "300.000,00", "Hospital 1"],
-                        ["9", "follow up", "300", "1", "", "350.000,00", "Hospital 1"]
+                        ["1", "collection", false, "0", "0", "", "150.000,00", "Hospital 1"],
+                        ["2", "cell pre-processing", false, "1", "1", "", "-", "Nearby Center"],
+                        ["3", "plasmid manufacturing", true, "-", "-", "", "-", "<span class=\"counter\">2</span> Pharma center 1, Pharma center 2"],
+                        ["4", "genetic vector manufacturing", true, "-", "-", "", "", "<span class=\"counter\">3</span> Pharma center 1, Pharma center 2, Uncommon center"],
+                        ["5", "cell manufacturing", false, "4", "2", "", "150.000,00", "Pharma center 1"],
+                        ["6", "treatment", false, "8", "1", "", "-", "Hospital 1"],
+                        ["7", "follow up", false, "30", "2", "", "250.000,00", "Hospital 1"],
+                        ["8", "follow up", false, "150", "1", "", "300.000,00", "Hospital 1"],
+                        ["9", "follow up", false, "300", "1", "", "350.000,00", "Hospital 1"]
                     ]
                 }
             }

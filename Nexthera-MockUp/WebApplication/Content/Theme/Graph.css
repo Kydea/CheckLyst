@@ -8,9 +8,15 @@ div.Graph > div.Path.Horizontal {
   border-top: solid 1px black;
   height: 1px;
 }
+div.Graph > div.Path.Horizontal.Dashed {
+  border-top-style: dashed;
+}
 div.Graph > div.Path.Vertical {
   border-right: solid 1px black;
   width: 1px;
+}
+div.Graph > div.Path.Vertical.Dashed {
+  border-right-style: dashed;
 }
 div.Graph > div.Arrow {
   position: absolute;
@@ -43,50 +49,159 @@ div.Graph > div.Arrow.ToL {
   border-top: solid 5px transparent;
   border-bottom: solid 5px transparent;
 }
-div.Graph > div.Column {
-  float: left;
-}
-div.Graph > div.Column > div.Node {
+div.Graph > div.Pipe > div.Node {
   border: solid 1px #009688;
   background: white;
   padding: 10px;
-  margin: 0 auto;
   max-width: 200px;
 }
-div.Graph > div.Column > div.Node span {
+div.Graph > div.Pipe > div.Node > span {
   display: block;
   text-align: center;
 }
-div.Graph > div.Column > div.Node span + span {
+div.Graph > div.Pipe > div.Node > span + span:not(.NoMargin) {
   margin-top: 10px;
 }
-div.Graph > div.Column > div.Node span.Label {
+div.Graph > div.Pipe > div.Node > span.Label {
   font-weight: bold;
   color: #00877a;
   padding-bottom: 10px;
   border-bottom: solid 1px #999;
 }
-div.Graph > div.Column > div.Node.FirstColumn {
-  left: 0;
+div.Graph > div.Pipe > div.Node > span.Date {
+  font-weight: bold;
 }
-div.Graph > div.Column > div.Node.LastColumn {
-  right: 0;
+div.Graph > div.Pipe > div.Node > span.Grey {
+  color: #999;
 }
-div.Graph > div.Column > div.Node.CentralColumn {
+div.Graph > div.Pipe > div.Node > span.Yellow {
+  color: #ff8800 !important;
+}
+div.Graph > div.Pipe > div.Shape.TimeLine {
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  position: relative;
+  background-color: #009688;
+  width: calc(100% - 30px);
+  padding-left: 20px;
+}
+div.Graph > div.Pipe > div.Shape.TimeLine::before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 0;
+  border-left: solid 30px transparent;
+  border-top: solid 30px #009688;
+  border-bottom: solid 30px #009688;
+}
+div.Graph > div.Pipe > div.Shape.TimeLine::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: 0;
+  border-left: solid 30px #009688;
+  border-top: solid 30px transparent;
+  border-bottom: solid 30px transparent;
+}
+div.Graph.Vertical > div.Pipe {
+  float: left;
+}
+div.Graph.Vertical > div.Pipe > div.Node {
   margin: 0 auto;
 }
-div.Graph > div.Column > div.Node + .Node {
+div.Graph.Vertical > div.Pipe > div.Node + .Node {
   margin-top: 30px;
 }
-div.Graph.Columns3 > div.Column {
+div.Graph.Vertical.Pipes3 > div.Pipe {
   width: 33.33%;
 }
-div.Graph.Columns3 > div.Column:first-child {
+div.Graph.Vertical.Pipes3 > div.Pipe:first-child {
   padding-right: 30px;
 }
-div.Graph.Columns3 > div.Column:nth-child(2) {
+div.Graph.Vertical.Pipes3 > div.Pipe:nth-child(2) {
   padding: 0 15px;
 }
-div.Graph.Columns3 > div.Column:last-child {
+div.Graph.Vertical.Pipes3 > div.Pipe:last-child {
   padding-left: 30px;
+}
+div.Graph.Horizontal > div.Pipe {
+  position: relative;
+  margin-left: 30px;
+}
+div.Graph.Horizontal > div.Pipe > div.Label {
+  color: black;
+  font-weight: bold;
+  transform-origin: 0% 0%;
+  transform: rotate(-90deg);
+  position: absolute;
+  top: 100%;
+  text-align: center;
+  font-size: 20px;
+  left: -30px;
+}
+div.Graph.Horizontal > div.Pipe > div.Node {
+  float: left;
+  position: relative;
+}
+div.Graph.Horizontal > div.Pipe > div.Node + .Node {
+  margin-left: 30px;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowDown {
+  padding-bottom: 40px;
+  width: 200px;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowDown::before {
+  content: "";
+  position: absolute;
+  bottom: -31px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-top: solid 30px #00877a;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowDown::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-top: solid 30px white;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowUp {
+  padding-top: 40px;
+  width: 200px;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowUp::before {
+  content: "";
+  position: absolute;
+  top: -31px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-bottom: solid 30px #00877a;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.ArrowUp::after {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-bottom: solid 30px white;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.Future {
+  background-color: #ebebeb;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.Future.ArrowDown::after {
+  border-top: solid 30px #ebebeb;
+}
+div.Graph.Horizontal > div.Pipe > div.Node.Future.ArrowUp::after {
+  border-bottom: solid 30px #ebebeb;
+}
+div.Graph.Horizontal > div.Pipe + .Pipe {
+  margin-top: 40px;
 }

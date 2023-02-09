@@ -21,10 +21,11 @@
             }
         },
         graphData = {
-            columns: [
+            orientation: "Vertical",
+            pipes: [
                 {
                     nodes: [
-                        { id: 1, label: "collection", center: "Hospital 1" },
+                        { id: 1, label: "collection", center: "Hospital 1", startedOn: "2023-02-01 10:50:18", completedOn: "2023-02-01 10:50:18" },
                         { id: 6, label: "treatment", center: "Hospital 1" },
                         { id: 7, label: "follow up", center: "Hospital 1" },
                         { id: 8, label: "follow up", center: "Hospital 1" },
@@ -33,23 +34,22 @@
                 },
                 {
                     nodes: [
-                        { id: 2, label: "cell-preprocessing", center: "Nearby Center" },
-                        { id: 5, label: "cell manufacturing", center: "Pharma center 1" },
+                        { id: 2, label: "cell-preprocessing", center: "Nearby Center", startedOn: "2023-02-02 18:50:18", completedOn: "2023-02-01 07:51:38" },
+                        { id: 5, label: "cell manufacturing", center: "Pharma center 1", startedOn: "2023-03-01 11:35:24" },
                     ]
                 },
                 {
-                    label: "",
                     nodes: [
-                        { id: 3, label: "plasmid manufacturing", center: "Pharma center 1<br />Pharma center 2" },
-                        { id: 4, label: "genetic vector manufacturing", center: "Pharma center 1<br />Pharma center 2" },
+                        { id: 3, label: "plasmid manufacturing", center: "Pharma center 2", madeToStock: true },
+                        { id: 4, label: "genetic vector manufacturing", center: "Pharma center 1", madeToStock: true },
                     ]
                 }
             ],
             paths: [
                 { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l" },
                 { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t" },
-                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r" },
-                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r" },
+                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", destinationBias: ".20" },
+                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", sourceBias: ".80", destinationBias: ".67", cssClass: "Dashed" },
                 { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r" },
                 { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t" },
                 { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t" },

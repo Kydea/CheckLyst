@@ -220,7 +220,7 @@ matematici.data = {
                 ["CHA0001-23-00124", "carnk-1 - Car-NK", "A0001-23-00AA01", "A0001-23-000N04", "made-to-stock", "allogeneic", "completetd", "", "250.000,00", "", "", true, "2023-02-01 10:50:18", "Ann Clark", "Giovanni Bianchi", "2023-02-01 10:50:18"],
                 ["CHA0001-23-00125", "cart.1 - Car-T", "A0001-23-00CK36", "A0001-23-00CK36", "made-to-order", "autologous", "proposed", "", "350.000,00", "", "", false, "2023-01-01 15:10:08", "John Smith", "Ann Clark", "2023-02-01 10:50:18", "John Smith", "2023-01-01 15:10:08"],
                 ["CHA0001-23-00126", "aav-8a1.1 - adeno-associated virus 8a1", "A0001-23-00JJ86", "", "made-to-stock", "n/a", "proposed", "", "50.000,00", "", "", true, "2022-12-01 15:10:18", "Mario Rossi", "Juan Lopez", "2023-02-01 10:50:18"],
-                ["CHA0001-23-00127", "pcv.1 - personalized cancer vaccin", "A0001-23-00CX43", "A0001-23-00CX43", "made-to-order", "proposed", "", "autologous", "315.000,00", "", "", false, "2023-02-10 14:41:50", "Giovanni Bianchi", "Juan Lopez", "2023-02-01 10:50:18"],
+                ["CHA0001-23-00127", "pcv.1 - personalized cancer vaccin", "A0001-23-00CX43", "A0001-23-00CX43", "made-to-order", "autologous", "proposed", "", "315.000,00", "", "", false, "2023-02-10 14:41:50", "Giovanni Bianchi", "Juan Lopez", "2023-02-01 10:50:18"],
                 ["CHA0001-23-00128", "mrna-7z4.1 - mRNA therapy 7z4", "A0001-23-00CX63", "", "assembled-to-order", "n/a", "in progress", "cell manufacturing", "155.000,00", "", "", true, "2022-12-15 11:40:08", "Juan Lopez", "Giovanni Bianchi", "2023-02-01 10:50:18"]
             ]
         };

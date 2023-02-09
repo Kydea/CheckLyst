@@ -21,12 +21,13 @@
                         { label: "source", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"] },
                         { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
                         { label: "carrier", values: ["SDA", "FedEx"], selectedIndex: 0, cssClass: "Clearing Width200" },
+                        { label: "tracking number", value: "HPT63535AN" },
                         { label: "shipped on", value: "2023-01-01", cssClass: "Clearing", editable: false },
                         { label: "shipping signature", value: "Karl Von Fersen", editable: false },
                         { label: "mark as shipped", icon: "arrow-right", handler: function () { console.log("to do") } },
                         { label: "arrived on", value: "", cssClass: "Clearing", editable: false },
                         { label: "arrival signature", value: "", editable: false },
-                        { label: "mark as arrived", icon: "arrow-right", handler: function () { console.log("to do") } },
+                        { label: "mark as arri  ved", icon: "arrow-right", handler: function () { console.log("to do") } },
                         { label: "deliverable", value: "blood", cssClass: "Clearing", editable: false },
                         { label: "deliverable code", value: "", editable: false },
                         { label: "unit of measure", value: "cc", editable: false },
@@ -55,7 +56,7 @@
                         { label: "arrived on" }
                     ],
                     rows: [
-                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)", "2023-01-01"],
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "SDA", "blood (150 cc)", "2023-01-01"],
                         ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
                         ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
                         ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "genetic vectors - gv321 (2 cc)"],
