@@ -216,7 +216,11 @@
     "inputFile": "Content/Theme/Form.scss"
   },
   {
-    "outputFile": "Content/Theme/Graph.css",
-    "inputFile": "Content/Theme/Graph.scss"
+    "outputFile": "Content/Theme/FlowChart.css",
+    "inputFile": "Content/Theme/FlowChart.scss"
+  },
+  {
+    "outputFile": "Content/Theme/TimeLine.css",
+    "inputFile": "Content/Theme/TimeLine.scss"
   }
 ]

@@ -7,7 +7,7 @@
 
 @Html.Partial("components/toolbar")
 
-<div class="Graph"></div>
+<div class="FlowChart"></div>
 
 <div class="Tables">
     @Html.Partial("components/table", "therapies")
@@ -21,15 +21,14 @@
             }
         },
         graphData = {
-            orientation: "Vertical",
             pipes: [
                 {
                     nodes: [
-                        { id: 1, label: "collection", center: "Hospital 1", startedOn: "2023-02-01 10:50:18", completedOn: "2023-02-01 10:50:18" },
-                        { id: 6, label: "treatment", center: "Hospital 1" },
-                        { id: 7, label: "follow up", center: "Hospital 1" },
-                        { id: 8, label: "follow up", center: "Hospital 1" },
-                        { id: 9, label: "follow up", center: "Hospital 1" }
+                        { id: 1, label: "collection", center: "Hospital 1", duration: "0 days", startedOn: "2023-02 - 01 10: 50: 18", completedOn: "2023-02 - 01 10: 50: 18" },
+                        { id: 6, label: "treatment", center: "Hospital 1", duration: "1 day", startedOn: null },
+                        { id: 7, label: "follow up", center: "Hospital 1", duration: "2 days", startedOn: null },
+                        { id: 8, label: "follow up", center: "Hospital 1", duration: "1 day", startedOn: null },
+                        { id: 9, label: "follow up", center: "Hospital 1", duration: "1 day", startedOn: null }
                     ]
                 },
                 {
@@ -40,20 +39,20 @@
                 },
                 {
                     nodes: [
-                        { id: 3, label: "plasmid manufacturing", center: "Pharma center 2", madeToStock: true },
-                        { id: 4, label: "genetic vector manufacturing", center: "Pharma center 1", madeToStock: true },
+                        { id: 3, label: "plasmid manufacturing", center: "Pharma center 2", startedOn: null, madeToStock: true },
+                        { id: 4, label: "genetic vector manufacturing", center: "Pharma center 1", startedOn: null, madeToStock: true },
                     ]
                 }
             ],
             paths: [
-                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l" },
-                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t" },
-                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", destinationBias: ".20" },
-                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", sourceBias: ".80", destinationBias: ".67", cssClass: "Dashed" },
-                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r" },
-                { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t" },
-                { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t" },
-                { sourceId: 8, destinationId: 9, sourcePosition: "b", destinationPosition: "t" },
+                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l", label: "0 days" },
+                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
+                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "1 day", destinationBias: ".20" },
+                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "0 days", sourceBias: ".80", destinationBias: ".67", cssClass: "Dashed" },
+                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r", label: "1 day" },
+                { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
+                { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
+                { sourceId: 8, destinationId: 9, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
             ]
         };
 
@@ -63,7 +62,7 @@
             helpPage: "@Title",
             initializers: [
                 new matematici.Nexthera(data),
-                new matematici.Graph(".Graph", graphData)
+                new matematici.FlowChart(".FlowChart", graphData)
             ],
             breadcrumbs: [
                 {

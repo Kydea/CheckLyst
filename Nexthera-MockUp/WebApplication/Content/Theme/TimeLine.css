@@ -1,0 +1,182 @@
+﻿div.TimeLine {
+  position: relative;
+}
+div.TimeLine > div.Path {
+  position: absolute;
+  border-top: solid 1px black;
+  height: 1px;
+}
+div.TimeLine > div.Path.Dashed {
+  border-top-style: dashed;
+}
+div.TimeLine > div.Arrow {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+}
+div.TimeLine > div.Arrow.ToT {
+  margin-left: -4px;
+  margin-top: -9px;
+  border-top: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.TimeLine > div.Arrow.ToR {
+  margin-top: -4px;
+  border-right: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.TimeLine > div.Arrow.ToB {
+  margin-left: -4px;
+  border-bottom: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.TimeLine > div.Arrow.ToL {
+  margin-left: -9px;
+  margin-top: -4px;
+  border-left: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.TimeLine > div.Pipe {
+  position: relative;
+  margin-left: 30px;
+  height: 180px;
+}
+div.TimeLine > div.Pipe:first-child > div.Label {
+  bottom: -60px;
+}
+div.TimeLine > div.Pipe:nth-child(2) {
+  height: unset;
+  padding: 30px 0;
+}
+div.TimeLine > div.Pipe:last-child > div.Label {
+  top: -60px;
+}
+div.TimeLine > div.Pipe > div.Label {
+  color: #ff8800;
+  font-weight: bold;
+  position: absolute;
+  font-size: 20px;
+  left: 0;
+  z-index: 1;
+}
+div.TimeLine > div.Pipe > div.Node {
+  border: solid 1px #009688;
+  background: white;
+  padding: 10px;
+  max-width: 200px;
+  float: left;
+  position: absolute;
+}
+div.TimeLine > div.Pipe > div.Node > span {
+  display: block;
+  text-align: center;
+}
+div.TimeLine > div.Pipe > div.Node > span + span:not(.NoMargin) {
+  margin-top: 10px;
+}
+div.TimeLine > div.Pipe > div.Node > span.Label {
+  font-weight: bold;
+  color: #00877a;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #999;
+}
+div.TimeLine > div.Pipe > div.Node > span.Date {
+  font-weight: bold;
+}
+div.TimeLine > div.Pipe > div.Node > span.Grey {
+  color: #999;
+}
+div.TimeLine > div.Pipe > div.Node > span.Yellow {
+  color: #ff8800 !important;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowDown {
+  padding-bottom: 40px;
+  width: 200px;
+  bottom: 0;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowDown::before {
+  content: "";
+  position: absolute;
+  bottom: -31px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-top: solid 30px #00877a;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowDown::after {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-top: solid 30px white;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowUp {
+  padding-top: 40px;
+  width: 200px;
+  top: 0;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowUp::before {
+  content: "";
+  position: absolute;
+  top: -31px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-bottom: solid 30px #00877a;
+}
+div.TimeLine > div.Pipe > div.Node.ArrowUp::after {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  border-left: solid 100px transparent;
+  border-right: solid 100px transparent;
+  border-bottom: solid 30px white;
+}
+div.TimeLine > div.Pipe > div.Node.Future {
+  background-color: #ebebeb;
+}
+div.TimeLine > div.Pipe > div.Node.Future.ArrowDown::after {
+  border-top: solid 30px #ebebeb;
+}
+div.TimeLine > div.Pipe > div.Node.Future.ArrowUp::after {
+  border-bottom: solid 30px #ebebeb;
+}
+div.TimeLine > div.Pipe > div.Shape.TimeLine {
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  position: relative;
+  background-color: #009688;
+  width: calc(100% - 30px);
+  padding-left: 20px;
+}
+div.TimeLine > div.Pipe > div.Shape.TimeLine::before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 0;
+  border-left: solid 30px transparent;
+  border-top: solid 30px #009688;
+  border-bottom: solid 30px #009688;
+}
+div.TimeLine > div.Pipe > div.Shape.TimeLine::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  top: 0;
+  border-left: solid 30px #009688;
+  border-top: solid 30px transparent;
+  border-bottom: solid 30px transparent;
+}
+div.TimeLine > div.Pipe + .Pipe {
+  margin-top: 40px;
+}

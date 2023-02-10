@@ -22,6 +22,7 @@
                         { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
                         { label: "carrier", values: ["SDA", "FedEx"], selectedIndex: 0, cssClass: "Clearing Width200" },
                         { label: "tracking number", value: "HPT63535AN" },
+                        { label: "expected duration", value: "0", um: "days", editable: false },
                         { label: "shipped on", value: "2023-01-01", cssClass: "Clearing", editable: false },
                         { label: "shipping signature", value: "Karl Von Fersen", editable: false },
                         { label: "mark as shipped", icon: "arrow-right", handler: function () { console.log("to do") } },
@@ -51,16 +52,17 @@
                     columns: [
                         { label: "path", cssClass: "Down", centered: true },
                         { label: "carriers" },
+                        { label: "expected duration", um: "days" },
                         { label: "deliverable" },
                         { label: "shipped on" },
                         { label: "arrived on" }
                     ],
                     rows: [
-                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "SDA", "blood (150 cc)", "2023-01-01"],
-                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
-                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
-                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "genetic vectors - gv321 (2 cc)"],
-                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "SDA", "0", "blood (150 cc)", "2023-01-01"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", 1, "blood (150 cc)"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", 1, "plasmids - pl123 (1 cc)"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "0", "genetic vectors - gv321 (2 cc)"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", 1, "therapy (30cc)"]
                     ]
                 }
             }

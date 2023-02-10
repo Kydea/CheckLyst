@@ -25,7 +25,8 @@
                         { label: "deliverable code editable", value: false },
                         { label: "unit of measure", value: "cc"},
                         { label: "quantity", value: "150"},
-                        { label: "carriers", values: ["SDA", "FedEx"], selectedIndexes: [0, 1], cssClass: "Clearing Width200" }
+                        { label: "carriers", values: ["SDA", "FedEx"], selectedIndexes: [0, 1], cssClass: "Clearing Width200" },
+                        { label: "duration", value: "0", um: "days"}
 
                     ]
                 },
@@ -47,13 +48,14 @@
                         { label: "path", cssClass: "Down", centered: true },
                         { label: "carriers" },
                         { label: "deliverable" },
+                        { label: "duration", um: "days" }
                     ],
                     rows: [
-                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)"],
-                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
-                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
-                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "genetic vectors - gv321 (2 cc)"],
-                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)", "0"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)", "1"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)", "1"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "genetic vectors - gv321 (2 cc)", "1"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)", "1"]
                     ]
                 }
             }

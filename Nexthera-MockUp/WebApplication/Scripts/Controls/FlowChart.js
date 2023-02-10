@@ -1,6 +1,6 @@
-﻿matematici.Graph = function (selector, data) {
+﻿matematici.FlowChart = function (selector, data) {
     var
-        graph = this,
+        flowChart = this,
         element = $(selector),
         elements = [],
         paths = [],
@@ -10,31 +10,40 @@
                 node = $("<div />").addClass("Node Container" + (nodeData.shape ? " " + nodeData.shape : "") + (nodeData.future ? " Future" : ""));
             node.append($("<span />").addClass("Label").html(nodeData.label));
             node.append($("<span />").addClass("Center").html(nodeData.center));
-            if (nodeData.position) 
-                node.css("left", 230 * (nodeData.position - 1) + "px");
-            if (nodeData.date)
-                node.append($("<span />").addClass("Date").text(nodeData.date));
-            else if (nodeData.madeToStock)
-                node.append($("<span />").addClass("Grey StartedOn").text("made to stock"));
-            else if (!nodeData.startedOn)
-                node.append($("<span />").addClass("Yellow StartedOn").text("not started"));
-            else {
-                node.append($("<span />").addClass("StartedOn").text(nodeData.startedOn));
-                node.append($("<span />").addClass("NoMargin Arrow").append($("<i />").addClass("fal fa-arrow-down")));
+
+            var noMargin = false;
+            if (nodeData.starting) {
+                node.append($("<span />").addClass("Starting Date").html("starting offset:").append($("<span />").addClass("Value").text(nodeData.starting)));
+                noMargin = true;
+            }
+            if (nodeData.duration) {
+                node.append($("<span />").addClass("Duration Date" + (noMargin ? " NoMargin" : "")).html("phase duration:").append($("<span />").addClass("Value").text(nodeData.duration)));
+                noMargin = true;
+            }
+            if (nodeData.totalDuration) {
+                node.append($("<span />").addClass("TotalDuration Date" + (noMargin ? " NoMargin" : "")).html("process duration:").append($("<span />").addClass("Value").text(nodeData.totalDuration)));
+                noMargin = true;
+            }
+            if (nodeData.deadline) {
+                node.append($("<span />").addClass("DeadLine Date Yellow" + (noMargin ? " NoMargin" : "")).html("deadline:").append($("<span />").addClass("Value").text(nodeData.deadline)));
+                noMargin = true;
+            }
+
+            if (nodeData.madeToStock)
+                node.append($("<span />").addClass("Date StartedOn").text("made to stock"));
+            else if (nodeData.startedOn === null)
+                node.append($("<span />").addClass("DateYellow StartedOn").text("not started"));
+            else if (nodeData.startedOn !== undefined) {
+                node.append($("<span />").addClass("Date StartedOn").text(nodeData.startedOn));
+                node.append($("<span />").addClass("Date NoMargin Arrow").append($("<i />").addClass("fal fa-arrow-down")));
                 if (!nodeData.completedOn)
-                    node.append($("<span />").addClass("NoMargin Yellow CompletedOn").text("not completed"));
+                    node.append($("<span />").addClass("Date NoMargin Yellow CompletedOn").text("not completed"));
                 else
-                    node.append($("<span />").addClass("NoMargin CompletedOn").text(nodeData.completedOn));
+                    node.append($("<span />").addClass("Date NoMargin CompletedOn").text(nodeData.completedOn));
             }
 
             pipe.append(node);
             elements[nodeData.id] = node;
-        },
-
-        addShape = function (pipe, shapeData) {
-            var shape = $("<div />").addClass("Shape " + shapeData.class).text(shapeData.label);
-            pipe.append(shape);
-            elements[shapeData.id] = shape;
         },
 
         addPipe = function (pipeData) {
@@ -43,8 +52,6 @@
                 pipe.append($("<div />").addClass("Label").text(pipeData.label))
             for (var node in pipeData.nodes)
                 addNode(pipe, pipeData.nodes[node]);
-            for (var shape in pipeData.shapes)
-                addShape(pipe, pipeData.shapes[shape]);
             element.append(pipe);
         },
 
@@ -110,6 +117,12 @@
                     top: b.y,
                     width: (b.x - a.x) / 2,
                 }));
+
+                paths.push($("<div />").appendTo(element).addClass("PathLabel").text(pathData.label).css({
+                    left: a.x + (b.x - a.x) / 2,
+                    top: Math.min(a.y, b.y),
+                    height: Math.abs(b.y - a.y) + 1
+                }));
             } else if (pathData.sourcePoint == "r" || pathData.sourcePoint == "l")
                 alert("TODO");
             else if (pathData.sourcePosition == "b" && pathData.destinationPosition == "t" || pathData.sourcePosition == "t" && pathData.destinationPosition == "b") {
@@ -134,9 +147,14 @@
                     top: a.y + (b.y - a.y) / 2,
                     height: (b.y - a.y) / 2,
                 }));
+
+                paths.push($("<div />").appendTo(element).addClass("PathLabel").text(pathData.label).css({
+                    left: a.x + (b.x - a.x) / 2,
+                    top: Math.min(a.y, b.y),
+                    height: Math.abs(b.y - a.y) + 1
+                }));
             } else if (pathData.sourcePoint == "r" || pathData.sourcePoint == "l")
                 alert("TODO")
-
 
             paths.push($("<div />").appendTo(element).addClass("Arrow To" + pathData.destinationPosition.toUpperCase()).css({
                 left: destinationPoint.x,

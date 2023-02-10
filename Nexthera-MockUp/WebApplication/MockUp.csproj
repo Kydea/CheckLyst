@@ -156,6 +156,9 @@
     <Content Include="Content\Theme\FixedHeader.css">
       <DependentUpon>FixedHeader.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\FlowChart.css">
+      <DependentUpon>FlowChart.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-brands-400.svg" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-duotone-900.svg" />
     <Content Include="Content\Theme\FontAwesome\WebFonts\fa-light-300.svg" />
@@ -175,9 +178,6 @@
     </Content>
     <Content Include="Content\Theme\GrantsDetailPage.css">
       <DependentUpon>GrantsDetailPage.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\Graph.css">
-      <DependentUpon>Graph.scss</DependentUpon>
     </Content>
     <Content Include="Content\Theme\Grid.css">
       <DependentUpon>Grid.scss</DependentUpon>
@@ -267,6 +267,9 @@
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\TimeLine.css">
+      <DependentUpon>TimeLine.scss</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Parameters.xml" />
@@ -306,7 +309,8 @@
     <Content Include="Scripts\Controls\Calendar.js" />
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
-    <Content Include="Scripts\Controls\Graph.js" />
+    <Content Include="Scripts\Controls\FlowChart.js" />
+    <Content Include="Scripts\Controls\TimeLine.js" />
     <Content Include="Scripts\Controls\Nexthera.js" />
     <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\SQLEditor.js" />
@@ -444,7 +448,8 @@
     <Content Include="Content\Theme\ClausesList.scss" />
     <Content Include="Content\Theme\ReportEditor.scss" />
     <Content Include="Content\Theme\Form.scss" />
-    <Content Include="Content\Theme\Graph.scss" />
+    <Content Include="Content\Theme\FlowChart.scss" />
+    <Content Include="Content\Theme\TimeLine.scss" />
     <None Include="packages.config" />
     <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\Libraries\jquery-2.1.4.js" />

@@ -1,0 +1,118 @@
+﻿div.FlowChart {
+  position: relative;
+}
+div.FlowChart > div.Path {
+  position: absolute;
+}
+div.FlowChart > div.Path.Horizontal.Strong {
+  border-top: solid 3px black;
+  height: 3px;
+}
+div.FlowChart > div.Path.Horizontal:not(.Strong) {
+  border-top: solid 1px black;
+  height: 1px;
+}
+div.FlowChart > div.Path.Horizontal.Dashed {
+  border-top-style: dashed;
+}
+div.FlowChart > div.Path.Vertical.Strong {
+  border-right: solid 3px black;
+  width: 3px;
+}
+div.FlowChart > div.Path.Vertical:not(.Strong) {
+  border-right: solid 1px black;
+  width: 1px;
+}
+div.FlowChart > div.Path.Vertical.Dashed {
+  border-right-style: dashed;
+}
+div.FlowChart > div.PathLabel {
+  position: absolute;
+  margin-left: 3px;
+  margin-top: 3px;
+  font-size: smaller;
+  color: #999;
+}
+div.FlowChart > div.Arrow {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+}
+div.FlowChart > div.Arrow.ToT {
+  margin-left: -4px;
+  margin-top: -9px;
+  border-top: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.FlowChart > div.Arrow.ToR {
+  margin-top: -4px;
+  border-right: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.FlowChart > div.Arrow.ToB {
+  margin-left: -4px;
+  border-bottom: solid 10px black;
+  border-left: solid 5px transparent;
+  border-right: solid 5px transparent;
+}
+div.FlowChart > div.Arrow.ToL {
+  margin-left: -9px;
+  margin-top: -4px;
+  border-left: solid 10px black;
+  border-top: solid 5px transparent;
+  border-bottom: solid 5px transparent;
+}
+div.FlowChart > div.Pipe {
+  float: left;
+}
+div.FlowChart > div.Pipe > div.Node {
+  border: solid 1px #009688;
+  background: white;
+  padding: 10px;
+  max-width: 200px;
+  margin: 0 auto;
+}
+div.FlowChart > div.Pipe > div.Node > span {
+  display: block;
+  text-align: center;
+}
+div.FlowChart > div.Pipe > div.Node > span + span:not(.NoMargin) {
+  margin-top: 10px;
+}
+div.FlowChart > div.Pipe > div.Node > span.Label {
+  font-weight: bold;
+  color: #00877a;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #999;
+}
+div.FlowChart > div.Pipe > div.Node > span.Date {
+  color: #999;
+  font-size: smaller;
+}
+div.FlowChart > div.Pipe > div.Node > span.Date span.Value {
+  color: black;
+  padding-left: 5px;
+}
+div.FlowChart > div.Pipe > div.Node > span.Yellow {
+  color: #ff8800 !important;
+}
+div.FlowChart > div.Pipe > div.Node > span.Red {
+  color: #ff3333 !important;
+}
+div.FlowChart > div.Pipe > div.Node + .Node {
+  margin-top: 30px;
+}
+div.FlowChart.Pipes3 > div.Pipe {
+  width: 33.33%;
+}
+div.FlowChart.Pipes3 > div.Pipe:first-child {
+  padding-right: 30px;
+}
+div.FlowChart.Pipes3 > div.Pipe:nth-child(2) {
+  padding: 0 15px;
+}
+div.FlowChart.Pipes3 > div.Pipe:last-child {
+  padding-left: 30px;
+}
