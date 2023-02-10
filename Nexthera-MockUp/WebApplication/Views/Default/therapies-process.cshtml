@@ -15,26 +15,35 @@
 
 <script type="text/javascript">
     var
+        baseOffset = -3,
+        currentDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
+        calculateDate = function (offset) {
+            var date = moment(new Date(currentDate.getTime() + 1000 * 60 * 60 * 24 * (offset + baseOffset)));
+            return matematici.dateFormatter.format(date).date;
+
+        },
         data = {
             tables: {
                 therapies: matematici.data.therapies(true)
             }
         },
         graphData = {
+            class: "therapies",
+            currentDate: calculateDate(-baseOffset),
             pipes: [
                 {
                     nodes: [
-                        { id: 1, label: "collection", center: "Hospital 1", duration: "0 days", startedOn: "2023-02 - 01 10: 50: 18", completedOn: "2023-02 - 01 10: 50: 18" },
-                        { id: 6, label: "treatment", center: "Hospital 1", duration: "1 day", startedOn: null },
-                        { id: 7, label: "follow up", center: "Hospital 1", duration: "2 days", startedOn: null },
-                        { id: 8, label: "follow up", center: "Hospital 1", duration: "1 day", startedOn: null },
-                        { id: 9, label: "follow up", center: "Hospital 1", duration: "1 day", startedOn: null }
+                        { id: 1, label: "collection", center: "Hospital 1", deadline: calculateDate(0), startedOn: calculateDate(0) + " 10:50:18", completedOn: calculateDate(0) + " 10:50:18" },
+                        { id: 6, label: "treatment", center: "Hospital 1", expectedDuration: "1 day", deadline: calculateDate(6), startedOn: null },
+                        { id: 7, label: "follow up", center: "Hospital 1", expectedDuration: "2 days", deadline: calculateDate(30), startedOn: null },
+                        { id: 8, label: "follow up", center: "Hospital 1", expectedDuration: "1 day", deadline: calculateDate(150), startedOn: null },
+                        { id: 9, label: "follow up", center: "Hospital 1", expectedDuration: "1 day", deadline: calculateDate(300), startedOn: null }
                     ]
                 },
                 {
                     nodes: [
-                        { id: 2, label: "cell-preprocessing", center: "Nearby Center", startedOn: "2023-02-02 18:50:18", completedOn: "2023-02-01 07:51:38" },
-                        { id: 5, label: "cell manufacturing", center: "Pharma center 1", startedOn: "2023-03-01 11:35:24" },
+                        { id: 2, label: "cell-preprocessing", center: "Nearby Center", deadline: calculateDate(0), startedOn: calculateDate(0) + " 18:50:18", completedOn: calculateDate(6) + " 07:51:38" },
+                        { id: 5, label: "cell manufacturing", center: "Pharma center 1", expectedDuration: "2 days", deadline: calculateDate(4), startedOn: calculateDate(3) + " 11:35:24" },
                     ]
                 },
                 {
@@ -45,15 +54,20 @@
                 }
             ],
             paths: [
-                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l", label: "0 days" },
-                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
-                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "1 day", destinationBias: ".20" },
-                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "0 days", sourceBias: ".80", destinationBias: ".67", cssClass: "Dashed" },
-                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r", label: "1 day" },
+                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l", label: "0 days", strong: true },
+                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t", label: "1 day", strong: true },
+                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "1 day", strong: true, destinationBias: ".20" },
+                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", label: "0 days", strong: true, cssClass: "Dashed", sourceBias: ".80", destinationBias: ".67" },
+                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r", label: "1 day", strong: true },
                 { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
                 { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
                 { sourceId: 8, destinationId: 9, sourcePosition: "b", destinationPosition: "t", label: "1 day" },
-            ]
+            ],
+            legend: {
+                items: [
+                    { key: "current date", value: calculateDate(-baseOffset) }
+                ]
+            }
         };
 
     matematici.events.onPageLoad = function (callback) {

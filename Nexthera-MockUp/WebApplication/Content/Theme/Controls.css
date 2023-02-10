@@ -191,10 +191,27 @@ a.Button.MiniIcon:hover i.Icon {
 a.Button.MiniIcon.Angle {
   margin-left: -16px;
 }
+a.Button.RedButton {
+  background-color: #cc0000;
+}
+a.Button.RedButton i.Icon {
+  color: white;
+  background-color: #cc0000;
+}
+a.Button.RedButton::after {
+  background-color: white;
+}
+a.Button.RedButton:hover:not(.Placeholder) {
+  background-color: #ff3333;
+}
+a.Button.RedButton:hover:not(.Placeholder) i.Icon {
+  color: white;
+  background-color: #ff3333;
+}
 a.Button.GreyGreenButton {
   background-color: #999;
 }
-a.Button.GreyGreenButton i.Icond {
+a.Button.GreyGreenButton i.Icon {
   color: white;
   background-color: #009688;
 }

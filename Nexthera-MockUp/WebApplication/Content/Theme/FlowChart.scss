@@ -1,20 +1,31 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 div.FlowChart {
     position: relative;
+
+    .Editable {
+        &::after {
+            content: fa-content($fa-var-pencil);
+            font-family: "Font Awesome 5 Pro";
+            color: $Color-Grey-Regular;
+            padding-left: 5px;
+            cursor: pointer;
+        }
+    }
 
     > div.Path {
         position: absolute;
 
         &.Horizontal {
             &.Strong {
-                border-top: solid 3px black;
-                height: 3px;
+                border-top: solid 4px black;
+                height: 4px;
             }
 
             &:not(.Strong) {
-                border-top: solid 1px black;
-                height: 1px;
+                border-top: solid 2px black;
+                height: 2px;
             }
 
             &.Dashed {
@@ -24,13 +35,14 @@ div.FlowChart {
 
         &.Vertical {
             &.Strong {
-                border-right: solid 3px black;
-                width: 3px;
+                border-right: solid 4px black;
+                width: 4px;
+                margin-bottom: 2px;
             }
 
             &:not(.Strong) {
-                border-right: solid 1px black;
-                width: 1px;
+                border-right: solid 2px black;
+                width: 2px;
             }
 
             &.Dashed {
@@ -41,8 +53,8 @@ div.FlowChart {
 
     > div.PathLabel {
         position: absolute;
-        margin-left: 3px;
-        margin-top: 3px;
+        margin-left: 5px;
+        margin-top: 5px;
         font-size: smaller;
         color: $Color-Grey-Regular;
     }
@@ -54,32 +66,50 @@ div.FlowChart {
 
         &.ToT {
             margin-left: -4px;
-            margin-top: -9px;
+            margin-top: -5px;
             border-top: solid 10px black;
             border-left: solid 5px transparent;
             border-right: solid 5px transparent;
+
+            &.Strong {
+                margin-left: -3px;
+            }
         }
 
         &.ToR {
             margin-top: -4px;
+            margin-left: -5px;
             border-right: solid 10px black;
             border-top: solid 5px transparent;
             border-bottom: solid 5px transparent;
+
+            &.Strong {
+                margin-top: -3px;
+            }
         }
 
         &.ToB {
             margin-left: -4px;
+            margin-top: -5px;
             border-bottom: solid 10px black;
             border-left: solid 5px transparent;
             border-right: solid 5px transparent;
+
+            &.Strong {
+                margin-left: -3px;
+            }
         }
 
         &.ToL {
-            margin-left: -9px;
             margin-top: -4px;
+            margin-left: -5px;
             border-left: solid 10px black;
             border-top: solid 5px transparent;
             border-bottom: solid 5px transparent;
+
+            &.Strong {
+                margin-top: -3px;
+            }
         }
     }
 
@@ -108,7 +138,7 @@ div.FlowChart {
                     border-bottom: solid 1px $Color-Grey-Regular;
                 }
 
-                &.Date {
+                &.Date, &.Days, &.Deadline {
                     color: $Color-Grey-Regular;
                     font-size: smaller;
 
@@ -116,10 +146,28 @@ div.FlowChart {
                         color: black;
                         padding-left: 5px;
                     }
+
+                    a {
+                        display: inline;
+                        padding-left: 5px;
+                        color: $Color-Yellow-Dark;
+                    }
+                }
+
+                &.Date + .Date {
+                    margin-top: 0;
+                }
+
+                &.Days + .Days {
+                    margin-top: 0;
                 }
 
                 &.Yellow {
                     color: $Color-Yellow-Dark !important;
+                }
+
+                &.Green {
+                    color: $Color-Green-Dark !important;
                 }
 
                 &.Red {
@@ -148,6 +196,33 @@ div.FlowChart {
             &:last-child {
                 padding-left: 30px;
             }
+        }
+    }
+
+    .Legend {
+        font-size: smaller;
+        padding: 20px;
+        border: solid 1px black;
+        background: white;
+        position: fixed;
+        right: 20px;
+        bottom: 150px;
+
+        > div {
+            white-space: nowrap;
+
+            .Key {
+                color: $Color-Grey-Dark;
+                padding-right: 5px;
+            }
+
+            + div {
+                margin-top: 5px;
+            }
+        }
+
+        a.Button {
+            margin-top: 20px;
         }
     }
 }

@@ -36,11 +36,12 @@
             }
         },
         graphData = {
+            class: "therapy-types",
             pipes: [
                 {
                     nodes: [
                         { id: 1, label: "collection", center: "Hospital 1", duration: "0 days" },
-                        { id: 6, label: "treatment", center: "Hospital 1", duration: "1 day", totalDuration: "6 days", deadline: "10 days" },
+                        { id: 6, label: "treatment", center: "Hospital 1", duration: "1 day", totalDuration: "6 days", deadlineDays: "10 days" },
                         { id: 7, label: "follow up", center: "Hospital 1", starting: "30 days", duration: "2 days" },
                         { id: 8, label: "follow up", center: "Hospital 1", starting: "150 days", duration: "1 day" },
                         { id: 9, label: "follow up", center: "Hospital 1", starting: "300 days", duration: "1 day" }
@@ -48,7 +49,7 @@
                 },
                 {
                     nodes: [
-                        { id: 2, label: "cell-preprocessing", center: "Nearby Center", duration: "1 day", totalDuration: "1 days" },
+                        { id: 2, label: "cell-preprocessing", center: "Nearby Center", duration: "1 day", totalDuration: "2 days", deadlineDays: "1 days" },
                         { id: 5, label: "cell manufacturing", center: "Pharma center 1", duration: "2 days", totalDuration: "4 days" },
                     ]
                 },
@@ -60,11 +61,11 @@
                 }
             ],
             paths: [
-                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l", cssClass: "Strong", label: "0 days", destinationBias: .67 },
-                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t", cssClass: "Strong", label: "1 day" },
-                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", cssClass: "Strong", label: "1 day" },
-                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", cssClass: "Strong", label: "1 day", sourceBias: .67 },
-                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r", cssClass: "Strong", label: "1 day", sourceBias: .67 },
+                { sourceId: 1, destinationId: 2, sourcePosition: "r", destinationPosition: "l", strong: true, label: "1 days", destinationBias: .67 },
+                { sourceId: 2, destinationId: 5, sourcePosition: "b", destinationPosition: "t", strong: true, label: "1 day" },
+                { sourceId: 3, destinationId: 5, sourcePosition: "l", destinationPosition: "r", strong: true, label: "1 day" },
+                { sourceId: 4, destinationId: 5, sourcePosition: "l", destinationPosition: "r", strong: true, label: "1 day", sourceBias: .67 },
+                { sourceId: 5, destinationId: 6, sourcePosition: "l", destinationPosition: "r", strong: true, label: "1 day", sourceBias: .67 },
                 { sourceId: 6, destinationId: 7, sourcePosition: "b", destinationPosition: "t" },
                 { sourceId: 7, destinationId: 8, sourcePosition: "b", destinationPosition: "t" },
                 { sourceId: 8, destinationId: 9, sourcePosition: "b", destinationPosition: "t" },

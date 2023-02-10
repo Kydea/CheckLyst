@@ -231,10 +231,32 @@ a.Button {
         }
     }
 
+    &.RedButton {
+        background-color: $Color-Red-Regular;
+
+        i.Icon {
+            color: white;
+            background-color: $Color-Red-Regular;
+        }
+
+        &::after {
+            background-color: white;
+        }
+
+        &:hover:not(.Placeholder) {
+            background-color: $Color-Red-Light;
+
+            i.Icon {
+                color: white;
+                background-color: $Color-Red-Light;
+            }
+        }
+    }
+
     &.GreyGreenButton {
         background-color: $Color-Grey-Regular;
 
-        i.Icond {
+        i.Icon {
             color: white;
             background-color: $Color-Green-Regular;
         }
