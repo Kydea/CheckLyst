@@ -9,8 +9,8 @@
 
 <div class="Tables">
     @Html.Partial("components/table", "therapies")
-    @Html.Partial("components/table", "therapyShippings")
-    @Html.Partial("components/table", "therapyShippingParameters")
+    @Html.Partial("components/table", "therapyMaterials")
+    @Html.Partial("components/table", "therapyMaterialParameters")
 </div>
 
 <script type="text/javascript">
@@ -42,13 +42,13 @@
             ],
             tables: {
                 therapies: matematici.data.therapies(true),
-                therapyShippings: {
+                therapyMaterials: {
                     compact: true,
-                    label: "shippings",
+                    label: "materials",
                     columns: [
                         { label: "path", cssClass: "Down", centered: true },
                         { label: "carriers" },
-                        { label: "deliverable" },
+                        { label: "material" },
                         { label: "shipped on" },
                         { label: "arrived on" }
                     ],
@@ -60,7 +60,7 @@
                         ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
                     ]
                 },
-                therapyShippingParameters: {
+                therapyMaterialParameters: {
                     label: "paramters",
                     columns: [
                         { label: "parameter", cssClass: "Down" },
@@ -88,29 +88,7 @@
             initializers: [
                 new matematici.Nexthera(data)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "therapies", url: "/therapies", selected: true }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "phases", url: "/therapies-phases" },
-                        { label: "payment plan", url: "/therapies-payment-plan" },
-                        { label: "payments", url: "/therapies-payments" },
-                        { label: "shippings", url: "/therapies-shippings", selected: true },
-                        { label: "history", url: "/therapies-history" },
-                        { label: "process", url: "/therapies-process" },
-                        { label: "coi/coc", url: "/therapies-coi-coc" }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "parameters", url: "/therapies-shippings-parameters", selected: true }
-                    ]
-                },
-            ]
+            breadcrumbs: matematici.data.therapiesBreadcrumbs(["therapies", "materials", "parameters"])
         });
 
         callback.call();

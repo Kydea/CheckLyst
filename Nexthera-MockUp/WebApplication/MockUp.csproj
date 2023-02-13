@@ -621,6 +621,7 @@
     <Content Include="Views\Default\person-records.cshtml" />
     <Content Include="Views\Default\components\data.cshtml" />
     <Content Include="Views\Default\therapies-shippings.cshtml" />
+    <Content Include="Views\Default\therapy-types-matherials.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

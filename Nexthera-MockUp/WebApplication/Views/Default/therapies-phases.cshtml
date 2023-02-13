@@ -95,24 +95,7 @@
             initializers: [
                 new matematici.Nexthera(data)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "therapies", url: "/therapies", selected: true }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "phases", url: "/therapies-phases", selected: true },
-                        { label: "payment plan", url: "/therapies-payment-plan" },
-                        { label: "payments", url: "/therapies-payments" },
-                        { label: "shippings", url: "/therapies-shippings" },
-                        { label: "history", url: "/therapies-history" },
-                        { label: "process", url: "/therapies-process" },
-                        { label: "coi/coc", url: "/therapies-coi-coc" }
-                    ]
-                }
-            ]
+            breadcrumbs: matematici.data.therapiesBreadcrumbs(["therapies", "phases"])
         });
 
         callback.call();

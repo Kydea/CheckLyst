@@ -1,0 +1,76 @@
+@{
+    var Title = "Therapy type matherials";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "therapyTypes")
+    @Html.Partial("components/table", "therapyTypeMaterials")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            blocks: [
+                {
+                    fields: [
+                        { label: "source", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"] },
+                        { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
+                        { label: "material", values: ["blood", "tissue"], cssClass: "Clearing" },
+                        { label: "material code", value: "" },
+                        { label: "material code editable", value: false },
+                        { label: "unit of measure", value: "cc"},
+                        { label: "quantity", value: "150"},
+                        { label: "carriers", values: ["SDA", "FedEx"], selectedIndexes: [0, 1], cssClass: "Clearing Width200" },
+                        { label: "duration", value: "0", um: "days"}
+
+                    ]
+                },
+                {
+                    emphasy: true,
+                    fields: [
+                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
+                        { label: "created on", editable: false, value: "john smith" },
+                        { label: "modified by", editable: false },
+                        { label: "modified on", editable: false }
+                    ]
+                }
+            ],
+            tables: {
+                therapyTypes: matematici.data.therapyTypes(true),
+                therapyTypeMaterials: {
+                    label: "matherials",
+                    columns: [
+                        { label: "path", cssClass: "Down", centered: true },
+                        { label: "carriers" },
+                        { label: "material" },
+                        { label: "duration", um: "days" }
+                    ],
+                    rows: [
+                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)", "0"],
+                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)", "1"],
+                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)", "1"],
+                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "genetic vectors - gv321 (2 cc)", "1"],
+                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)", "1"]
+                    ]
+                }
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: matematici.data.therapyTypesBreadcrumbs(["therapy types", "materials"])
+        });
+
+        callback.call();
+    };
+</script>

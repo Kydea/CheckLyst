@@ -1,5 +1,17 @@
 <script type="text/javascript">
     matematici.data = {
+        selectBreadcrumbsItems: function (items, selectedIndexes, depth) {
+            if (depth === undefined) depth = 0;
+            for (var itemIndex in items) {
+                var
+                    item = items[itemIndex];
+                item.selected = selectedIndexes.length > depth && item.label == selectedIndexes[depth];
+
+                if (item.selected && item.items)
+                    this.selectBreadcrumbsItems(item.items, selectedIndexes, ++depth);
+            }
+        },
+
         therapies: function (compact) {
             return {
                 filters: !compact,
@@ -33,6 +45,33 @@
             };
         },
 
+        therapiesBreadcrumbs: function (selectedIndexes) {
+            var items = [
+                {
+                    label: "therapies",
+                    items: [
+                        { label: "phases", url: "/therapies-phases" },
+                        {
+                            label: "materials", url: "/therapies-materials",
+                            items: [
+                                { label: "parameters", url: "/therapies-materials-parameters" }
+                            ]
+                        },
+                        { label: "shippings", url: "/therapies-shippings" },
+                        { label: "payment plan", url: "/therapies-payment-plan" },
+                        { label: "payments", url: "/therapies-payments" },
+                        { label: "history", url: "/therapies-history" },
+                        { label: "process", url: "/therapies-process" },
+                        { label: "coi/coc", url: "/therapies-coi-coc" }
+                    ]
+                }
+            ];
+
+            this.selectBreadcrumbsItems(items, selectedIndexes);
+
+            return items;
+        },
+
         therapyTypes: function (compact) {
             return {
                 filters: !compact,
@@ -58,6 +97,30 @@
                 ],
                 selectedIndex: 1
             }
+        },
+
+        therapyTypesBreadcrumbs: function (selectedIndexes) {
+            var items = [
+                {
+                    label: "therapy types", url: "/therapy-types",
+                    items: [
+                        { label: "phases", url: "/therapy-types-phases" },
+                        {
+                            label: "materials", url: "/therapy-types-materials",
+                            items: [
+                                { label: "parameters", url: "/therapy-types-materials-parameters" }
+                            ]
+                        },
+                        { label: "shippings", url: "/therapy-types-shippings" },
+                        { label: "payment plan", url: "/therapy-types-payment-plan" },
+                        { label: "process", url: "/therapy-types-process" }
+                    ]
+                }
+            ];
+
+            this.selectBreadcrumbsItems(items, selectedIndexes);
+
+            return items;
         },
 
         personRecords: function (compact) {

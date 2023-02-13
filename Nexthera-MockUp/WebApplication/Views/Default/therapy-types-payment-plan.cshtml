@@ -57,21 +57,7 @@
             initializers: [
                 new matematici.Nexthera(data)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "therapy types", url: "/therapy-types", selected: true }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "phases", url: "/therapy-types-phases" },
-                        { label: "payment plan", url: "/therapy-types-payment-plan", selected: true },
-                        { label: "shippings", url: "/therapy-types-shippings" },
-                        { label: "process", url: "/therapy-types-process" }
-                    ]
-                }
-            ]
+            breadcrumbs: matematici.data.therapyTypesBreadcrumbs(["therapy types", "payment plan"])
         });
 
         callback.call();

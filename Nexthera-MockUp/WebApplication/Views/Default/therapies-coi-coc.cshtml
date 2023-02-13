@@ -60,24 +60,7 @@
                 new matematici.Nexthera(data),
                 new matematici.TimeLine(".TimeLine", graphData)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "therapies", url: "/therapies", selected: true }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "phases", url: "/therapies-phases" },
-                        { label: "payment plan", url: "/therapies-payment-plan" },
-                        { label: "payment plan", url: "/therapies-payments" },
-                        { label: "shippings", url: "/therapies-shippings" },
-                        { label: "history", url: "/therapies-history" },
-                        { label: "process", url: "/therapies-process" },
-                        { label: "coi/coc", url: "/therapies-coi-coc", selected: true }
-                    ]
-                }
-            ]
+            breadcrumbs: matematici.data.therapiesBreadcrumbs(["therapies", "coi/coc"])
         });
 
         callback.call();

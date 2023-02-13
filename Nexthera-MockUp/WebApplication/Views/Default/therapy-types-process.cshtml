@@ -23,7 +23,7 @@
                     columns: [
                         { label: "path", cssClass: "Down", centered: true },
                         { label: "carriers" },
-                        { label: "deliverable" },
+                        { label: "material" },
                     ],
                     rows: [
                         ["1 <i class=\"fa fa-caret-right\"></i> 2", "<span class=\"counter\">2</span> SDA, FedEx", "blood (150 cc)"],
@@ -80,21 +80,7 @@
                 new matematici.Nexthera(data),
                 new matematici.FlowChart(".FlowChart", graphData)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "therapy types", url: "/therapy-types-types", selected: true }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "phases", url: "/therapy-types-phases" },
-                        { label: "payment plan", url: "/therapy-types-payment-plan" },
-                        { label: "shippings", url: "/therapy-types-shippings" },
-                        { label: "process", url: "/therapy-types-process", selected: true }
-                    ]
-                }
-            ]
+            breadcrumbs: matematici.data.therapyTypesBreadcrumbs(["therapy types", "process"])
         });
 
         callback.call();
