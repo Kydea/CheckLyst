@@ -137,7 +137,11 @@
         },
 
         maximize = function (table) {
-            table.css("margin-top", matematici.breadcrumbs.getElement().outerHeight() + $("div.Toolbar").outerHeight() + 1);
+            var top = matematici.breadcrumbs.getElement().outerHeight() + $("div.Toolbar").outerHeight() + 1;
+            table.css({
+                "margin-top": top,
+                "height": "calc(100% - " + top + "px)"
+            });
         },
 
         setup = function () {

@@ -21,25 +21,28 @@
 			var
 				count = items && items.length || 0,
 				container = $("<div />").appendTo(element).addClass(count == 0 ? "" : count == 1 ? "OneChild" : count == 2 ? "TwoChildren" : "ManyChildren"),
-				selectedItem;
+				selectedItem, selectedLabel;
 			//$("<i />").addClass("Point").appendTo(container).css({ left: position, top: 0 }).text("note");
 
 			for (itemIndex in items) {
 				var
 					item = items[itemIndex],
-					label = (item.url ? $("<a />").attr("href", item.url) : $("<span />")).html(item.label);
+					label = (item.url ? $("<a />").attr("href", item.url) : $("<span />")).append($("<span />").html(item.label));
 				container.append(label);
 				if (count == 1 && position != null) {
 					label.css("left", position - 15 - label.outerWidth() / 2 + "px");
 				} if (item.selected) {
-					label.addClass("Strong " + label.outerWidth());
+					label.addClass("Strong");
 					position = label.offset().left - 70 + label.outerWidth() / 2;
 					selectedItem = item;
+					selectedLabel = label;
 				}
 			}
 
-			if (selectedItem && selectedItem.items)
+			if (selectedItem && selectedItem.items) {
+				selectedLabel.addClass("Long");
 				addItems(selectedItem.items);
+			}
 
 		};
 

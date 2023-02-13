@@ -172,7 +172,7 @@ div.Tables div.Table.Extended div.Label {
   margin-top: 0;
 }
 div.Tables div.Table.Extended div.Data {
-  max-height: unset;
+  max-height: calc(100% - 20px);
 }
 div.Tables div.Table.Filters form.Filters {
   display: block;

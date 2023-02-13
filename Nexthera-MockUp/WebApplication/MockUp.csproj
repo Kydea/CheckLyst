@@ -612,7 +612,7 @@
     <Content Include="Views\Default\components\toolbar.cshtml" />
     <Content Include="Views\Default\therapies-payment-plan.cshtml" />
     <Content Include="Views\Default\therapies-phases.cshtml" />
-    <Content Include="Views\Default\therapies-shippings-parameters.cshtml" />
+    <Content Include="Views\Default\therapies-materials-parameters.cshtml" />
     <Content Include="Views\Default\therapies-payments.cshtml" />
     <Content Include="Views\Default\therapies-history.cshtml" />
     <Content Include="Views\Default\therapies-coi-coc.cshtml" />
@@ -621,7 +621,10 @@
     <Content Include="Views\Default\person-records.cshtml" />
     <Content Include="Views\Default\components\data.cshtml" />
     <Content Include="Views\Default\therapies-shippings.cshtml" />
-    <Content Include="Views\Default\therapy-types-matherials.cshtml" />
+    <Content Include="Views\Default\therapy-types-materials.cshtml" />
+    <Content Include="Views\Default\therapy-types-materials-parameters.cshtml" />
+    <Content Include="Views\Default\therapies-materials.cshtml" />
+    <Content Include="Views\Default\therapies-materials-log.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
