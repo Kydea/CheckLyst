@@ -1,7 +1,7 @@
 ﻿div.Toolbar {
   height: 30px;
   line-height: 30px;
-  z-index: 1000;
+  z-index: 1001;
   position: fixed;
   width: calc(100% - 70px);
   top: 0;

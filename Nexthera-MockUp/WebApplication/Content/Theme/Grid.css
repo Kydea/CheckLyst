@@ -23,6 +23,9 @@ table.Grid thead tr th span.UM {
 table.Grid thead tr th.Tight {
   width: 0;
 }
+table.Grid thead tr th.Down:not(.Tight) {
+  padding-right: 40px;
+}
 table.Grid thead tr th.Down::after {
   content: "";
   display: block;

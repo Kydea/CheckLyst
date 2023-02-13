@@ -21,10 +21,6 @@
                         { label: "source", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"] },
                         { label: "destination", values: ["1: collection", "2: cell pre-processing", "3: plasmid manufacturing", "4: genetic vector manufacturing", "5: cell manufacturing", "6: treatment", "7: follow up", "8: follow up", "9: follow up"], selectedIndex: 1 },
                         { label: "material", values: ["blood", "tissue"], cssClass: "Clearing" },
-                        { label: "material code", value: "" },
-                        { label: "material code editable", value: false },
-                        { label: "unit of measure", value: "cc"},
-                        { label: "quantity", value: "150"},
                         { label: "carriers", values: ["SDA", "FedEx"], selectedIndexes: [0, 1], cssClass: "Clearing Width200" },
                         { label: "duration", value: "0", um: "days"}
 
@@ -46,8 +42,8 @@
                     label: "shippings",
                     columns: [
                         { label: "path", cssClass: "Down", centered: true },
-                        { label: "carriers" },
-                        { label: "material" },
+                        { label: "carriers", width: 180 },
+                        { label: "material", width: 300 },
                         { label: "duration", um: "days" }
                     ],
                     rows: [

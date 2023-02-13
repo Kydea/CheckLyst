@@ -114,7 +114,7 @@ div#Breadcrumbs {
         &.Visible {
             padding-top: 10px;
             padding-bottom: 10px;
-            z-index: $Depth-Header;
+            z-index: $Depth-Breadcrumbs;
             position: fixed;
             width: 100%;
             top: 30px;

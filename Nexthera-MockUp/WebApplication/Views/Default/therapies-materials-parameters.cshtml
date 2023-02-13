@@ -21,7 +21,7 @@
                     fields: [
                         { label: "parameter", values: ["temperature", "pressure", "shock"] },
                         { label: "unit of measure", value: "kelvin", editable: false },
-                        { label: "lower bound", value: "253", cssClass: "Clearing Width200", editable: false },
+                        { label: "lower bound", value: "253", cssClass: "Clearing", editable: false },
                         { label: "upper bound", value: "283", editable: false },
                         { label: "lower value", value: "273" },
                         { label: "upper bound", value: "278" },
@@ -46,18 +46,17 @@
                     compact: true,
                     label: "materials",
                     columns: [
-                        { label: "path", cssClass: "Down", centered: true },
-                        { label: "carriers" },
-                        { label: "material" },
-                        { label: "shipped on" },
-                        { label: "arrived on" }
+                        { label: "material", cssClass: "Down" },
+                        { label: "material code", width: 180 },
+                        { label: "material code editable", width: 150 },
+                        { label: "unit of measure" },
+                        { label: "quantity" },
                     ],
                     rows: [
-                        ["1 <i class=\"fa fa-caret-right\"></i> 2", "SDA", "blood (150 cc)", "2023-01-01"],
-                        ["2 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "blood (150 cc)"],
-                        ["3 <i class=\"fa fa-caret-right\"></i> 5", "SDA", "plasmids - pl123 (1 cc)"],
-                        ["4 <i class=\"fa fa-caret-right\"></i> 5", "<span class=\"Note\">(same center)</span>", "genetic vectors - gv321 (2 cc)"],
-                        ["5 <i class=\"fa fa-caret-right\"></i> 6", "SDA", "therapy (30cc)"]
+                        ["blood", "A0001-23-00AA01-01", false, "cc", "150"],
+                        ["plasmids", "pl123", false, "cc", "1"],
+                        ["genetic vectors", "gv321", false, "cc", "2"],
+                        ["therapy", "A0001-23-00AA01-02", false, "CC", "30"]
                     ]
                 },
                 therapyMaterialParameters: {
@@ -69,8 +68,8 @@
                         { label: "upper bound" },
                         { label: "lower value" },
                         { label: "upper value" },
-                        { label: "signed by" },
-                        { label: "signed on" }
+                        { label: "signed by", width: 180 },
+                        { label: "signed on", width: 180 }
                     ],
                     rows: [
                         ["temperature", "Kelvin", "253", "283", "273", "278", "", ""],

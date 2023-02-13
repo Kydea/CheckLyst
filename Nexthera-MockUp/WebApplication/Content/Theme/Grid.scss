@@ -28,19 +28,25 @@ table.Grid {
                     width: 0;
                 }
 
-                &.Down::after {
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    top: 50%;
-                    right: 20px;
-                    width: 0;
-                    height: 0;
-                    transform: translateY(-50%);
-                    border-width: 5px 8px;
-                    border-color: transparent $Color-Grey-Light transparent transparent;
-                    border-style: solid;
-                    transform: rotate(-90deg);
+                &.Down {
+                    &:not(.Tight) {
+                        padding-right: 40px;
+                    }
+
+                    &::after {
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        top: 50%;
+                        right: 20px;
+                        width: 0;
+                        height: 0;
+                        transform: translateY(-50%);
+                        border-width: 5px 8px;
+                        border-color: transparent $Color-Grey-Light transparent transparent;
+                        border-style: solid;
+                        transform: rotate(-90deg);
+                    }
                 }
             }
         }
