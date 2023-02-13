@@ -41,6 +41,10 @@ div#Breadcrumbs div > a > span, div#Breadcrumbs div > span > span {
   background-color: white;
   position: relative;
   z-index: 1;
+  padding-bottom: 2px;
+}
+div#Breadcrumbs div:not(:last-child):not(:first-child) > .Strong.Long::after {
+  height: 35px;
 }
 div#Breadcrumbs div:not(:last-child) {
   padding-bottom: 10px;
@@ -52,9 +56,6 @@ div#Breadcrumbs div:not(:last-child) > .Strong::after {
   height: 8px;
   bottom: -10px;
   left: 50%;
-}
-div#Breadcrumbs div:not(:last-child) > .Strong.Long::after {
-  height: 35px;
 }
 div#Breadcrumbs div:not(:first-child):not(.OneChild) {
   padding-top: 10px;

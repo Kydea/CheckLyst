@@ -14,42 +14,6 @@
 <script type="text/javascript">
     var
         data = {
-            blocks: [
-                {
-                    fields: [
-                        { label: "id", icon: "key", value: "CHA0001-23-00123" }
-                    ]
-                },
-                {
-                    fields: [
-                        { label: "patient", values: ["A0001-23-00AA01"], editable: false },
-                        { label: "donor", values: ["A0001-23-00AA01"], editable: false },
-                        { label: "therapy type", values: ["carnk.1 - Car-NK", "cart.1 - Car-T", "aav-8a1.1 - adeno-associated virus 8a1", "mrna-7z4.1 - mRNA therapy 7z4", "pcv.1 - personalized cancer vaccin"], selectedIndex: 1, editable: false },
-                        { label: "donation type", value: "autologous", editable: false }
-                    ]
-                },
-                {
-                    fields: [
-                        { label: "state", value: "in progress", editable: false },
-                        { label: "current phase", value: "5 - cell manufacturing", editable: false },
-                        { label: "started by", value: "john smith", editable: false },
-                        { label: "started on", value: "2023/02/04 16:50:22", editable: false },
-                        { label: "aborted by", value: "", editable: false, cssClass: "Clearing" },
-                        { label: "aborted on", value: "", editable: false },
-                        { label: "abortion reason", value: "", editable: false, cssClass: "Width200" },
-                        { label: "close", icon: "arrow-right", handler: function () { console.log("to do") } }
-                    ]
-                },
-                {
-                    emphasy: true,
-                    fields: [
-                        { label: "created by", editable: false, value: "2023-01-01 15:10:08" },
-                        { label: "created on", editable: false, value: "john smith" },
-                        { label: "modified by", editable: false },
-                        { label: "modified on", editable: false }
-                    ]
-                }
-            ],
             tables: {
                 personRecords: matematici.data.personRecords(false)
             }
@@ -62,23 +26,7 @@
             initializers: [
                 new matematici.Nexthera(data)
             ],
-            breadcrumbs: [
-                {
-                    items: [
-                        { label: "@(Title.ToLower())", selected: true, bias: .8 }
-                    ]
-                },
-                {
-                    items: [
-                        { label: "contacts", url: "/persons-contacts" }, //domicilio, residenza, care giver (anche codice fiscale)
-                        { label: "therapies", url: "/persons-therapies" },
-                        { label: "medical records", url: "/therapies-medical-records" },
-                        { label: "pathologies", url: "/persons-pathologies" },
-                        { label: "hospitalizations", url: "/persons-hospitalizations"},
-                        { label: "analysis results", url: "/persons-analysis-results" }
-                    ]
-                }
-            ]
+            breadcrumbs: matematici.data.personRecordsBreadcrumbs(["person records"])
         });
 
         callback.call();

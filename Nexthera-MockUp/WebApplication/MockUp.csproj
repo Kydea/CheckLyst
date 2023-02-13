@@ -625,6 +625,8 @@
     <Content Include="Views\Default\therapy-types-materials-parameters.cshtml" />
     <Content Include="Views\Default\therapies-materials.cshtml" />
     <Content Include="Views\Default\therapies-materials-log.cshtml" />
+    <Content Include="Views\Default\centers.cshtml" />
+    <Content Include="Views\Default\carriers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

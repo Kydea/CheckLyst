@@ -1,0 +1,34 @@
+@{
+    var Title = "Person records";
+    ViewBag.Title = Title;
+}
+
+<h1>@Title</h1>
+
+@Html.Partial("components/toolbar")
+
+<div class="Tables">
+    @Html.Partial("components/table", "personRecords")
+</div>
+
+<script type="text/javascript">
+    var
+        data = {
+            tables: {
+                personRecords: matematici.data.centerRecords(false)
+            }
+        };
+
+    matematici.events.onPageLoad = function (callback) {
+        new matematici.Page({
+            name: "@Title",
+            helpPage: "@Title",
+            initializers: [
+                new matematici.Nexthera(data)
+            ],
+            breadcrumbs: [{ label: "centers", selected: true }]
+        });
+
+        callback.call();
+    };
+</script>

@@ -44,6 +44,13 @@ div#Breadcrumbs {
                 background-color: white;
                 position: relative;
                 z-index: 1;
+                padding-bottom: 2px;
+            }
+        }
+
+        &:not(:last-child):not(:first-child) {
+            > .Strong.Long::after {
+                height: 35px;
             }
         }
 
@@ -57,10 +64,6 @@ div#Breadcrumbs {
                 height: 8px;
                 bottom: -10px;
                 left: 50%;
-            }
-
-            > .Strong.Long::after {
-                height: 35px;
             }
         }
 
