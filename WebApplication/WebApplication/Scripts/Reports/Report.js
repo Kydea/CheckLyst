@@ -82,27 +82,51 @@
 
         print = function () {
             var
-                select = $("<select />"),
-                content = $("<label />").text("Zoom factor").append(select);
+                content = $("<div />"),
+                formatSelect = $("<select />"),
+                orientationSelect = $("<select />");
 
-            for (var index = 10; index > 0; --index)
-                select.append($("<option />").text(index * 10 + "%").attr("value", index / 10));
+            content.append($("<label />").text("Paper format"));
+            content.append(formatSelect);
+
+            var index = 0
+            formatSelect.append($("<option />").text("A0").attr("value", index++));
+            formatSelect.append($("<option />").text("A1").attr("value", index++));
+            formatSelect.append($("<option />").text("A2").attr("value", index++));
+            formatSelect.append($("<option />").text("A3").attr("value", index++));
+            formatSelect.append($("<option />").text("A4").attr("value", index++).attr("selected", "slelected"));
+            formatSelect.append($("<option />").text("A5").attr("value", index++));
+            formatSelect.append($("<option />").text("A6").attr("value", index++));
+            formatSelect.append($("<option />").text("B5").attr("value", index++));
+            formatSelect.append($("<option />").text("Letter").attr("value", index++));
+            formatSelect.append($("<option />").text("Legal").attr("value", index++));
+            formatSelect.append($("<option />").text("Ledger").attr("value", index++));
+            content.append(formatSelect);
+
+            content.append($("<label />").text("Orientation").css("margin-top", 10));
+            index = 0
+            orientationSelect.append($("<option />").text("Portrait").attr("value", index++).attr("selected", "slelected"));
+            orientationSelect.append($("<option />").text("Landscape").attr("value", index++));
+            content.append(orientationSelect);
+
 
             setTimeout(function () {
-                matematici.dialog.show("print scale", content, [
+                matematici.dialog.show("print", content, [
                     {
                         text: "OK", icon: "check", defaultButton: true, handler: function () {
-                            $("body").css("zoom", select.val());
+                            $("body").css("format", formatSelect.val());
 
                             $.ajax({
                                 url: matematici.urls.reports.api + "/Viewer/Download",
                                 type: "post",
                                 data: {
                                     id: options.id,
-                                    parameters: parameters
+                                    parameters: parameters,
+                                    format: formatSelect.val(),
+                                    orientation: orientationSelect.val()
                                 }
                             }).done(function (result) {
-                                location = matematici.urls.reports.api + "/Download?Token=" + result.token;
+                                location = matematici.urls.reports.api + "/Viewer/Download?Token=" + result.token;
                             });
                         }
                     },

@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.DataEngine;
+using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,8 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string CompanyName { get; set; }
         public string UserCode { get; set; }
         public string TimeZone { get; set; }
+        public PageFormat Format { get; set; }
+        public Orientation Orientation { get; set; }
 
         public class Parameter
         {

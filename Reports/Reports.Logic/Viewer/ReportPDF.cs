@@ -16,6 +16,7 @@ using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using System.Runtime.Remoting.Messaging;
 using CheckListManager.Common.Core.Helpers;
+using static System.Collections.Specialized.BitVector32;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -25,11 +26,14 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string CompanyName { get; }
         public string TimeZone { get; }
         public string Repository { get; }
+        PageFormat Format { get; }
+        Orientation Orientation { get; }
         public ReportResponse Report { get; }
+
 
         public IConfigurationService ConfigurationService { get; }
 
-        public ReportPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, IConfigurationService ConfigurationService, ReportResponse Report) : base("CheckList")
+        public ReportPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, IConfigurationService ConfigurationService, PageFormat Format, Orientation Orientation, ReportResponse Report) : base("CheckList")
         {
             this.CompanyID = CompanyID;
             this.CompanyName = CompanyName;
@@ -37,6 +41,8 @@ namespace CheckListManager.Reports.Logic.Viewer
             this.Repository = Repository;
             this.ConfigurationService = ConfigurationService;
             this.Report = Report;
+            this.Format = Format;
+            this.Orientation = Orientation;
         }
 
         protected override async Task OnGenerateAsync()
@@ -88,13 +94,16 @@ namespace CheckListManager.Reports.Logic.Viewer
 
         protected override Task OnRenderAttachmentsAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         protected override Task OnNewSectionAsync()
         {
             PageSetup setup = Container.Document.DefaultPageSetup.Clone();
-            setup.PageFormat = PageFormat.A4;
+            setup.PageWidth = Unit.Empty;
+            setup.PageHeight = Unit.Empty;
+            setup.PageFormat = Format;
+            setup.Orientation = Orientation;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
             setup.TopMargin = Unit.FromPoint(70);
             setup.BottomMargin = Unit.FromPoint(80);

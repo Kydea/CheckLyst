@@ -17,6 +17,7 @@ using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using System.Net;
 using CheckListManager.Common.Data;
+using MigraDoc.DocumentObjectModel;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -101,8 +102,8 @@ namespace CheckListManager.Reports.Api.Controllers
             var data = await _redisCache.GetAsync<ReportRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            var report = await _reportViewerService.GetReportData(Identity, data, cancellationToken);
-            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, report);
+            //var report = await _reportViewerService.GetReportData(Identity, data, cancellationToken);
+            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.Format, data.Orientation, null);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
 
