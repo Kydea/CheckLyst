@@ -81,8 +81,6 @@
         },
 
         print = function () {
-            hamburger.toggle(false);
-
             var
                 select = $("<select />"),
                 content = $("<label />").text("Zoom factor").append(select);
@@ -95,9 +93,17 @@
                     {
                         text: "OK", icon: "check", defaultButton: true, handler: function () {
                             $("body").css("zoom", select.val());
-                            setTimeout(function () {
-                                window.print();
-                            }, 0);
+
+                            $.ajax({
+                                url: matematici.urls.reports.api + "/Viewer/Download",
+                                type: "post",
+                                data: {
+                                    id: options.id,
+                                    parameters: parameters
+                                }
+                            }).done(function (result) {
+                                location = matematici.urls.reports.api + "/Download?Token=" + result.token;
+                            });
                         }
                     },
                     { hidden: true, cancelButton: true }

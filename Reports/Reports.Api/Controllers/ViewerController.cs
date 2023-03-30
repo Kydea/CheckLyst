@@ -11,6 +11,12 @@ using System.Collections.Generic;
 using CheckListManager.Reports.Logic.Detail;
 using System.Threading;
 using System.Web;
+using CheckListManager.Common.Logic.Api.Formatters;
+using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Logic.Services;
+using CheckListManager.Common.Logic.Trail;
+using System.Net;
+using CheckListManager.Common.Data;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -19,10 +25,16 @@ namespace CheckListManager.Reports.Api.Controllers
     public class ViewerController : BaseApiController
     {
         private readonly IViewerEditorService _reportViewerService;
+        private readonly IConfigurationService _configurationService;
+        private readonly IRedisCache _redisCache;
+        private readonly ICommonRepository _commonRepository;
 
-        public ViewerController(IViewerEditorService reportViewerService)
+        public ViewerController(IViewerEditorService reportViewerService, IConfigurationService configurationService, IRedisCache redisCache, ICommonRepository commonRepository)
         {
             _reportViewerService = reportViewerService;
+            _configurationService = configurationService;
+            _redisCache = redisCache;
+            _commonRepository = commonRepository;
         }
 
         [HttpPost]
@@ -66,5 +78,34 @@ namespace CheckListManager.Reports.Api.Controllers
                 return new ErrorResult(Request, Response);
             }
         }
+
+        [HttpPost]
+        [Route("Download")]
+        public async Task<IHttpActionResult> Download(ReportRequest request)
+        {
+            var Token = Identity.Code + ":" + Guid.NewGuid();
+            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
+            request.CompanyId = Identity.CompanyId;
+            request.CompanyName = Company.Name;
+            request.TimeZone = Company.TimeZone;
+            request.UserCode = Identity.Code;
+            await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { Token });
+        }
+
+        [HttpGet]
+        [Route("Download")]
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> Download([FromUri] string Token)
+        {
+            var data = await _redisCache.GetAsync<ReportRequest>($"Token:{Token}", "Download");
+            await _redisCache.RemoveAsync($"Token:{Token}", "Download");
+            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+            var report = await _reportViewerService.GetReportData(Identity, data, cancellationToken);
+            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, report);
+            return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
+        }
+
+
     }
 }

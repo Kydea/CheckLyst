@@ -8,6 +8,10 @@ namespace CheckListManager.Reports.Logic.Viewer
     {
         public long ID { get; set; }
         public List<Parameter> Parameters { get; set; }
+        public long? CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public string UserCode { get; set; }
+        public string TimeZone { get; set; }
 
         public class Parameter
         {
