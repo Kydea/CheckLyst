@@ -1,7 +1,0 @@
-﻿body.InstanceManager div.CheckListGrid div.Container.ExternalSources.MultiSelection table tr > :first-child {
-  width: 20px;
-  padding: 10px;
-}
-body.InstanceManager div.CheckListGrid div.Container.ExternalSources > div {
-  position: relative;
-}

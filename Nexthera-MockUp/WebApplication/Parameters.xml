@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<parameters >
-	<parameter name="API Base URL" description="API Base URL (i.e. https://api.clm.matematici-aws.com)" defaultValue="https://api.clm.matematici-aws.com">
-		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='BaseUrl']/@value" />
-	</parameter>
-</parameters>
