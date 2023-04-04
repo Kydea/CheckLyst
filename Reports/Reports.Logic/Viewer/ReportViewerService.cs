@@ -103,7 +103,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 if (!string.IsNullOrEmpty(ParameterValue))
                 {
                     if (!DataType.FromName(ReportClause.ParameterType).TryParse(ParameterValue, out var TypedValue))
-                        throw new ReportViewerException($"Ivalid value {ParameterValue} for type {ReportClause.ParameterType}");
+                        throw new ReportViewerException($"Invalid value {ParameterValue} for type {ReportClause.ParameterType}");
                     var clause = ParseClause(ReportClause, Clause, TypedValue);
                     if (clause != null)
                         StringBuilder.AppendLine($"    and {clause}");
