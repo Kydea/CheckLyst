@@ -72,16 +72,6 @@ namespace CheckListManager.Reports.Logic.Viewer
             if (logo != null)
                 logo.ScaleWidth = 0.4;
 
-            paragraph = Container.AddParagraph("prima riga");
-            paragraph.Format.Alignment = ParagraphAlignment.Center;
-            paragraph.Format.SpaceBefore = 20;
-            paragraph.Format.SpaceAfter = 10;
-
-            paragraph = Container.AddParagraph();
-            paragraph.Format.Borders.Bottom = DefaultBorder;
-            paragraph = Container.AddParagraph("seconda riga");
-            paragraph.Format.SpaceBefore = paragraph.Format.SpaceAfter = 20;
-
             var table = Container.AddTable();
             table.Borders.Width = 0.25;
             table.Borders.Left.Width = 0.5;
@@ -117,9 +107,6 @@ namespace CheckListManager.Reports.Logic.Viewer
                 paragraph = cell.AddParagraph(Row.Item2);
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
             }
-
-            paragraph = Container.AddParagraph("terza riga");
-            paragraph.Format.SpaceBefore = 20;
 
             Container.AddPageBreak();
             addContent(Container, pageWidth);

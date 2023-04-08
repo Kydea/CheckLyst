@@ -107,8 +107,8 @@
                 "Ledger"
             ]
             for (index = 0; index < formats.length; ++index) {
-                var option = $("<option />").text(formats[index]).attr("value", index++);
-                if (lastFormat == formats[index])
+                var option = $("<option />").text(formats[index]).attr("value", index);
+                if (lastFormat == index)
                     option.attr("selected", "slelected");
                 formatSelect.append(option);
             }
@@ -117,10 +117,10 @@
             content.append($("<label />").text("Orientation").css("margin-top", 10));
             index = 0
             var option = $("<option />").text("Portrait").attr("value", index++);
-            if (lastOrientation == "Portrait") option.attr("selected", "slelected")
+            if (lastOrientation != 1) option.attr("selected", "slelected")
             orientationSelect.append(option);
             option = $("<option />").text("Landscape").attr("value", index++);
-            if (lastOrientation == "Landscape") option.attr("selected", "slelected")
+            if (lastOrientation == 1) option.attr("selected", "slelected")
             orientationSelect.append(option);
             content.append(orientationSelect);
 
