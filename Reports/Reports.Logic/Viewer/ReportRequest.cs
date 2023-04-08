@@ -12,6 +12,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public long? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string UserCode { get; set; }
+        public string UserDescription { get; set; }
         public string TimeZone { get; set; }
         public PageFormat Format { get; set; }
         public Orientation Orientation { get; set; }

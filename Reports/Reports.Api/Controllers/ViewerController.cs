@@ -18,6 +18,8 @@ using CheckListManager.Common.Logic.Trail;
 using System.Net;
 using CheckListManager.Common.Data;
 using MigraDoc.DocumentObjectModel;
+using CheckListManager.Common.Core.Web.Security;
+using System.ServiceModel.Security;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -90,6 +92,7 @@ namespace CheckListManager.Reports.Api.Controllers
             request.CompanyName = Company.Name;
             request.TimeZone = Company.TimeZone;
             request.UserCode = Identity.Code;
+            request.UserDescription = Identity.Description;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { Token });
         }
@@ -102,11 +105,24 @@ namespace CheckListManager.Reports.Api.Controllers
             var data = await _redisCache.GetAsync<ReportRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            //var report = await _reportViewerService.GetReportData(Identity, data, cancellationToken);
-            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.Format, data.Orientation, null);
+            var identity = new ReportIdentity
+            {
+                CompanyId = data.CompanyId.Value,
+                Code = data.UserCode,
+                Description = data.UserDescription
+            };
+            var report = await _reportViewerService.GetReportData(identity, data, cancellationToken);
+            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.Format, data.Orientation, identity.Code, report);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
 
 
+        public class ReportIdentity : IDefaultIdentity
+        {
+            public long CompanyId { get; set; }
+            public string Code { get; set; }
+            public string Description { get; set; }
+            public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null) => true;
+        }
     }
 }

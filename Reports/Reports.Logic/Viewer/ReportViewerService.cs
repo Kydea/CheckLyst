@@ -124,8 +124,10 @@ namespace CheckListManager.Reports.Logic.Viewer
             var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
             return new ReportResponse
             {
+                ID = report.ID,
                 Code = report.Code,
                 Description = report.Description,
+                Online = report.Online,
                 Columns = report.ReportColumns.Where(c => c.Visible).Select(c => c.Label).ToList(),
                 Rows = rows
             };

@@ -17,6 +17,8 @@ using MigraDoc.DocumentObjectModel.Tables;
 using System.Runtime.Remoting.Messaging;
 using CheckListManager.Common.Core.Helpers;
 using static System.Collections.Specialized.BitVector32;
+using MigraDoc.Rendering;
+using System.Xml.Linq;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -28,18 +30,30 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string Repository { get; }
         PageFormat Format { get; }
         Orientation Orientation { get; }
+        public string User { get; }
         public ReportResponse Report { get; }
 
 
         public IConfigurationService ConfigurationService { get; }
 
-        public ReportPDF(long CompanyID, string CompanyName, string TimeZone, string Repository, IConfigurationService ConfigurationService, PageFormat Format, Orientation Orientation, ReportResponse Report) : base("CheckList")
+        public ReportPDF(
+            long CompanyID, 
+            string CompanyName, 
+            string TimeZone, 
+            string Repository, 
+            IConfigurationService ConfigurationService, 
+            PageFormat Format, 
+            Orientation Orientation, 
+            string User,
+            ReportResponse Report
+        ) : base("CheckList")
         {
             this.CompanyID = CompanyID;
             this.CompanyName = CompanyName;
             this.TimeZone = TimeZone;
             this.Repository = Repository;
             this.ConfigurationService = ConfigurationService;
+            this.User = User;
             this.Report = Report;
             this.Format = Format;
             this.Orientation = Orientation;
@@ -68,28 +82,91 @@ namespace CheckListManager.Reports.Logic.Viewer
             paragraph = Container.AddParagraph("seconda riga");
             paragraph.Format.SpaceBefore = paragraph.Format.SpaceAfter = 20;
 
-            int Columns = 2;
-            PdfPTable Table = new PdfPTable(Columns) { WidthPercentage = 100, HorizontalAlignment = RowAlignment.Center };
-            Table.SetWidths(new float[] { 23.66f, 100 - 23.66f });
+            var table = Container.AddTable();
+            table.Borders.Width = 0.25;
+            table.Borders.Left.Width = 0.5;
+            table.Borders.Right.Width = 0.5;
+            table.Rows.LeftIndent = 0;
+
+            var pageWidth = Orientation == Orientation.Portrait ? 
+                Container.PageSetup.PageWidth - Container.PageSetup.LeftMargin - Container.PageSetup.RightMargin :
+                Container.PageSetup.PageHeight - Container.PageSetup.TopMargin - Container.PageSetup.BottomMargin;
+            var column = table.AddColumn();
+            column.Width = pageWidth * .3;
+
+            column = table.AddColumn();
+            column.Width = pageWidth * .7;
 
             var Rows = new List<Tuple<string, string>> {
                 new Tuple<string, string> ("Plant", CompanyName),
-                new Tuple<string, string> ("Report", "..."),
-                new Tuple<string, string> ("State", "...")
+                new Tuple<string, string> ("Report ID", Report.ID.ToString()),
+                new Tuple<string, string> ("Report code", Report.Code),
+                new Tuple<string, string> ("Report description", Report.Description),
+                new Tuple<string, string> ("Report state", Report.Online ? "online" : "offline"),
+                new Tuple<string, string> ("User", User),
             };
 
             foreach (var Row in Rows)
             {
-                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item1).SetFont(PDFBase.BoldFont).Padding(5)));
-                Table.AddCell(new PdfPCell(new Paragraph().SetText(Row.Item2).Padding(5)));
-                Table.CompleteRow();
+                Row tableRow = table.AddRow();
+                var cell = tableRow.Cells[0];
+                paragraph = cell.AddParagraph(Row.Item1);
+                cell.Format.Font.Bold = true;
+                paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                cell = tableRow.Cells[1];
+                paragraph = cell.AddParagraph(Row.Item2);
+                paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
             }
-            Container.Add(Table);
 
             paragraph = Container.AddParagraph("terza riga");
             paragraph.Format.SpaceBefore = 20;
 
+            Container.AddPageBreak();
+            addContent(Container, pageWidth);
+
             await Task.CompletedTask;
+        }
+
+        private void addContent(MigraDoc.DocumentObjectModel.Section section, float pageWidth)
+        {
+            var table = section.AddTable();
+            table.Borders.Width = 0.25;
+            table.Borders.Left.Width = 0.5;
+            table.Borders.Right.Width = 0.5;
+            table.Rows.LeftIndent = 0;
+
+            int columnIndex;
+            for (columnIndex = 0; columnIndex < Report.Columns.Count; columnIndex++)
+            {
+                var column = table.AddColumn();
+                column.Width = pageWidth / Report.Columns.Count;
+            }
+
+            Row row = table.AddRow();
+            row.HeadingFormat = true;
+            row.Format.Font.Bold = true;
+            columnIndex = 0;
+            foreach (var Column in Report.Columns)
+            {
+                var cell = row.Cells[columnIndex++];
+                var paragraph = cell.AddParagraph(Column);
+                cell.Format.Font.Bold = true;
+                cell.Format.Font.Size = 6;
+                paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+            }
+
+            foreach(var Row in Report.Rows)
+            {
+                row = table.AddRow();
+                columnIndex = 0;
+                foreach (var Value in Row.Record)
+                {
+                    var cell = row.Cells[columnIndex++];
+                    cell.Format.Font.Size = 6;
+                    var paragraph = cell.AddParagraph(Value);
+                    paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                }
+            }
         }
 
         protected override Task OnRenderAttachmentsAsync()
@@ -100,9 +177,10 @@ namespace CheckListManager.Reports.Logic.Viewer
         protected override Task OnNewSectionAsync()
         {
             PageSetup setup = Container.Document.DefaultPageSetup.Clone();
-            setup.PageWidth = Unit.Empty;
-            setup.PageHeight = Unit.Empty;
             setup.PageFormat = Format;
+            PageSetup.GetPageSize(Format, out var pageWidth, out var pageHeight);
+            setup.PageWidth = pageWidth;
+            setup.PageHeight = pageHeight;
             setup.Orientation = Orientation;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
             setup.TopMargin = Unit.FromPoint(70);

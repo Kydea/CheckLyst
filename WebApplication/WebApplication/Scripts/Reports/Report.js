@@ -89,24 +89,39 @@
             content.append($("<label />").text("Paper format"));
             content.append(formatSelect);
 
+            var lastFormat = localStorage.ReportFormat || "A4";
+            var lastOrientation = localStorage.ReportOrientation || "Portrait";
+
             var index = 0
-            formatSelect.append($("<option />").text("A0").attr("value", index++));
-            formatSelect.append($("<option />").text("A1").attr("value", index++));
-            formatSelect.append($("<option />").text("A2").attr("value", index++));
-            formatSelect.append($("<option />").text("A3").attr("value", index++));
-            formatSelect.append($("<option />").text("A4").attr("value", index++).attr("selected", "slelected"));
-            formatSelect.append($("<option />").text("A5").attr("value", index++));
-            formatSelect.append($("<option />").text("A6").attr("value", index++));
-            formatSelect.append($("<option />").text("B5").attr("value", index++));
-            formatSelect.append($("<option />").text("Letter").attr("value", index++));
-            formatSelect.append($("<option />").text("Legal").attr("value", index++));
-            formatSelect.append($("<option />").text("Ledger").attr("value", index++));
+            var formats = [
+                "A0",
+                "A1",
+                "A2",
+                "A3",
+                "A4",
+                "A5",
+                "A6",
+                "B5",
+                "Letter",
+                "Legal",
+                "Ledger"
+            ]
+            for (index = 0; index < formats.length; ++index) {
+                var option = $("<option />").text(formats[index]).attr("value", index++);
+                if (lastFormat == formats[index])
+                    option.attr("selected", "slelected");
+                formatSelect.append(option);
+            }
             content.append(formatSelect);
 
             content.append($("<label />").text("Orientation").css("margin-top", 10));
             index = 0
-            orientationSelect.append($("<option />").text("Portrait").attr("value", index++).attr("selected", "slelected"));
-            orientationSelect.append($("<option />").text("Landscape").attr("value", index++));
+            var option = $("<option />").text("Portrait").attr("value", index++);
+            if (lastOrientation == "Portrait") option.attr("selected", "slelected")
+            orientationSelect.append(option);
+            option = $("<option />").text("Landscape").attr("value", index++);
+            if (lastOrientation == "Landscape") option.attr("selected", "slelected")
+            orientationSelect.append(option);
             content.append(orientationSelect);
 
 
