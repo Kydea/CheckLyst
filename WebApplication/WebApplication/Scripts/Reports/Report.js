@@ -131,6 +131,9 @@
                         text: "OK", icon: "check", defaultButton: true, handler: function () {
                             $("body").css("format", formatSelect.val());
 
+                            localStorage.ReportFormat = formatSelect.val();
+                            localStorage.ReportOrientation = orientationSelect.val();
+
                             $.ajax({
                                 url: matematici.urls.reports.api + "/Viewer/Download",
                                 type: "post",
