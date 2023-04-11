@@ -19,6 +19,7 @@ using CheckListManager.Common.Core.Helpers;
 using static System.Collections.Specialized.BitVector32;
 using MigraDoc.Rendering;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -31,6 +32,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         int FontSize { get; }
         PageFormat Format { get; }
         Orientation Orientation { get; }
+        CancellationToken CancellationToken { get; }
         public string User { get; }
         public ReportResponse Report { get; }
 
@@ -47,7 +49,8 @@ namespace CheckListManager.Reports.Logic.Viewer
             PageFormat Format, 
             Orientation Orientation, 
             string User,
-            ReportResponse Report
+            ReportResponse Report,
+            CancellationToken CancellationToken
         ) : base("CheckList")
         {
             this.CompanyID = CompanyID;
@@ -60,6 +63,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             this.FontSize = FontSize;
             this.Format = Format;
             this.Orientation = Orientation;
+            this.CancellationToken = CancellationToken;
         }
 
         protected override async Task OnGenerateAsync()
@@ -101,6 +105,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 
             foreach (var Row in Rows)
             {
+                if (CancellationToken.IsCancellationRequested) Thread.CurrentThread.Abort();
                 Row tableRow = table.AddRow();
                 var cell = tableRow.Cells[0];
                 paragraph = cell.AddParagraph(Row.Item1);
