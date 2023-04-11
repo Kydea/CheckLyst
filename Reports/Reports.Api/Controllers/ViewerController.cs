@@ -112,7 +112,7 @@ namespace CheckListManager.Reports.Api.Controllers
                 Description = data.UserDescription
             };
             var report = await _reportViewerService.GetReportData(identity, data, cancellationToken);
-            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.Format, data.Orientation, identity.Code, report);
+            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.Format, data.Orientation, identity.Code, report);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
 

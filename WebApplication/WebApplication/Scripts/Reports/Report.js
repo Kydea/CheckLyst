@@ -83,16 +83,28 @@
         print = function () {
             var
                 content = $("<div />"),
+
+                lastFontSize = localStorage.ReportFontSize || "8",
+                lastFormat = localStorage.ReportFormat || "A4",
+                lastOrientation = localStorage.ReportOrientation || "Portrait",
+
+                fontSizeSelect = $("<select />"),
                 formatSelect = $("<select />"),
                 orientationSelect = $("<select />");
 
-            content.append($("<label />").text("Paper format"));
-            content.append(formatSelect);
 
-            var lastFormat = localStorage.ReportFormat || "A4";
-            var lastOrientation = localStorage.ReportOrientation || "Portrait";
-
+            content.append($("<label />").text("Font size"));
             var index = 0
+            for (index = 5; index < 21; ++index) {
+                var option = $("<option />").text(index + "px").attr("value", index);
+                if (lastFontSize == index)
+                    option.attr("selected", "selected");
+                fontSizeSelect.append(option);
+            }
+            content.append(fontSizeSelect);
+
+            content.append($("<label />").text("Paper format").css("margin-top", 10));
+            index = 0
             var formats = [
                 "A0",
                 "A1",
@@ -109,7 +121,7 @@
             for (index = 0; index < formats.length; ++index) {
                 var option = $("<option />").text(formats[index]).attr("value", index);
                 if (lastFormat == index)
-                    option.attr("selected", "slelected");
+                    option.attr("selected", "selected");
                 formatSelect.append(option);
             }
             content.append(formatSelect);
@@ -117,10 +129,10 @@
             content.append($("<label />").text("Orientation").css("margin-top", 10));
             index = 0
             var option = $("<option />").text("Portrait").attr("value", index++);
-            if (lastOrientation != 1) option.attr("selected", "slelected")
+            if (lastOrientation != 1) option.attr("selected", "selected")
             orientationSelect.append(option);
             option = $("<option />").text("Landscape").attr("value", index++);
-            if (lastOrientation == 1) option.attr("selected", "slelected")
+            if (lastOrientation == 1) option.attr("selected", "selected")
             orientationSelect.append(option);
             content.append(orientationSelect);
 
@@ -131,6 +143,7 @@
                         text: "OK", icon: "check", defaultButton: true, handler: function () {
                             $("body").css("format", formatSelect.val());
 
+                            localStorage.ReportFontSize = fontSizeSelect.val();
                             localStorage.ReportFormat = formatSelect.val();
                             localStorage.ReportOrientation = orientationSelect.val();
 
@@ -140,6 +153,7 @@
                                 data: {
                                     id: options.id,
                                     parameters: parameters,
+                                    fontSize: fontSizeSelect.val(),
                                     format: formatSelect.val(),
                                     orientation: orientationSelect.val()
                                 }

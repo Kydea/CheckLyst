@@ -28,6 +28,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string CompanyName { get; }
         public string TimeZone { get; }
         public string Repository { get; }
+        int FontSize { get; }
         PageFormat Format { get; }
         Orientation Orientation { get; }
         public string User { get; }
@@ -37,11 +38,12 @@ namespace CheckListManager.Reports.Logic.Viewer
         public IConfigurationService ConfigurationService { get; }
 
         public ReportPDF(
-            long CompanyID, 
-            string CompanyName, 
-            string TimeZone, 
-            string Repository, 
-            IConfigurationService ConfigurationService, 
+            long CompanyID,
+            string CompanyName,
+            string TimeZone,
+            string Repository,
+            IConfigurationService ConfigurationService,
+            int FontSize,
             PageFormat Format, 
             Orientation Orientation, 
             string User,
@@ -55,6 +57,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             this.ConfigurationService = ConfigurationService;
             this.User = User;
             this.Report = Report;
+            this.FontSize = FontSize;
             this.Format = Format;
             this.Orientation = Orientation;
         }
@@ -138,7 +141,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 var cell = row.Cells[columnIndex++];
                 var paragraph = cell.AddParagraph(Column);
                 cell.Format.Font.Bold = true;
-                cell.Format.Font.Size = 6;
+                cell.Format.Font.Size = FontSize;
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
             }
 
@@ -149,7 +152,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 foreach (var Value in Row.Record)
                 {
                     var cell = row.Cells[columnIndex++];
-                    cell.Format.Font.Size = 6;
+                    cell.Format.Font.Size = FontSize;
                     var paragraph = cell.AddParagraph(Value);
                     paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
                 }

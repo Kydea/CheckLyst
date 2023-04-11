@@ -14,6 +14,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string UserCode { get; set; }
         public string UserDescription { get; set; }
         public string TimeZone { get; set; }
+        public int FontSize { get; set; }
         public PageFormat Format { get; set; }
         public Orientation Orientation { get; set; }
 
