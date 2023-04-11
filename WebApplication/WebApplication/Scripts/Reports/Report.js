@@ -85,8 +85,8 @@
                 content = $("<div />"),
 
                 lastFontSize = localStorage.ReportFontSize || "8",
-                lastFormat = localStorage.ReportFormat || "A4",
-                lastOrientation = localStorage.ReportOrientation || "Portrait",
+                lastFormat = localStorage.ReportFormat || "4",
+                lastOrientation = localStorage.ReportOrientation || "0",
 
                 fontSizeSelect = $("<select />"),
                 formatSelect = $("<select />"),
