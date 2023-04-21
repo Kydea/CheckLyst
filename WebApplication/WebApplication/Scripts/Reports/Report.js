@@ -81,6 +81,7 @@
         },
 
         print = function () {
+            hamburger.toggle(false);
             var
                 content = $("<div />"),
 
