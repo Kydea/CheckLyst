@@ -209,7 +209,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Container.AddPageBreak();
 
                 Paragraph paragraph = Container.AddParagraph("Approval workflow").SetFont(TitleFont1);
-                paragraph.Format.SpaceAfter =    10;
+                paragraph.Format.SpaceAfter = 10;
 
                 var Table = new PdfPTable(7) { WidthPercentage = 100 };
 

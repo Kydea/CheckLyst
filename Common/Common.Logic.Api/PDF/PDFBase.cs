@@ -1,6 +1,8 @@
 ﻿using CheckListManager.Common.Logic.Api.PDF.Helper;
 using MigraDoc.DocumentObjectModel;
+using PdfSharp.Drawing;
 using PdfSharp.Fonts;
+using PdfSharp.Pdf;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -55,7 +57,8 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                 DocumentBuilder = new MigraDocBuilder()
                 {
-                    Unicode = true // allow unicode charset
+                    Unicode = true, // allow unicode charset
+                    OnPageReady = OnPageReady
                 };
                 
                 await AddSectionAsync();
@@ -74,6 +77,11 @@ namespace CheckListManager.Common.Logic.Api.PDF
             {
                 throw ex;
             }
+        }
+
+        protected virtual void OnPageReady(int pageNumber, PdfPage page, XGraphics graphics)
+        {
+
         }
 
         protected abstract Task OnGenerateAsync();

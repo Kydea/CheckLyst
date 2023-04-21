@@ -110,14 +110,9 @@
                 "A0",
                 "A1",
                 "A2",
-                "A3",
+                "A3 ",
                 "A4",
-                "A5",
-                "A6",
-                "B5",
-                "Letter",
-                "Legal",
-                "Ledger"
+                "Letter"
             ]
             for (index = 0; index < formats.length; ++index) {
                 var option = $("<option />").text(formats[index]).attr("value", index);
@@ -139,7 +134,7 @@
 
 
             setTimeout(function () {
-                matematici.dialog.show("print", content, [
+                matematici.dialog.show("download pdf", content, [
                     {
                         text: "OK", icon: "check", defaultButton: true, handler: function () {
                             $("body").css("format", formatSelect.val());
@@ -177,8 +172,8 @@
             matematici.dialog.popupMenu([
                 { text: "cancel", icon: "times", cancelButton: true, handler: cancel },
                 { text: "quit", icon: "door-closed", handler: quit },
-                { text: "download", icon: "download", handler: download },
-                { text: "print", icon: "print", handler: print }
+                { text: "download csv", icon: "download", handler: download },
+                { text: "download pdf", icon: "print", handler: print }
             ]);
         },
 

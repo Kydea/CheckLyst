@@ -20,6 +20,9 @@ using static System.Collections.Specialized.BitVector32;
 using MigraDoc.Rendering;
 using System.Xml.Linq;
 using System.Threading;
+using PdfSharp.Drawing;
+using PdfSharp.Drawing.Layout;
+using PdfSharp.Pdf;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -35,6 +38,8 @@ namespace CheckListManager.Reports.Logic.Viewer
         CancellationToken CancellationToken { get; }
         public string User { get; }
         public ReportResponse Report { get; }
+        private MigraDoc.DocumentObjectModel.Tables.Table ReportTable;
+        private float PageWidth;
 
 
         public IConfigurationService ConfigurationService { get; }
@@ -46,8 +51,8 @@ namespace CheckListManager.Reports.Logic.Viewer
             string Repository,
             IConfigurationService ConfigurationService,
             int FontSize,
-            PageFormat Format, 
-            Orientation Orientation, 
+            PageFormat Format,
+            Orientation Orientation,
             string User,
             ReportResponse Report,
             CancellationToken CancellationToken
@@ -69,7 +74,18 @@ namespace CheckListManager.Reports.Logic.Viewer
         protected override async Task OnGenerateAsync()
         {
             Container.Headers = null;
-            Container.PageSetup.TopMargin = 36;
+            Container.PageSetup.TopMargin = 70;
+
+            Paragraph header = Container.Headers.Primary.AddParagraph();
+            header.Format.Font = GrayFont;
+            header.Format.Font.Size = FontSize;
+            header.AddText($"{CompanyName} - {Report.ID} - {Report.Code}");
+            header.Format.SpaceBefore = 20;
+            header.Format.Alignment = ParagraphAlignment.Right;
+            header.Format.Borders.Top = DefaultBorder;
+            header.Format.Borders.Bottom = DefaultBorder;
+            header.Format.Borders.DistanceFromTop = 10;
+            header.Format.Borders.DistanceFromBottom = 10;
 
             Paragraph paragraph = Container.AddParagraph();
 
@@ -80,19 +96,20 @@ namespace CheckListManager.Reports.Logic.Viewer
                 logo.ScaleWidth = 0.4;
 
             var table = Container.AddTable();
+            table.Borders.Color = Gray;
             table.Borders.Width = 0.25;
             table.Borders.Left.Width = 0.5;
             table.Borders.Right.Width = 0.5;
             table.Rows.LeftIndent = 0;
 
-            var pageWidth = Orientation == Orientation.Portrait ? 
+            PageWidth = Orientation == Orientation.Portrait ?
                 Container.PageSetup.PageWidth - Container.PageSetup.LeftMargin - Container.PageSetup.RightMargin :
                 Container.PageSetup.PageHeight - Container.PageSetup.TopMargin - Container.PageSetup.BottomMargin;
             var column = table.AddColumn();
-            column.Width = pageWidth * .3;
+            column.Width = PageWidth * .3;
 
             column = table.AddColumn();
-            column.Width = pageWidth * .7;
+            column.Width = PageWidth * .7;
 
             var Rows = new List<Tuple<string, string>> {
                 new Tuple<string, string> ("Plant", CompanyName),
@@ -100,7 +117,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 new Tuple<string, string> ("Report code", Report.Code),
                 new Tuple<string, string> ("Report description", Report.Description),
                 new Tuple<string, string> ("Report state", Report.Online ? "online" : "offline"),
-                new Tuple<string, string> ("User", User),
+                new Tuple<string, string> ("Report extracted by", User),
             };
 
             foreach (var Row in Rows)
@@ -110,54 +127,77 @@ namespace CheckListManager.Reports.Logic.Viewer
                 var cell = tableRow.Cells[0];
                 paragraph = cell.AddParagraph(Row.Item1);
                 cell.Format.Font.Bold = true;
+                cell.Format.Font.Color = DarkGray;
+                cell.Format.Font.Size = FontSize;
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
                 cell = tableRow.Cells[1];
+                cell.Format.Font.Size = FontSize;
                 paragraph = cell.AddParagraph(Row.Item2);
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
             }
 
             Container.AddPageBreak();
-            addContent(Container, pageWidth);
+            AddContent(Container);
 
             await Task.CompletedTask;
         }
 
-        private void addContent(MigraDoc.DocumentObjectModel.Section section, float pageWidth)
+        private void AddContent(MigraDoc.DocumentObjectModel.Section section)
         {
-            var table = section.AddTable();
-            table.Borders.Width = 0.25;
-            table.Borders.Left.Width = 0.5;
-            table.Borders.Right.Width = 0.5;
-            table.Rows.LeftIndent = 0;
+            ReportTable = section.AddTable();
+            ReportTable.Borders.Color = Gray;
+            ReportTable.Borders.Width = 0.25;
+            ReportTable.Borders.Left.Width = 0.5;
+            ReportTable.Borders.Right.Width = 0.5;
+            ReportTable.Rows.LeftIndent = 0;
+
+            var column = ReportTable.AddColumn();
+            var firstColumnSize = Unit.FromPoint(FontSize) * (Math.Floor(Math.Log10(Report.Rows.Count())) + 1) + 10;
+            column.Width = firstColumnSize;
 
             int columnIndex;
             for (columnIndex = 0; columnIndex < Report.Columns.Count; columnIndex++)
             {
-                var column = table.AddColumn();
-                column.Width = pageWidth / Report.Columns.Count;
+                column = ReportTable.AddColumn();
+                column.Width = (PageWidth - firstColumnSize) / Report.Columns.Count;
             }
 
-            Row row = table.AddRow();
+            Row row = ReportTable.AddRow();
             row.HeadingFormat = true;
             row.Format.Font.Bold = true;
-            columnIndex = 0;
+            columnIndex = 1;
             foreach (var Column in Report.Columns)
             {
                 var cell = row.Cells[columnIndex++];
                 var paragraph = cell.AddParagraph(Column);
                 cell.Format.Font.Bold = true;
                 cell.Format.Font.Size = FontSize;
+                cell.Shading.Color = LightGray;
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
             }
 
-            foreach(var Row in Report.Rows)
+            var index = 1;
+            foreach (var Row in Report.Rows)
             {
-                row = table.AddRow();
-                columnIndex = 0;
+                row = ReportTable.AddRow();
+
+                var cell = row.Cells[0];
+                cell.Format.Font.Size = FontSize;
+                cell.Shading.Color = LightGray;
+                if (!Row.Total)
+                {
+                    var paragraph = cell.AddParagraph(index++.ToString());
+                    paragraph.Format.Alignment = ParagraphAlignment.Right;
+                    paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                }
+
+                columnIndex = 1;
                 foreach (var Value in Row.Record)
                 {
-                    var cell = row.Cells[columnIndex++];
+                    cell = row.Cells[columnIndex++];
                     cell.Format.Font.Size = FontSize;
+                    if (Row.Total)
+                        cell.Shading.Color = LightGray;
                     var paragraph = cell.AddParagraph(Value);
                     paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
                 }
@@ -178,30 +218,21 @@ namespace CheckListManager.Reports.Logic.Viewer
             setup.PageHeight = pageHeight;
             setup.Orientation = Orientation;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
-            setup.TopMargin = Unit.FromPoint(70);
+            setup.TopMargin = Unit.FromPoint(120);
             setup.BottomMargin = Unit.FromPoint(80);
             setup.FooterDistance = Unit.FromPoint(61);
             setup.HeaderDistance = Unit.FromPoint(0);
-            //setup.DifferentFirstPageHeaderFooter = true;
+            setup.DifferentFirstPageHeaderFooter = true;
 
             Container.PageSetup = setup;
 
             Style style = Container.Document.Styles[StyleNames.Normal];
             style.Font = GenericFont.Clone();
 
-            Paragraph header;
-            header = Container.Headers.Primary.AddParagraph("Header");
-            header.Format.SpaceBefore = 20;
-            header.Format.Alignment = ParagraphAlignment.Right;
-            header.Format.Borders.Top = DefaultBorder;
-            header.Format.Borders.Bottom = DefaultBorder;
-            header.Format.Borders.DistanceFromTop = 10;
-            header.Format.Borders.DistanceFromBottom = 10;
-            header.Format.Font = GrayFont;
-
             Paragraph footer = Container.Footers.Primary.AddParagraph();
             footer.Tag = "PageCount";
             footer.Format.Font = GrayFont;
+            footer.Format.Font.Size = FontSize;
             footer.AddText("Page ");
             footer.AddPageField();
             footer.AddText(" / ");
