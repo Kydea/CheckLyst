@@ -29,13 +29,15 @@ namespace CheckListManager.Reports.Api.Controllers
     {
         private readonly IViewerEditorService _reportViewerService;
         private readonly IConfigurationService _configurationService;
+        private readonly ISettingService _settingService;
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
 
-        public ViewerController(IViewerEditorService reportViewerService, IConfigurationService configurationService, IRedisCache redisCache, ICommonRepository commonRepository)
+        public ViewerController(IViewerEditorService reportViewerService, IConfigurationService configurationService, ISettingService settingService, IRedisCache redisCache, ICommonRepository commonRepository)
         {
             _reportViewerService = reportViewerService;
             _configurationService = configurationService;
+            _settingService = settingService;
             _redisCache = redisCache;
             _commonRepository = commonRepository;
         }
@@ -112,7 +114,9 @@ namespace CheckListManager.Reports.Api.Controllers
                 Description = data.UserDescription
             };
             var report = await _reportViewerService.GetReportData(identity, data, cancellationToken);
-            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.Format, data.Orientation, identity.Code, report, cancellationToken);
+            var details = await _reportViewerService.LoadParameters(identity, report.ID);
+            var decimalSeparator = await _settingService.DecimalSeparatorAsync(data.CompanyId.Value);
+            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, decimalSeparator, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.Format, data.Orientation, identity.Code, data, report, details, cancellationToken);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
 

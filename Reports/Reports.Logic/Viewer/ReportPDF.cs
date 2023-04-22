@@ -23,6 +23,11 @@ using System.Threading;
 using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
+using CheckListManager.Reports.Logic.Detail;
+using CheckListManager.Common.Logic.Models;
+using static CheckListManager.Common.Logic.Models.DataType;
+using AutoMapper;
+using CheckListManager.Common.Logic.Models.Expressions.Functions;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -31,13 +36,16 @@ namespace CheckListManager.Reports.Logic.Viewer
         public long CompanyID { get; }
         public string CompanyName { get; }
         public string TimeZone { get; }
+        public string DecimalSeparator { get; }
         public string Repository { get; }
         int FontSize { get; }
         PageFormat Format { get; }
         Orientation Orientation { get; }
         CancellationToken CancellationToken { get; }
         public string User { get; }
+        public ReportRequest Request { get; }
         public ReportResponse Report { get; }
+        public DetailResponse Details { get; }
         private MigraDoc.DocumentObjectModel.Tables.Table ReportTable;
         private float PageWidth;
 
@@ -48,23 +56,29 @@ namespace CheckListManager.Reports.Logic.Viewer
             long CompanyID,
             string CompanyName,
             string TimeZone,
+            string DecimalSeparator,
             string Repository,
             IConfigurationService ConfigurationService,
             int FontSize,
             PageFormat Format,
             Orientation Orientation,
             string User,
+            ReportRequest Request,
             ReportResponse Report,
+            DetailResponse Details,
             CancellationToken CancellationToken
         ) : base("CheckList")
         {
             this.CompanyID = CompanyID;
             this.CompanyName = CompanyName;
             this.TimeZone = TimeZone;
+            this.DecimalSeparator = DecimalSeparator;
             this.Repository = Repository;
             this.ConfigurationService = ConfigurationService;
             this.User = User;
+            this.Request = Request;
             this.Report = Report;
+            this.Details = Details;
             this.FontSize = FontSize;
             this.Format = Format;
             this.Orientation = Orientation;
@@ -120,6 +134,24 @@ namespace CheckListManager.Reports.Logic.Viewer
                 new Tuple<string, string> ("Report extracted by", User),
             };
 
+            if (Details.Clauses.Any())
+            {
+                Rows.Add(new Tuple<string, string>("Parameters", null));
+                var ParameterIndex = 0;
+                foreach (var clause in Details.Clauses)
+                {
+                    var parameter = Request.Parameters[ParameterIndex++];
+                    var dataType = FromName(clause.ParameterType);
+                    dataType.TryParse(parameter.Value, out var value);
+                    var formattedValue =
+                        dataType == DataType.Date ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone, DateTimeOffsetHelper.DateFormat) :
+                        dataType == DataType.DateTime ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone) :
+                        dataType == Number ? DecimalHelper.Format((decimal)value, DecimalSeparator) :
+                        value.ToString();
+                    Rows.Add(new Tuple<string, string>(clause.Label, formattedValue));
+                }
+            }
+
             foreach (var Row in Rows)
             {
                 if (CancellationToken.IsCancellationRequested) Thread.CurrentThread.Abort();
@@ -130,10 +162,19 @@ namespace CheckListManager.Reports.Logic.Viewer
                 cell.Format.Font.Color = DarkGray;
                 cell.Format.Font.Size = FontSize;
                 paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
-                cell = tableRow.Cells[1];
-                cell.Format.Font.Size = FontSize;
-                paragraph = cell.AddParagraph(Row.Item2);
-                paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                if (Row.Item2 == null)
+                {
+                    tableRow.Borders.Width = 0;
+                    cell.MergeRight = 1;
+                    cell.Format.Alignment = ParagraphAlignment.Center;
+                }
+                else
+                {
+                    cell = tableRow.Cells[1];
+                    cell.Format.Font.Size = FontSize;
+                    paragraph = cell.AddParagraph(Row.Item2);
+                    paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                }
             }
 
             Container.AddPageBreak();
