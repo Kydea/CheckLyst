@@ -134,22 +134,22 @@ namespace CheckListManager.Reports.Logic.Viewer
                 new Tuple<string, string> ("Report extracted by", User),
             };
 
-            if (Details.Clauses.Any())
+            if (Request.Parameters != null && Request.Parameters.Any(p => !string.IsNullOrEmpty(p.Value)))
             {
+                var parameters = Request.Parameters?.ToDictionary(k => k.Code, v => v);
                 Rows.Add(new Tuple<string, string>("Parameters", null));
-                var ParameterIndex = 0;
                 foreach (var clause in Details.Clauses)
-                {
-                    var parameter = Request.Parameters[ParameterIndex++];
-                    var dataType = FromName(clause.ParameterType);
-                    dataType.TryParse(parameter.Value, out var value);
-                    var formattedValue =
-                        dataType == DataType.Date ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone, DateTimeOffsetHelper.DateFormat) :
-                        dataType == DataType.DateTime ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone) :
-                        dataType == Number ? DecimalHelper.Format((decimal)value, DecimalSeparator) :
-                        value.ToString();
-                    Rows.Add(new Tuple<string, string>(clause.Label, formattedValue));
-                }
+                    if (parameters.TryGetValue(clause.ParameterName, out var parameter) && !string.IsNullOrEmpty(parameter.Value))
+                    {
+                        var dataType = FromName(clause.ParameterType);
+                        dataType.TryParse(parameter.Value, out var value);
+                        var formattedValue =
+                            dataType == DataType.Date ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone, DateTimeOffsetHelper.DateFormat) :
+                            dataType == DataType.DateTime ? DateTimeOffsetHelper.Format((DateTimeOffset)value, TimeZone) :
+                            dataType == Number ? DecimalHelper.Format((decimal)value, DecimalSeparator) :
+                            value.ToString();
+                        Rows.Add(new Tuple<string, string>(clause.Label, formattedValue));
+                    }
             }
 
             foreach (var Row in Rows)
