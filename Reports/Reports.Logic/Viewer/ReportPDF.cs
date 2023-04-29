@@ -28,6 +28,7 @@ using CheckListManager.Common.Logic.Models;
 using static CheckListManager.Common.Logic.Models.DataType;
 using AutoMapper;
 using CheckListManager.Common.Logic.Models.Expressions.Functions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
@@ -40,6 +41,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public string Repository { get; }
         int FontSize { get; }
         PageFormat Format { get; }
+        List<int> ColumnWidths { get; }
         Orientation Orientation { get; }
         CancellationToken CancellationToken { get; }
         public string User { get; }
@@ -82,6 +84,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             this.FontSize = FontSize;
             this.Format = Format;
             this.Orientation = Orientation;
+            ColumnWidths = Request.ColumnWidths;
             this.CancellationToken = CancellationToken;
         }
 
@@ -192,16 +195,25 @@ namespace CheckListManager.Reports.Logic.Viewer
             ReportTable.Borders.Right.Width = 0.5;
             ReportTable.Rows.LeftIndent = 0;
 
-            var column = ReportTable.AddColumn();
-            var firstColumnSize = Unit.FromPoint(FontSize) * (Math.Floor(Math.Log10(Report.Rows.Count())) + 1) + 10;
-            column.Width = firstColumnSize;
-
             int columnIndex;
-            for (columnIndex = 0; columnIndex < Report.Columns.Count; columnIndex++)
+            if (ColumnWidths == null)
             {
-                column = ReportTable.AddColumn();
-                column.Width = (PageWidth - firstColumnSize) / Report.Columns.Count;
+                var column = ReportTable.AddColumn();
+                var firstColumnSize = Unit.FromPoint(FontSize) * (Math.Floor(Math.Log10(Report.Rows.Count())) + 1) + 10;
+                column.Width = firstColumnSize;
+
+                for (columnIndex = 0; columnIndex < Report.Columns.Count; columnIndex++)
+                {
+                    column = ReportTable.AddColumn();
+                    column.Width = (PageWidth - firstColumnSize) / Report.Columns.Count;
+                }
             }
+            else
+                for (columnIndex = 0; columnIndex < Report.Columns.Count + 1; columnIndex++)
+                {
+                    var column = ReportTable.AddColumn();
+                    column.Width = ColumnWidths[columnIndex];
+                }
 
             Row row = ReportTable.AddRow();
             row.HeadingFormat = true;
@@ -253,10 +265,27 @@ namespace CheckListManager.Reports.Logic.Viewer
         protected override Task OnNewSectionAsync()
         {
             PageSetup setup = Container.Document.DefaultPageSetup.Clone();
-            setup.PageFormat = Format;
-            PageSetup.GetPageSize(Format, out var pageWidth, out var pageHeight);
-            setup.PageWidth = pageWidth;
-            setup.PageHeight = pageHeight;
+            if (ColumnWidths == null)
+            {
+                setup.PageFormat = Format;
+                PageSetup.GetPageSize(Format, out var pageWidth, out var pageHeight);
+                setup.PageWidth = pageWidth;
+                setup.PageHeight = pageHeight;
+            }
+            else
+            {
+                var pageWidth = ColumnWidths.Sum() + 80;
+                if (Orientation == Orientation.Portrait)
+                {
+                    setup.PageWidth = pageWidth;
+                    setup.PageHeight = pageWidth * 2 / 3;
+                }
+                else
+                {
+                    setup.PageHeight = pageWidth;
+                    setup.PageWidth = pageWidth * 2 / 3;
+                }
+            }
             setup.Orientation = Orientation;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
             setup.TopMargin = Unit.FromPoint(120);
