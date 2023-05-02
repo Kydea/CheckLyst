@@ -42,7 +42,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         int FontSize { get; }
         PageFormat Format { get; }
         List<int> ColumnWidths { get; }
-        Orientation Orientation { get; }
+        Orientation Orientation { get; set; }
         CancellationToken CancellationToken { get; }
         public string User { get; }
         public ReportRequest Request { get; }
@@ -275,16 +275,12 @@ namespace CheckListManager.Reports.Logic.Viewer
             else
             {
                 var pageWidth = ColumnWidths.Sum() + 80;
+                setup.PageWidth = pageWidth;
                 if (Orientation == Orientation.Portrait)
-                {
-                    setup.PageWidth = pageWidth;
-                    setup.PageHeight = pageWidth * 2 / 3;
-                }
+                    setup.PageHeight = pageWidth * 3 / 2;
                 else
-                {
-                    setup.PageHeight = pageWidth;
-                    setup.PageWidth = pageWidth * 2 / 3;
-                }
+                    setup.PageHeight = pageWidth * 2 / 3;
+                Orientation = Orientation.Portrait;
             }
             setup.Orientation = Orientation;
             setup.LeftMargin = setup.RightMargin = Unit.FromPoint(40);
