@@ -196,7 +196,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             ReportTable.Rows.LeftIndent = 0;
 
             int columnIndex;
-            if (ColumnWidths == null)
+            if (ColumnWidths == null || ColumnWidths.Count == 1 && ColumnWidths[0] == 0)
             {
                 var column = ReportTable.AddColumn();
                 var firstColumnSize = Unit.FromPoint(FontSize) * (Math.Floor(Math.Log10(Report.Rows.Count())) + 1) + 10;
@@ -265,7 +265,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         protected override Task OnNewSectionAsync()
         {
             PageSetup setup = Container.Document.DefaultPageSetup.Clone();
-            if (ColumnWidths == null)
+            if (ColumnWidths == null || ColumnWidths.Count == 1 && ColumnWidths[0] == 0)
             {
                 setup.PageFormat = Format;
                 PageSetup.GetPageSize(Format, out var pageWidth, out var pageHeight);
