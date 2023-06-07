@@ -128,7 +128,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 Code = report.Code,
                 Description = report.Description,
                 Online = report.Online,
-                Columns = report.ReportColumns.Where(c => c.Visible).Select(c => c.Label).ToList(),
+                Columns = report.ReportColumns.Where(c => c.Visible).OrderBy(c => c.ID).Select(c => c.Label).ToList(), 
                 Rows = rows
             };
         }
