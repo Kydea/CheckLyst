@@ -1,83 +1,110 @@
 ﻿body.Report header, body.Report footer, body.Report div#Breadcrumbs {
-  display: none !important; }
-
+  display: none !important;
+}
 body.Report label.PrintDialog {
-  display: none; }
-
+  display: none;
+}
 body.Report table tbody tr:not(.NoRecord).Total {
-  background: #f5f5f5 !important; }
-  body.Report table tbody tr:not(.NoRecord).Total td:not(:first-child) {
-    border-top: solid 1px #ccc; }
-  body.Report table tbody tr:not(.NoRecord).Total:not(:nth-last-child(2)) td:not(:first-child) {
-    border-bottom: solid 1px #ccc; }
-  body.Report table tbody tr:not(.NoRecord).Total:hover {
-    background: #ebebeb !important; }
-  body.Report table tbody tr:not(.NoRecord).Total td:first-child {
-    border-right: none !important; }
-
+  background: #f5f5f5 !important;
+}
+body.Report table tbody tr:not(.NoRecord).Total td:not(:first-child) {
+  border-top: solid 1px #ccc;
+}
+body.Report table tbody tr:not(.NoRecord).Total:not(:nth-last-child(2)) td:not(:first-child) {
+  border-bottom: solid 1px #ccc;
+}
+body.Report table tbody tr:not(.NoRecord).Total:hover {
+  background: #ebebeb !important;
+}
+body.Report table tbody tr:not(.NoRecord).Total td:first-child {
+  border-right: none !important;
+}
 body.Report table tbody tr:not(.NoRecord) td:first-child {
   text-align: right !important;
-  width: 10px; }
-
+  width: 10px;
+}
 body.Report table tbody tr:not(.NoRecord):not(.Total:last-child) td:first-child {
-  background: #f5f5f5; }
-
+  background: #f5f5f5;
+}
 body.Report table tbody tr:not(.NoRecord).Total:last-child {
-  background: #ebebeb !important; }
-  body.Report table tbody tr:not(.NoRecord).Total:last-child td {
-    border-top: solid 1px #ccc !important;
-    border-bottom: solid 2px #ccc !important; }
-  body.Report table tbody tr:not(.NoRecord).Total:last-child:hover {
-    background: #bbb !important; }
-
+  background: #ebebeb !important;
+}
+body.Report table tbody tr:not(.NoRecord).Total:last-child td {
+  border-top: solid 1px #ccc !important;
+  border-bottom: solid 2px #ccc !important;
+}
+body.Report table tbody tr:not(.NoRecord).Total:last-child:hover {
+  background: #bbb !important;
+}
 @media screen {
   body.Report {
     width: unset;
     min-width: 100%;
-    zoom: 1 !important; }
-    body.Report div#Content {
-      margin: 0 !important;
-      padding: 20px !important; }
-      body.Report div#Content h1 {
-        font-size: 28px !important; }
-        body.Report div#Content h1 button.hamburger {
-          padding: 0;
-          margin-right: 10px; }
-      body.Report div#Content table thead {
-        position: -webkit-sticky !important;
-        position: sticky !important;
-        top: 0; }
-      body.Report div#Content table tbody tr {
-        cursor: pointer; }
-        body.Report div#Content table tbody tr:not(.Current) td {
-          white-space: nowrap;
-          max-width: 200px;
-          overflow: hidden;
-          text-overflow: ellipsis; }
-        body.Report div#Content table tbody tr.CurrentPrevious td {
-          border-bottom: solid 1px black !important; }
-        body.Report div#Content table tbody tr.Current td {
-          border-top: solid 1px black !important;
-          border-bottom: solid 1px black !important; }
-        body.Report div#Content table tbody tr:hover {
-          background-color: #fce6e8; } }
-
+    zoom: 1 !important;
+  }
+  body.Report div#Content {
+    margin: 0 !important;
+    padding: 20px !important;
+  }
+  body.Report div#Content h1 {
+    font-size: 28px !important;
+  }
+  body.Report div#Content h1 button.hamburger {
+    padding: 0;
+    margin-right: 10px;
+  }
+  body.Report div#Content table thead {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0;
+    cursor: default;
+  }
+  body.Report div#Content table thead .Resizable {
+    cursor: ew-resize;
+  }
+  body.Report div#Content table tbody tr {
+    cursor: pointer;
+  }
+  body.Report div#Content table tbody tr:not(.Current) td {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  body.Report div#Content table tbody tr.CurrentPrevious td {
+    border-bottom: solid 1px black !important;
+  }
+  body.Report div#Content table tbody tr.Current td {
+    border-top: solid 1px black !important;
+    border-bottom: solid 1px black !important;
+  }
+  body.Report div#Content table tbody tr:hover {
+    background-color: #fce6e8;
+  }
+}
 @media print {
   body.Report {
-    background-color: white !important; }
-    body.Report div#Content {
-      padding: 0 !important;
-      margin: 0 !important; }
-      body.Report div#Content div.ShadowPanel {
-        padding: 0;
-        box-shadow: none;
-        border-radius: 0; }
-        body.Report div#Content div.ShadowPanel h1.Green {
-          background-color: white !important;
-          color: black !important;
-          padding: 0 !important;
-          margin: 0 0 10px !important; }
-          body.Report div#Content div.ShadowPanel h1.Green button.hamburger {
-            display: none; }
-        body.Report div#Content div.ShadowPanel table.Grid {
-          width: 100vh; } }
+    background-color: white !important;
+  }
+  body.Report div#Content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  body.Report div#Content div.ShadowPanel {
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  body.Report div#Content div.ShadowPanel h1.Green {
+    background-color: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 0 10px !important;
+  }
+  body.Report div#Content div.ShadowPanel h1.Green button.hamburger {
+    display: none;
+  }
+  body.Report div#Content div.ShadowPanel table.Grid {
+    width: 100vh;
+  }
+}

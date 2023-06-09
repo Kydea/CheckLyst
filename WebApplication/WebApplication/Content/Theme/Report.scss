@@ -84,6 +84,11 @@ body.Report {
                     position: -webkit-sticky !important;
                     position: sticky !important;
                     top: 0;
+                    cursor: default;
+
+                    .Resizable {
+                        cursor: ew-resize;
+                    }
                 }
 
                 tbody {

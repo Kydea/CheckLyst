@@ -14,6 +14,7 @@
         startedOn = new Date(),
         renderTimeout,
         scrollTop = 0,
+        resizingElement,
 
         createCSV = function (fileName, columns, rows) {
             var processRow = function (row) {
@@ -252,6 +253,10 @@
                     th = document.createElement("th");
                     th.innerText = result.columns[columnIndex];
                     tr.appendChild(th);
+
+                    th.addEventListener('mousemove', headerMouseMove);
+                    th.addEventListener('mousedown', headerMouseDown);
+                    th.addEventListener('mouseup', headerMouseUp);
                 }
                 noRecord.children().eq(0).attr("colspan", (result.columns.length || 1) + 1)
                 initialized = true;
@@ -336,6 +341,35 @@
             tableBody = $("table tbody", selector).on("click", "td", clickHandler)[0];
             noRecord = $("tr.NoRecord", selector).remove();
             load(1);
+        },
+
+        headerMouseMove = function (e) {
+            var th = e.target;
+            if (resizingElement !== null) {
+                if (e.buttons !== 1)
+                    headerMouseUp();
+                else {
+                    var width = Math.max(0, resizingElement.offsetWidth + e.movementX);
+                    resizingElement.style.setProperty("min-width", width + "px");
+                }
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.offsetX > th.offsetWidth - 20 && !th.classList.contains("tight"))
+                th.classList.add("Resizable");
+            else
+                th.classList.remove("Resizable");
+        },
+
+        headerMouseDown = function(e) {
+            var th = e.target;
+            if (e.buttons === 1 && th.classList.contains("Resizable"))
+                resizingElement = th;
+        },
+
+        headerMouseUp = function() {
+            resizingElement = null;
         };
 
     setup();
