@@ -251,8 +251,20 @@ namespace CheckListManager.Reports.Logic.Viewer
                     cell.Format.Font.Size = FontSize;
                     if (Row.Total)
                         cell.Shading.Color = LightGray;
-                    var paragraph = cell.AddParagraph(Value);
-                    paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                    var link = Value != null && (Value.StartsWith("http://") || Value.StartsWith("https://"));
+                    if (link)
+                    {
+                        var paragraph = cell.AddParagraph();
+                        var hyperlink = paragraph.AddHyperlink(Value, HyperlinkType.Url);
+                        var text = hyperlink.AddFormattedText("(click)");
+                        text.Style = StyleNames.Hyperlink;
+                    }
+                    else
+                    {
+                        var softhyphen = "\xad";
+                        var paragraph = cell.AddParagraph(string.Join("", Value.ToCharArray().Select(c => softhyphen + c)));
+                        paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                    }
                 }
             }
         }
