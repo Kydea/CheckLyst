@@ -252,9 +252,10 @@ namespace CheckListManager.Reports.Logic.Viewer
                     if (Row.Total)
                         cell.Shading.Color = LightGray;
                     var link = Value != null && (Value.StartsWith("http://") || Value.StartsWith("https://"));
+                    Paragraph paragraph;
                     if (link)
                     {
-                        var paragraph = cell.AddParagraph();
+                        paragraph = cell.AddParagraph();
                         var hyperlink = paragraph.AddHyperlink(Value, HyperlinkType.Url);
                         var text = hyperlink.AddFormattedText("(click)");
                         text.Style = StyleNames.Hyperlink;
@@ -262,9 +263,20 @@ namespace CheckListManager.Reports.Logic.Viewer
                     else
                     {
                         var softhyphen = "\xad";
-                        var paragraph = cell.AddParagraph(string.Join("", Value.ToCharArray().Select(c => softhyphen + c)));
-                        paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
+                        var valueWithHyphen = string.Empty;
+                        var lastCharacter = ' ';
+                        foreach (var character in Value)
+                        {
+                            valueWithHyphen += 
+                                character != ' ' && character != '-' && character != '\n' && character != '\t' && !(character >= '0' && character <= '9')
+                                && lastCharacter != ' ' && lastCharacter != '-' && lastCharacter != '\n' && lastCharacter != '\t' && !(lastCharacter >= '0' && lastCharacter <= '9')
+                                ? softhyphen + character 
+                                : character.ToString();
+                            lastCharacter = character;
+                        }
+                        paragraph = cell.AddParagraph(valueWithHyphen);
                     }
+                    paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
                 }
             }
         }
