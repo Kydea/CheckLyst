@@ -257,7 +257,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                     {
                         paragraph = cell.AddParagraph();
                         var hyperlink = paragraph.AddHyperlink(Value, HyperlinkType.Url);
-                        var text = hyperlink.AddFormattedText("(click)");
+                        var text = hyperlink.AddFormattedText("(link)");
                         text.Style = StyleNames.Hyperlink;
                     }
                     else
