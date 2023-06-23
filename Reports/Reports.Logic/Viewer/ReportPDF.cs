@@ -262,19 +262,19 @@ namespace CheckListManager.Reports.Logic.Viewer
                     }
                     else
                     {
-                        var softhyphen = "\xad";
-                        var valueWithHyphen = string.Empty;
+                        var zeroWidthJoiner = "\u200C"; // var softHyphen = "\xad";
+                        var valueWithJoiners = string.Empty;
                         var lastCharacter = ' ';
                         foreach (var character in Value)
                         {
-                            valueWithHyphen += 
-                                character != ' ' && character != '-' && character != '\n' && character != '\t' && !(character >= '0' && character <= '9')
-                                && lastCharacter != ' ' && lastCharacter != '-' && lastCharacter != '\n' && lastCharacter != '\t' && !(lastCharacter >= '0' && lastCharacter <= '9')
-                                ? softhyphen + character 
+                            valueWithJoiners += 
+                                character != ' ' && character != '-' && character != '\n' && character != '\t'// && !(character >= '0' && character <= '9')
+                                && lastCharacter != ' ' && lastCharacter != '-' && lastCharacter != '\n' && lastCharacter != '\t'// && !(lastCharacter >= '0' && lastCharacter <= '9')
+                                ? zeroWidthJoiner + character 
                                 : character.ToString();
                             lastCharacter = character;
                         }
-                        paragraph = cell.AddParagraph(valueWithHyphen);
+                        paragraph = cell.AddParagraph(valueWithJoiners);
                     }
                     paragraph.Format.SpaceAfter = paragraph.Format.SpaceBefore = paragraph.Format.LeftIndent = paragraph.Format.RightIndent = 5;
                 }
