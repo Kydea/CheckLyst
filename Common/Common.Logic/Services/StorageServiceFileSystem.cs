@@ -34,7 +34,7 @@ namespace CheckListManager.Common.Logic.Services
                 var directory = Path.GetDirectoryName(path);
                 if (directory != null && !Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
-                using (var outputStream = File.OpenWrite(path))
+                using (var outputStream = File.Create(path))
                 {
                     await inputStream.CopyToAsync(outputStream);
                     await outputStream.FlushAsync();
