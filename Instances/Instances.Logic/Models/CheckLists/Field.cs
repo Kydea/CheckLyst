@@ -148,8 +148,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             else
                 ValueFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
 
-            object ConvertedValue = null;
-
             if (ValueFormula.IsSet)
             {
                 var FormulaValue = ValueFormula.Value;
@@ -163,7 +161,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
                 else
                 {
-                    ConversionError = !ValueType.TryParse(FormulaValue, out ConvertedValue);
+                    ConversionError = !ValueType.TryParse(FormulaValue, out _);
                     Value = ConversionError ? null : FormulaValue;
                 }
             }
@@ -183,7 +181,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 }
                 else
                 {
-                    ConversionError = !ValueType.TryParse(ExternalSourceValue, out ConvertedValue);
+                    ConversionError = !ValueType.TryParse(ExternalSourceValue, out _);
                     Value = ConversionError ? null : ExternalSourceValue;
                 }
             }

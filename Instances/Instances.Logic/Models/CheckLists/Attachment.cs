@@ -12,7 +12,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public DateTimeOffset? ModifiedOn { get; set; }
 
         public ICheckListAttachmentBase GetTarget() =>
-            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
+            Target == null || !GetBranchElements().TryGetValue(Target, out var Item) || !(Item is Attachment Attachment) ? this : Attachment;
 
         public override ICheckListItem Clone(ICheckListGroup parent)
         {
@@ -20,7 +20,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 Group = parent,
                 FileType = FileType,
-                Target = Target
+                Target = Target,
+                RestrictToCamera = RestrictToCamera
             };
             Copy(this, attachment);
             return attachment;

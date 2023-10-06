@@ -295,10 +295,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             var Iterations = this.Iterations.Where(i => !i.Removed);
             bool AnyIteration = Iterations.Any();
 
-            foreach (Iteration iteration in Iterations)
+            foreach (var iteration in Iterations.Cast<Iteration>())
                 iteration.MarkAllAsChanged(Roots);
 
-            foreach (Item item in Items)
+            foreach (var item in Items.Cast<Item>())
                 if (!item.IteratorModelItem || !AnyIteration) //when there is no iteration the table header must be marked explicitely, could be imporved by checking if an ancestor is a table
                     item.MarkAllAsChanged(Roots);
         }
@@ -307,26 +307,26 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void ClearDependencies()
         {
             base.ClearDependencies();
-            foreach (Item Item in Items)
-                Item.ClearDependencies();
+            foreach (var item in Items.Cast<Item>())
+                item.ClearDependencies();
         }
 
         public override void BuildDependencies()
         {
             base.BuildDependencies();
-            foreach (Item Item in Items)
+            foreach (var item in Items.Cast<Item>())
             {
                 if (!IterationItem)
                 {
                     if (HiddenCondition != Conditions.True)
-                        Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
+                        item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
 
-                    if (Item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
-                        AddDependingRelation(DependencyRelation.Properties.Validity, Item, DependencyRelation.Properties.Validity);
+                    if (item is ICheckListEditableItem && (ValidCondition == Conditions.Default || ValidCondition == Conditions.ExpressionOrDefault || ValidCondition == Conditions.ExpressionAndDefault))
+                        AddDependingRelation(DependencyRelation.Properties.Validity, item, DependencyRelation.Properties.Validity);
                 }
 
-                if (!(IterationItem && Item.IteratorModelItem)) //the cloned iterator model items are ignored
-                    Item.BuildDependencies();
+                if (!(IterationItem && item.IteratorModelItem)) //the cloned iterator model items are ignored
+                    item.BuildDependencies();
             }
 
             if (Iterator)
@@ -340,7 +340,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
-                foreach (Iteration Iteration in Iterations.Where(i => !i.Removed))
+                foreach (var Iteration in Iterations.Where(i => !i.Removed).Cast<Iteration>())
                     Iteration.BuildDependencies();
         }
 

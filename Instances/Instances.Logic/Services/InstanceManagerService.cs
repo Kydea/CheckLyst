@@ -408,7 +408,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType))
                     throw new InstanceException("Access denied");
 
-                cacheObject = 
+                cacheObject =
                     await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
@@ -1456,7 +1456,7 @@ namespace CheckListManager.Instances.Logic.Services
                     IterationChildren = IterationChildren.Where(x => x != null).ToList();
 
                     if (IterationChildren.Any())
-                        foreach (Element Child in IterationChildren)
+                        foreach (var Child in IterationChildren.Cast<Element>())
                             Child.MarkAllAsChanged(Roots);
 
                     AffectedElement = (Group)Iteration.Group;
@@ -2121,7 +2121,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
             var iterationsId = new List<int>(rows.Count);
-
+            var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
             foreach (var row in rows)
             {
                 var iteration = group.AddIteration();
@@ -2135,23 +2135,24 @@ namespace CheckListManager.Instances.Logic.Services
                 IterationChildren = IterationChildren.Where(x => x != null).ToList();
 
                 if (IterationChildren.Any())
-                    foreach (Element Child in IterationChildren)
+                    foreach (var Child in IterationChildren.Cast<Element>())
                     {
-                        var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-
                         //the children of the added iterations are all marked as changed
                         Child.MarkAllAsChanged(Roots);
 
-                        //the fields boudn to the external source are update directly
-                        if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code) Field.Update(DependencyRelation.Properties.Value);
+                        if (Child is Field Field)
+                        {
+                            //the fields bound to the external source are update directly
+                            if (Field.ExternalSourceName == ExternalSource.Code) Field.Update(DependencyRelation.Properties.Value);
+                        }
 
                         //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
                         var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
                         IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
-
-                        DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
                     }
             }
+
+            DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
             //call audit trail only after the rest of the process has worked
             for (var rowIndex = 0; rowIndex < rows.Count; ++rowIndex)
