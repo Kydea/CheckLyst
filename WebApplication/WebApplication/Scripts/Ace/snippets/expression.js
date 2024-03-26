@@ -437,7 +437,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             scope: "expression",
             meta: "method",
             interface: "Iterator",
-            comment: "returns the correlation coefficient of the provided (x, y) set"
+            comment: "returns the correlation coefficient of the provided (y, x) set"
         },
         {
             content: "Slope(${1:y}, ${2:x})",
@@ -445,7 +445,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             scope: "expression",
             meta: "method",
             interface: "Iterator",
-            comment: "returns the slope of the provided (x, y) set"
+            comment: "returns the slope of the provided (y, x) set"
         },
         {
             content: "Intercept(${1:y}, ${2:x})",
@@ -453,7 +453,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             scope: "expression",
             meta: "method",
             interface: "Iterator",
-            comment: "returns the intercept of the provided (x, y) set"
+            comment: "returns the intercept of the provided (y, x) set"
         },
         {
             content: "Each(${1:argument})",
