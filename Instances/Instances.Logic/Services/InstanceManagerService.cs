@@ -2122,7 +2122,6 @@ namespace CheckListManager.Instances.Logic.Services
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
             var iterationsId = new List<int>(rows.Count);
             var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
-            group.SetupIterationsIndexes();
             group.ModifiedBy = identity.Code;
             group.ModifiedOn = DateTimeOffset.UtcNow;
             group.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Iterations);
