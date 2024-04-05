@@ -27,7 +27,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public static List<TypedValue> GetIteratorValues(ICheckListGroup Iterator, Symbol Argument, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
-            var NewIterationIndexes = new Dictionary<string, int>(IterationIndexes) { [Iterator.Code] = 0 }; //creates a clone, because Irerator.Code is contextual and expires at the end of the evaluation
+            var NewIterationIndexes = new Dictionary<string, int>(IterationIndexes) { [Iterator.Code] = 0 }; //creates a clone, because Iterator.Code is contextual and expires at the end of the evaluation
 
             return Iterator.Iterations.Where(x => !x.Removed).Select(Iteration => {
                 Iteration.ReccurencyValue = Argument.GetValue(Iteration, NewIterationIndexes, TimeZone);
