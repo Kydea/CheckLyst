@@ -1377,6 +1377,10 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElement = await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
                         Property = DependencyRelation.Properties.Value;
                         break;
+                    case EventTypes.Import:
+                        await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
+                        Property = DependencyRelation.Properties.ReadOnly;
+                        break;
                     case EventTypes.Add:
                         AffectedElement = await HandleAddAsync(cacheObject, identity.Code, request.ItemId);
                         Property = DependencyRelation.Properties.Iterations;
@@ -1426,10 +1430,6 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.ExternalSourceRowChange:
                         AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
                         Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
-                        break;
-                    case EventTypes.Import:
-                        await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
-                        Property = DependencyRelation.Properties.ReadOnly;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
@@ -2154,6 +2154,7 @@ namespace CheckListManager.Instances.Logic.Services
                         IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
                     }
             }
+            group.SetupIterationsIndexes();
 
             DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
