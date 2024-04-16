@@ -5,6 +5,7 @@ using System;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
+using System.Reflection;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -135,19 +136,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (Item is Group Group)
                     Group.SetupIterationsIndexes();
 
-            foreach (Iteration Iteration in Iterations)
-            {
-                Iteration.Indexes.Clear();
-                if (this.Iteration != null)
-                    this.Iteration.Indexes.ForEach(i => Iteration.Indexes.Add(i));
+            foreach (Iteration iteration in Iterations)
+                SetupIterationIntexes(iteration, ref Index);
+        }
 
-                Iteration.Indexes.Add(Index); //0-base
-                Iteration.Index = Index + 1; //1-base
-                if (!Iteration.Removed) ++Index;
+        public void SetupIterationIntexes(Iteration iteration, ref int Index)
+        {
+            iteration.Indexes.Clear();
+            if (Iteration != null)
+                Iteration.Indexes.ForEach(i => iteration.Indexes.Add(i));
 
-                Iteration.SetupIterationsIndexes();
-            }
+            iteration.Indexes.Add(Index); //0-base
+            iteration.Index = Index + 1; //1-base
+            if (!iteration.Removed) ++Index;
 
+            iteration.SetupIterationsIndexes();
         }
 
         public override bool IsValidByDefault()

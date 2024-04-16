@@ -2125,9 +2125,11 @@ namespace CheckListManager.Instances.Logic.Services
             group.ModifiedBy = identity.Code;
             group.ModifiedOn = DateTimeOffset.UtcNow;
             group.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Iterations);
+            var iterationIndex = group.Iterations.Count(i => !i.Removed);
             foreach (var row in rows)
             {
                 var iteration = group.AddIteration();
+                group.SetupIterationIntexes(iteration, ref iterationIndex);
                 iterationsId.Add(iteration.Id);
                 for (var index = 0; index < columns.Count; ++index)
                     rowDictionary[columns[index]] = row[index];
@@ -2137,22 +2139,20 @@ namespace CheckListManager.Instances.Logic.Services
                 iteration.GetAllChildren(IterationChildren);
                 IterationChildren = IterationChildren.Where(x => x != null).ToList();
 
-                if (IterationChildren.Any())
-                    foreach (var Child in IterationChildren.Cast<Element>())
-                    {
-                        //the children of the added iterations are all marked as changed
-                        Child.MarkAllAsChanged(Roots);
+                foreach (var Child in IterationChildren.Cast<Element>())
+                {
+                    //the children of the added iterations are all marked as changed
+                    Child.MarkAllAsChanged(Roots);
 
-                        if (Child is Field Field)
-                        {
-                            //the fields bound to the external source are update directly
-                            if (Field.ExternalSourceName == ExternalSource.Code) Field.Update(DependencyRelation.Properties.Value);
-                        }
+                    //the fields bound to the external source are update directly
+                    if (Child is Field Field)
+                        //if (Field.ExternalSourceName == ExternalSource.Code) 
+                            Field.Update(DependencyRelation.Properties.Value);
 
-                        //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
-                        var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
-                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
-                    }
+                    //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
+                    var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
+                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                }
             }
             group.SetupIterationsIndexes();
 
