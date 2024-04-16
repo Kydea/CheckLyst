@@ -2145,13 +2145,14 @@ namespace CheckListManager.Instances.Logic.Services
                     Child.MarkAllAsChanged(Roots);
 
                     //the fields bound to the external source are update directly
-                    if (Child is Field Field)
-                        //if (Field.ExternalSourceName == ExternalSource.Code) 
-                            Field.Update(DependencyRelation.Properties.Value);
+                    if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code)
+                    {
+                        Field.Update(DependencyRelation.Properties.Value);
 
-                    //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
-                    var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
-                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                        //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
+                        var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
+                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                    }
                 }
             }
             group.SetupIterationsIndexes();
