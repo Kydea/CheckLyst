@@ -16,7 +16,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions.IteratorFunctions
             var DependingElement = (DependencyNode)Iterator;
             Expression.AddDependingRelation(DependencyRelation.Properties.Value, DependingElement, DependencyRelation.Properties.Iterations);
             base.BuildDependencies(CheckList, Expression);
-
         }
 
         public override void Check(ICheckList CheckList, Expression Expression, List<string> IteratorStack)

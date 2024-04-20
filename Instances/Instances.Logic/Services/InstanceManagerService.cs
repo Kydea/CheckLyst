@@ -1377,6 +1377,10 @@ namespace CheckListManager.Instances.Logic.Services
                         AffectedElement = await HandleValueCopyAsync(cacheObject, identity.Code, request.ItemId);
                         Property = DependencyRelation.Properties.Value;
                         break;
+                    case EventTypes.ExternalSourceRowChange:
+                        AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
+                        Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
+                        break;
                     case EventTypes.Import:
                         await HandleImport(cacheObject, identity, request.ItemId, request.Value, request.Columns, request.Rows);
                         Property = DependencyRelation.Properties.ReadOnly;
@@ -1426,10 +1430,6 @@ namespace CheckListManager.Instances.Logic.Services
                     case EventTypes.Quit:
                         await HandleQuitAsync(cacheObject, identity);
                         Property = DependencyRelation.Properties.ReadOnly;
-                        break;
-                    case EventTypes.ExternalSourceRowChange:
-                        AffectedElements = await HandleExternalSourceRowChange(cacheObject, identity, request.ItemId, request.Row);
-                        Property = AffectedElements == null ? DependencyRelation.Properties.ReadOnly : DependencyRelation.Properties.Value;
                         break;
                     case EventTypes.UploadAttachment:
                         AffectedElement = await HandleUploadAttachment(cacheObject, identity, request.ItemId, request.Attachment);
@@ -2056,19 +2056,32 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
-            if (field == null)
-                throw new InstanceException($"Field {itemId} not found");
+            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : throw new InstanceException($"Field {itemId} not found");
 
             if (field.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(field.ExternalSourceName, out var ExternalSource))
                 return null;
 
             ExternalSource.Values = row;
-            var AffectedElements = field.IterationItem ? null : new List<Item>();
+            List<Item> AffectedElements;
 
-            foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
-                if (field.IterationItem)
+            if (field.IterationItem)
+            {
+                AffectedElements = null;
+                var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
+                foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
                 {
+                    var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
+                    Item IterationItem = IteratorModelItem.FindIterationItems(field.Iteration).Single();
+                    IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
+
+                    //the fields bound to the external source of the iteration that contains field are update directly
+                    IterationItem.Update(DependencyRelation.Properties.Value);
+
+                    //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
+                    IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+
+
+                    /*
                     var IteratorModelItem = (Item)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
                     Item IterationItem = IteratorModelItem.FindIterationItems(field.Iteration).Single();
 
@@ -2081,12 +2094,21 @@ namespace CheckListManager.Instances.Logic.Services
                     IteratorModelItem.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Value);
                     IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+                    */
                 }
-                else
+
+                DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+            }
+            else
+            {
+                AffectedElements = new List<Item>();
+                foreach (var ExternalSourceDependencyRelation in ExternalSource.DependentRelations)
                 {
                     var AffectedField = (Field)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
-                    if (!AffectedField.IteratorModelItem) AffectedElements.Add(AffectedField); //for external sources the iteration act as scope
+                    if (!AffectedField.IteratorModelItem) //other scope
+                        AffectedElements.Add(AffectedField); 
                 }
+            }
 
             await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
             {
