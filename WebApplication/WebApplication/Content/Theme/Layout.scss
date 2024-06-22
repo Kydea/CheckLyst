@@ -43,6 +43,27 @@ a {
     &.Right {
         float: right;
     }
+
+    &.NoConnectionWarning {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: $Color-Silver-Light;
+        padding: 20px;
+        border-radius: 10px;
+        border: solid 1px $Color-Red-Regular;
+        opacity: .5;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        i {
+            font-size: 30px;
+            color: $Color-Red-Regular;
+        }
+    }
 }
 
 pre {
