@@ -9,7 +9,6 @@
         label,
         span,
         element = item.getElement(),
-        copyButton,
         readOnly = false,
         goToNext = 0,
 
@@ -49,13 +48,13 @@
                 }, 0);
         },
 
-        change = function () {
+        change = function (value) {
             if (!model.valuesList && (model.valueTypeName == "Date" || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") && !matematici.TypedInput.validate(model.valueTypeName, input, select, select2))
                 return;
 
             var handleGoToNext = goToNext;
             goToNext = 0;
-            new instances.Event(instances.Events.valueChange, model.id, { value: getValue() }).done(function (result) {
+            new instances.Event(instances.Events.valueChange, model.id, { value: value == undefined ? getValue() : value }).done(function (result) {
                 instances.instance.update(result);
                 if (handleGoToNext) next(handleGoToNext);
             }).trigger();
@@ -70,6 +69,10 @@
                 instances.instance.update(result);
                 next();
             }).trigger();
+        },
+
+        scan = function () {
+            new matematici.Scanner(change);
         },
 
         focus = function () {
@@ -87,6 +90,12 @@
                 return;
             }
 
+            if (e.keyCode == 120 || e.key == "F9") {
+                e.preventDefault();
+                scan();
+                return;
+            }
+
             if (e.keyCode == 9 || e.key == "Tab") {
                 e.preventDefault();
                 goToNext = e.shiftKey ? -1 : 1;
@@ -97,6 +106,7 @@
         },
 
         setup = function () {
+            var actionButtons = [];
             label = document.createElement("label");
             span = document.createElement("span");
             span.className = "Label";
@@ -120,8 +130,11 @@
                     } else if (model.valueTypeName == "Boolean") {
                         element.classList.add("Boolean");
                         input.setAttribute("type", "checkbox");
-                    } else
+                    } else {
                         input.classList.add("Scan");
+                        if (!matematici.appMode)
+                            actionButtons.push({ label: "scan (F9)", tooltip: "F9", icon: "barcode-read", handler: scan });
+                    }
 
                     input.addEventListener("focus", focus);
                     input.addEventListener("change", change);
@@ -197,11 +210,9 @@
             if (select2) (autoComplete2 = new matematici.AutoComplete(select2, { noCheck: model.valueTypeName == "DateTime" })).initialize();
 
             if (!item.isTableContent() || !item.getParent().isSubRow()) {
-                copyButton = document.createElement("a");
-                copyButton.className = "Copy fal fa-clone";
-                copyButton.setAttribute("href", "#");
-                copyButton.setAttribute("title", "F8");
-                copyButton.addEventListener("mousedown", valueCopy);
+                if (!matematici.appMode)
+                    actionButtons.push({ label: "copy (F8)", tootip: "F8", icon: "clone", handler: valueCopy, check: function (e) { return $(e.target).closest(".FirstIteration").length == 0; } });
+
                 if (autoComplete) {
                     select.addEventListener("showList", function () { field.classList.add("Focused"); });
                     select.addEventListener("hideList", function () { field.classList.remove("Focused"); });
@@ -210,8 +221,35 @@
                     select2.addEventListener("showList", function () { field.classList.add("Focused"); });
                     select2.addEventListener("hideList", function () { field.classList.remove("Focused"); });
                 }
+            }
 
-                (item.isTableContent() ? element : label).appendChild(copyButton);
+            if (actionButtons.length > 0) {
+                var toolButton = document.createElement("a");
+
+                toolButton.className = "ActionButton fal fa-bolt";
+                toolButton.setAttribute("href", "#");
+
+                toolButton.addEventListener("mousedown", function (e) {
+                    var
+                        buttons = [
+                            { text: "Cancel", icon: "times", cancelButton: true }
+                        ],
+                        signers = matematici.tokenManager.getSigners();
+
+                    for (var index in actionButtons) {
+                        var
+                            actionButton = actionButtons[index],
+                            button = {
+                                text: actionButton.label, icon: actionButton.icon, title: actionButton.tooltip, handler: actionButton.handler
+                            };
+                        if (actionButton.check && !actionButton.check(e))
+                            button.disabled = true;
+                        buttons.push(button);
+                    }
+
+                    matematici.dialog.popupMenu(buttons)
+                });
+                (item.isTableContent() ? element : label).appendChild(toolButton);
             }
 
         };

@@ -19,15 +19,21 @@ matematici.dialog = function () {
                 if (button.marginTop) textArea.css("margin-top", button.marginTop);
 				container.append(button.content);
 			} else if (button.text || button.hidden) {
-				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
-					if (!button.handler)
-                        matematici.dialog.close();
-				    else if (!button.handler.call(this, button.data)) {
-						matematici.dialog.close();
-					}
-				});
+				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text);
+
+				if (button.disabled)
+					button.content.addClass("Disabled");
+				else
+					button.content.on("click", function () {
+						if (!button.handler)
+							matematici.dialog.close();
+						else if (!button.handler.call(this, button.data)) {
+							matematici.dialog.close();
+						}
+					});
                 if (button.icon) button.content.prepend($("<i />").addClass("Icon " + (options.iconPrefix || "fa") + " fa-" + button.icon));
 				if (button.hidden) button.content.hide();
+
 				if (button.defaultButton) button.content.addClass("DefaultButton");
 				if (button.title) button.content.attr("title", button.title);
 				if (button.cancelButton) 
@@ -176,6 +182,7 @@ matematici.dialog = function () {
             handler - type: function, description: called when the button is clicked
             icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
 			hidden - type: boolean, description: the button is hidden
+			disabled - type: boolean, description: the button is disabled
 			defaultButton - type: boolean, description: the click action is invoked when user press return
 			cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)
 
@@ -197,6 +204,7 @@ matematici.dialog = function () {
                 handler - type: function, description: called when the button is clicked
                 icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
 				hidden - type: boolean, description: the button is hidden
+				disabled - type: boolean, description: the button is disabled
 				defaultButton - type: boolean, description: the click action is invoked when user press return
 				cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)
 

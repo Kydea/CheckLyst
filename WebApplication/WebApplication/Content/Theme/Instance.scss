@@ -203,7 +203,7 @@ div.Instance {
 
             .Item.Field:not(.Boolean) {
                 :focus, .Focused {
-                    ~ .Copy {
+                    ~ .ActionButton {
                         display: block;
                     }
                 }
@@ -222,12 +222,6 @@ div.Instance {
             &.FirstIteration {
                 > .IterationCommands a.Up {
                     display: none;
-                }
-
-                > .Item.Field {
-                    .Copy {
-                        display: none !important;
-                    }
                 }
             }
 
@@ -279,8 +273,7 @@ div.Instance {
             border: none;
             overflow: hidden;
 
-            > *:not(.CountDown)
-            {
+            > *:not(.CountDown) {
                 display: none;
             }
         }
@@ -462,7 +455,7 @@ div.Instance {
                 }
             }
 
-            .Copy {
+            .ActionButton {
                 position: absolute;
                 top: 21px;
                 right: 3px;
@@ -672,7 +665,7 @@ div.Instance {
                             margin: 0 auto;
                         }
 
-                        .Copy {
+                        .ActionButton {
                             top: 2px;
                         }
 

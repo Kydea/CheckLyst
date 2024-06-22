@@ -301,6 +301,7 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
     <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\Scanner.js" />
     <Content Include="Scripts\Custom\SQLEditor.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />
@@ -317,6 +318,7 @@
     <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Instances\InstanceLink.js" />
     <Content Include="Scripts\Libraries\pako.1.0.11.js" />
+    <Content Include="Scripts\Libraries\zxing-0.18.5.js" />
     <Content Include="Scripts\Matematici\Profiler.js" />
     <Content Include="Scripts\Custom\TokenManager.js" />
     <Content Include="Scripts\Custom\ActionBar.js" />

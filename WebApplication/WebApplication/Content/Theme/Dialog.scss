@@ -122,7 +122,15 @@ div.Dialog {
                         content: none;
                     }
 
-                    &:hover {
+                    &.Disabled {
+                        color: $Color-Grey-Light;
+
+                        i {
+                            color: $Color-Grey-Light;
+                        }
+                    }
+
+                    &:not(.Disabled):hover {
                         background-color: $Color-Green-Regular;
                         color: white;
                     }
