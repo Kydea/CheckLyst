@@ -25,7 +25,7 @@
             content.appendChild(deviceSelect);
             videoElement = document.createElement("video");
             videoElement.style.setProperty("margin-top", "20px")
-            videoElement.style.setProperty("width", "300px")
+            videoElement.style.setProperty("width", "320px")
             content.appendChild(videoElement);
 
             matematici.popup.show({
@@ -45,7 +45,7 @@
                 ]
             });
 
-            matematici.popup.setWidth(340);
+            matematici.popup.setWidth(360);
             codeReader.getVideoInputDevices()
                 .then((videoInputDevices) => {
                     if (videoInputDevices.length == 0)
@@ -58,8 +58,7 @@
                             localStorage["ScannerDevice"] = deviceId;
                         });
 
-                        var selectedDevice = parseInt(localStorage["ScannerDevice"]);
-                        if (selectedDevice == null || isNaN(selectedDevice) || selectedDevice > videoInputDevices.length) selectedDevice = videoInputDevices[0].deviceId;
+                        var selectedDevice = localStorage["ScannerDevice"];
                         for (var index in videoInputDevices) {
                             var
                                 option = document.createElement("option"),
@@ -70,8 +69,10 @@
                             option.innerText = label == "" || label == null ? "device " + index : label;
                             deviceSelect.appendChild(option);
                         }
-                        matematici.AutoComplete.get(deviceSelect).refresh();
-                        startDevice(selectedDevice);
+                        setTimeout(function () {
+                            matematici.AutoComplete.get(deviceSelect).refresh();
+                            startDevice(deviceSelect.value);
+                        }, 1000);
                     }
                 })
                 .catch((error) => {

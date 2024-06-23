@@ -5,7 +5,6 @@
         input,
         readOnly,
         key,
-        restrictToCamera,
 
         onChange = function () {
             var data = new FormData();
@@ -35,7 +34,7 @@
         },
 
         setup = function () {
-            restrictToCamera = model.fileType === "images" && model.restrictToCamera;
+            var restrictToCamera = model.fileType === "images" && model.restrictToCamera;
             var element = item.getElement();
             input = document.createElement("input");
             input.classList.add("Hidden");
@@ -54,7 +53,28 @@
                     return;
                 }
 
-                input.click();
+                if (model.fileType == "pdf")
+                    input.click();
+                else if (restrictToCamera)
+                    new matematici.ImageUpload(model);
+                else
+                    matematici.dialog.popupMenu([
+                        { text: "Cancel", icon: "times", cancelButton: true },
+                        {
+                            text: "Capture",
+                            icon: "camera",
+                            handler: function () {
+                                new matematici.ImageUpload(model);
+                            }
+                        },
+                        {
+                            text: "Upload",
+                            icon: "paperclip",
+                            handler: function () {
+                                input.click();
+                            }
+                        }
+                    ]);
             });
             element.appendChild(uploadButton);
 

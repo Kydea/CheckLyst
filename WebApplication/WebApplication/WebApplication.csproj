@@ -301,6 +301,7 @@
     <Content Include="Scripts\Controls\Controls.js" />
     <Content Include="Scripts\Controls\DatePicker.js" />
     <Content Include="Scripts\Controls\TypedInput.js" />
+    <Content Include="Scripts\Custom\ImageUpload.js" />
     <Content Include="Scripts\Custom\Scanner.js" />
     <Content Include="Scripts\Custom\SQLEditor.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
