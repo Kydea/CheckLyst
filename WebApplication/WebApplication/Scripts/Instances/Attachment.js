@@ -48,11 +48,6 @@
             uploadButton.setAttribute("href", "#");
             uploadButton.addEventListener("click", function () {
                 if (readOnly) return;
-                if (restrictToCamera && !matematici.appMode) {
-                    matematici.dialog.error("error", "this image can be attached only using the camera from the mobile app");
-                    return;
-                }
-
                 if (model.fileType == "pdf")
                     input.click();
                 else if (restrictToCamera)
