@@ -79,9 +79,15 @@
                 text: "capture",
                 icon: "camera",
                 handler: function () {
-                    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                    var
+                        width = videoElement.videoWidth,
+                        height = videoElement.videoHeight;
+                    canvasElement.width = width;
+                    canvasElement.height = height;  
+
+                    context.drawImage(videoElement, 0, 0, width, height);
                     canvasElement.toBlob(function (blob) {
-                        upload(blob);
+                        //upload(blob);
                     }, 'image/jpeg');
                     return true;
                 }
