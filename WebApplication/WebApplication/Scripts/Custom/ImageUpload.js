@@ -33,7 +33,7 @@
             new instances.Event(instances.Events.uploadAttachment, model.id, data, undefined, undefined, true).done(function (result) {
                 instances.instance.update(result);
                 closeStream();
-                matematici.dialog.close();
+                matematici.popup.close();
             }).trigger();
         },
 
