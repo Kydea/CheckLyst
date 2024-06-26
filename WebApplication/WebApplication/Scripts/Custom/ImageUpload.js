@@ -87,7 +87,7 @@
 
                     context.drawImage(videoElement, 0, 0, width, height);
                     canvasElement.toBlob(function (blob) {
-                        //upload(blob);
+                        upload(blob);
                     }, 'image/jpeg');
                     return true;
                 }
