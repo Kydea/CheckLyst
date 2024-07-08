@@ -1,38 +1,48 @@
 ﻿label {
   display: block;
-  font-size: 13px; }
-  label > span:first-child > i.fa-exclamation {
-    color: #cc0000;
-    font-size: inherit;
-    margin-left: 5px; }
-  label.Boolean input {
-    height: 36px;
-    line-height: 36px;
-    vertical-align: middle; }
-  label.DateTime input:nth-child(3) {
-    width: 120px;
-    display: inline-block;
-    border-radius: 5px 0 0 5px; }
-  label.DateTime select + input.AutoComplete {
-    width: 55px;
-    display: inline-block;
-    border-radius: 0;
-    border-left: 0; }
-  label.DateTime select:last-of-type + input.AutoComplete {
-    border-radius: 0 5px 5px 0; }
-  label.Time input.AutoComplete {
-    width: 50%;
-    display: inline-block;
-    border-radius: 5px 0 0 5px; }
-    label.Time input.AutoComplete:nth-last-child(2), label.Time input.AutoComplete:nth-last-child(1), label.Time input.AutoComplete:not(:first-of-type) {
-      border-radius: 0 5px 5px 0;
-      border-left: 0; }
-  label *.Error {
-    color: #cc0000; }
+  font-size: 13px;
+}
+label > span:first-child > i.fa-exclamation {
+  color: #cc0000;
+  font-size: inherit;
+  margin-left: 5px;
+}
+label.Boolean input {
+  height: 36px;
+  line-height: 36px;
+  vertical-align: middle;
+}
+label.DateTime input:nth-child(3) {
+  width: 120px;
+  display: inline-block;
+  border-radius: 5px 0 0 5px;
+}
+label.DateTime select + input.AutoComplete {
+  width: 55px;
+  display: inline-block;
+  border-radius: 0;
+  border-left: 0;
+}
+label.DateTime select:last-of-type + input.AutoComplete {
+  border-radius: 0 5px 5px 0;
+}
+label.Time input.AutoComplete {
+  width: 50%;
+  display: inline-block;
+  border-radius: 5px 0 0 5px;
+}
+label.Time input.AutoComplete:nth-last-child(2), label.Time input.AutoComplete:nth-last-child(1), label.Time input.AutoComplete:not(:first-of-type) {
+  border-radius: 0 5px 5px 0;
+  border-left: 0;
+}
+label *.Error {
+  color: #cc0000;
+}
 
 div.Input {
   overflow: hidden;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+}
 
 input[type=text], input[type=range], input[type=number], input[type=password], input[type=email], input[type=file], select, div.Input {
   display: block;
@@ -44,13 +54,16 @@ input[type=text], input[type=range], input[type=number], input[type=password], i
   line-height: 26px;
   height: 36px;
   font-family: Arial, sans-serif;
-  font-size: 13px; }
-  input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
-    background-color: #f5f5f5; }
+  font-size: 13px;
+}
+input[type=text][readonly], input[type=text].ReadOnly, input[type=range][readonly], input[type=range].ReadOnly, input[type=number][readonly], input[type=number].ReadOnly, input[type=password][readonly], input[type=password].ReadOnly, input[type=email][readonly], input[type=email].ReadOnly, input[type=file][readonly], input[type=file].ReadOnly, select[readonly], select.ReadOnly, div.Input[readonly], div.Input.ReadOnly {
+  background-color: #f5f5f5;
+}
 
 input.Error, select.Error {
   border-color: #cc0000;
-  outline-color: #ff3333; }
+  outline-color: #ff3333;
+}
 
 textarea {
   height: 88px;
@@ -63,12 +76,15 @@ textarea {
   padding: 5px 10px;
   resize: none;
   font-family: Arial, sans-serif;
-  font-size: 13px; }
-  textarea[readonly], textarea.ReadOnly {
-    background-color: #f5f5f5; }
+  font-size: 13px;
+}
+textarea[readonly], textarea.ReadOnly {
+  background-color: #f5f5f5;
+}
 
 pre {
-  border: solid 1px #ccc; }
+  border: solid 1px #ccc;
+}
 
 a.Button {
   text-transform: uppercase;
@@ -84,200 +100,252 @@ a.Button {
   cursor: default;
   height: 36px;
   line-height: 36px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px; }
-  a.Button i.Icon {
-    margin-top: 5px;
-    margin-right: 5px;
-    width: 26px;
-    height: 26px;
-    right: 0;
-    line-height: 26px;
-    position: absolute;
-    background: white;
-    top: 0;
-    z-index: 1;
-    border-radius: 50%;
-    color: #009688; }
-  a.Button::after {
-    content: "";
-    width: 36px;
-    height: 36px;
-    right: 0;
-    border-left: 1px solid #ebebeb;
-    background-color: inherit;
-    border-radius: 0 5px 5px 0;
-    position: absolute;
-    top: 0; }
-  a.Button:hover, a.Button.Selected {
-    text-decoration: none !important; }
-    a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
-      color: white; }
-      a.Button:hover:not(.ReadOnly):not(.Placeholder), a.Button.Selected:not(.ReadOnly):not(.Placeholder) {
-        background-color: #03c3b1; }
-        a.Button:hover:not(.ReadOnly):not(.Placeholder) i.Icon, a.Button.Selected:not(.ReadOnly):not(.Placeholder) i.Icon {
-          color: #03c3b1; }
-  a.Button.Icon {
-    min-width: 0;
-    width: 36px;
-    padding: 0; }
-    a.Button.Icon i.Icon {
-      padding: 0; }
-    a.Button.Icon::after {
-      border: 0;
-      border-radius: 5px; }
-  a.Button.MiniIcon {
-    min-width: 0;
-    width: 36px;
-    padding: 0;
-    height: 16px;
-    width: 16px;
-    line-height: 16px;
-    margin-top: 20px;
-    margin-left: 0;
-    box-shadow: none;
-    border-radius: 50% !important;
-    font-size: 10px;
-    background: none; }
-    a.Button.MiniIcon i.Icon {
-      color: #009688;
-      height: 16px;
-      width: 16px;
-      line-height: 16px;
-      padding: 0;
-      border: 0;
-      background: none;
-      font-size: 10px;
-      margin: 0; }
-    a.Button.MiniIcon::after {
-      content: none; }
-    a.Button.MiniIcon:hover {
-      background: none; }
-      a.Button.MiniIcon:hover i.Icon {
-        color: #03c3b1; }
-    a.Button.MiniIcon.Angle {
-      margin-left: -16px; }
-  a.Button.GreyGreenButton {
-    background-color: #999; }
-    a.Button.GreyGreenButton i.Icond {
-      color: white;
-      background-color: #009688; }
-    a.Button.GreyGreenButton::after {
-      background-color: white; }
-    a.Button.GreyGreenButton:hover:not(.Placeholder) {
-      background-color: #009688; }
-      a.Button.GreyGreenButton:hover:not(.Placeholder) i.Icon {
-        color: #009688; }
-  a.Button.GreyYellowButton {
-    background-color: #999; }
-    a.Button.GreyYellowButton i.Icon {
-      color: white;
-      background-color: #ffba00; }
-    a.Button.GreyYellowButton::after {
-      background-color: white; }
-    a.Button.GreyYellowButton:hover:not(.Placeholder) {
-      background-color: #ffba00; }
-      a.Button.GreyYellowButton:hover:not(.Placeholder) i.Icon {
-        color: white; }
-  a.Button.Invalid {
-    color: #cc0000; }
-  a.Button.ReadOnly {
-    background-color: #ccc !important;
-    box-shadow: none; }
-    a.Button.ReadOnly i.Icon {
-      color: white;
-      background-color: #ccc; }
-    a.Button.ReadOnly::after {
-      background-color: #ebebeb !important;
-      background-color: white; }
-    a.Button.ReadOnly:hover {
-      background-color: #ccc !important;
-      color: white !important; }
+  box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+}
+a.Button i.Icon {
+  margin-top: 5px;
+  margin-right: 5px;
+  width: 26px;
+  height: 26px;
+  right: 0;
+  line-height: 26px;
+  position: absolute;
+  background: white;
+  top: 0;
+  z-index: 1;
+  border-radius: 50%;
+  color: #009688;
+}
+a.Button::after {
+  content: "";
+  width: 36px;
+  height: 36px;
+  right: 0;
+  border-left: 1px solid #ebebeb;
+  background-color: inherit;
+  border-radius: 0 5px 5px 0;
+  position: absolute;
+  top: 0;
+}
+a.Button:hover, a.Button.Selected {
+  text-decoration: none !important;
+}
+a.Button:hover:not(.ReadOnly), a.Button.Selected:not(.ReadOnly) {
+  color: white;
+}
+a.Button:hover:not(.ReadOnly):not(.Placeholder), a.Button.Selected:not(.ReadOnly):not(.Placeholder) {
+  background-color: #03c3b1;
+}
+a.Button:hover:not(.ReadOnly):not(.Placeholder) i.Icon, a.Button.Selected:not(.ReadOnly):not(.Placeholder) i.Icon {
+  color: #03c3b1;
+}
+a.Button.Icon {
+  min-width: 0;
+  width: 36px;
+  padding: 0;
+}
+a.Button.Icon i.Icon {
+  padding: 0;
+}
+a.Button.Icon::after {
+  border: 0;
+  border-radius: 5px;
+}
+a.Button.MiniIcon {
+  min-width: 0;
+  width: 36px;
+  padding: 0;
+  height: 16px;
+  width: 16px;
+  line-height: 16px;
+  margin-top: 20px;
+  margin-left: 0;
+  box-shadow: none;
+  border-radius: 50% !important;
+  font-size: 10px;
+  background: none;
+}
+a.Button.MiniIcon i.Icon {
+  color: #009688;
+  height: 16px;
+  width: 16px;
+  line-height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 10px;
+  margin: 0;
+}
+a.Button.MiniIcon::after {
+  content: none;
+}
+a.Button.MiniIcon:hover {
+  background: none;
+}
+a.Button.MiniIcon:hover i.Icon {
+  color: #03c3b1;
+}
+a.Button.MiniIcon.Angle {
+  margin-left: -16px;
+}
+a.Button.GreyGreenButton {
+  background-color: #999;
+}
+a.Button.GreyGreenButton i.Icond {
+  color: white;
+  background-color: #009688;
+}
+a.Button.GreyGreenButton::after {
+  background-color: white;
+}
+a.Button.GreyGreenButton:hover:not(.Placeholder) {
+  background-color: #009688;
+}
+a.Button.GreyGreenButton:hover:not(.Placeholder) i.Icon {
+  color: #009688;
+}
+a.Button.GreyYellowButton {
+  background-color: #999;
+}
+a.Button.GreyYellowButton i.Icon {
+  color: white;
+  background-color: #ffba00;
+}
+a.Button.GreyYellowButton::after {
+  background-color: white;
+}
+a.Button.GreyYellowButton:hover:not(.Placeholder) {
+  background-color: #ffba00;
+}
+a.Button.GreyYellowButton:hover:not(.Placeholder) i.Icon {
+  color: white;
+}
+a.Button.Invalid {
+  color: #cc0000;
+}
+a.Button.ReadOnly {
+  background-color: #ccc !important;
+  box-shadow: none;
+}
+a.Button.ReadOnly i.Icon {
+  color: white;
+  background-color: #ccc;
+}
+a.Button.ReadOnly::after {
+  background-color: #ebebeb !important;
+  background-color: white;
+}
+a.Button.ReadOnly:hover {
+  background-color: #ccc !important;
+  color: white !important;
+}
 
 div.Errors {
   color: #cc0000;
   margin-top: 20px;
   display: none;
-  line-height: 1.5; }
-  div.Errors:first-child {
-    margin-top: 0; }
+  line-height: 1.5;
+}
+div.Errors:first-child {
+  margin-top: 0;
+}
 
 form {
   border: 1px solid #ccc;
   position: relative;
   padding-bottom: 20px;
   padding-right: 20px;
-  background-color: #f5f5f5; }
-  form h2, form h3, form h4 {
-    float: left;
-    margin-top: 20px !important;
-    margin-left: 20px !important;
-    margin-bottom: 0 !important; }
-  form hr {
-    clear: both;
-    float: left;
-    margin-top: 20px !important;
-    margin-left: 20px !important;
-    margin-bottom: 0 !important;
-    width: calc(100% - 2 * 20px) !important; }
-  form a.Button {
-    float: left;
-    margin-top: calc(1em + 25px);
-    margin-left: 20px; }
-  form.AdvancedSearch {
-    padding-bottom: 56px; }
-  form > a.FiltersLinkButton {
-    display: none; }
-  form#Filters > a.FiltersLinkButton {
-    display: block;
-    top: 10px;
-    right: 10px;
-    position: absolute; }
-    form#Filters > a.FiltersLinkButton i {
-      font-size: 12px; }
-  form div.AdvancedSearch {
-    display: none;
-    clear: both; }
-    form div.AdvancedSearch + #ApplyButton {
-      clear: both; }
-  form a.AdvancedSearch {
-    width: 100%;
-    display: block;
-    background-color: #ccc;
-    border-top: solid 1px #ccc;
-    color: white;
-    position: absolute;
-    bottom: 0;
-    height: 36px;
-    line-height: 36px;
-    text-align: center; }
-    form a.AdvancedSearch i {
-      font-size: 12px !important;
-      transition: transform linear .3s;
-      margin-left: 10px;
-      display: inline-block; }
-    form a.AdvancedSearch.Open i {
-      transform: rotate(180deg); }
-    form a.AdvancedSearch:hover {
-      text-decoration: none !important;
-      background-color: #bbb; }
-  form > label.GridLabel {
-    float: none;
-    clear: both; }
-  form table.Grid {
-    margin-top: 3px;
-    margin-left: 20px;
-    width: calc(100% - 20px);
-    border: solid 1px #999; }
-    form table.Grid td {
-      position: relative; }
-  form div.Control {
-    margin-top: 20px;
-    margin-left: 20px; }
-  form div.NoParameter {
-    margin-top: 20px;
-    margin-left: 20px;
-    text-align: center;
-    color: #666; }
+  background-color: #f5f5f5;
+}
+form h2, form h3, form h4 {
+  float: left;
+  margin-top: 20px !important;
+  margin-left: 20px !important;
+  margin-bottom: 0 !important;
+}
+form hr {
+  clear: both;
+  float: left;
+  margin-top: 20px !important;
+  margin-left: 20px !important;
+  margin-bottom: 0 !important;
+  width: calc(100% - 2 * 20px) !important;
+}
+form a.Button {
+  float: left;
+  margin-top: calc(1em + 25px);
+  margin-left: 20px;
+}
+form.AdvancedSearch {
+  padding-bottom: 56px;
+}
+form > a.FiltersLinkButton {
+  display: none;
+}
+form#Filters > a.FiltersLinkButton {
+  display: block;
+  top: 10px;
+  right: 10px;
+  position: absolute;
+}
+form#Filters > a.FiltersLinkButton i {
+  font-size: 12px;
+}
+form div.AdvancedSearch {
+  display: none;
+  clear: both;
+}
+form div.AdvancedSearch + #ApplyButton {
+  clear: both;
+}
+form a.AdvancedSearch {
+  width: 100%;
+  display: block;
+  background-color: #ccc;
+  border-top: solid 1px #ccc;
+  color: white;
+  position: absolute;
+  bottom: 0;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+}
+form a.AdvancedSearch i {
+  font-size: 12px !important;
+  transition: transform linear 0.3s;
+  margin-left: 10px;
+  display: inline-block;
+}
+form a.AdvancedSearch.Open i {
+  transform: rotate(180deg);
+}
+form a.AdvancedSearch:hover {
+  text-decoration: none !important;
+  background-color: #bbb;
+}
+form > label.GridLabel {
+  float: none;
+  clear: both;
+}
+form table.Grid {
+  margin-top: 3px;
+  margin-left: 20px;
+  width: calc(100% - 20px);
+  border: solid 1px #999;
+}
+form table.Grid td {
+  position: relative;
+}
+form div.Control {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+form div.NoParameter {
+  margin-top: 20px;
+  margin-left: 20px;
+  text-align: center;
+  color: #666;
+}
 
 form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.PropertyPanel div.PropertyValue label, div.PropertyPanel div.PropertyValue p.Label, div.Module label, div.Module p.Label {
   float: left;
@@ -287,142 +355,191 @@ form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.Proper
   max-width: calc(100% - 20px);
   position: relative;
   color: #666;
-  padding-top: 1em; }
-  form label label, form p.Label label, div.CheckList label label, div.CheckList p.Label label, div.PropertyPanel div.PropertyValue label label, div.PropertyPanel div.PropertyValue p.Label label, div.Module label label, div.Module p.Label label {
-    padding: 0;
-    margin: 0;
-    width: unset; }
-  form label input, form label select, form label textarea, form label div.Input, form label pre, form p.Label input, form p.Label select, form p.Label textarea, form p.Label div.Input, form p.Label pre, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input, div.CheckList label pre, div.CheckList p.Label input, div.CheckList p.Label select, div.CheckList p.Label textarea, div.CheckList p.Label div.Input, div.CheckList p.Label pre, div.PropertyPanel div.PropertyValue label input, div.PropertyPanel div.PropertyValue label select, div.PropertyPanel div.PropertyValue label textarea, div.PropertyPanel div.PropertyValue label div.Input, div.PropertyPanel div.PropertyValue label pre, div.PropertyPanel div.PropertyValue p.Label input, div.PropertyPanel div.PropertyValue p.Label select, div.PropertyPanel div.PropertyValue p.Label textarea, div.PropertyPanel div.PropertyValue p.Label div.Input, div.PropertyPanel div.PropertyValue p.Label pre, div.Module label input, div.Module label select, div.Module label textarea, div.Module label div.Input, div.Module label pre, div.Module p.Label input, div.Module p.Label select, div.Module p.Label textarea, div.Module p.Label div.Input, div.Module p.Label pre {
-    margin-top: 5px; }
-  form label input[type=checkbox], form p.Label input[type=checkbox], div.CheckList label input[type=checkbox], div.CheckList p.Label input[type=checkbox], div.PropertyPanel div.PropertyValue label input[type=checkbox], div.PropertyPanel div.PropertyValue p.Label input[type=checkbox], div.Module label input[type=checkbox], div.Module p.Label input[type=checkbox] {
-    display: block;
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 0; }
-  form label > span, form p.Label > span, div.CheckList label > span, div.CheckList p.Label > span, div.PropertyPanel div.PropertyValue label > span, div.PropertyPanel div.PropertyValue p.Label > span, div.Module label > span, div.Module p.Label > span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; }
-  form label i.Icon, form p.Label i.Icon, div.CheckList label i.Icon, div.CheckList p.Label i.Icon, div.PropertyPanel div.PropertyValue label i.Icon, div.PropertyPanel div.PropertyValue p.Label i.Icon, div.Module label i.Icon, div.Module p.Label i.Icon {
-    position: absolute;
-    text-align: center;
-    height: 36px;
-    width: 36px;
-    line-height: 36px;
-    border: 1px solid #ccc;
-    background-color: #ebebeb;
-    border-radius: 3px 0 0 3px;
-    margin-left: 0; }
-    form label i.Icon:first-of-type, form p.Label i.Icon:first-of-type, div.CheckList label i.Icon:first-of-type, div.CheckList p.Label i.Icon:first-of-type, div.PropertyPanel div.PropertyValue label i.Icon:first-of-type, div.PropertyPanel div.PropertyValue p.Label i.Icon:first-of-type, div.Module label i.Icon:first-of-type, div.Module p.Label i.Icon:first-of-type {
-      left: 0; }
-    form label i.Icon + select.AutoComplete + input, form label i.Icon + select:not(.AutoComplete), form label i.Icon + input.AutoComplete + input, form label i.Icon + input:not(.AutoComplete), form label i.Icon + div.Input.AutoComplete + input, form label i.Icon + div.Input:not(.AutoComplete), form p.Label i.Icon + select.AutoComplete + input, form p.Label i.Icon + select:not(.AutoComplete), form p.Label i.Icon + input.AutoComplete + input, form p.Label i.Icon + input:not(.AutoComplete), form p.Label i.Icon + div.Input.AutoComplete + input, form p.Label i.Icon + div.Input:not(.AutoComplete), div.CheckList label i.Icon + select.AutoComplete + input, div.CheckList label i.Icon + select:not(.AutoComplete), div.CheckList label i.Icon + input.AutoComplete + input, div.CheckList label i.Icon + input:not(.AutoComplete), div.CheckList label i.Icon + div.Input.AutoComplete + input, div.CheckList label i.Icon + div.Input:not(.AutoComplete), div.CheckList p.Label i.Icon + select.AutoComplete + input, div.CheckList p.Label i.Icon + select:not(.AutoComplete), div.CheckList p.Label i.Icon + input.AutoComplete + input, div.CheckList p.Label i.Icon + input:not(.AutoComplete), div.CheckList p.Label i.Icon + div.Input.AutoComplete + input, div.CheckList p.Label i.Icon + div.Input:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + select.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + select:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + input.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + input:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + div.Input.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + div.Input:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + select.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + select:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + input.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + input:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + div.Input.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + div.Input:not(.AutoComplete), div.Module label i.Icon + select.AutoComplete + input, div.Module label i.Icon + select:not(.AutoComplete), div.Module label i.Icon + input.AutoComplete + input, div.Module label i.Icon + input:not(.AutoComplete), div.Module label i.Icon + div.Input.AutoComplete + input, div.Module label i.Icon + div.Input:not(.AutoComplete), div.Module p.Label i.Icon + select.AutoComplete + input, div.Module p.Label i.Icon + select:not(.AutoComplete), div.Module p.Label i.Icon + input.AutoComplete + input, div.Module p.Label i.Icon + input:not(.AutoComplete), div.Module p.Label i.Icon + div.Input.AutoComplete + input, div.Module p.Label i.Icon + div.Input:not(.AutoComplete) {
-      padding-left: 41px; }
-  form label.Narrow, form p.Label.Narrow, div.CheckList label.Narrow, div.CheckList p.Label.Narrow, div.PropertyPanel div.PropertyValue label.Narrow, div.PropertyPanel div.PropertyValue p.Label.Narrow, div.Module label.Narrow, div.Module p.Label.Narrow {
-    width: unset;
-    margin-top: 0; }
-  form label.Width150, form p.Label.Width150, div.CheckList label.Width150, div.CheckList p.Label.Width150, div.PropertyPanel div.PropertyValue label.Width150, div.PropertyPanel div.PropertyValue p.Label.Width150, div.Module label.Width150, div.Module p.Label.Width150 {
-    width: 345px; }
-  form label.Width200, form p.Label.Width200, div.CheckList label.Width200, div.CheckList p.Label.Width200, div.PropertyPanel div.PropertyValue label.Width200, div.PropertyPanel div.PropertyValue p.Label.Width200, div.Module label.Width200, div.Module p.Label.Width200 {
-    width: 480px; }
-  form label.Width300, form p.Label.Width300, div.CheckList label.Width300, div.CheckList p.Label.Width300, div.PropertyPanel div.PropertyValue label.Width300, div.PropertyPanel div.PropertyValue p.Label.Width300, div.Module label.Width300, div.Module p.Label.Width300 {
-    width: 730px; }
-  form label.Error > span, form p.Label.Error > span, div.CheckList label.Error > span, div.CheckList p.Label.Error > span, div.PropertyPanel div.PropertyValue label.Error > span, div.PropertyPanel div.PropertyValue p.Label.Error > span, div.Module label.Error > span, div.Module p.Label.Error > span {
-    margin-left: 25px; }
-  form label.Error i, form p.Label.Error i, div.CheckList label.Error i, div.CheckList p.Label.Error i, div.PropertyPanel div.PropertyValue label.Error i, div.PropertyPanel div.PropertyValue p.Label.Error i, div.Module label.Error i, div.Module p.Label.Error i {
-    border-color: #cc0000 !important; }
-  form label.Error input, form label.Error select, form label.Error div.Input, form label.Error textarea, form p.Label.Error input, form p.Label.Error select, form p.Label.Error div.Input, form p.Label.Error textarea, div.CheckList label.Error input, div.CheckList label.Error select, div.CheckList label.Error div.Input, div.CheckList label.Error textarea, div.CheckList p.Label.Error input, div.CheckList p.Label.Error select, div.CheckList p.Label.Error div.Input, div.CheckList p.Label.Error textarea, div.PropertyPanel div.PropertyValue label.Error input, div.PropertyPanel div.PropertyValue label.Error select, div.PropertyPanel div.PropertyValue label.Error div.Input, div.PropertyPanel div.PropertyValue label.Error textarea, div.PropertyPanel div.PropertyValue p.Label.Error input, div.PropertyPanel div.PropertyValue p.Label.Error select, div.PropertyPanel div.PropertyValue p.Label.Error div.Input, div.PropertyPanel div.PropertyValue p.Label.Error textarea, div.Module label.Error input, div.Module label.Error select, div.Module label.Error div.Input, div.Module label.Error textarea, div.Module p.Label.Error input, div.Module p.Label.Error select, div.Module p.Label.Error div.Input, div.Module p.Label.Error textarea {
-    border-color: #cc0000;
-    outline-color: #ff3333; }
-  form label.Error i.ValidationMessagesIcon, form p.Label.Error i.ValidationMessagesIcon, div.CheckList label.Error i.ValidationMessagesIcon, div.CheckList p.Label.Error i.ValidationMessagesIcon, div.PropertyPanel div.PropertyValue label.Error i.ValidationMessagesIcon, div.PropertyPanel div.PropertyValue p.Label.Error i.ValidationMessagesIcon, div.Module label.Error i.ValidationMessagesIcon, div.Module p.Label.Error i.ValidationMessagesIcon {
-    color: #cc0000;
-    cursor: pointer;
-    position: absolute;
-    top: -4px;
-    font-size: 20px; }
-  @media only screen and (min-width: 460px) {
-    form label .Icon, form p.Label .Icon, div.CheckList label .Icon, div.CheckList p.Label .Icon, div.PropertyPanel div.PropertyValue label .Icon, div.PropertyPanel div.PropertyValue p.Label .Icon, div.Module label .Icon, div.Module p.Label .Icon {
-      bottom: 0; }
-    form label input + i.Icon, form label select + i.Icon, form label div.AutoComplete-List + i.Icon, form label div.Input + i.Icon, form p.Label input + i.Icon, form p.Label select + i.Icon, form p.Label div.AutoComplete-List + i.Icon, form p.Label div.Input + i.Icon, div.CheckList label input + i.Icon, div.CheckList label select + i.Icon, div.CheckList label div.AutoComplete-List + i.Icon, div.CheckList label div.Input + i.Icon, div.CheckList p.Label input + i.Icon, div.CheckList p.Label select + i.Icon, div.CheckList p.Label div.AutoComplete-List + i.Icon, div.CheckList p.Label div.Input + i.Icon, div.PropertyPanel div.PropertyValue label input + i.Icon, div.PropertyPanel div.PropertyValue label select + i.Icon, div.PropertyPanel div.PropertyValue label div.AutoComplete-List + i.Icon, div.PropertyPanel div.PropertyValue label div.Input + i.Icon, div.PropertyPanel div.PropertyValue p.Label input + i.Icon, div.PropertyPanel div.PropertyValue p.Label select + i.Icon, div.PropertyPanel div.PropertyValue p.Label div.AutoComplete-List + i.Icon, div.PropertyPanel div.PropertyValue p.Label div.Input + i.Icon, div.Module label input + i.Icon, div.Module label select + i.Icon, div.Module label div.AutoComplete-List + i.Icon, div.Module label div.Input + i.Icon, div.Module p.Label input + i.Icon, div.Module p.Label select + i.Icon, div.Module p.Label div.AutoComplete-List + i.Icon, div.Module p.Label div.Input + i.Icon {
-      border-radius: 0; }
-    form label.Controls2 > *:not(span), form label.Controls3 > *:not(span), form label.Controls1-2 > *:not(span), form label.Controls2-1 > *:not(span), form p.Label.Controls2 > *:not(span), form p.Label.Controls3 > *:not(span), form p.Label.Controls1-2 > *:not(span), form p.Label.Controls2-1 > *:not(span), div.CheckList label.Controls2 > *:not(span), div.CheckList label.Controls3 > *:not(span), div.CheckList label.Controls1-2 > *:not(span), div.CheckList label.Controls2-1 > *:not(span), div.CheckList p.Label.Controls2 > *:not(span), div.CheckList p.Label.Controls3 > *:not(span), div.CheckList p.Label.Controls1-2 > *:not(span), div.CheckList p.Label.Controls2-1 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span), div.Module label.Controls2 > *:not(span), div.Module label.Controls3 > *:not(span), div.Module label.Controls1-2 > *:not(span), div.Module label.Controls2-1 > *:not(span), div.Module p.Label.Controls2 > *:not(span), div.Module p.Label.Controls3 > *:not(span), div.Module p.Label.Controls1-2 > *:not(span), div.Module p.Label.Controls2-1 > *:not(span) {
-      float: left; }
-    form label.Controls2 > *:not(span):not(i):not(div), form label.Controls3 > *:not(span):not(i):not(div), form label.Controls1-2 > *:not(span):not(i):not(div), form label.Controls2-1 > *:not(span):not(i):not(div), form p.Label.Controls2 > *:not(span):not(i):not(div), form p.Label.Controls3 > *:not(span):not(i):not(div), form p.Label.Controls1-2 > *:not(span):not(i):not(div), form p.Label.Controls2-1 > *:not(span):not(i):not(div), div.CheckList label.Controls2 > *:not(span):not(i):not(div), div.CheckList label.Controls3 > *:not(span):not(i):not(div), div.CheckList label.Controls1-2 > *:not(span):not(i):not(div), div.CheckList label.Controls2-1 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls2 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls3 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls1-2 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls2-1 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(i):not(div), div.Module label.Controls2 > *:not(span):not(i):not(div), div.Module label.Controls3 > *:not(span):not(i):not(div), div.Module label.Controls1-2 > *:not(span):not(i):not(div), div.Module label.Controls2-1 > *:not(span):not(i):not(div), div.Module p.Label.Controls2 > *:not(span):not(i):not(div), div.Module p.Label.Controls3 > *:not(span):not(i):not(div), div.Module p.Label.Controls1-2 > *:not(span):not(i):not(div), div.Module p.Label.Controls2-1 > *:not(span):not(i):not(div) {
-      border-right: none;
-      border-radius: 5px 0 0 5px; }
-      form label.Controls2 > *:not(span):not(i):not(div):last-child, form label.Controls3 > *:not(span):not(i):not(div):last-child, form label.Controls1-2 > *:not(span):not(i):not(div):last-child, form label.Controls2-1 > *:not(span):not(i):not(div):last-child, form p.Label.Controls2 > *:not(span):not(i):not(div):last-child, form p.Label.Controls3 > *:not(span):not(i):not(div):last-child, form p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, form p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls2 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls3 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.Module label.Controls2 > *:not(span):not(i):not(div):last-child, div.Module label.Controls3 > *:not(span):not(i):not(div):last-child, div.Module label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.Module label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child {
-        border-right: solid 1px #ccc;
-        border-radius: 5px; }
-    form label.Controls2, form p.Label.Controls2, div.CheckList label.Controls2, div.CheckList p.Label.Controls2, div.PropertyPanel div.PropertyValue label.Controls2, div.PropertyPanel div.PropertyValue p.Label.Controls2, div.Module label.Controls2, div.Module p.Label.Controls2 {
-      width: 480px; }
-      form label.Controls2 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls2 > *:not(span):not(.Icon):not(.fa) {
-        width: calc(50% + 10px); }
-        form label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child {
-          width: calc(50% - 10px); }
-      form label.Controls2 input ~ select + input, form label.Controls2 select ~ select + input, form p.Label.Controls2 input ~ select + input, form p.Label.Controls2 select ~ select + input, div.CheckList label.Controls2 input ~ select + input, div.CheckList label.Controls2 select ~ select + input, div.CheckList p.Label.Controls2 input ~ select + input, div.CheckList p.Label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2 select ~ select + input, div.Module label.Controls2 input ~ select + input, div.Module label.Controls2 select ~ select + input, div.Module p.Label.Controls2 input ~ select + input, div.Module p.Label.Controls2 select ~ select + input {
-        width: calc(50% - 10px) !important;
-        border-right: solid 1px #ccc;
-        border-radius: 5px; }
-      form label.Controls2 i.Icon ~ i.Icon, form p.Label.Controls2 i.Icon ~ i.Icon, div.CheckList label.Controls2 i.Icon ~ i.Icon, div.CheckList p.Label.Controls2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2 i.Icon ~ i.Icon, div.Module label.Controls2 i.Icon ~ i.Icon, div.Module p.Label.Controls2 i.Icon ~ i.Icon {
-        left: calc(50% + 10px);
-        border-radius: 0 !important; }
-    form label.Controls3, form p.Label.Controls3, div.CheckList label.Controls3, div.CheckList p.Label.Controls3, div.PropertyPanel div.PropertyValue label.Controls3, div.PropertyPanel div.PropertyValue p.Label.Controls3, div.Module label.Controls3, div.Module p.Label.Controls3 {
-      width: 730px; }
-      form label.Controls3 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls3 > *:not(span):not(.Icon):not(.fa) {
-        width: calc(33.33% + 6.66667px); }
-        form label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child {
-          width: calc(33.33% - 13.33333px); }
-      form label.Controls3 input input ~ select + input, form label.Controls3 input select ~ select + input, form label.Controls3 select input ~ select + input, form label.Controls3 select select ~ select + input, form p.Label.Controls3 input input ~ select + input, form p.Label.Controls3 input select ~ select + input, form p.Label.Controls3 select input ~ select + input, form p.Label.Controls3 select select ~ select + input, div.CheckList label.Controls3 input input ~ select + input, div.CheckList label.Controls3 input select ~ select + input, div.CheckList label.Controls3 select input ~ select + input, div.CheckList label.Controls3 select select ~ select + input, div.CheckList p.Label.Controls3 input input ~ select + input, div.CheckList p.Label.Controls3 input select ~ select + input, div.CheckList p.Label.Controls3 select input ~ select + input, div.CheckList p.Label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 select select ~ select + input, div.Module label.Controls3 input input ~ select + input, div.Module label.Controls3 input select ~ select + input, div.Module label.Controls3 select input ~ select + input, div.Module label.Controls3 select select ~ select + input, div.Module p.Label.Controls3 input input ~ select + input, div.Module p.Label.Controls3 input select ~ select + input, div.Module p.Label.Controls3 select input ~ select + input, div.Module p.Label.Controls3 select select ~ select + input {
-        width: calc(33.33% - 13.33333px);
-        border-right: solid 1px #ccc;
-        border-radius: 5px; }
-      form label.Controls3 i.Icon ~ i.Icon, form p.Label.Controls3 i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon, div.CheckList p.Label.Controls3 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls3 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls3 i.Icon ~ i.Icon, div.Module label.Controls3 i.Icon ~ i.Icon, div.Module p.Label.Controls3 i.Icon ~ i.Icon {
-        left: calc(33.33% + 6.66667px); }
-      form label.Controls3 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon {
-        left: calc(66.66% + 13.33333px); }
-    form label.Controls1-2, form p.Label.Controls1-2, div.CheckList label.Controls1-2, div.CheckList p.Label.Controls1-2, div.PropertyPanel div.PropertyValue label.Controls1-2, div.PropertyPanel div.PropertyValue p.Label.Controls1-2, div.Module label.Controls1-2, div.Module p.Label.Controls1-2 {
-      width: 730px; }
-      form label.Controls1-2 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa) {
-        width: calc(33.33% + 10px); }
-        form label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child {
-          width: calc(66.67% - 10px); }
-      form label.Controls1-2 input ~ select + input, form label.Controls1-2 select ~ select + input, form p.Label.Controls1-2 input ~ select + input, form p.Label.Controls1-2 select ~ select + input, div.CheckList label.Controls1-2 input ~ select + input, div.CheckList label.Controls1-2 select ~ select + input, div.CheckList p.Label.Controls1-2 input ~ select + input, div.CheckList p.Label.Controls1-2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls1-2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls1-2 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 select ~ select + input, div.Module label.Controls1-2 input ~ select + input, div.Module label.Controls1-2 select ~ select + input, div.Module p.Label.Controls1-2 input ~ select + input, div.Module p.Label.Controls1-2 select ~ select + input {
-        width: calc(66.67% - 10px) !important;
-        border-right: solid 1px #ccc;
-        border-radius: 0 5px 5px 0 !important; }
-      form label.Controls1-2 i.Icon ~ i.Icon, form p.Label.Controls1-2 i.Icon ~ i.Icon, div.CheckList label.Controls1-2 i.Icon ~ i.Icon, div.CheckList p.Label.Controls1-2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls1-2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 i.Icon ~ i.Icon, div.Module label.Controls1-2 i.Icon ~ i.Icon, div.Module p.Label.Controls1-2 i.Icon ~ i.Icon {
-        left: calc(33.33% + 10px);
-        border-radius: 0 !important; }
-      form label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon {
-        left: calc(100% + 10px); }
-    form label.Controls2-1, form p.Label.Controls2-1, div.CheckList label.Controls2-1, div.CheckList p.Label.Controls2-1, div.PropertyPanel div.PropertyValue label.Controls2-1, div.PropertyPanel div.PropertyValue p.Label.Controls2-1, div.Module label.Controls2-1, div.Module p.Label.Controls2-1 {
-      width: 730px; }
-      form label.Controls2-1 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa) {
-        width: calc(66.67% + 10px); }
-        form label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child {
-          width: calc(33.33% - 10px); }
-      form label.Controls2-1 input ~ select + input, form label.Controls2-1 select ~ select + input, form p.Label.Controls2-1 input ~ select + input, form p.Label.Controls2-1 select ~ select + input, div.CheckList label.Controls2-1 input ~ select + input, div.CheckList label.Controls2-1 select ~ select + input, div.CheckList p.Label.Controls2-1 input ~ select + input, div.CheckList p.Label.Controls2-1 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2-1 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2-1 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 select ~ select + input, div.Module label.Controls2-1 input ~ select + input, div.Module label.Controls2-1 select ~ select + input, div.Module p.Label.Controls2-1 input ~ select + input, div.Module p.Label.Controls2-1 select ~ select + input {
-        width: calc(33.33% - 10px) !important;
-        border-right: solid 1px #ccc;
-        border-radius: 0 5px 5px 0 !important; }
-      form label.Controls2-1 i.Icon ~ i.Icon, form p.Label.Controls2-1 i.Icon ~ i.Icon, div.CheckList label.Controls2-1 i.Icon ~ i.Icon, div.CheckList p.Label.Controls2-1 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2-1 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 i.Icon ~ i.Icon, div.Module label.Controls2-1 i.Icon ~ i.Icon, div.Module p.Label.Controls2-1 i.Icon ~ i.Icon {
-        left: calc(66.67% + 10px);
-        border-radius: 0 !important; }
-      form label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon {
-        left: calc(100% + 10px); } }
-  @media only screen and (max-width: 459px) {
-    form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.PropertyPanel div.PropertyValue label, div.PropertyPanel div.PropertyValue p.Label, div.Module label, div.Module p.Label {
-      width: calc(100% - 20px); }
-      form label .Icon, form p.Label .Icon, div.CheckList label .Icon, div.CheckList p.Label .Icon, div.PropertyPanel div.PropertyValue label .Icon, div.PropertyPanel div.PropertyValue p.Label .Icon, div.Module label .Icon, div.Module p.Label .Icon {
-        margin-top: 5px; } }
-  form label.FullWidth, form p.Label.FullWidth, div.CheckList label.FullWidth, div.CheckList p.Label.FullWidth, div.PropertyPanel div.PropertyValue label.FullWidth, div.PropertyPanel div.PropertyValue p.Label.FullWidth, div.Module label.FullWidth, div.Module p.Label.FullWidth {
-    width: calc(100% - 20px); }
-
+  padding-top: 1em;
+}
+form label label, form p.Label label, div.CheckList label label, div.CheckList p.Label label, div.PropertyPanel div.PropertyValue label label, div.PropertyPanel div.PropertyValue p.Label label, div.Module label label, div.Module p.Label label {
+  padding: 0;
+  margin: 0;
+  width: unset;
+}
+form label input, form label select, form label textarea, form label div.Input, form label pre, form p.Label input, form p.Label select, form p.Label textarea, form p.Label div.Input, form p.Label pre, div.CheckList label input, div.CheckList label select, div.CheckList label textarea, div.CheckList label div.Input, div.CheckList label pre, div.CheckList p.Label input, div.CheckList p.Label select, div.CheckList p.Label textarea, div.CheckList p.Label div.Input, div.CheckList p.Label pre, div.PropertyPanel div.PropertyValue label input, div.PropertyPanel div.PropertyValue label select, div.PropertyPanel div.PropertyValue label textarea, div.PropertyPanel div.PropertyValue label div.Input, div.PropertyPanel div.PropertyValue label pre, div.PropertyPanel div.PropertyValue p.Label input, div.PropertyPanel div.PropertyValue p.Label select, div.PropertyPanel div.PropertyValue p.Label textarea, div.PropertyPanel div.PropertyValue p.Label div.Input, div.PropertyPanel div.PropertyValue p.Label pre, div.Module label input, div.Module label select, div.Module label textarea, div.Module label div.Input, div.Module label pre, div.Module p.Label input, div.Module p.Label select, div.Module p.Label textarea, div.Module p.Label div.Input, div.Module p.Label pre {
+  margin-top: 5px;
+}
+form label input[type=checkbox], form p.Label input[type=checkbox], div.CheckList label input[type=checkbox], div.CheckList p.Label input[type=checkbox], div.PropertyPanel div.PropertyValue label input[type=checkbox], div.PropertyPanel div.PropertyValue p.Label input[type=checkbox], div.Module label input[type=checkbox], div.Module p.Label input[type=checkbox] {
+  display: block;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+form label > span, form p.Label > span, div.CheckList label > span, div.CheckList p.Label > span, div.PropertyPanel div.PropertyValue label > span, div.PropertyPanel div.PropertyValue p.Label > span, div.Module label > span, div.Module p.Label > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+form label i.Icon, form p.Label i.Icon, div.CheckList label i.Icon, div.CheckList p.Label i.Icon, div.PropertyPanel div.PropertyValue label i.Icon, div.PropertyPanel div.PropertyValue p.Label i.Icon, div.Module label i.Icon, div.Module p.Label i.Icon {
+  position: absolute;
+  text-align: center;
+  height: 36px;
+  width: 36px;
+  line-height: 36px;
+  border: 1px solid #ccc;
+  background-color: #ebebeb;
+  border-radius: 3px 0 0 3px;
+  margin-left: 0;
+}
+form label i.Icon:first-of-type, form p.Label i.Icon:first-of-type, div.CheckList label i.Icon:first-of-type, div.CheckList p.Label i.Icon:first-of-type, div.PropertyPanel div.PropertyValue label i.Icon:first-of-type, div.PropertyPanel div.PropertyValue p.Label i.Icon:first-of-type, div.Module label i.Icon:first-of-type, div.Module p.Label i.Icon:first-of-type {
+  left: 0;
+}
+form label i.Icon + select.AutoComplete + input, form label i.Icon + select:not(.AutoComplete), form label i.Icon + input.AutoComplete + input, form label i.Icon + input:not(.AutoComplete), form label i.Icon + div.Input.AutoComplete + input, form label i.Icon + div.Input:not(.AutoComplete), form p.Label i.Icon + select.AutoComplete + input, form p.Label i.Icon + select:not(.AutoComplete), form p.Label i.Icon + input.AutoComplete + input, form p.Label i.Icon + input:not(.AutoComplete), form p.Label i.Icon + div.Input.AutoComplete + input, form p.Label i.Icon + div.Input:not(.AutoComplete), div.CheckList label i.Icon + select.AutoComplete + input, div.CheckList label i.Icon + select:not(.AutoComplete), div.CheckList label i.Icon + input.AutoComplete + input, div.CheckList label i.Icon + input:not(.AutoComplete), div.CheckList label i.Icon + div.Input.AutoComplete + input, div.CheckList label i.Icon + div.Input:not(.AutoComplete), div.CheckList p.Label i.Icon + select.AutoComplete + input, div.CheckList p.Label i.Icon + select:not(.AutoComplete), div.CheckList p.Label i.Icon + input.AutoComplete + input, div.CheckList p.Label i.Icon + input:not(.AutoComplete), div.CheckList p.Label i.Icon + div.Input.AutoComplete + input, div.CheckList p.Label i.Icon + div.Input:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + select.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + select:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + input.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + input:not(.AutoComplete), div.PropertyPanel div.PropertyValue label i.Icon + div.Input.AutoComplete + input, div.PropertyPanel div.PropertyValue label i.Icon + div.Input:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + select.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + select:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + input.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + input:not(.AutoComplete), div.PropertyPanel div.PropertyValue p.Label i.Icon + div.Input.AutoComplete + input, div.PropertyPanel div.PropertyValue p.Label i.Icon + div.Input:not(.AutoComplete), div.Module label i.Icon + select.AutoComplete + input, div.Module label i.Icon + select:not(.AutoComplete), div.Module label i.Icon + input.AutoComplete + input, div.Module label i.Icon + input:not(.AutoComplete), div.Module label i.Icon + div.Input.AutoComplete + input, div.Module label i.Icon + div.Input:not(.AutoComplete), div.Module p.Label i.Icon + select.AutoComplete + input, div.Module p.Label i.Icon + select:not(.AutoComplete), div.Module p.Label i.Icon + input.AutoComplete + input, div.Module p.Label i.Icon + input:not(.AutoComplete), div.Module p.Label i.Icon + div.Input.AutoComplete + input, div.Module p.Label i.Icon + div.Input:not(.AutoComplete) {
+  padding-left: 41px;
+}
+form label.Narrow, form p.Label.Narrow, div.CheckList label.Narrow, div.CheckList p.Label.Narrow, div.PropertyPanel div.PropertyValue label.Narrow, div.PropertyPanel div.PropertyValue p.Label.Narrow, div.Module label.Narrow, div.Module p.Label.Narrow {
+  width: unset;
+  margin-top: 0;
+}
+form label.Width150, form p.Label.Width150, div.CheckList label.Width150, div.CheckList p.Label.Width150, div.PropertyPanel div.PropertyValue label.Width150, div.PropertyPanel div.PropertyValue p.Label.Width150, div.Module label.Width150, div.Module p.Label.Width150 {
+  width: 345px;
+}
+form label.Width200, form p.Label.Width200, div.CheckList label.Width200, div.CheckList p.Label.Width200, div.PropertyPanel div.PropertyValue label.Width200, div.PropertyPanel div.PropertyValue p.Label.Width200, div.Module label.Width200, div.Module p.Label.Width200 {
+  width: 480px;
+}
+form label.Width300, form p.Label.Width300, div.CheckList label.Width300, div.CheckList p.Label.Width300, div.PropertyPanel div.PropertyValue label.Width300, div.PropertyPanel div.PropertyValue p.Label.Width300, div.Module label.Width300, div.Module p.Label.Width300 {
+  width: 730px;
+}
+form label.Error > span, form p.Label.Error > span, div.CheckList label.Error > span, div.CheckList p.Label.Error > span, div.PropertyPanel div.PropertyValue label.Error > span, div.PropertyPanel div.PropertyValue p.Label.Error > span, div.Module label.Error > span, div.Module p.Label.Error > span {
+  margin-left: 25px;
+}
+form label.Error i, form p.Label.Error i, div.CheckList label.Error i, div.CheckList p.Label.Error i, div.PropertyPanel div.PropertyValue label.Error i, div.PropertyPanel div.PropertyValue p.Label.Error i, div.Module label.Error i, div.Module p.Label.Error i {
+  border-color: #cc0000 !important;
+}
+form label.Error input, form label.Error select, form label.Error div.Input, form label.Error textarea, form p.Label.Error input, form p.Label.Error select, form p.Label.Error div.Input, form p.Label.Error textarea, div.CheckList label.Error input, div.CheckList label.Error select, div.CheckList label.Error div.Input, div.CheckList label.Error textarea, div.CheckList p.Label.Error input, div.CheckList p.Label.Error select, div.CheckList p.Label.Error div.Input, div.CheckList p.Label.Error textarea, div.PropertyPanel div.PropertyValue label.Error input, div.PropertyPanel div.PropertyValue label.Error select, div.PropertyPanel div.PropertyValue label.Error div.Input, div.PropertyPanel div.PropertyValue label.Error textarea, div.PropertyPanel div.PropertyValue p.Label.Error input, div.PropertyPanel div.PropertyValue p.Label.Error select, div.PropertyPanel div.PropertyValue p.Label.Error div.Input, div.PropertyPanel div.PropertyValue p.Label.Error textarea, div.Module label.Error input, div.Module label.Error select, div.Module label.Error div.Input, div.Module label.Error textarea, div.Module p.Label.Error input, div.Module p.Label.Error select, div.Module p.Label.Error div.Input, div.Module p.Label.Error textarea {
+  border-color: #cc0000;
+  outline-color: #ff3333;
+}
+form label.Error i.ValidationMessagesIcon, form p.Label.Error i.ValidationMessagesIcon, div.CheckList label.Error i.ValidationMessagesIcon, div.CheckList p.Label.Error i.ValidationMessagesIcon, div.PropertyPanel div.PropertyValue label.Error i.ValidationMessagesIcon, div.PropertyPanel div.PropertyValue p.Label.Error i.ValidationMessagesIcon, div.Module label.Error i.ValidationMessagesIcon, div.Module p.Label.Error i.ValidationMessagesIcon {
+  color: #cc0000;
+  cursor: pointer;
+  position: absolute;
+  top: -4px;
+  font-size: 20px;
+}
+@media only screen and (min-width: 460px) {
+  form label .Icon, form p.Label .Icon, div.CheckList label .Icon, div.CheckList p.Label .Icon, div.PropertyPanel div.PropertyValue label .Icon, div.PropertyPanel div.PropertyValue p.Label .Icon, div.Module label .Icon, div.Module p.Label .Icon {
+    bottom: 0;
+  }
+  form label input + i.Icon, form label select + i.Icon, form label div.AutoComplete-List + i.Icon, form label div.Input + i.Icon, form p.Label input + i.Icon, form p.Label select + i.Icon, form p.Label div.AutoComplete-List + i.Icon, form p.Label div.Input + i.Icon, div.CheckList label input + i.Icon, div.CheckList label select + i.Icon, div.CheckList label div.AutoComplete-List + i.Icon, div.CheckList label div.Input + i.Icon, div.CheckList p.Label input + i.Icon, div.CheckList p.Label select + i.Icon, div.CheckList p.Label div.AutoComplete-List + i.Icon, div.CheckList p.Label div.Input + i.Icon, div.PropertyPanel div.PropertyValue label input + i.Icon, div.PropertyPanel div.PropertyValue label select + i.Icon, div.PropertyPanel div.PropertyValue label div.AutoComplete-List + i.Icon, div.PropertyPanel div.PropertyValue label div.Input + i.Icon, div.PropertyPanel div.PropertyValue p.Label input + i.Icon, div.PropertyPanel div.PropertyValue p.Label select + i.Icon, div.PropertyPanel div.PropertyValue p.Label div.AutoComplete-List + i.Icon, div.PropertyPanel div.PropertyValue p.Label div.Input + i.Icon, div.Module label input + i.Icon, div.Module label select + i.Icon, div.Module label div.AutoComplete-List + i.Icon, div.Module label div.Input + i.Icon, div.Module p.Label input + i.Icon, div.Module p.Label select + i.Icon, div.Module p.Label div.AutoComplete-List + i.Icon, div.Module p.Label div.Input + i.Icon {
+    border-radius: 0;
+  }
+  form label.Controls2 > *:not(span), form label.Controls3 > *:not(span), form label.Controls1-2 > *:not(span), form label.Controls2-1 > *:not(span), form p.Label.Controls2 > *:not(span), form p.Label.Controls3 > *:not(span), form p.Label.Controls1-2 > *:not(span), form p.Label.Controls2-1 > *:not(span), div.CheckList label.Controls2 > *:not(span), div.CheckList label.Controls3 > *:not(span), div.CheckList label.Controls1-2 > *:not(span), div.CheckList label.Controls2-1 > *:not(span), div.CheckList p.Label.Controls2 > *:not(span), div.CheckList p.Label.Controls3 > *:not(span), div.CheckList p.Label.Controls1-2 > *:not(span), div.CheckList p.Label.Controls2-1 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span), div.Module label.Controls2 > *:not(span), div.Module label.Controls3 > *:not(span), div.Module label.Controls1-2 > *:not(span), div.Module label.Controls2-1 > *:not(span), div.Module p.Label.Controls2 > *:not(span), div.Module p.Label.Controls3 > *:not(span), div.Module p.Label.Controls1-2 > *:not(span), div.Module p.Label.Controls2-1 > *:not(span) {
+    float: left;
+  }
+  form label.Controls2 > *:not(span):not(i):not(div), form label.Controls3 > *:not(span):not(i):not(div), form label.Controls1-2 > *:not(span):not(i):not(div), form label.Controls2-1 > *:not(span):not(i):not(div), form p.Label.Controls2 > *:not(span):not(i):not(div), form p.Label.Controls3 > *:not(span):not(i):not(div), form p.Label.Controls1-2 > *:not(span):not(i):not(div), form p.Label.Controls2-1 > *:not(span):not(i):not(div), div.CheckList label.Controls2 > *:not(span):not(i):not(div), div.CheckList label.Controls3 > *:not(span):not(i):not(div), div.CheckList label.Controls1-2 > *:not(span):not(i):not(div), div.CheckList label.Controls2-1 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls2 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls3 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls1-2 > *:not(span):not(i):not(div), div.CheckList p.Label.Controls2-1 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(i):not(div), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(i):not(div), div.Module label.Controls2 > *:not(span):not(i):not(div), div.Module label.Controls3 > *:not(span):not(i):not(div), div.Module label.Controls1-2 > *:not(span):not(i):not(div), div.Module label.Controls2-1 > *:not(span):not(i):not(div), div.Module p.Label.Controls2 > *:not(span):not(i):not(div), div.Module p.Label.Controls3 > *:not(span):not(i):not(div), div.Module p.Label.Controls1-2 > *:not(span):not(i):not(div), div.Module p.Label.Controls2-1 > *:not(span):not(i):not(div) {
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+  }
+  form label.Controls2 > *:not(span):not(i):not(div):last-child, form label.Controls3 > *:not(span):not(i):not(div):last-child, form label.Controls1-2 > *:not(span):not(i):not(div):last-child, form label.Controls2-1 > *:not(span):not(i):not(div):last-child, form p.Label.Controls2 > *:not(span):not(i):not(div):last-child, form p.Label.Controls3 > *:not(span):not(i):not(div):last-child, form p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, form p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls2 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls3 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.CheckList label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.CheckList p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.Module label.Controls2 > *:not(span):not(i):not(div):last-child, div.Module label.Controls3 > *:not(span):not(i):not(div):last-child, div.Module label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.Module label.Controls2-1 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls2 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls3 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls1-2 > *:not(span):not(i):not(div):last-child, div.Module p.Label.Controls2-1 > *:not(span):not(i):not(div):last-child {
+    border-right: solid 1px #ccc;
+    border-radius: 5px;
+  }
+  form label.Controls2, form p.Label.Controls2, div.CheckList label.Controls2, div.CheckList p.Label.Controls2, div.PropertyPanel div.PropertyValue label.Controls2, div.PropertyPanel div.PropertyValue p.Label.Controls2, div.Module label.Controls2, div.Module p.Label.Controls2 {
+    width: 480px;
+  }
+  form label.Controls2 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls2 > *:not(span):not(.Icon):not(.fa) {
+    width: calc(50% + 10px);
+  }
+  form label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls2 > *:not(span):not(.Icon):not(.fa):last-child {
+    width: calc(50% - 10px);
+  }
+  form label.Controls2 input ~ select + input, form label.Controls2 select ~ select + input, form p.Label.Controls2 input ~ select + input, form p.Label.Controls2 select ~ select + input, div.CheckList label.Controls2 input ~ select + input, div.CheckList label.Controls2 select ~ select + input, div.CheckList p.Label.Controls2 input ~ select + input, div.CheckList p.Label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2 select ~ select + input, div.Module label.Controls2 input ~ select + input, div.Module label.Controls2 select ~ select + input, div.Module p.Label.Controls2 input ~ select + input, div.Module p.Label.Controls2 select ~ select + input {
+    width: calc(50% - 10px) !important;
+    border-right: solid 1px #ccc;
+    border-radius: 5px;
+  }
+  form label.Controls2 i.Icon ~ i.Icon, form p.Label.Controls2 i.Icon ~ i.Icon, div.CheckList label.Controls2 i.Icon ~ i.Icon, div.CheckList p.Label.Controls2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2 i.Icon ~ i.Icon, div.Module label.Controls2 i.Icon ~ i.Icon, div.Module p.Label.Controls2 i.Icon ~ i.Icon {
+    left: calc(50% + 10px);
+    border-radius: 0 !important;
+  }
+  form label.Controls3, form p.Label.Controls3, div.CheckList label.Controls3, div.CheckList p.Label.Controls3, div.PropertyPanel div.PropertyValue label.Controls3, div.PropertyPanel div.PropertyValue p.Label.Controls3, div.Module label.Controls3, div.Module p.Label.Controls3 {
+    width: 730px;
+  }
+  form label.Controls3 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls3 > *:not(span):not(.Icon):not(.fa) {
+    width: calc(33.33% + 6.6666666667px);
+  }
+  form label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls3 > *:not(span):not(.Icon):not(.fa):last-child {
+    width: calc(33.33% - 13.3333333333px);
+  }
+  form label.Controls3 input input ~ select + input, form label.Controls3 input select ~ select + input, form label.Controls3 select input ~ select + input, form label.Controls3 select select ~ select + input, form p.Label.Controls3 input input ~ select + input, form p.Label.Controls3 input select ~ select + input, form p.Label.Controls3 select input ~ select + input, form p.Label.Controls3 select select ~ select + input, div.CheckList label.Controls3 input input ~ select + input, div.CheckList label.Controls3 input select ~ select + input, div.CheckList label.Controls3 select input ~ select + input, div.CheckList label.Controls3 select select ~ select + input, div.CheckList p.Label.Controls3 input input ~ select + input, div.CheckList p.Label.Controls3 input select ~ select + input, div.CheckList p.Label.Controls3 select input ~ select + input, div.CheckList p.Label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls3 select select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 input input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 input select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 select input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls3 select select ~ select + input, div.Module label.Controls3 input input ~ select + input, div.Module label.Controls3 input select ~ select + input, div.Module label.Controls3 select input ~ select + input, div.Module label.Controls3 select select ~ select + input, div.Module p.Label.Controls3 input input ~ select + input, div.Module p.Label.Controls3 input select ~ select + input, div.Module p.Label.Controls3 select input ~ select + input, div.Module p.Label.Controls3 select select ~ select + input {
+    width: calc(33.33% - 13.3333333333px);
+    border-right: solid 1px #ccc;
+    border-radius: 5px;
+  }
+  form label.Controls3 i.Icon ~ i.Icon, form p.Label.Controls3 i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon, div.CheckList p.Label.Controls3 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls3 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls3 i.Icon ~ i.Icon, div.Module label.Controls3 i.Icon ~ i.Icon, div.Module p.Label.Controls3 i.Icon ~ i.Icon {
+    left: calc(33.33% + 6.6666666667px);
+  }
+  form label.Controls3 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls3 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls3 i.Icon ~ i.Icon ~ i.Icon {
+    left: calc(66.66% + 13.3333333333px);
+  }
+  form label.Controls1-2, form p.Label.Controls1-2, div.CheckList label.Controls1-2, div.CheckList p.Label.Controls1-2, div.PropertyPanel div.PropertyValue label.Controls1-2, div.PropertyPanel div.PropertyValue p.Label.Controls1-2, div.Module label.Controls1-2, div.Module p.Label.Controls1-2 {
+    width: 730px;
+  }
+  form label.Controls1-2 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls1-2 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa) {
+    width: calc(33.33% + 10px);
+  }
+  form label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls1-2 > *:not(span):not(.Icon):not(.fa):last-child {
+    width: calc(66.67% - 10px);
+  }
+  form label.Controls1-2 input ~ select + input, form label.Controls1-2 select ~ select + input, form p.Label.Controls1-2 input ~ select + input, form p.Label.Controls1-2 select ~ select + input, div.CheckList label.Controls1-2 input ~ select + input, div.CheckList label.Controls1-2 select ~ select + input, div.CheckList p.Label.Controls1-2 input ~ select + input, div.CheckList p.Label.Controls1-2 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls1-2 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls1-2 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 select ~ select + input, div.Module label.Controls1-2 input ~ select + input, div.Module label.Controls1-2 select ~ select + input, div.Module p.Label.Controls1-2 input ~ select + input, div.Module p.Label.Controls1-2 select ~ select + input {
+    width: calc(66.67% - 10px) !important;
+    border-right: solid 1px #ccc;
+    border-radius: 0 5px 5px 0 !important;
+  }
+  form label.Controls1-2 i.Icon ~ i.Icon, form p.Label.Controls1-2 i.Icon ~ i.Icon, div.CheckList label.Controls1-2 i.Icon ~ i.Icon, div.CheckList p.Label.Controls1-2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls1-2 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 i.Icon ~ i.Icon, div.Module label.Controls1-2 i.Icon ~ i.Icon, div.Module p.Label.Controls1-2 i.Icon ~ i.Icon {
+    left: calc(33.33% + 10px);
+    border-radius: 0 !important;
+  }
+  form label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls1-2 i.Icon ~ i.Icon ~ i.Icon {
+    left: calc(100% + 10px);
+  }
+  form label.Controls2-1, form p.Label.Controls2-1, div.CheckList label.Controls2-1, div.CheckList p.Label.Controls2-1, div.PropertyPanel div.PropertyValue label.Controls2-1, div.PropertyPanel div.PropertyValue p.Label.Controls2-1, div.Module label.Controls2-1, div.Module p.Label.Controls2-1 {
+    width: 730px;
+  }
+  form label.Controls2-1 > *:not(span):not(.Icon):not(.fa), form p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.CheckList label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.CheckList p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.Module label.Controls2-1 > *:not(span):not(.Icon):not(.fa), div.Module p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa) {
+    width: calc(66.67% + 10px);
+  }
+  form label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, form p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.CheckList p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.Module label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child, div.Module p.Label.Controls2-1 > *:not(span):not(.Icon):not(.fa):last-child {
+    width: calc(33.33% - 10px);
+  }
+  form label.Controls2-1 input ~ select + input, form label.Controls2-1 select ~ select + input, form p.Label.Controls2-1 input ~ select + input, form p.Label.Controls2-1 select ~ select + input, div.CheckList label.Controls2-1 input ~ select + input, div.CheckList label.Controls2-1 select ~ select + input, div.CheckList p.Label.Controls2-1 input ~ select + input, div.CheckList p.Label.Controls2-1 select ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2-1 input ~ select + input, div.PropertyPanel div.PropertyValue label.Controls2-1 select ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 input ~ select + input, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 select ~ select + input, div.Module label.Controls2-1 input ~ select + input, div.Module label.Controls2-1 select ~ select + input, div.Module p.Label.Controls2-1 input ~ select + input, div.Module p.Label.Controls2-1 select ~ select + input {
+    width: calc(33.33% - 10px) !important;
+    border-right: solid 1px #ccc;
+    border-radius: 0 5px 5px 0 !important;
+  }
+  form label.Controls2-1 i.Icon ~ i.Icon, form p.Label.Controls2-1 i.Icon ~ i.Icon, div.CheckList label.Controls2-1 i.Icon ~ i.Icon, div.CheckList p.Label.Controls2-1 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2-1 i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 i.Icon ~ i.Icon, div.Module label.Controls2-1 i.Icon ~ i.Icon, div.Module p.Label.Controls2-1 i.Icon ~ i.Icon {
+    left: calc(66.67% + 10px);
+    border-radius: 0 !important;
+  }
+  form label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, form p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.CheckList label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.CheckList p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.PropertyPanel div.PropertyValue p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.Module label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon, div.Module p.Label.Controls2-1 i.Icon ~ i.Icon ~ i.Icon {
+    left: calc(100% + 10px);
+  }
+}
+@media only screen and (max-width: 459px) {
+  form label, form p.Label, div.CheckList label, div.CheckList p.Label, div.PropertyPanel div.PropertyValue label, div.PropertyPanel div.PropertyValue p.Label, div.Module label, div.Module p.Label {
+    width: calc(100% - 20px);
+  }
+  form label .Icon, form p.Label .Icon, div.CheckList label .Icon, div.CheckList p.Label .Icon, div.PropertyPanel div.PropertyValue label .Icon, div.PropertyPanel div.PropertyValue p.Label .Icon, div.Module label .Icon, div.Module p.Label .Icon {
+    margin-top: 5px;
+  }
+}
+form label.FullWidth, form p.Label.FullWidth, div.CheckList label.FullWidth, div.CheckList p.Label.FullWidth, div.PropertyPanel div.PropertyValue label.FullWidth, div.PropertyPanel div.PropertyValue p.Label.FullWidth, div.Module label.FullWidth, div.Module p.Label.FullWidth {
+  width: calc(100% - 20px);
+}
 form::after, div.CheckList::after, div.PropertyPanel div.PropertyValue::after, div.Module::after {
   content: "";
   display: table;
-  clear: both; }
-
+  clear: both;
+}
 form div.Errors, div.CheckList div.Errors, div.PropertyPanel div.PropertyValue div.Errors, div.Module div.Errors {
   margin-top: 20px;
-  margin-left: 20px; }
+  margin-left: 20px;
+}

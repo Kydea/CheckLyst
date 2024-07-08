@@ -48,17 +48,23 @@
                 }, 0);
         },
 
-        change = function (value) {
+        change = function () {
             if (!model.valuesList && (model.valueTypeName == "Date" || model.valueTypeName == "DateTime" || model.valueTypeName == "Time") && !matematici.TypedInput.validate(model.valueTypeName, input, select, select2))
                 return;
 
+            raiseChangeEvent(getValue());
+        },
+
+        raiseChangeEvent = function (value) {
             var handleGoToNext = goToNext;
             goToNext = 0;
-            new instances.Event(instances.Events.valueChange, model.id, { value: value == undefined ? getValue() : value }).done(function (result) {
+            new instances.Event(instances.Events.valueChange, model.id, { value: value }).done(function (result) {
+                //new instances.Event(instances.Events.valueChange, model.id, { value: value == undefined ? getValue() : value }).done(function (result) {
                 instances.instance.update(result);
                 if (handleGoToNext) next(handleGoToNext);
             }).trigger();
-        },
+
+        }
 
         valueCopy = function (e) {
             if (e) {
@@ -72,7 +78,7 @@
         },
 
         scan = function () {
-            new matematici.Scanner(change);
+            new matematici.Scanner(raiseChangeEvent);
         },
 
         focus = function () {
