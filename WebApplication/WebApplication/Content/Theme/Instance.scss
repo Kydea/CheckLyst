@@ -201,14 +201,6 @@ div.Instance {
                 margin: $Metric-Control-Space 0 0 $Metric-Control-Space !important;
             }
 
-            .Item.Field:not(.Boolean) {
-                :focus, .Focused {
-                    ~ .ActionButton {
-                        display: block;
-                    }
-                }
-            }
-
             > h3 {
                 display: none;
             }
@@ -465,6 +457,14 @@ div.Instance {
 
                 &:hover {
                     text-decoration: none;
+                }
+            }
+
+            &:not(.Boolean) {
+                :focus, .Focused {
+                    ~ .ActionButton {
+                        display: block;
+                    }
                 }
             }
         }

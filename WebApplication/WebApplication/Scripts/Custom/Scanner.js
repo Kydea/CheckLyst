@@ -1,7 +1,7 @@
 ﻿matematici.Scanner = function (handler) {
     var
         videoElement,
-        codeReader = new ZXing.BrowserQRCodeReader(),
+        codeReader = new ZXing.BrowserMultiFormatReader(),
 
         startDevice = function (selectedDeviceId) {
             codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, error) => {

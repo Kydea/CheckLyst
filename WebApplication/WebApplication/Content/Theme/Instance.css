@@ -159,9 +159,6 @@ div.Instance .Group .Iteration > * {
   float: left;
   margin: 20px 0 0 20px !important;
 }
-div.Instance .Group .Iteration .Item.Field:not(.Boolean) :focus ~ .ActionButton, div.Instance .Group .Iteration .Item.Field:not(.Boolean) .Focused ~ .ActionButton {
-  display: block;
-}
 div.Instance .Group .Iteration > h3 {
   display: none;
 }
@@ -316,6 +313,9 @@ div.Instance .Item.Field .ActionButton {
 }
 div.Instance .Item.Field .ActionButton:hover {
   text-decoration: none;
+}
+div.Instance .Item.Field:not(.Boolean) :focus ~ .ActionButton, div.Instance .Item.Field:not(.Boolean) .Focused ~ .ActionButton {
+  display: block;
 }
 div.Instance .Item div.Information {
   top: 3px;
