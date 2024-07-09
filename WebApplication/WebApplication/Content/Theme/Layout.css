@@ -106,6 +106,10 @@ i.fa, i.fal {
   display: none !important;
 }
 
+.Grey {
+  color: #999;
+}
+
 textarea.ClipboardBridge {
   position: absolute;
   top: 0;
@@ -223,6 +227,9 @@ footer div.Information .Item span.Label {
     border-left: unset;
     margin-left: 0;
     padding-left: 0;
+  }
+  footer div.Information .Item a {
+    display: inline-block;
   }
 }
 @media only screen and (max-width: 759px) {

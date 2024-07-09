@@ -114,6 +114,10 @@ i.fa, i.fal {
     display: none !important;
 }
 
+.Grey {
+    color: $Color-Grey-Regular;
+}
+
 textarea.ClipboardBridge {
     position: absolute;
     top: 0;
@@ -242,6 +246,10 @@ footer {
                     border-left: unset;
                     margin-left: 0;
                     padding-left: 0;
+                }
+
+                a {
+                    display: inline-block;
                 }
             }
         }

@@ -220,6 +220,10 @@ body.Help div.Help div.Content, body.OnlyHelp {
             background: $Color-Silver-Dark;
             width: 100%;
 
+            &.Width50 {
+                width: 50%;
+            }
+
             span.Note {
                 margin-left: 10px;
                 color: $Color-Yellow-Regular;
@@ -229,11 +233,17 @@ body.Help div.Help div.Content, body.OnlyHelp {
                 }
             }
 
-            &:first-child {
+            &:first-child, &.Strong {
                 min-width: 150px;
                 width: unset;
                 border-left: none;
                 font-weight: bold;
+            }
+        }
+
+        &.Columns3 td {
+            &:not(:first-child) {
+                width: 50%;
             }
         }
     }

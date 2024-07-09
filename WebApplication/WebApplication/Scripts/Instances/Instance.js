@@ -84,7 +84,8 @@
                 { content: departmentName, label: "department" },
                 { content: prototypeTypeName, label: "prototype type" },
                 { content: getInstanceCode(), label: "code" },
-                { content: state, label: "state" }
+                { content: state, label: "state" },
+                { content: id || "?", label: "id" }
             ]);
         },
 
