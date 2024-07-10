@@ -620,7 +620,7 @@
                     properties.push(restrictToCameraProperty = new prototypes.Property(
                         this, new prototypes.BooleanProperty(model, "restrictToCamera", model.fileType == "pdf"),
                         "Restrict to camera",
-                        "If the flag is set, the attachment will be taken exclusively by camera of the mobile device on the app."
+                        "If the flag is set, the attachment will be taken exclusively by camera of the device, otherwise it will be possible to browse in the saved images."
                     ));
                     break;
                 default:

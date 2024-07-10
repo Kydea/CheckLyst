@@ -29,7 +29,7 @@
 
         upload = function (image) {
             var data = new FormData();
-            data.append("attachment", image);
+            data.append("attachment", image, "image.jpg");
             new instances.Event(instances.Events.uploadAttachment, model.id, data, undefined, undefined, true).done(function (result) {
                 instances.instance.update(result);
                 closeStream();
@@ -81,14 +81,34 @@
                 handler: function () {
                     var
                         width = videoElement.videoWidth,
-                        height = videoElement.videoHeight;
+                        height = videoElement.videoHeight,
+                        watermark = new Image();
+
                     canvasElement.width = width;
                     canvasElement.height = height;  
 
                     context.drawImage(videoElement, 0, 0, width, height);
-                    canvasElement.toBlob(function (blob) {
-                        upload(blob);
-                    }, 'image/jpeg');
+
+                    watermark.onload = function () {
+                        context.globalAlpha = 0.8;
+                        context.drawImage(watermark, width - watermark.width - 10, height - watermark.height - 20, watermark.width, watermark.height);
+
+                        context.font = '10px sans-serif';
+                        context.textBaseline = 'top';
+                        context.textAlign = 'center'
+                        context.lineWidth = 2;
+                        context.strokeStyle = 'white';
+                        var text = matematici.dateFormatter.both(matematici.clock.getTime());
+                        context.strokeText(text, width - 10 - watermark.width / 2, height - 15);
+                        context.fillStyle = 'black';
+                        context.fillText(text, width - 10 - watermark.width / 2, height - 15);
+
+                        canvasElement.toBlob(function (blob) {
+                            upload(blob);
+                        }, 'image/jpeg');
+                    };
+                    watermark.src = "/Content/Media/LogoMobile.png";
+
                     return true;
                 }
             }, {
