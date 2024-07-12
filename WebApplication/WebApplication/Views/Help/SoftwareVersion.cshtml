@@ -1,15 +1,15 @@
 ﻿<h3>Software version</h3>
 
-<table id="SoftwareVersionHelpPage" class="Columns3">
-    <tr><td>Service</td><td class="Strong">Version</td><td class="Strong">Build date</td></tr>
-    <tr><td>Web application</td><td>@CheckListManager.WebApplication.Code.Version.Get()</td><td></td></tr>
-    <tr id="AccessControl"><td>Access control</td><td ><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="Trail"><td>Audit trail</td><td ><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="DataSources"><td>Data sources</td><td ><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="Infrastructure"><td>Infrastructure</td><td ><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="Instances"><td>Instances</td><td><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="Prototypes"><td>Prototypes</td><td><span class="Grey">(wait)</span></td><td></td></tr>
-    <tr id="WorkFlows"><td>Workflows</td><td><span class="Grey">(wait)</span></td><td></td></tr>
+<table id="SoftwareVersionHelpPage">
+    <tr><td>Service</td><td class="Strong">Version</td></tr>
+    <tr><td>Web application</td><td>@CheckListManager.WebApplication.Code.Version.Get()</td></tr>
+    <tr id="AccessControl"><td>Access control</td><td ><span class="Grey">(wait)</span></td></tr>
+    <tr id="Trail"><td>Audit trail</td><td ><span class="Grey">(wait)</span></td></tr>
+    <tr id="DataSources"><td>Data sources</td><td ><span class="Grey">(wait)</span></td></tr>
+    <tr id="Infrastructure"><td>Infrastructure</td><td ><span class="Grey">(wait)</span></td></tr>
+    <tr id="Instances"><td>Instances</td><td><span class="Grey">(wait)</span></td></tr>
+    <tr id="Prototypes"><td>Prototypes</td><td><span class="Grey">(wait)</span></td></tr>
+    <tr id="WorkFlows"><td>Workflows</td><td><span class="Grey">(wait)</span></td></tr>
 </table>
 
 <script>
@@ -28,9 +28,7 @@
                 $("td", tr).each(function (index) {
                     if (index == 1)
                         this.innerText = result && result.version || ""
-                    else if (index == 2) {
-                        this.innerText = result && result.buildDate && matematici.dateFormatter.both(moment(result.buildDate)) || "";
-                    }
+                    //else if (index == 2) this.innerText = result && result.buildDate && matematici.dateFormatter.both(moment(result.buildDate)) || "";
                 });
             });
     });

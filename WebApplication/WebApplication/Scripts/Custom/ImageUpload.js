@@ -12,20 +12,34 @@
 
         startDevice = function (deviceId) {
             closeStream();
-            const constraints = {
-                video: {
-                    deviceId: deviceId ? { exact: deviceId } : undefined
-                }
-            };
+            var capatilities = getCameraCapabilities(deviceId, function(capabilities) {
+                const constraints = {
+                    video: {
+                        deviceId: deviceId ? { exact: deviceId } : undefined,
+                        width: { ideal: capabilities.width.max },
+                        height: { ideal: capabilities.height.max }
+                    }
+                };
 
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    currentStream = videoElement.srcObject = stream;
-                })
-                .catch(error => {
-                    matematici.dialog.error("Video stream error", error || "(unspecified error)");
-                });
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(stream => {
+                        currentStream = videoElement.srcObject = stream;
+                    })
+                    .catch(error => {
+                        matematici.dialog.error("Video stream error", error || "(unspecified error)");
+                    });
+            });
         },
+
+        getCameraCapabilities = function (deviceId, handler) {
+            const constraints = { video: { deviceId: { exact: deviceId } } };
+            navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+                const track = stream.getVideoTracks()[0];
+                const capabilities = track.getCapabilities();
+                stream.getTracks().forEach(track => track.stop());
+                handler(capabilities);
+            });
+        }
 
         upload = function (image) {
             var data = new FormData();

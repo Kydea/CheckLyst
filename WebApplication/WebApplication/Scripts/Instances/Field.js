@@ -136,7 +136,7 @@
                     } else if (model.valueTypeName == "Boolean") {
                         element.classList.add("Boolean");
                         input.setAttribute("type", "checkbox");
-                    } else {
+                    } else if (model.valueTypeName == "Time") {
                         input.classList.add("Scan");
                         if (!matematici.appMode)
                             actionButtons.push({ label: "scan (F9)", tooltip: "F9", icon: "barcode-read", handler: scan });
