@@ -60,6 +60,8 @@
                 deviceSelect = document.createElement("select"),
                 context = canvasElement.getContext('2d');
 
+            videoElement.setAttribute('playsinline', true);
+
             getVideoDevices().then(videoDevices => {
                 var selectedDevice = localStorage["ScannerDevice"];
                 videoDevices.forEach(device => {
