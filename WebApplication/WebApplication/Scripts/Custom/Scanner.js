@@ -3,6 +3,12 @@
         videoElement,
         codeReader = new ZXing.BrowserMultiFormatReader(),
 
+        requestCameraPermission = async function () {
+            var stream = await navigator.mediaDevices.getUserMedia({ video: true })
+            const videoTracks = stream.getVideoTracks();
+            videoTracks.forEach(track => track.stop());
+        },
+
         startDevice = function (selectedDeviceId) {
             codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, error) => {
                 if (result) {
@@ -17,7 +23,9 @@
             codeReader.reset();
         },
 
-        initialize = function () {
+        initialize = async function () {
+            await requestCameraPermission();
+
             var
                 content = document.createElement("div"),
                 deviceSelect = document.createElement("select");

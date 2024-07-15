@@ -51,7 +51,13 @@
             }).trigger();
         },
 
-        initialize = function () {
+        requestCameraPermission = async function() {
+            var stream = await navigator.mediaDevices.getUserMedia({ video: true })
+            const videoTracks = stream.getVideoTracks();
+            videoTracks.forEach(track => track.stop());
+        },
+
+        initialize = async function () {
             videoElement = document.createElement("video");
             canvasElement = document.createElement("canvas");
 
@@ -62,20 +68,21 @@
 
             videoElement.setAttribute('playsinline', true);
 
-            getVideoDevices().then(videoDevices => {
-                var selectedDevice = localStorage["ScannerDevice"];
-                videoDevices.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.text = device.label || `Camera ${deviceSelect.length + 1}`;
-                    if (selectedDevice == device.deviceId) option.setAttribute("selected", "selected");
-                    deviceSelect.appendChild(option);
-                });
-                setTimeout(function () {
-                    matematici.AutoComplete.get(deviceSelect).refresh();
-                    startDevice(deviceSelect.value);
-                }, 1000);
+            await requestCameraPermission();
+
+            var videoDevices = await getVideoDevices();
+            var selectedDevice = localStorage["ScannerDevice"];
+            videoDevices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Camera ${deviceSelect.length + 1}`;
+                if (selectedDevice == device.deviceId) option.setAttribute("selected", "selected");
+                deviceSelect.appendChild(option);
             });
+            setTimeout(function () {
+                matematici.AutoComplete.get(deviceSelect).refresh();
+                startDevice(deviceSelect.value);
+            }, 1000);
 
             deviceSelect.addEventListener("change", function () {
                 startDevice(deviceSelect.value);
