@@ -217,7 +217,13 @@
 
             if (!item.isTableContent() || !item.getParent().isSubRow()) {
                 if (!matematici.appMode)
-                    actionButtons.push({ label: "copy (F8)", tootip: "F8", icon: "clone", handler: valueCopy, check: function (e) { return $(e.target).closest(".FirstIteration").length == 0; } });
+                    actionButtons.push({
+                        label: "copy (F8)", tootip: "F8", icon: "clone", handler: valueCopy,
+                        check: function (e) {
+                            var iteration = $(e.target).closest(".Iteration")
+                            return iteration.length > 0 && !iteration.hasClass("FirstIteration");
+                        }
+                    });
 
                 if (autoComplete) {
                     select.addEventListener("showList", function () { field.classList.add("Focused"); });
