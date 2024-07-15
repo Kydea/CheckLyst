@@ -307,11 +307,11 @@ div.Instance .Item.Field .ExternalSourceLink:hover {
 }
 div.Instance .Item.Field .ActionButton {
   position: absolute;
-  top: 22px;
-  right: 4px;
+  top: 27px;
+  right: 5px;
   margin: 0;
   display: none;
-  font-size: 16px;
+  font-size: 20px;
 }
 div.Instance .Item.Field .ActionButton:hover {
   text-decoration: none;
