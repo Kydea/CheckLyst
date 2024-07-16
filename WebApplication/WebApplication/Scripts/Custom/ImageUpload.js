@@ -91,7 +91,7 @@
             content.appendChild(deviceSelect);
 
             videoElement.setAttribute("autoplay", true);
-            videoElement.style.setProperty("width", "320px");
+            videoElement.style.setProperty("width", "100%");
             videoElement.style.setProperty("margin-top", "20px")
             content.appendChild(videoElement);
 

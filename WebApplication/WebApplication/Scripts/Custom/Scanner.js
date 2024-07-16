@@ -33,7 +33,7 @@
             content.appendChild(deviceSelect);
             videoElement = document.createElement("video");
             videoElement.style.setProperty("margin-top", "20px");
-            videoElement.style.setProperty("width", "320px");
+            videoElement.style.setProperty("width", "100%");
             videoElement.setAttribute('playsinline', true);
             content.appendChild(videoElement);
 
