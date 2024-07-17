@@ -42,7 +42,7 @@ a.Right {
 }
 a.NoConnectionWarning {
   position: fixed;
-  bottom: 30px;
+  bottom: 60px;
   right: 30px;
   background-color: #f5f5f5;
   padding: 20px;

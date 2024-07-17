@@ -71,7 +71,7 @@
             await requestCameraPermission();
 
             var videoDevices = await getVideoDevices();
-            var selectedDevice = localStorage["ScannerDevice"];
+            var selectedDevice = localStorage["CaptureDevice"];
             videoDevices.forEach(device => {
                 const option = document.createElement('option');
                 option.value = device.deviceId;
@@ -85,7 +85,8 @@
             }, 1000);
 
             deviceSelect.addEventListener("change", function () {
-                startDevice(deviceSelect.value);
+                var deviceId = deviceSelect.value;
+                startDevice(deviceId);
                 localStorage["CaptureDevice"] = deviceId;
             })
             content.appendChild(deviceSelect);
