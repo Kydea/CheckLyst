@@ -50,6 +50,8 @@
                 if (readOnly) return;
                 if (model.fileType == "pdf")
                     input.click();
+                else if (restrictToCamera && matematici.appMode) 
+                    input.click()
                 else if (restrictToCamera)
                     new matematici.ImageUpload(model);
                 else
