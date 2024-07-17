@@ -46,14 +46,15 @@ a {
 
     &.NoConnectionWarning {
         position: fixed;
-        bottom: 60px;
-        right: 30px;
+        bottom: 70px;
+        right: 40px;
         background-color: $Color-Silver-Light;
         padding: 20px;
         border-radius: 10px;
         border: solid 1px $Color-Red-Regular;
         opacity: .5;
         cursor: pointer;
+        z-index: $Depth-NoConnectionIcon;
 
         &:hover {
             opacity: 1;

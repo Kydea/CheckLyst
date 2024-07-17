@@ -1,15 +1,16 @@
 ﻿body.AppMode header {
-  display: none !important; }
-
+  display: none !important;
+}
 body.AppMode footer {
-  display: none !important; }
-
+  display: none !important;
+}
 body.AppMode div#Content {
   margin: 36px 0 !important;
-  min-height: unset !important; }
-
+  min-height: unset !important;
+}
 body.AppMode div.Instance .Item.Field .Copy {
-  display: none !important; }
-
+  display: none !important;
+}
 body.AppMode div#Breadcrumbs {
-  margin-left: 0 !important; }
+  margin-left: 0 !important;
+}

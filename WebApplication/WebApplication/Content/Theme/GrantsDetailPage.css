@@ -4,9 +4,12 @@
   min-width: 200px;
   margin-left: 20px;
   margin-top: 20px;
-  padding: 20px; }
-  div.GrantsDetailPage .GeneralFunction h3 {
-    margin: 0 !important; }
-  div.GrantsDetailPage .GeneralFunction label {
-    margin-left: 0;
-    margin-right: 20px; }
+  padding: 20px;
+}
+div.GrantsDetailPage .GeneralFunction h3 {
+  margin: 0 !important;
+}
+div.GrantsDetailPage .GeneralFunction label {
+  margin-left: 0;
+  margin-right: 20px;
+}

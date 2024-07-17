@@ -2,14 +2,19 @@
   padding-bottom: 20px;
   text-align: right;
   float: right;
-  margin: 0 0 20px; }
-  div.ActionBar a.Button {
-    display: block;
-    float: left;
-    margin-right: 10px; }
-    div.ActionBar a.Button.Invalid i {
-      color: #cc0000; }
-    div.ActionBar a.Button.Invalid:hover i {
-      color: #ff3333 !important; }
-    div.ActionBar a.Button.Hidden {
-      display: none; }
+  margin: 0 0 20px;
+}
+div.ActionBar a.Button {
+  display: block;
+  float: left;
+  margin-right: 10px;
+}
+div.ActionBar a.Button.Invalid i {
+  color: #cc0000;
+}
+div.ActionBar a.Button.Invalid:hover i {
+  color: #ff3333 !important;
+}
+div.ActionBar a.Button.Hidden {
+  display: none;
+}

@@ -2,8 +2,11 @@
   position: absolute;
   z-index: 1;
   overflow: hidden;
-  width: calc(100% - 40px); }
-  div.GridFixedHeader tbody {
-    visibility: hidden; }
-  div.GridFixedHeader + div.ScrollablePanel table thead {
-    visibility: hidden; }
+  width: calc(100% - 40px);
+}
+div.GridFixedHeader tbody {
+  visibility: hidden;
+}
+div.GridFixedHeader + div.ScrollablePanel table thead {
+  visibility: hidden;
+}
