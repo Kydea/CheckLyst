@@ -58,10 +58,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>E58BD82DB9CCEBB958FE720E5CEE990C59FB7BD2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>C3D1DF0959CC3BAFF064F17D229ED0CE2C515E3D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>LDAP_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>LDAP_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -106,7 +106,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="LDAP_TemporaryKey.pfx" />
+    <None Include="2025.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
