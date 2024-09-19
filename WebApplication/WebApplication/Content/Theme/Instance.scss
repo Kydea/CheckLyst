@@ -320,6 +320,7 @@ div.Instance {
                     float: left;
                     width: 120px;
                     border-radius: 5px 0 0 5px;
+                    padding-right: 10px;
                 }
 
                 input.AutoComplete {
@@ -449,7 +450,7 @@ div.Instance {
                 }
             }
 
-            .ActionButton {
+            a.ActionButton {
                 position: absolute;
                 top: 27px;
                 right: 5px;
@@ -458,7 +459,7 @@ div.Instance {
                 font-size: 20px;
 
                 &:hover {
-                    text-decoration: none;
+                    text-decoration: none !important;
                 }
             }
 
@@ -509,6 +510,10 @@ div.Instance {
                 color: $Color-Red-Regular;
                 font-size: inherit;
                 margin-left: 5px;
+            }
+
+            input {
+                padding-right: 10px !important;
             }
 
             @media #{$Media-Extended} {

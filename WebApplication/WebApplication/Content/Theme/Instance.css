@@ -221,6 +221,7 @@ div.Instance .Item.Field.DateTime input {
   float: left;
   width: 120px;
   border-radius: 5px 0 0 5px;
+  padding-right: 10px;
 }
 div.Instance .Item.Field.DateTime input.AutoComplete {
   float: left;
@@ -305,7 +306,7 @@ div.Instance .Item.Field .ExternalSourceLink {
 div.Instance .Item.Field .ExternalSourceLink:hover {
   text-decoration: none;
 }
-div.Instance .Item.Field .ActionButton {
+div.Instance .Item.Field a.ActionButton {
   position: absolute;
   top: 27px;
   right: 5px;
@@ -313,8 +314,8 @@ div.Instance .Item.Field .ActionButton {
   display: none;
   font-size: 20px;
 }
-div.Instance .Item.Field .ActionButton:hover {
-  text-decoration: none;
+div.Instance .Item.Field a.ActionButton:hover {
+  text-decoration: none !important;
 }
 div.Instance .Item.Field:not(.Boolean) :focus ~ .ActionButton, div.Instance .Item.Field:not(.Boolean) .Focused ~ .ActionButton {
   display: block;
@@ -347,6 +348,9 @@ div.Instance .Item.Signature i.fa-exclamation {
   color: #cc0000;
   font-size: inherit;
   margin-left: 5px;
+}
+div.Instance .Item.Signature input {
+  padding-right: 10px !important;
 }
 @media only screen and (min-width: 760px) {
   div.Instance .Item.Signature label.Controls3 {
