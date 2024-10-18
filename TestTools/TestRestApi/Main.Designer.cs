@@ -28,36 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            tabControl1 = new TabControl();
+            TabControl = new TabControl();
             JsonTabPage = new TabPage();
-            ConfigurationTextBox = new TextBox();
-            OutputTabPage = new TabPage();
-            textBox2 = new TextBox();
+            JsonTextBox = new TextBox();
+            CursorLabel = new Label();
+            ParametersTabPage = new TabPage();
+            ParametersDataGridView = new DataGridView();
+            ParameterNameColumn = new DataGridViewTextBoxColumn();
+            ParameterValueColumn = new DataGridViewTextBoxColumn();
+            LogTabPage = new TabPage();
+            LogTextBox = new TextBox();
             CommandsPanel = new Panel();
+            LoadButton = new Button();
+            SaveButton = new Button();
             FormatButton = new Button();
             AbortButton = new Button();
             StartButton = new Button();
-            CursorLabel = new Label();
-            tabControl1.SuspendLayout();
+            TabControl.SuspendLayout();
             JsonTabPage.SuspendLayout();
-            OutputTabPage.SuspendLayout();
+            ParametersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ParametersDataGridView).BeginInit();
+            LogTabPage.SuspendLayout();
             CommandsPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // tabControl1
+            // TabControl
             // 
-            tabControl1.Controls.Add(JsonTabPage);
-            tabControl1.Controls.Add(OutputTabPage);
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 0);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1731, 763);
-            tabControl1.TabIndex = 0;
+            TabControl.Controls.Add(JsonTabPage);
+            TabControl.Controls.Add(ParametersTabPage);
+            TabControl.Controls.Add(LogTabPage);
+            TabControl.Dock = DockStyle.Fill;
+            TabControl.Location = new Point(0, 0);
+            TabControl.Name = "TabControl";
+            TabControl.SelectedIndex = 0;
+            TabControl.Size = new Size(1731, 763);
+            TabControl.TabIndex = 0;
             // 
             // JsonTabPage
             // 
-            JsonTabPage.Controls.Add(ConfigurationTextBox);
+            JsonTabPage.Controls.Add(JsonTextBox);
             JsonTabPage.Controls.Add(CursorLabel);
             JsonTabPage.Location = new Point(4, 24);
             JsonTabPage.Name = "JsonTabPage";
@@ -67,41 +76,86 @@
             JsonTabPage.Text = "Json";
             JsonTabPage.UseVisualStyleBackColor = true;
             // 
-            // ConfigurationTextBox
+            // JsonTextBox
             // 
-            ConfigurationTextBox.Dock = DockStyle.Fill;
-            ConfigurationTextBox.Location = new Point(3, 3);
-            ConfigurationTextBox.Multiline = true;
-            ConfigurationTextBox.Name = "ConfigurationTextBox";
-            ConfigurationTextBox.ScrollBars = ScrollBars.Both;
-            ConfigurationTextBox.Size = new Size(1717, 706);
-            ConfigurationTextBox.TabIndex = 0;
-            ConfigurationTextBox.KeyUp += ConfigurationTextBox_KeyUp;
-            ConfigurationTextBox.MouseUp += ConfigurationTextBox_MouseUp;
+            JsonTextBox.Dock = DockStyle.Fill;
+            JsonTextBox.Location = new Point(3, 3);
+            JsonTextBox.Multiline = true;
+            JsonTextBox.Name = "JsonTextBox";
+            JsonTextBox.ScrollBars = ScrollBars.Both;
+            JsonTextBox.Size = new Size(1717, 706);
+            JsonTextBox.TabIndex = 0;
+            JsonTextBox.KeyUp += ConfigurationTextBox_KeyUp;
+            JsonTextBox.MouseUp += ConfigurationTextBox_MouseUp;
             // 
-            // OutputTabPage
+            // CursorLabel
             // 
-            OutputTabPage.Controls.Add(textBox2);
-            OutputTabPage.Location = new Point(4, 24);
-            OutputTabPage.Name = "OutputTabPage";
-            OutputTabPage.Padding = new Padding(3);
-            OutputTabPage.Size = new Size(1723, 735);
-            OutputTabPage.TabIndex = 1;
-            OutputTabPage.Text = "Output";
-            OutputTabPage.UseVisualStyleBackColor = true;
+            CursorLabel.Dock = DockStyle.Bottom;
+            CursorLabel.Location = new Point(3, 709);
+            CursorLabel.Name = "CursorLabel";
+            CursorLabel.Size = new Size(1717, 23);
+            CursorLabel.TabIndex = 1;
+            CursorLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // textBox2
+            // ParametersTabPage
             // 
-            textBox2.Dock = DockStyle.Fill;
-            textBox2.Enabled = false;
-            textBox2.Location = new Point(3, 3);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(1717, 729);
-            textBox2.TabIndex = 0;
+            ParametersTabPage.Controls.Add(ParametersDataGridView);
+            ParametersTabPage.Location = new Point(4, 24);
+            ParametersTabPage.Name = "ParametersTabPage";
+            ParametersTabPage.Padding = new Padding(3);
+            ParametersTabPage.Size = new Size(1723, 735);
+            ParametersTabPage.TabIndex = 2;
+            ParametersTabPage.Text = "Parameters";
+            ParametersTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ParametersDataGridView
+            // 
+            ParametersDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ParametersDataGridView.Columns.AddRange(new DataGridViewColumn[] { ParameterNameColumn, ParameterValueColumn });
+            ParametersDataGridView.Dock = DockStyle.Fill;
+            ParametersDataGridView.Location = new Point(3, 3);
+            ParametersDataGridView.Name = "ParametersDataGridView";
+            ParametersDataGridView.Size = new Size(1717, 729);
+            ParametersDataGridView.TabIndex = 0;
+            // 
+            // ParameterNameColumn
+            // 
+            ParameterNameColumn.HeaderText = "Name";
+            ParameterNameColumn.Name = "ParameterNameColumn";
+            ParameterNameColumn.Width = 200;
+            // 
+            // ParameterValueColumn
+            // 
+            ParameterValueColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ParameterValueColumn.HeaderText = "Value";
+            ParameterValueColumn.Name = "ParameterValueColumn";
+            // 
+            // LogTabPage
+            // 
+            LogTabPage.Controls.Add(LogTextBox);
+            LogTabPage.Location = new Point(4, 24);
+            LogTabPage.Name = "LogTabPage";
+            LogTabPage.Padding = new Padding(3);
+            LogTabPage.Size = new Size(1723, 735);
+            LogTabPage.TabIndex = 1;
+            LogTabPage.Text = "Log";
+            LogTabPage.UseVisualStyleBackColor = true;
+            // 
+            // LogTextBox
+            // 
+            LogTextBox.BackColor = Color.White;
+            LogTextBox.Dock = DockStyle.Fill;
+            LogTextBox.Location = new Point(3, 3);
+            LogTextBox.Multiline = true;
+            LogTextBox.Name = "LogTextBox";
+            LogTextBox.ReadOnly = true;
+            LogTextBox.Size = new Size(1717, 729);
+            LogTextBox.TabIndex = 0;
             // 
             // CommandsPanel
             // 
+            CommandsPanel.Controls.Add(LoadButton);
+            CommandsPanel.Controls.Add(SaveButton);
             CommandsPanel.Controls.Add(FormatButton);
             CommandsPanel.Controls.Add(AbortButton);
             CommandsPanel.Controls.Add(StartButton);
@@ -110,6 +164,28 @@
             CommandsPanel.Name = "CommandsPanel";
             CommandsPanel.Size = new Size(1731, 35);
             CommandsPanel.TabIndex = 1;
+            // 
+            // LoadButton
+            // 
+            LoadButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            LoadButton.Location = new Point(1644, 6);
+            LoadButton.Name = "LoadButton";
+            LoadButton.Size = new Size(75, 23);
+            LoadButton.TabIndex = 4;
+            LoadButton.Text = "Load";
+            LoadButton.UseVisualStyleBackColor = true;
+            LoadButton.Click += LoadButton_Click;
+            // 
+            // SaveButton
+            // 
+            SaveButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            SaveButton.Location = new Point(1563, 6);
+            SaveButton.Name = "SaveButton";
+            SaveButton.Size = new Size(75, 23);
+            SaveButton.TabIndex = 3;
+            SaveButton.Text = "Save";
+            SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // FormatButton
             // 
@@ -130,6 +206,7 @@
             AbortButton.TabIndex = 1;
             AbortButton.Text = "Abort";
             AbortButton.UseVisualStyleBackColor = true;
+            AbortButton.Visible = false;
             // 
             // StartButton
             // 
@@ -141,44 +218,44 @@
             StartButton.UseVisualStyleBackColor = true;
             StartButton.Click += StartButton_Click;
             // 
-            // CursorLabel
-            // 
-            CursorLabel.Dock = DockStyle.Bottom;
-            CursorLabel.Location = new Point(3, 709);
-            CursorLabel.Name = "CursorLabel";
-            CursorLabel.Size = new Size(1717, 23);
-            CursorLabel.TabIndex = 1;
-            CursorLabel.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1731, 798);
-            Controls.Add(tabControl1);
+            Controls.Add(TabControl);
             Controls.Add(CommandsPanel);
             Name = "Main";
             Text = "Rest API";
-            tabControl1.ResumeLayout(false);
+            WindowState = FormWindowState.Maximized;
+            TabControl.ResumeLayout(false);
             JsonTabPage.ResumeLayout(false);
             JsonTabPage.PerformLayout();
-            OutputTabPage.ResumeLayout(false);
-            OutputTabPage.PerformLayout();
+            ParametersTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ParametersDataGridView).EndInit();
+            LogTabPage.ResumeLayout(false);
+            LogTabPage.PerformLayout();
             CommandsPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private TabControl tabControl1;
+        private TabControl TabControl;
         private TabPage JsonTabPage;
-        private TabPage OutputTabPage;
-        private TextBox ConfigurationTextBox;
+        private TabPage LogTabPage;
         private Panel CommandsPanel;
         private Button AbortButton;
         private Button StartButton;
-        private TextBox textBox2;
         private Button FormatButton;
         private Label CursorLabel;
+        private TabPage ParametersTabPage;
+        private DataGridView ParametersDataGridView;
+        private DataGridViewTextBoxColumn ParameterNameColumn;
+        private DataGridViewTextBoxColumn ParameterValueColumn;
+        private Button LoadButton;
+        private Button SaveButton;
+        private TextBox JsonTextBox;
+        public TextBox LogTextBox;
     }
 }
