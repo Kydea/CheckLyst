@@ -38,6 +38,8 @@
             ParameterValueColumn = new DataGridViewTextBoxColumn();
             LogTabPage = new TabPage();
             LogTextBox = new TextBox();
+            ResultTabPage = new TabPage();
+            ResultDataGridView = new DataGridView();
             CommandsPanel = new Panel();
             LoadButton = new Button();
             SaveButton = new Button();
@@ -49,6 +51,8 @@
             ParametersTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ParametersDataGridView).BeginInit();
             LogTabPage.SuspendLayout();
+            ResultTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ResultDataGridView).BeginInit();
             CommandsPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -57,6 +61,7 @@
             TabControl.Controls.Add(JsonTabPage);
             TabControl.Controls.Add(ParametersTabPage);
             TabControl.Controls.Add(LogTabPage);
+            TabControl.Controls.Add(ResultTabPage);
             TabControl.Dock = DockStyle.Fill;
             TabControl.Location = new Point(0, 0);
             TabControl.Name = "TabControl";
@@ -78,6 +83,7 @@
             // 
             // JsonTextBox
             // 
+            JsonTextBox.AcceptsTab = true;
             JsonTextBox.Dock = DockStyle.Fill;
             JsonTextBox.Location = new Point(3, 3);
             JsonTextBox.Multiline = true;
@@ -151,6 +157,29 @@
             LogTextBox.ReadOnly = true;
             LogTextBox.Size = new Size(1717, 729);
             LogTextBox.TabIndex = 0;
+            // 
+            // ResultTabPage
+            // 
+            ResultTabPage.Controls.Add(ResultDataGridView);
+            ResultTabPage.Location = new Point(4, 24);
+            ResultTabPage.Name = "ResultTabPage";
+            ResultTabPage.Padding = new Padding(3);
+            ResultTabPage.Size = new Size(1723, 735);
+            ResultTabPage.TabIndex = 3;
+            ResultTabPage.Text = "Results";
+            ResultTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ResultDataGridView
+            // 
+            ResultDataGridView.AllowUserToAddRows = false;
+            ResultDataGridView.AllowUserToDeleteRows = false;
+            ResultDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ResultDataGridView.Dock = DockStyle.Fill;
+            ResultDataGridView.Location = new Point(3, 3);
+            ResultDataGridView.Name = "ResultDataGridView";
+            ResultDataGridView.ReadOnly = true;
+            ResultDataGridView.Size = new Size(1717, 729);
+            ResultDataGridView.TabIndex = 0;
             // 
             // CommandsPanel
             // 
@@ -235,6 +264,8 @@
             ((System.ComponentModel.ISupportInitialize)ParametersDataGridView).EndInit();
             LogTabPage.ResumeLayout(false);
             LogTabPage.PerformLayout();
+            ResultTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ResultDataGridView).EndInit();
             CommandsPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -257,5 +288,7 @@
         private Button SaveButton;
         private TextBox JsonTextBox;
         public TextBox LogTextBox;
+        private TabPage ResultTabPage;
+        private DataGridView ResultDataGridView;
     }
 }

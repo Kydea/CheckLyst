@@ -23,15 +23,16 @@ namespace TestRestApi
         private readonly static int OperationLimit = 100;
         private readonly List<JToken?> Responses = [];
 
-        public async Task RunAsync()
+        public async Task<List<List<string?>>> RunAsync()
         {
             Command? command = null;
             int commandIndex = 0;
             int operationIndex = 0;
+            List<List<string?>> rows = [];
             try
             {
                 using var client = new HttpClient();
-                Responses.Clear();
+                Responses.AddRange(Model.Commands.Select(c => default(JToken?)));
                 Main.Instance?.LogTextBox.Clear();
                 while (commandIndex < Model.Commands.Count)
                 {
@@ -70,50 +71,54 @@ namespace TestRestApi
                         throw;
                     }
 
-                    Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
+                    var responseToken = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
 
                     if (command.Rules != null)
                         foreach (var rule in command.Rules)
                         {
-                            var pathValue = ParseParameter(rule.Path);
+                            var pathValue = ParseParameters(rule.Path);
                             if (rule.Test(pathValue))
-                                switch (rule.Action)
+                                commandIndex = rule.Action switch
                                 {
-                                    case "goto":
-                                        commandIndex = rule.CommandIndex!.Value;
-                                        break;
-                                    case "error":
-                                        throw new Exception(rule.TextValue);
-                                    default: 
-                                        throw new ArgumentException(nameof(rule.Action));
-                                }
+                                    "goto" => rule.CommandIndex!.Value,
+                                    "error" => throw new Exception(rule.TextValue),
+                                    _ => throw new ArgumentException(nameof(rule.Action)),
+                                };
                         }
 
-                    foreach(var row in Model.Rows)
+                    foreach (var row in Model.Rows)
                         if (row.CommandIndex == command.Index)
                         {
+                            var jToken = GetJsonPath(responseToken, row.Path);
 
+                            var array =
+                                jToken is JArray jArray ? jArray :
+                                jToken is JObject record ? new JArray(record) :
+                                null;
+
+                            if (array != null)
+                                foreach (var item in array)
+                                {
+                                    var result = new List<string?>();
+                                    foreach (var value in row.Values)
+                                        result[value.Column] = GetJsonValue(item, value.Path);
+
+                                    rows.Add(result);
+                                }
                         }
 
                     if (++operationIndex > OperationLimit)
                         throw new Exception($"Too many operations: {OperationLimit}");
                 }
+
+                return rows;
             }
             catch (Exception exception)
             {
                 if (command == null)
                     throw;
                 else
-                    throw new Exception($"Error in command ${command.Reference} on operation number {operationIndex}: {exception.Message}", exception);
-            }
-
-            try
-            {
-
-            }
-            catch (Exception exception)
-            {
-                throw new Exception($"Error mapping results: {exception.Message}", exception);
+                    throw new Exception($"Error, command: {command.Reference}, operation number: {operationIndex}, message: {exception.Message}", exception);
             }
         }
 
@@ -137,7 +142,6 @@ namespace TestRestApi
                 case JTokenType.String:
                     var value = (JValue)token;
                     value.Value = ParseParameters(value?.Value?.ToString());
-                    Console.WriteLine($"Value: {token}");
                     break;
             }
         }
@@ -178,10 +182,10 @@ namespace TestRestApi
                 {
                     var end = value.IndexOf("].", 9);
                     if (end == -1 || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
-                    return GetJsonValueByPath(Responses[reponseIndex], value[(end + 2)..]) ?? value;
+                    return GetJsonValue(Responses[reponseIndex], value[(end + 2)..]) ?? value;
                 }
                 else if (value.StartsWith("response."))
-                    return GetJsonValueByPath(Responses[^1], value[9..]) ?? value;
+                    return GetJsonValue(Responses[^1], value[9..]) ?? value;
                 else if (Parameters.TryGetValue(value, out var parameterValue))
                     return parameterValue;
                 else
@@ -193,7 +197,10 @@ namespace TestRestApi
             }
         }
 
-        public static string? GetJsonValueByPath(JToken? jToken, string path)
+        private static string? GetJsonValue(JToken? jToken, string path) =>
+            GetJsonPath(jToken, path) is JValue value ? value.ToString() : null;
+
+        private static JToken? GetJsonPath(JToken? jToken, string path)
         {
             var pathTokens = path.Replace("[", ".[").Split('.');
             foreach (var partToken in pathTokens)
@@ -204,8 +211,7 @@ namespace TestRestApi
                 else
                     return null;
 
-            return jToken?.ToString();
+            return jToken;
         }
-
     }
 }

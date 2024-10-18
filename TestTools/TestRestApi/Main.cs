@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
 using System.Data.Common;
 using System.Drawing.Text;
@@ -87,17 +88,28 @@ namespace TestRestApi
         {
             try
             {
+                LogTextBox.Clear();
                 Settings.Default.SaveFile = SaveSettings();
                 Settings.Default.Save();
                 var model = Parse();
                 model.Validate();
 
-                await new RestApiService(model, []).RunAsync();
+                ResultDataGridView.Columns.Clear();
+                ResultDataGridView.Rows.Clear();
+
+                var columnIndex = 0;
+                foreach (var column in model.Columns)
+                    ResultDataGridView.Columns.Add($"column{columnIndex++}", column);
+
+                var rows = await new RestApiService(model, []).RunAsync();
+                foreach (var row in rows)
+                    ResultDataGridView.Rows.Add(row);
             }
             catch (Exception Exception)
             {
                 MessageBox.Show(Exception.Message);
-                TabControl.SelectedIndex = 2;
+                if (LogTextBox.Text != string.Empty)
+                    TabControl.SelectedIndex = 2;
             }
         }
 

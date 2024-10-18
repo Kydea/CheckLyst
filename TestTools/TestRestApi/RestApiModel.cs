@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -13,6 +15,7 @@ namespace TestRestApi
     {
         public string? Url { get; set; }
         public List<Command> Commands { get; set; } = [];
+        public List<string> Columns { get; set; } = [];
         public List<Row> Rows { get; set; } = [];
         public string ParameterLeftDelimiter { get; set; } = "{";
         public string ParameterRightDelimiter { get; set; } = "}";
@@ -111,9 +114,8 @@ namespace TestRestApi
         public bool? BooleanValue { get; set; }
 
         public required string Action { get; set; }
-
-        [JsonIgnore]
-        public int? CommandIndex { get; private set; }
+        public string? CommandName { get; set; }
+        public int? CommandIndex { get; set; }
 
         public void Validate(RestApiModel model, Command command)
         {
@@ -132,15 +134,22 @@ namespace TestRestApi
             switch (Action)
             {
                 case "goto":
-                    if (valuesCount == 0)
-                        throw new ParseException($"Missing value for rule: {Action}, for command: {command.Reference}");
+                    if (CommandName != null && CommandIndex.HasValue)
+                        throw new ParseException($"A rule cannot have both a CommandName and a CommandIndex, for action: {Action}, for command: {command.Reference}");
 
-                    CommandIndex =
-                        NumberValue.HasValue ? (int)NumberValue.Value :
-                        TextValue != null ? model.GetCommand(TextValue)?.Index :
-                        null;
-                    if (CommandIndex == null)
-                        throw new ParseException($"Invalid value, for action: {Action}, for command: {command.Reference}");
+                    if (CommandName == null && !CommandIndex.HasValue)
+                        throw new ParseException($"A rule must have a CommandName or a CommandIndex, for action: {Action}, for command: {command.Reference}");
+
+                    if (CommandIndex.HasValue && model.Commands.Count <= CommandIndex.Value)
+                        throw new ParseException($"Invalid CommandIndex: {CommandIndex}, for action: {Action}, for command: {command.Reference}");
+
+                    if (CommandName != null)
+                    {
+                        if (!model.TryGetCommand(CommandName, out var refencedCommand))
+                            throw new ParseException($"Invalid CommandName: {CommandName}, for action: {Action}, for command: {command.Reference}");
+
+                        CommandIndex = refencedCommand!.Index;
+                    }
                     break;
 
                 case "error":
@@ -185,7 +194,7 @@ namespace TestRestApi
         public required string? CommandName { get; set; }
         public required int? CommandIndex { get; set; }
         public required string Path { get; set; }
-        public List<Column> Columns { get; set; } = [];
+        public List<Value> Values { get; set; } = [];
 
         public void Validate(RestApiModel model, int index)
         {
@@ -195,7 +204,7 @@ namespace TestRestApi
                 throw new ParseException($"A row cannot have both a CommandName and a CommandIndex, for row {index}");
 
             if (CommandName == null && !CommandIndex.HasValue)
-                throw new ParseException($"A row mast have a CommandName or a CommandIndex, for row {index}");
+                throw new ParseException($"A row must have a CommandName or a CommandIndex, for row {index}");
 
             if (CommandIndex.HasValue && model.Commands.Count <= CommandIndex.Value)
                 throw new ParseException($"Invalid CommandIndex: {CommandIndex}, for row {index}");
@@ -207,13 +216,17 @@ namespace TestRestApi
 
                 CommandIndex = command!.Index;
             }
+
+            foreach(var value in Values)
+                if (value.Column >= model.Columns.Count)
+                    throw new ParseException($"Invalid Column: {value.Column}, for row {index}");
         }
     }
 
-    public class Column
+    public class Value
     {
+        public required int Column { get; set; }
         public required string Path { get; set; }
-        public required string Label { get; set; }
     }
 
     public class ParseException(string Message) : Exception(Message)
