@@ -49,6 +49,8 @@ namespace TestRestApi
                     foreach (var header in command.Headers)
                         request.Headers.Add(header.Key, ParseParameters(header.Value));
 
+                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}{Environment.NewLine}command {commandIndex}, operation {operationIndex}{Environment.NewLine}->{Environment.NewLine}{request.Content}{Environment.NewLine}{Environment.NewLine}");
+
                     var response = await client.SendAsync(request);
                     try
                     {
@@ -71,13 +73,15 @@ namespace TestRestApi
                         throw;
                     }
 
-                    var responseToken = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
+                    var responseJToken = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
+
+                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}{Environment.NewLine}<-{Environment.NewLine}{responseJToken}{Environment.NewLine}{Environment.NewLine}");
 
                     if (command.Rules != null)
                         foreach (var rule in command.Rules)
                         {
                             var pathValue = ParseParameters(rule.Path);
-                            if (rule.Test(pathValue))
+                            if (rule.Test(pathValue.ToString() ?? ""))
                                 commandIndex = rule.Action switch
                                 {
                                     "goto" => rule.CommandIndex!.Value,
@@ -89,7 +93,7 @@ namespace TestRestApi
                     foreach (var row in Model.Rows)
                         if (row.CommandIndex == command.Index)
                         {
-                            var jToken = GetJsonPath(responseToken, row.Path);
+                            var jToken = GetJsonPath(responseJToken, row.Path);
 
                             var array =
                                 jToken is JArray jArray ? jArray :

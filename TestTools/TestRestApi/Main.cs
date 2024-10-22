@@ -101,7 +101,11 @@ namespace TestRestApi
                 foreach (var column in model.Columns)
                     ResultDataGridView.Columns.Add($"column{columnIndex++}", column);
 
-                var rows = await new RestApiService(model, []).RunAsync();
+                var parameters = new Dictionary<string, string>(ParametersDataGridView.RowCount);
+                for (var rowIndex = 0; rowIndex < ParametersDataGridView.RowCount - 1; ++rowIndex)
+                    parameters.Add((string)ParametersDataGridView[0, rowIndex].Value, (string)ParametersDataGridView[1, rowIndex].Value);
+
+                var rows = await new RestApiService(model, parameters).RunAsync();
                 foreach (var row in rows)
                     ResultDataGridView.Rows.Add(row);
             }
