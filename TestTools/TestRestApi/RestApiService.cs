@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace TestRestApi
     {
         private readonly static int OperationLimit = 100;
         private readonly List<JToken?> Responses = [];
+        private JToken? LastResponse = null;
 
         public async Task<List<List<string?>>> RunAsync()
         {
@@ -38,18 +40,36 @@ namespace TestRestApi
                 {
                     command = Model.Commands[commandIndex];
                     var request = new HttpRequestMessage(command.GetHttpMethod(), (Model.Url ?? string.Empty) + (command.Path ?? string.Empty));
+
+                    Main.Instance?.LogTextBox.AppendText($"--- command {commandIndex}, operation {operationIndex} ---{Environment.NewLine}{Environment.NewLine}body:{Environment.NewLine}");
                     if (command.FormParameters != null)
-                        request.Content = new FormUrlEncodedContent(command.FormParameters.Select(p => new KeyValuePair<string, string>(p.Key, ParseParameters(p.Value))));
+                    {
+                        var formParameters = command.FormParameters.Select(p => new KeyValuePair<string, string>(p.Key, ParseParameters(p.Value)));
+                        request.Content = new FormUrlEncodedContent(formParameters);
+                        foreach(var formParameter in formParameters)
+                        Main.Instance?.LogTextBox.AppendText($"\"{formParameter.Key}\": \"{formParameter.Value}\"{Environment.NewLine}");
+
+                    }
                     else if (command.JsonContent != null)
                     {
                         IterateJToken(command.JsonContent);
                         request.Content = new StringContent(JsonConvert.SerializeObject(command.JsonContent), Encoding.UTF8, "application/json");
+                        Main.Instance?.LogTextBox.AppendText($"{command.JsonContent}{Environment.NewLine}");
                     }
 
-                    foreach (var header in command.Headers)
-                        request.Headers.Add(header.Key, ParseParameters(header.Value));
+                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}");
 
-                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}{Environment.NewLine}command {commandIndex}, operation {operationIndex}{Environment.NewLine}->{Environment.NewLine}{request.Content}{Environment.NewLine}{Environment.NewLine}");
+                    if (command.Headers.Any())
+                    {
+                        Main.Instance?.LogTextBox.AppendText($"headers:{Environment.NewLine}");
+                        foreach (var header in command.Headers)
+                        {
+                            var value = ParseParameters(header.Value);
+                            request.Headers.Add(header.Key, value);
+                            Main.Instance?.LogTextBox.AppendText($"\"{header.Key}\": \"{value}\"{Environment.NewLine}");
+                        }
+                        Main.Instance?.LogTextBox.AppendText(Environment.NewLine);
+                    }
 
                     var response = await client.SendAsync(request);
                     try
@@ -59,7 +79,6 @@ namespace TestRestApi
                     catch (HttpRequestException exception)
                     {
                         Main.Instance?.LogTextBox.AppendText($"Errore HTTP: {exception.Message}\n");
-
                         Main.Instance?.LogTextBox.AppendText($"Status Code: {(int)response.StatusCode} - {response.StatusCode}\n");
                         Main.Instance?.LogTextBox.AppendText($"Response Headers: {response.Headers}\n");
 
@@ -73,9 +92,9 @@ namespace TestRestApi
                         throw;
                     }
 
-                    var responseJToken = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
+                    LastResponse = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
 
-                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}{Environment.NewLine}<-{Environment.NewLine}{responseJToken}{Environment.NewLine}{Environment.NewLine}");
+                    Main.Instance?.LogTextBox.AppendText($"response:{Environment.NewLine}{LastResponse}{Environment.NewLine}{Environment.NewLine}");
 
                     if (command.Rules != null)
                         foreach (var rule in command.Rules)
@@ -93,7 +112,7 @@ namespace TestRestApi
                     foreach (var row in Model.Rows)
                         if (row.CommandIndex == command.Index)
                         {
-                            var jToken = GetJsonPath(responseJToken, row.Path);
+                            var jToken = ParsePath(row.Path);
 
                             var array =
                                 jToken is JArray jArray ? jArray :
@@ -103,13 +122,15 @@ namespace TestRestApi
                             if (array != null)
                                 foreach (var item in array)
                                 {
-                                    var result = new List<string?>();
+                                    var result = Model.Columns.Select(c => string.Empty).ToList();
                                     foreach (var value in row.Values)
-                                        result[value.Column] = GetJsonValue(item, value.Path);
+                                        result[value.Column] = GetJsonValue(item, value.Path) ?? "";
 
-                                    rows.Add(result);
+                                    rows.Add(result!);
                                 }
                         }
+
+                    Main.Instance?.LogTextBox.AppendText($"{Environment.NewLine}");
 
                     if (++operationIndex > OperationLimit)
                         throw new Exception($"Too many operations: {OperationLimit}");
@@ -178,27 +199,50 @@ namespace TestRestApi
             return result;
         }
 
+        private JToken? ParsePath(string value)
+        {
+            if (value == "response")
+                return LastResponse;
+
+            if (value.StartsWith("response."))
+                return GetJsonPath(LastResponse, value[9..]);
+
+
+            if (value.StartsWith("commands["))
+            {
+                var end = value.IndexOf(']', 9);
+                if (end == -1 || (end < value.Length - 1 && value[^1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
+                return
+                    end == value.Length ?
+                        Responses[reponseIndex] :
+                        GetJsonPath(Responses[reponseIndex], value[(end + 2)..]);
+            }
+                
+            return null;
+        }
+
         private string ParseParameter(string value)
         {
-            try
+            if (value == "response")
+                return LastResponse?.ToString() ?? string.Empty;
+
+            if (value.StartsWith("response."))
+                return GetJsonValue(LastResponse, value[9..]) ?? value;
+
+            if (value.StartsWith("commands["))
             {
-                if (value.StartsWith("commands["))
-                {
-                    var end = value.IndexOf("].", 9);
-                    if (end == -1 || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
-                    return GetJsonValue(Responses[reponseIndex], value[(end + 2)..]) ?? value;
-                }
-                else if (value.StartsWith("response."))
-                    return GetJsonValue(Responses[^1], value[9..]) ?? value;
-                else if (Parameters.TryGetValue(value, out var parameterValue))
-                    return parameterValue;
-                else
-                    return value;
+                var end = value.IndexOf(']', 9);
+                if (end == -1 || (end < value.Length - 1 && value[^1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
+                return
+                    end == value.Length ?
+                        Responses[reponseIndex]?.ToString() ?? string.Empty :
+                        GetJsonValue(Responses[reponseIndex], value[(end + 2)..]) ?? value;
             }
-            catch
-            {
-                return value;
-            }
+
+            if (Parameters.TryGetValue(value, out var parameterValue))
+                return parameterValue;
+
+            return value;
         }
 
         private static string? GetJsonValue(JToken? jToken, string path) =>
@@ -208,13 +252,22 @@ namespace TestRestApi
         {
             var pathTokens = path.Replace("[", ".[").Split('.');
             foreach (var partToken in pathTokens)
+            {
                 if (jToken is JObject record)
-                    jToken = record[partToken];
+                {
+                    if (int.TryParse(partToken.Trim('[', ']'), out int index))
+                    {
+                        var dictionary = record.ToObject<Dictionary<int, dynamic>>();
+                        jToken = dictionary[dictionary.Keys.ToList()[index]];
+                    }
+                    else
+                        jToken = record[partToken];
+                }
                 else if (jToken is JArray array && int.TryParse(partToken.Trim('[', ']'), out int index))
                     jToken = array[index];
                 else
                     return null;
-
+            }
             return jToken;
         }
     }

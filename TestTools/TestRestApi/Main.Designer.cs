@@ -91,6 +91,7 @@
             JsonTextBox.ScrollBars = ScrollBars.Both;
             JsonTextBox.Size = new Size(1717, 706);
             JsonTextBox.TabIndex = 0;
+            JsonTextBox.WordWrap = false;
             JsonTextBox.KeyUp += ConfigurationTextBox_KeyUp;
             JsonTextBox.MouseUp += ConfigurationTextBox_MouseUp;
             // 
@@ -155,8 +156,10 @@
             LogTextBox.Multiline = true;
             LogTextBox.Name = "LogTextBox";
             LogTextBox.ReadOnly = true;
+            LogTextBox.ScrollBars = ScrollBars.Both;
             LogTextBox.Size = new Size(1717, 729);
             LogTextBox.TabIndex = 0;
+            LogTextBox.WordWrap = false;
             // 
             // ResultTabPage
             // 

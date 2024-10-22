@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Drawing.Text;
 using System.IO;
 using System.Text;
+using System.Xml;
 using TestRestApi.Properties;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -107,7 +108,9 @@ namespace TestRestApi
 
                 var rows = await new RestApiService(model, parameters).RunAsync();
                 foreach (var row in rows)
-                    ResultDataGridView.Rows.Add(row);
+                    ResultDataGridView.Rows.Add(row.ToArray());
+
+                TabControl.SelectedIndex = 3;
             }
             catch (Exception Exception)
             {
