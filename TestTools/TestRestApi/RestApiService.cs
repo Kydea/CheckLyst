@@ -39,9 +39,13 @@ namespace TestRestApi
                 while (commandIndex < Model.Commands.Count)
                 {
                     command = Model.Commands[commandIndex];
-                    var request = new HttpRequestMessage(command.GetHttpMethod(), (Model.Url ?? string.Empty) + (command.Path ?? string.Empty));
+                    Main.Instance?.LogTextBox.AppendText($"--- command {commandIndex}, operation {operationIndex} ---{Environment.NewLine}{Environment.NewLine}");
 
-                    Main.Instance?.LogTextBox.AppendText($"--- command {commandIndex}, operation {operationIndex} ---{Environment.NewLine}{Environment.NewLine}body:{Environment.NewLine}");
+                    var url = (Model.Url ?? string.Empty) + (command.Path ?? string.Empty);
+
+                    Main.Instance?.LogTextBox.AppendText($"{command.Method} {url}{Environment.NewLine}{Environment.NewLine}body:{Environment.NewLine}");
+                    var request = new HttpRequestMessage(command.GetHttpMethod(), url);
+
                     if (command.FormParameters != null)
                     {
                         var formParameters = command.FormParameters.Select(p => new KeyValuePair<string, string>(p.Key, ParseParameters(p.Value)));
@@ -112,7 +116,7 @@ namespace TestRestApi
                     foreach (var row in Model.Rows)
                         if (row.CommandIndex == command.Index)
                         {
-                            var jToken = ParsePath(row.Path);
+                            var jToken = ParsePath(row.RowsPath);
 
                             var array =
                                 jToken is JArray jArray ? jArray :
@@ -124,7 +128,7 @@ namespace TestRestApi
                                 {
                                     var result = Model.Columns.Select(c => string.Empty).ToList();
                                     foreach (var value in row.Values)
-                                        result[value.Column] = GetJsonValue(item, value.Path) ?? "";
+                                        result[value.Column!.Value] = GetJsonValue(item, value.ValuePath) ?? "";
 
                                     rows.Add(result!);
                                 }

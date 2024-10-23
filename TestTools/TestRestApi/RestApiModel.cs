@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -77,27 +78,12 @@ namespace TestRestApi
         public void Validate(RestApiModel model, int Index)
         {
             this.Index = Index;
-            if (Name != null &&
-                (
-                    string.IsNullOrWhiteSpace(Name)
-                    || Name.Contains('#')
-                )
-            )
-                throw new ParseException($"Invalid command name: {Name}");
-
             Method = Method.ToUpper();
             if (!Methods.Contains(Method))
                 throw new ParseException($"Invalid method: {Method}, for command: ${Reference}");
 
             Rules.ForEach(r => r.Validate(model, this));
         }
-    }
-
-
-    public class FormParameter
-    {
-        public string? Name { get; set; }
-        public string? Value { get; set; }
     }
 
     public class Rule
@@ -110,12 +96,11 @@ namespace TestRestApi
         public required string Sign { get; set; }
         public decimal? NumberValue { get; set; }
         public string? TextValue { get; set; }
-        public DateTime? DateTimeValue { get; set; }
-        public bool? BooleanValue { get; set; }
 
         public required string Action { get; set; }
         public string? CommandName { get; set; }
         public int? CommandIndex { get; set; }
+        public string? Error { get; set; }
 
         public void Validate(RestApiModel model, Command command)
         {
@@ -153,8 +138,8 @@ namespace TestRestApi
                     break;
 
                 case "error":
-                    if (TextValue == null)
-                        throw new ParseException($"Invalid text value, for action: {Action}, for command: {command.Reference}");
+                    if (Error == null)
+                        throw new ParseException($"Provide an error, for action: {Action}, for command: {command.Reference}");
                     break;
             }
         }
@@ -193,8 +178,8 @@ namespace TestRestApi
         public int Index { get; set; }
         public required string? CommandName { get; set; }
         public required int? CommandIndex { get; set; }
-        public required string Path { get; set; }
-        public List<Value> Values { get; set; } = [];
+        public required string RowsPath { get; set; }
+        public List<RowValue> Values { get; set; } = [];
 
         public void Validate(RestApiModel model, int index)
         {
@@ -217,16 +202,21 @@ namespace TestRestApi
                 CommandIndex = command!.Index;
             }
 
-            foreach(var value in Values)
-                if (value.Column >= model.Columns.Count)
-                    throw new ParseException($"Invalid Column: {value.Column}, for row {index}");
+            foreach (var value in Values)
+                value.Validate(model, index);
         }
     }
 
-    public class Value
+    public class RowValue
     {
-        public required int Column { get; set; }
-        public required string Path { get; set; }
+        public required int? Column { get; set; }
+        public required string ValuePath { get; set; } = "";
+
+        public void Validate(RestApiModel model, int index)
+        {
+            if (!Column.HasValue || Column < 0 || Column >= model.Columns.Count)
+                throw new ParseException($"Invalid Column: {Column}, for row {index}");
+        }
     }
 
     public class ParseException(string Message) : Exception(Message)
