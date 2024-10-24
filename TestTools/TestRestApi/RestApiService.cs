@@ -41,7 +41,7 @@ namespace TestRestApi
                     command = Model.Commands[commandIndex];
                     Main.Instance?.LogTextBox.AppendText($"--- command {commandIndex}, operation {operationIndex} ---{Environment.NewLine}{Environment.NewLine}");
 
-                    var url = (Model.Url ?? string.Empty) + (command.Path ?? string.Empty);
+                    var url = (Model.Url ?? string.Empty) + ParseParameters(command.Path);
 
                     Main.Instance?.LogTextBox.AppendText($"{command.Method} {url}{Environment.NewLine}{Environment.NewLine}body:{Environment.NewLine}");
                     var request = new HttpRequestMessage(command.GetHttpMethod(), url);
