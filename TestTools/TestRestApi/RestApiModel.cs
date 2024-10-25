@@ -210,12 +210,19 @@ namespace TestRestApi
     public class RowValue
     {
         public required int? Column { get; set; }
-        public required string ValuePath { get; set; } = "";
+        public required string RelativePath { get; set; }
+        public required string AbsolutePath { get; set; }
 
         public void Validate(RestApiModel model, int index)
         {
             if (!Column.HasValue || Column < 0 || Column >= model.Columns.Count)
                 throw new ParseException($"Invalid Column: {Column}, for row {index}");
+
+            if (RelativePath != null && AbsolutePath != null)
+                throw new ParseException($"A value cannot have both a RelativePath and an AbsolutePath, for row {index}");
+
+            if (RelativePath == null && AbsolutePath == null)
+                throw new ParseException($"A value must have a RelativePath or an AbsolutePath, for row {index}");
         }
     }
 

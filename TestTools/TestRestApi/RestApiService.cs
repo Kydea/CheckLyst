@@ -128,7 +128,10 @@ namespace TestRestApi
                                 {
                                     var result = Model.Columns.Select(c => string.Empty).ToList();
                                     foreach (var value in row.Values)
-                                        result[value.Column!.Value] = GetJsonValue(item, value.ValuePath) ?? "";
+                                        result[value.Column!.Value] = 
+                                            value.AbsolutePath == null ?
+                                                GetJsonValue(item, value.RelativePath) ?? "" :
+                                                ParseParameter(value.AbsolutePath);
 
                                     rows.Add(result!);
                                 }
@@ -236,7 +239,7 @@ namespace TestRestApi
             if (value.StartsWith("commands["))
             {
                 var end = value.IndexOf(']', 9);
-                if (end == -1 || (end < value.Length - 1 && value[^1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
+                if (end == -1 || (end < value.Length - 1 && value[end + 1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
                 return
                     end == value.Length ?
                         Responses[reponseIndex]?.ToString() ?? string.Empty :

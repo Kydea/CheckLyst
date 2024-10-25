@@ -36,11 +36,11 @@ namespace CheckListManager.Common.Logic.Models.Expressions.StringFunctions
             {
                 var Text = LeftValue.TextValue ?? string.Empty;
                 var Pattern = RightValue.IsNull ? " " : RightValue.TextValue;
-                if (Direction != Directions.Right)
+                if (Pattern.Length > 0 && Direction != Directions.Right)
                     while (Text.StartsWith(Pattern))
                         Text = Text.Substring(Pattern.Length);
-                if (Direction != Directions.Left)
-                    while (Text.EndsWith(Pattern))
+                if (Pattern.Length > 0 && Direction != Directions.Left)
+                    while (Pattern.Length > 0 && Text.EndsWith(Pattern))
                         Text = Text.Substring(0, Text.Length - Pattern.Length);
                 Result = new TypedValue(DataType.Text, Text);
             }
