@@ -303,6 +303,7 @@
     <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\ImageUpload.js" />
     <Content Include="Scripts\Custom\Scanner.js" />
+    <Content Include="Scripts\Custom\JSONEditor.js" />
     <Content Include="Scripts\Custom\SQLEditor.js" />
     <Content Include="Scripts\Custom\ExpressionEditor.js" />
     <Content Include="Scripts\Controls\Grid.js" />

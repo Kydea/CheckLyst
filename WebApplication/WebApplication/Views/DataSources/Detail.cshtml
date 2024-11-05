@@ -8,6 +8,7 @@
                 <a href="#">Details</a>
                 <a href="#" class="Parameters SAP">Parameters</a>
                 <a href="#" class="Parameters SQL">Connection</a>
+                <a href="#" class="Parameters REST">Configuration</a>
                 <a href="#" class="Parameters SQL">Parameters</a>
             </div>
             <div class="Tab">
@@ -23,6 +24,7 @@
                     <select class="AutoComplete SourceClass" name="class">
                         <option value="SAP">SAP</option>
                         <option value="SQL">SQL</option>
+                        <option value="REST">Rest API</option>
                     </select>
                 </label>
 
@@ -130,7 +132,13 @@
 
                 <label class="Width300">
                     <span>Query</span>
-                    <pre id="AceEditor" style="height: 200px"></pre>
+                    <pre id="SQLAceEditor" style="height: 200px"></pre>
+                </label>
+            </div>
+            <div class="Tab">
+                <label class="Width300">
+                    <span>JSON</span>
+                    <pre id="RESTAceEditor" style="height: 600px"></pre>
                 </label>
             </div>
             <div class="Tab">
@@ -147,7 +155,8 @@
         formElement = $(formSelector),
         codeInput = $("input.Code", formElement),
         classSelect = $("select.SourceClass", formElement),
-        editor,
+        sqlEditor,
+        restEditor,
 
         parameterTypes = [
             "Text",
@@ -272,13 +281,15 @@
 
             if (parameters) {
                 if (parameters.queryParameters) buildQueryParameters(parameters.queryParameters);
-                if (parameters.query) {
-                    justLoaded = true;
-                    editor.setValue(parameters.query, -1);
-                }
+                if (parameters.query) sqlEditor.setValue(parameters.query, -1);
+                if (parameters.json) restEditor.setValue(parameters.json, -1);
             }
 
-            editor.setChangeHandler(function () {
+            sqlEditor.setChangeHandler(function () {
+                detailPage.getForm().onChange($(this));
+            });
+
+            restEditor.setChangeHandler(function () {
                 detailPage.getForm().onChange($(this));
             });
         },
@@ -367,5 +378,6 @@
             addQueryParameterButton.toggle(item.index > 2);
         });
 
-    editor = new matematici.SQLEditor("AceEditor");
+    sqlEditor = new matematici.SQLEditor("SQLAceEditor");
+    restEditor = new matematici.JSONEditor("RESTAceEditor");
 </script>

@@ -170,8 +170,8 @@
             data = d;
             //if (data && !avoidSetValues) form.setValues(data);
             var
-                id = data.id || data.fields && data.fields.id && data.fields.id.value,
-                code = data.code || data.fields && data.fields.code && data.fields.code.value;
+                id = data && (data.id || data.fields && data.fields.id && data.fields.id.value),
+                code = data && (data.code || data.fields && data.fields.code && data.fields.code.value);
             matematici.popup.getTitle().html(title + (!data ? " (new)" : id ? " (ID: " + id + ")" : code ? " (Code: " + code + ")" : ""));
         };
 
