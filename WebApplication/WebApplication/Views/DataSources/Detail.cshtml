@@ -136,9 +136,14 @@
                 </label>
             </div>
             <div class="Tab">
+                <label>
+                    <span>Password</span>
+                    <i class="Icon fal fa-lock" />
+                    <input type="password" maxlength="50" />
+                </label>
                 <label class="Width300">
                     <span>JSON</span>
-                    <pre id="RESTAceEditor" style="height: 600px"></pre>
+                    <pre id="RESTAceEditor" style="height: 400px"></pre>
                 </label>
             </div>
             <div class="Tab">
@@ -151,6 +156,7 @@
 
 <script type="text/javascript">
     var
+        queryParametersTabIndex = 4,
         formSelector = "form#Detail",
         formElement = $(formSelector),
         codeInput = $("input.Code", formElement),
@@ -167,7 +173,7 @@
             "Time"
         ],
 
-        fixQueryParameters = function (tabIndex) {
+        fixQueryParameters = function () {
             resize();
         },
 
@@ -178,9 +184,9 @@
             }, 500);
         },
 
-        addQueryParameter = function (tabIndex) {
+        addQueryParameter = function () {
             var
-                tabItem = tabIndex && tab.getItem(tabIndex) || tab.getCurrentItem(),
+                tabItem = tab.getItem(queryParametersTabIndex) || tab.getCurrentItem(),
                 div = $("<div />").addClass("QueryParameter").insertBefore(tabItem.tab.children("div.Clearing"));
 
             var input1 = $("<input />").attr("type", "text");
@@ -206,10 +212,10 @@
             if (!detailPage.isReadOnly())
                 $("<a />").attr("href", "#").addClass("Button Icon").append($("<i />").addClass("Icon fal fa-minus")).on("click", function () {
                     div.remove();
-                    fixQueryParameters(tabIndex);
+                    fixQueryParameters();
                 }).appendTo(div);
 
-            fixQueryParameters(tabIndex);
+            fixQueryParameters();
 
             return {
                 name: input1,
@@ -239,9 +245,11 @@
             });
 
             if (classSelect.val() == "SQL")
-                parameters.query = editor.getValue();
+                parameters.query = sqlEditor.getValue();
+            else if (classSelect.val() == "REST")
+                parameters.json = restEditor.getValue();
 
-            $("div.QueryParameter", tab.getItem(3).tab).each(function () {
+            $("div.QueryParameter", tab.getItem(4).tab).each(function () {
                 var
                     record = {},
                     inputs = $("input", this),
@@ -336,8 +344,8 @@
                 hidden: true,
                 id: "AddQueryParameter",
                 handler: function () {
-                    addQueryParameter(3);
-                    fixQueryParameters(tab.getCurrentItem().index);
+                    addQueryParameter();
+                    fixQueryParameters();
                     return true;
                 }
             }]
@@ -347,7 +355,7 @@
             for (var index in queryParameters) {
                 var
                     record = queryParameters[index],
-                    row = addQueryParameter(3);
+                    row = addQueryParameter();
 
                 row.name.val(record.name);
                 row.label.val(record.label);
@@ -375,7 +383,7 @@
         });
     } else
         tab.addHandler(function (item) {
-            addQueryParameterButton.toggle(item.index > 2);
+            addQueryParameterButton.toggle(item.index >= queryParametersTabIndex);
         });
 
     sqlEditor = new matematici.SQLEditor("SQLAceEditor");

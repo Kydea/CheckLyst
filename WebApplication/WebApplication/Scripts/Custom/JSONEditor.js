@@ -8,6 +8,18 @@
             editor.setShowPrintMargin(false);
         };
 
+    this.setReadOnly = function (value) {
+        editor.setReadOnly(value);
+    };
+
+    this.setValue = function (value) {
+        editor.session.setValue(value);
+    };
+
+    this.getValue = function () {
+        return editor.session.getValue();
+    };
+
     this.setChangeHandler = function (value) {
         editor.session.on('change', value);
     };
