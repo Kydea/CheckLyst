@@ -9,7 +9,7 @@
                 <a href="#" class="Parameters SAP">Parameters</a>
                 <a href="#" class="Parameters SQL">Connection</a>
                 <a href="#" class="Parameters REST">Configuration</a>
-                <a href="#" class="Parameters SQL">Parameters</a>
+                <a href="#" class="Parameters SQL REST">Parameters</a>
             </div>
             <div class="Tab">
                 <label>
@@ -371,7 +371,7 @@
 
     classSelect.on("change", toggleTabs);
 
-    formElement.on("change", "input, select", function () {
+    formElement.on("change", "input, select", function (e) {
         detailPage.getForm().onChange($(this));
     });
 

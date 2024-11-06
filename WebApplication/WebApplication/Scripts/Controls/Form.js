@@ -74,8 +74,9 @@
 
             element
                 .on("keypress", fieldsSelector, function (e) {
-                    if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey)
+                    if (e.key != "Tab" && e.which !== 0 && !e.ctrlKey && !e.metaKey && !e.altKey) {
                         onChange($(this));
+                    }
                 })
                 .on("change paste", fieldsSelector, function (e) {
                     onChange($(this));
