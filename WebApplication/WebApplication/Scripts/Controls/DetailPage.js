@@ -161,7 +161,6 @@
             if (!options.readOnly) {
                 form.addChangeHandler(function () {
                     matematici.canClose = false;
-                    console.log(new Error());
                 });
                 matematici.save = function (callback, takeOpen) {
                     return clickHandler($("#SaveButton"), data == null ? options.addEvent || "Add" : options.editEvent || "Edit", callback, takeOpen);
