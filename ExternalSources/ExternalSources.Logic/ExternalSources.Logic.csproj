@@ -107,7 +107,7 @@
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="REST\Source.cs" />
-    <Compile Include="REST\SQLParameters.cs" />
+    <Compile Include="REST\RESTParameters.cs" />
     <Compile Include="SQL\SQLParameters.cs" />
     <Compile Include="SQL\Source.cs" />
     <Compile Include="SAP\SAPConfiguration.cs" />
