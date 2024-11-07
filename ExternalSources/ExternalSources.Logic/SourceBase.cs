@@ -15,8 +15,8 @@ namespace CheckListManager.ExternalSources.Logic
 
         public abstract void Dispose();
 
-        public abstract void PrepareMetaData(out double OperationTime);
-        public abstract IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double OperationTime);
+        public abstract void PrepareMetaData();
+        public abstract Task<IEnumerable<List<string>>> GetDataAsync(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone);
 
         protected string Code { get; private set; }
 
@@ -27,6 +27,8 @@ namespace CheckListManager.ExternalSources.Logic
         public List<string> Columns { get; protected set; }
 
         public List<Parameter> Parameters { get; protected set; }
+
+        public double OperationTime { get; protected set; }
 
         public static SourceBase Build(string Class, string Code, string Password, DateTimeOffset Version, string Data)
         {

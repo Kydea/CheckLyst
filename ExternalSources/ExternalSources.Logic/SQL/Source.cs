@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace CheckListManager.ExternalSources.Logic.SQL
 {
@@ -136,7 +137,7 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         {
         }
 
-        public override void PrepareMetaData(out double OperationTime)
+        public override void PrepareMetaData()
         {
             var stopWatch = Stopwatch.StartNew();
             var DataSet = LoadData(null, 0, 0);
@@ -147,13 +148,13 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                 Columns.Add(((DataColumn)Column).ColumnName);
         }
 
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double OperationTime)
+        public override Task<IEnumerable<List<string>>> GetDataAsync(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
             var stopWatch = Stopwatch.StartNew();
             var Result = LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
             stopWatch.Stop();
             OperationTime = stopWatch.Elapsed.TotalMilliseconds;
-            return Result;
+            return Task.FromResult(Result.AsEnumerable());
         }
     }
 }

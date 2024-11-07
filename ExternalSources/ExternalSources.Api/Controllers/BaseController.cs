@@ -56,8 +56,8 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                 Logger.Info($"ExternalSource/GetMetaData {OperationNumber} parameters:\n {JsonConvert.SerializeObject(request)}");
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
-                    Source.PrepareMetaData(out var OperationTime);
-                    Logger.Info($"ExternalSource/GetMetaData {OperationNumber} time (ms): {OperationTime}");
+                    Source.PrepareMetaData();
+                    Logger.Info($"ExternalSource/GetMetaData {OperationNumber} time (ms): {Source.OperationTime}");
                     return Ok(new
                     {
                         Code = request.code,
@@ -74,7 +74,7 @@ namespace CheckListManager.ExternalSources.Api.Controllers
 
         [HttpPost]
         [Route("GetData")]
-        public IHttpActionResult GetData(ExternalSourceRequest request)
+        public async Task<IHttpActionResult> GetData(ExternalSourceRequest request)
         {
             try
             {
@@ -83,8 +83,8 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                 using (var Source = SourceBase.Build(request.className, request.code, request.password, request.version, request.data))
                 {
                     Source.Open();
-                    var Result = Source.GetData(request.parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
-                    Logger.Info($"ExternalSource/GetData {OperationNumber} time (ms): {OperationTime}");
+                    var Result = await Source.GetDataAsync(request.parameters, request.page, request.decimalSeparator, request.timeZone);
+                    Logger.Info($"ExternalSource/GetData {OperationNumber} time (ms): {Source.OperationTime}");
                     return Ok(new
                     {
                         Rows = request.page > 4 ? //limited to maximum 5 pages
@@ -117,8 +117,8 @@ namespace CheckListManager.ExternalSources.Api.Controllers
                         var Parameters = new Dictionary<string, string>();
                         for (var Index = 0; Index < request.names.Count; ++Index)
                             Parameters.Add(request.names[Index], Record[Index]);
-                        Source.GetData(Parameters, request.page, request.decimalSeparator, request.timeZone, out var OperationTime);
-                        TotalOperationTime += OperationTime;
+                        Source.GetDataAsync(Parameters, request.page, request.decimalSeparator, request.timeZone);
+                        TotalOperationTime += Source.OperationTime;
                     }
                     Logger.Info($"ExternalSource/Export {OperationNumber} time (ms): {TotalOperationTime}");
 

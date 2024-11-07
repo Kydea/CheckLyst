@@ -218,7 +218,7 @@ namespace TestRestApi
             if (value.StartsWith("commands["))
             {
                 var end = value.IndexOf(']', 9);
-                if (end == -1 || (end < value.Length - 1 && value[^1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
+                if (end == -1 || (end < value.Length - 1 && value[end + 1] != '.') || !int.TryParse(value[9..end], out int reponseIndex) || reponseIndex >= Responses.Count) return value;
                 return
                     end == value.Length ?
                         Responses[reponseIndex] :

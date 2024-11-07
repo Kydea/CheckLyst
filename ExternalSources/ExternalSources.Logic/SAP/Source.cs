@@ -77,12 +77,12 @@ namespace CheckListManager.ExternalSources.Logic.SAP
             }
         }
 
-        public override void PrepareMetaData(out double OperationTime)
+        public override void PrepareMetaData()
         {
             OperationTime = 0;
         }
 
-        public override IEnumerable<List<string>> GetData(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone, out double OperationTime)
+        public override Task<IEnumerable<List<string>>> GetDataAsync(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
             var stopWatch = Stopwatch.StartNew();
             switch (SAPParameters.FunctionName)
@@ -91,7 +91,7 @@ namespace CheckListManager.ExternalSources.Logic.SAP
                     var Result = FunctionPOHeader(Parameters, Page, DecimalSeparator);
                     stopWatch.Stop();
                     OperationTime = stopWatch.Elapsed.TotalMilliseconds;
-                    return Result;
+                    return Task.FromResult(Result.AsEnumerable());
                 default:
                     throw new NotSupportedException($"Source name {SAPParameters.FunctionName}");
             }
