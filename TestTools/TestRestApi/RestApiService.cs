@@ -103,12 +103,12 @@ namespace TestRestApi
                     if (command.Rules != null)
                         foreach (var rule in command.Rules)
                         {
-                            var pathValue = ParseParameters(rule.Path);
+                            var pathValue = ParsePath(rule.Path) ?? rule.Path;
                             if (rule.Test(pathValue.ToString() ?? ""))
                                 commandIndex = rule.Action switch
                                 {
                                     "goto" => rule.CommandIndex!.Value,
-                                    "error" => throw new Exception(rule.TextValue),
+                                    "error" => throw new Exception(rule.Error),
                                     _ => throw new ArgumentException(nameof(rule.Action)),
                                 };
                         }

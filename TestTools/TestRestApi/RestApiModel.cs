@@ -32,7 +32,8 @@ namespace TestRestApi
             NamedCommands = commandsGroup.ToDictionary(g => g.Key ?? "", v => v.Single());
 
             var commandIndex = 0;
-            Commands.ForEach(c => c.Validate(this, commandIndex++));
+            Commands.ForEach(c => c.Index = commandIndex++);
+            Commands.ForEach(c => c.Validate(this));
 
             var rowIndex = 0;
             Rows.ForEach(r => r.Validate(this, rowIndex++));
@@ -75,9 +76,8 @@ namespace TestRestApi
             };
         }
 
-        public void Validate(RestApiModel model, int Index)
+        public void Validate(RestApiModel model)
         {
-            this.Index = Index;
             Method = Method.ToUpper();
             if (!Methods.Contains(Method))
                 throw new ParseException($"Invalid method: {Method}, for command: ${Reference}");

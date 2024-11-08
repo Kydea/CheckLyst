@@ -108,7 +108,7 @@ namespace CheckListManager.ExternalSources.Logic.REST
                         if (command.Rules != null)
                             foreach (var rule in command.Rules)
                             {
-                                var pathValue = ParseParameters(rule.Path);
+                                var pathValue = ParsePath(rule.Path) ?? rule.Path;
                                 if (rule.Test(pathValue.ToString() ?? ""))
                                 {
                                     switch (rule.Action)
@@ -117,7 +117,7 @@ namespace CheckListManager.ExternalSources.Logic.REST
                                             commandIndex = rule.CommandIndex.Value;
                                             break;
                                         case "error":
-                                            throw new Exception(rule.TextValue);
+                                            throw new Exception(rule.Error);
                                         default:
                                             throw new ArgumentException(nameof(rule.Action));
                                     }
