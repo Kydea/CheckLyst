@@ -28,6 +28,7 @@ namespace CheckListManager.Common.Data
         public int Version { get; set; }
         public string Description { get; set; }
         public string VersionState { get; set; }
+        public int? LifeCycle { get; set; }
         public Nullable<System.DateTimeOffset> ValidFrom { get; set; }
         public Nullable<System.DateTimeOffset> ValidUntil { get; set; }
         public string ProposedState { get; set; }

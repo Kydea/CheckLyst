@@ -130,6 +130,7 @@ namespace CheckListManager.Infrastructure.Data
         {
             var ExistingPrototypeType = await GetPrototypeTypeAsync(identity, prototypeType.ID);
             ExistingPrototypeType.Name = prototypeType.Name;
+            ExistingPrototypeType.LifeCycle = prototypeType.LifeCycle;
             ExistingPrototypeType.ApprovationWorkFlow = prototypeType.ApprovationWorkFlow;
             ExistingPrototypeType.ObsolescenceWorkFlow = prototypeType.ObsolescenceWorkFlow;
             ExistingPrototypeType.PrototypesFTPServerEnabled = prototypeType.PrototypesFTPServerEnabled;

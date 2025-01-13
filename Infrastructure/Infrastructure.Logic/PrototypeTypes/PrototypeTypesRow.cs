@@ -12,6 +12,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
         public string DepartmentName { get; set; }
         public long ID { get; set; }
         public string Name { get; set; }
+        public int? LifeCycle { get; set; }
         public long? ApprovationWorkFlow { get; set; }
         public string ApprovationWorkFlowDescription { get; set; }
         public long? ObsolescenceWorkFlow { get; set; }

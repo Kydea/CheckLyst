@@ -95,7 +95,6 @@ namespace CheckListManager.Instances.Logic.List
             {
                 var prototypeTypes = await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Instances", "View");
                 prototypeTypes = prototypeTypes.Union(await _commonRepository.GetPrototypeTypesAsync(identity, department ?? -1, "Prototypes", "Preview"), new PrototypeTypeComparer()).ToList();
-                prototypeType = null;
                 response.Fields["PrototypeType"] = new Field
                 {
                     Options = prototypeTypes.Select(pt => new Option(pt.ID.ToString(), $"{pt.Name} ({pt.DepartmentName})")).Distinct(),

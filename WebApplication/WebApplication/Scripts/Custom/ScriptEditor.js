@@ -21,6 +21,7 @@
             destination.instanceConfirmationWorkFlow = source.instanceConfirmationWorkFlow;
             destination.itemIDSequence = source.itemIDSequence;
             destination.typeName = source.typeName;
+            destination.lifeCycle = source.lifeCycle;
         },
 
         map = function (source, destination, customExclusions) {

@@ -37,6 +37,8 @@
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
                 prototypes.prototype.verify(options && options.okHandler);
+            else
+                prototypes.prototype.setupActionBar();
         };
 
     propertyPanel.confirm = confirm;
@@ -55,7 +57,7 @@
             name = model.typeName,
             buttons = [];
 
-        if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)
+        if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft || model.typeName == "Prototype")
             buttons.push({
                 icon: "check",
                 text: "apply",
@@ -107,6 +109,18 @@
                 this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                 "Description", "A short description of the prototype.",
                 function () { $("h2 span", item.getElement()).text(model.description); }
+            ));
+            properties.push(new prototypes.Property(
+                this, new prototypes.SimpleValueProperty(model, "lifeCycle", { number: true, maxLength: 4 }).setCheck([
+                    {
+                        action: function (value) {
+                            var intValue = parseInt(value);
+                            return (value || "").trim() == "" || intValue > 0 && value == intValue;
+                        },
+                        message: "invalid value"
+                    }
+                ]), "Life cycle",
+                "The number of days of the life cycle."
             ));
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "descriptionFormulaString", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),

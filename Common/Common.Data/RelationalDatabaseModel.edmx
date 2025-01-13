@@ -113,6 +113,7 @@
           <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Company" Type="int8" Nullable="false" />
           <Property Name="Department" Type="int8" Nullable="false" />
+          <Property Name="LifeCycle" Type="int4" />
           <Property Name="ApprovationWorkFlow" Type="int8" />
           <Property Name="ObsolescenceWorkFlow" Type="int8" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="60" />
@@ -133,6 +134,7 @@
           <Property Name="Version" Type="int4" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="100" />
           <Property Name="VersionState" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="LifeCycle" Type="int4" />
           <Property Name="ValidFrom" Type="timestamptz" Precision="7" />
           <Property Name="ValidUntil" Type="timestamptz" Precision="7" />
           <Property Name="ProposedState" Type="varchar" MaxLength="20" />
@@ -2734,6 +2736,7 @@
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="VersionState" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="LifeCycle" Type="Int32" />
           <Property Name="ValidFrom" Type="DateTimeOffset" Precision="7" />
           <Property Name="ValidUntil" Type="DateTimeOffset" Precision="7" />
           <Property Name="ProposedState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
@@ -3013,6 +3016,7 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Company" Type="Int64" Nullable="false" />
           <Property Name="Department" Type="Int64" Nullable="false" />
+          <Property Name="LifeCycle" Type="Int32" />
           <Property Name="ApprovationWorkFlow" Type="Int64" />
           <Property Name="ObsolescenceWorkFlow" Type="Int64" />
           <Property Name="CreatedBy" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
@@ -4545,6 +4549,7 @@
                 <ScalarProperty Name="VersionState" ColumnName="VersionState" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="LifeCycle" ColumnName="LifeCycle" />
                 <ScalarProperty Name="Prototype" ColumnName="Prototype" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -4677,6 +4682,7 @@
                 <ScalarProperty Name="ObsolescenceWorkFlow" ColumnName="ObsolescenceWorkFlow" />
                 <ScalarProperty Name="ApprovationWorkFlow" ColumnName="ApprovationWorkFlow" />
                 <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="LifeCycle" ColumnName="LifeCycle" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />

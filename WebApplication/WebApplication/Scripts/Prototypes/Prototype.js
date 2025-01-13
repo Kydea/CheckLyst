@@ -81,6 +81,8 @@
                 exportButton = $("a.Export", buttonGroup),
                 downloadButton = $("a.Download", buttonGroup);
 
+            if (!matematici.canClose) saveButton.removeClass("Hidden"); //some property is always editable
+
             switch (model.state) {
                 case prototypes.Prototype.states.active:
                 case prototypes.Prototype.states.approved:
@@ -637,6 +639,7 @@
                     model.state = result.state;
                     model.proposedState = result.proposedState;
                     model.proposedDate = result.proposedDate;
+                    model.lifeCycle = result.lifeCycle;
                     model.validFrom = result.validFrom;
                     model.validUntil = result.validUntil;
                     model.instanceConfirmationWorkFlow = result.instanceConfirmationWorkFlow;
@@ -717,6 +720,7 @@
                     data = JSON.stringify({
                         id: prototypeKey.id,
                         version: prototypeKey.version,
+                        lifeCycle: model.lifeCycle,
                         modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
                         modifiedby: concurrencyInformation.modifiedBy,
                         validFrom: model.validFrom,
@@ -965,6 +969,8 @@
         select();
         update();
     };
+
+    prototype.setupActionBar = setupActionBar;
 
     prototype.setDataSources = function (value) {
         dataSources = value;

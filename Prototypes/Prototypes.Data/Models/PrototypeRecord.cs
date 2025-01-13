@@ -14,6 +14,7 @@ namespace CheckListManager.Prototypes.Data.Models
         public string DepartmentName { get; set; }
         public long PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
+        public int? LifeCycle { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }

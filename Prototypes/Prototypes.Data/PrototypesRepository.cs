@@ -79,7 +79,7 @@ namespace CheckListManager.Prototypes.Data
         private const string PROTOTYPE_VERSIONS_LIST_QUERY = 
             "select " +
                 "p.\"ID\", p.\"Name\", pv.\"Description\", pv.\"VersionState\" \"State\", pv.\"Version\", pv.\"ValidFrom\" \"ValidityFrom\", pv.\"ValidUntil\" \"ValidityUntil\", " +
-                "p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
+                "p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", pv.\"LifeCycle\", " +
                 "pv.\"CreatedOn\", pv.\"CreatedBy\", pv.\"ModifiedOn\", pv.\"ModifiedBy\" " +
             PROTOTYPE_VERSIONS_BASE_QUERY + 
             "order by p.\"ID\", pv.\"Version\" " +
@@ -119,17 +119,13 @@ namespace CheckListManager.Prototypes.Data
 
         public async Task<Common.Data.Prototypes> GetPrototypeAsync(DefaultIdentity defaultIdentity, long id)
         {
-            var result = await Entities.Prototypes.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == id);
-            if (result == null)
-                throw new Exception($"Prototype {id} not found");
+            var result = await Entities.Prototypes.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == id) ?? throw new Exception($"Prototype {id} not found");
             return result;
         }
 
         public async Task<PrototypeVersions> GetPrototypeVersionAsync(long companyId, long prototype, int version)
         {
-            var result = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == companyId && x.Prototype == prototype && x.Version == version);
-            if (result == null)
-                throw new Exception($"Prototype version {prototype}.{version} not found");
+            var result = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == companyId && x.Prototype == prototype && x.Version == version) ?? throw new Exception($"Prototype version {prototype}.{version} not found");
             return result;
         }
 
@@ -151,9 +147,7 @@ namespace CheckListManager.Prototypes.Data
 
         public async Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version)
         {
-            var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version);
-            if (PrototypeVersion == null)
-                throw new Exception($"Prototype version {prototype}.{version} not found");
+            var PrototypeVersion = await Entities.PrototypeVersions.SingleOrDefaultAsync(x => x.Prototypes.Company == defaultIdentity.CompanyId && x.Prototype == prototype && x.Version == version) ?? throw new Exception($"Prototype version {prototype}.{version} not found");
             if (PrototypeVersion.VersionState != VersionState.Draft)
                 throw new Exception("The prototype version is not in state draft");
 
@@ -205,13 +199,11 @@ namespace CheckListManager.Prototypes.Data
             }
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Approved && proposed)
             {
-                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow;
-                if (WorkFlow == null)
-                    throw new InvalidOperationException($"Approval workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
+                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ApprovationWorkFlow ?? throw new InvalidOperationException($"Approval workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
                 var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
-                    WorkFlow = WorkFlow.Value,
+                    WorkFlow = WorkFlow,
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,
                     Action = "Prototype – state to Approved/Active"
@@ -244,13 +236,11 @@ namespace CheckListManager.Prototypes.Data
             }
             else if ((prototypeVersion.VersionState == VersionState.Approved || prototypeVersion.VersionState == VersionState.Active) && state == VersionState.Obsolete && proposed)
             {
-                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ObsolescenceWorkFlow;
-                if (WorkFlow == null)
-                    throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
+                var WorkFlow = prototypeVersion.Prototypes.PrototypeTypes.ObsolescenceWorkFlow ?? throw new InvalidOperationException($"Obsolescence workflow not found for prototype type {prototypeVersion.Prototypes.PrototypeTypes.Name} ({prototypeVersion.Prototypes.PrototypeType}).");
 
                 var response = await _workFlowsService.CreateWorkFlowApplicationAsync(defaultIdentity, new CreateRequest
                 {
-                    WorkFlow = WorkFlow.Value,
+                    WorkFlow = WorkFlow,
                     Prototype = prototypeVersion.Prototype,
                     Version = prototypeVersion.Version,
                     Action = "Prototype – state to Obsolete"

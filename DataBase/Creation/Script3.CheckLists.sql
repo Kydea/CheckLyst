@@ -7,6 +7,8 @@ create table "CheckLists"."PrototypeTypes"
 
 	"Company" bigint not null references "Infrastructure"."Companies",
 	"Department" bigint not null references "Infrastructure"."Departments",
+
+	"LifeCycle" uint,
     
 	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
 	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
@@ -33,6 +35,8 @@ create table "CheckLists"."Prototypes"
 	"Company" bigint not null references "Infrastructure"."Companies",
 	"Department" bigint not null references "Infrastructure"."Departments",
 	"PrototypeType" bigint not null references "CheckLists"."PrototypeTypes",
+
+	"LifeCycle" uint,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

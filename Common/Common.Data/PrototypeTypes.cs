@@ -29,6 +29,7 @@ namespace CheckListManager.Common.Data
         public string Name { get; set; }
         public long Company { get; set; }
         public long Department { get; set; }
+        public Nullable<int> LifeCycle { get; set; }
         public Nullable<long> ApprovationWorkFlow { get; set; }
         public Nullable<long> ObsolescenceWorkFlow { get; set; }
         public string CreatedBy { get; set; }

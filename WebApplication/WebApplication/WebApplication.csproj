@@ -54,6 +54,7 @@
     <Compile Include="Code\DefaultViewPage.cs" />
     <Compile Include="Code\Version.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DashboardsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -591,6 +592,10 @@
     <Content Include="Views\Help\ReportViewer.cshtml" />
     <Content Include="Views\Help\StandardFormats.cshtml" />
     <Content Include="Views\Help\SoftwareVersion.cshtml" />
+    <Content Include="Views\Help\InstanceLifeCycle.cshtml" />
+    <Content Include="Views\Help\InstanceOverview.cshtml" />
+    <Content Include="Views\Dashboards\InstanceOverview.cshtml" />
+    <Content Include="Views\Dashboards\InstanceLifeCycle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -50,6 +50,9 @@ table.Grid tbody tr td.Off {
 table.Grid tbody tr td.Centered {
   text-align: center;
 }
+table.Grid tbody tr td.Right {
+  text-align: right;
+}
 table.Grid tbody tr td.Inactive {
   cursor: default !important;
 }

@@ -66,6 +66,10 @@ table.Grid {
                     text-align: center;
                 }
 
+                &.Right {
+                    text-align: right;
+                }
+
                 &.Inactive {
                     cursor: default !important;
                 }

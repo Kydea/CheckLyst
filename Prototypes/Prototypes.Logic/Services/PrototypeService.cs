@@ -75,6 +75,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 ID = PrototypeVersion.Prototype,
                 Version = PrototypeVersion.Version,
+                LifeCycle = PrototypeVersion.LifeCycle,
                 CheckList = Prototype,
                 ModifiedOn = PrototypeVersion.ModifiedOn,
                 ModifiedBy = PrototypeVersion.ModifiedBy,
@@ -112,7 +113,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 Version = -1,
                 CheckList = Prototype,
                 InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
-                State = VersionState.Draft
+                State = VersionState.Draft,
+                LifeCycle = PrototypeVersion.LifeCycle
             });
         }
 
@@ -168,7 +170,8 @@ namespace CheckListManager.Prototypes.Logic.Services
                 DepartmentName = PrototypeVersion.Prototypes.Departments.Name,
                 InstanceConfirmationWorkFlow = PrototypeVersion.InstanceConfirmationWorkFlow,
 
-                State = VersionState.Draft
+                State = VersionState.Draft,
+                LifeCycle = PrototypeVersion.LifeCycle
             });
         }
 
@@ -288,40 +291,45 @@ namespace CheckListManager.Prototypes.Logic.Services
             else
             {
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
-                if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable");
+                if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable"); //now there are properties always editable
                 if (
                     (PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10000 /*ignored under milliseconds*/
                     || PrototypeVersion.ModifiedBy != request.ModifiedBy
                 ) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
 
+                PrototypeVersion.LifeCycle = request.LifeCycle;
                 PrototypeVersion.ModifiedOn = Now;
                 PrototypeVersion.ModifiedBy = identity.Code;
             }
 
-            //Get the new id
-            if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();
+            if (PrototypeVersion.VersionState == VersionState.Draft)
+            {
+                //Get the new id
+                if (NewPrototype || NewVersion) await _prototypeRepository.SaveChangesAsync();
 
-            await CloneImagesAsync(
-                request.CheckList,
-                identity.CompanyId,
-                PrototypeVersion.Prototype,
-                PrototypeVersion.Version
-            );
+                await CloneImagesAsync(
+                    request.CheckList,
+                    identity.CompanyId,
+                    PrototypeVersion.Prototype,
+                    PrototypeVersion.Version
+                );
 
-            //Processes the deleted images attachment
-            foreach (var key in request.ImagesToDelete)
-                await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
+                //Processes the deleted images attachment
+                foreach (var key in request.ImagesToDelete)
+                    await DeleteAttachmentAsync(identity.CompanyId, PrototypeVersion.Prototype, PrototypeVersion.Version, key);
 
-            PrototypeVersion.Description = request.Description;
-            PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converters);
-            PrototypeVersion.ValidFrom = request.ValidFrom;
-            PrototypeVersion.ValidUntil = request.ValidUntil;
-            PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
+                PrototypeVersion.Description = request.Description;
+                PrototypeVersion.LifeCycle = request.LifeCycle;
+                PrototypeVersion.Data = JsonConvert.SerializeObject(request.CheckList, _converters);
+                PrototypeVersion.ValidFrom = request.ValidFrom;
+                PrototypeVersion.ValidUntil = request.ValidUntil;
+                PrototypeVersion.InstanceConfirmationWorkFlow = request.InstanceConfirmationWorkFlow;
 
-            //Deletes the old tags and creates the new ones
-            _prototypeRepository.DeletePrototypeVersionTags(PrototypeVersion.PrototypeVersionTags);
-            var Tags = CreateTags(request);
-            Tags.ForEach(t => PrototypeVersion.PrototypeVersionTags.Add(t));
+                //Deletes the old tags and creates the new ones
+                _prototypeRepository.DeletePrototypeVersionTags(PrototypeVersion.PrototypeVersionTags);
+                var Tags = CreateTags(request);
+                Tags.ForEach(t => PrototypeVersion.PrototypeVersionTags.Add(t));
+            }
 
             await _prototypeRepository.SaveChangesAsync();
 
