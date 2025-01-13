@@ -64,7 +64,7 @@
             $(options.filterFormSelector).append($("<a />")
                 .attr({ href: "#", id: "ApplyButton" })
                 .addClass("Button GreyYellowButton DefaultButton")
-                .text("search")
+                .text(options.searchButtonLabel || "search")
                 .prepend($("<i />").addClass("Icon fa fa-caret-right"))
             );
 
@@ -95,7 +95,7 @@
 						bindEvent: options.bindEvent,
 						applyButton: {
 							button: "#ApplyButton",
-							event: "GetData",
+							event: options.getDataEvent || "GetData",
 							handler: filterHandler,
 						},
 						searchPage: searchPage

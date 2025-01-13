@@ -32,5 +32,21 @@ namespace CheckListManager.Instances.Api.Controllers
         {
             return Ok(await _listService.GetDataAsync(Identity, request));
         }
+
+        [HttpPost]
+        [Route("Overview")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> Overview(Message<InstanceFilters> request)
+        {
+            return Ok(await _listService.GetDataAsync(Identity, request));
+        }
+
+        [HttpPost]
+        [Route("LifeCycle")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> LifeCycle(Message<InstanceFilters> request)
+        {
+            return Ok(await _listService.GetDataAsync(Identity, request));
+        }
     }
 }
