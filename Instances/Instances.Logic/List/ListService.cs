@@ -8,6 +8,8 @@ using CheckListManager.Instances.Data;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Instances.Data.Models;
+using CheckListManager.Instances.Logic.Messages;
+using CheckListManager.Common.Logic.Models.Expressions.Functions;
 
 namespace CheckListManager.Instances.Logic.List
 {
@@ -148,5 +150,17 @@ namespace CheckListManager.Instances.Logic.List
 
         public async Task<PagingResponse<List<InstanceRecord>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<InstanceFilters> form) =>
             await _instancesRepository.GetInstancesAsync(identity, form.Data, form.CurrentPage, form.ItemsPerPage);
+
+        public async Task<OverviewResponse> OverviewAsync(IDefaultIdentity identity, InstanceFilters filters) =>
+            new OverviewResponse
+            {
+                Records = await _instancesRepository.OverviewAsync(identity, filters)
+            };
+
+        public async Task<LifeCycleResponse> LifeCycleAsync(IDefaultIdentity identity, InstanceFilters filters) =>
+            new LifeCycleResponse
+            {
+                Records = await _instancesRepository.LifeCycleAsync(identity, filters)
+            };
     }
 }

@@ -210,5 +210,17 @@
   {
     "outputFile": "Content/Theme/ReportEditor.css",
     "inputFile": "Content/Theme/ReportEditor.scss"
+  },
+  {
+    "outputFile": "Content/Theme/InstanceOverview.css",
+    "inputFile": "Content/Theme/InstanceOverview.scss"
+  },
+  {
+    "outputFile": "Content/Theme/InstanceLifeCycle.css",
+    "inputFile": "Content/Theme/InstanceOverview.scss"
+  },
+  {
+    "outputFile": "Content/Theme/InstanceLifeCycle.css",
+    "inputFile": "Content/Theme/InstanceLifeCycle.scss"
   }
 ]

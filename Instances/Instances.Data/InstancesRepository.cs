@@ -57,23 +57,52 @@ namespace CheckListManager.Instances.Data
                         "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Instances', 'View') g " +
                         "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
                     ")" +
-                ")";
-        private const string INSTANCES_LIST_QUERY =
+                ") ";
+
+        private const string INSTANCES_LIST_QUERY_UNPAGED =
             "select " +
                 "i.\"ID\", i.\"Code\", " +
                 "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
                 "i.\"Number\", i.\"InstanceState\" \"State\", i.\"Description\", d.\"Name\" \"DepartmentName\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
                 "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
             INSTANCES_BASE_QUERY +
-            "order by i.\"ID\" desc " +
-            "limit :limit offset :offset";
+            "order by i.\"ID\" desc ";
+
+        private const string INSTANCES_LIST_QUERY = INSTANCES_LIST_QUERY_UNPAGED + "limit :limit offset :offset";
+
         private const string INSTANCES_COUNT_QUERY = "select count(*) " + INSTANCES_BASE_QUERY;
-        
-        public async Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(
+
+        private const string OVERVIEW_QUERY =
+            "select " +
+                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "i.\"CreatedOn\", i.\"CreatedBy\" " +
+            INSTANCES_BASE_QUERY +
+                "and pv.\"VersionState\" <> 'Draft' " +
+                "and pv.\"VersionState\" <> 'In progress' " +
+                "and i.\"Year\" <> 0 " +
+            "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
+
+        private const string LIFE_CYCLE_QUERY =
+            "select " +
+                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "extract(day from now() - i.\"CreatedOn\") \"Days\", pv.\"LifeCycle\", " +
+                "i.\"CreatedOn\", i.\"CreatedBy\" " +
+            INSTANCES_BASE_QUERY +
+                "and pv.\"VersionState\" <> 'Draft' " +
+                "and pv.\"VersionState\" <> 'In progress' " +
+                "and pv.\"LifeCycle\" > 0 " +
+                "and i.\"Year\" <> 0 " +
+                "and i.\"InstanceState\" in ('In progress', 'Confirmed') " +
+            "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
+
+
+        public async Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync
+        (
             IDefaultIdentity identity,
             InstanceFilters filters,
             int currentPage,
-            int itemsPerPage)
+            int itemsPerPage
+        )
         {
             var Filters = new
             {
@@ -110,6 +139,68 @@ namespace CheckListManager.Instances.Data
                 CurrentPage = currentPage,
                 ItemsPerPage = itemsPerPage
             };
+        }
+
+        public async Task<List<OverviewRecord>> OverviewAsync
+        (
+            IDefaultIdentity identity,
+            InstanceFilters filters
+        )
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty
+            };
+
+            var List = await Read<OverviewRecord>(OVERVIEW_QUERY, Filters);
+            return List.ToList();
+        }
+
+        public async Task<List<LifeCycleRecord>> LifeCycleAsync
+        (
+            IDefaultIdentity identity,
+            InstanceFilters filters
+        )
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty
+            };
+
+            var List = await Read<LifeCycleRecord>(LIFE_CYCLE_QUERY, Filters);
+            return List.ToList();
         }
 
         public async Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance)

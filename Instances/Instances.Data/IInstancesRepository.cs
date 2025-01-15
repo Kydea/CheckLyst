@@ -12,7 +12,9 @@ namespace CheckListManager.Instances.Data
     public interface IInstancesRepository : IRepository
     {
         Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(IDefaultIdentity identity, InstanceFilters filters, int currentPage, int itemsPerPage);
-	    Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance);
+        Task<List<OverviewRecord>> OverviewAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<List<LifeCycleRecord>> LifeCycleAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance);
 	    void EndCreateInstanceAsync(Common.Data.Instances instance);
 	    void CancelCreateInstanceAsync();
 	    Task<Common.Data.Instances> GetAsync(long companyId, string code);

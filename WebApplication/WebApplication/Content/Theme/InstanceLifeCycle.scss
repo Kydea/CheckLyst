@@ -1,0 +1,117 @@
+﻿@import "FontAwesome/_variables.scss";
+@import "_Library.scss";
+
+body div.InstanceLifeCycle {
+    #Result {
+        color: $Color-Grey-Dark;
+
+        div.Item {
+            //border: solid 1px $Color-Grey-Light;
+            //border-bottom: none;
+            line-height: 30px;
+
+            > div:not(.Values) {
+                margin: 0px 20px 0 20px;
+            }
+
+            div.Values {
+                padding: 0 20px 10px;
+                display: flex;
+
+                span {
+                    display: block;
+                    height: 20px;
+
+                    &.Green {
+                        background-color: $Color-Green-Regular;
+                    }
+
+                    &.Yellow {
+                        background-color: $Color-Yellow-Regular;
+                    }
+
+                    &.Red {
+                        background-color: $Color-Red-Regular;
+                    }
+                }
+            }
+
+            a {
+                color: $Color-Grey-Dark !important;
+                display: block;
+
+                > span.Black {
+                    color: black !important;
+                }
+
+                &:hover {
+                    color: black !important;
+                    text-decoration: none;
+                }
+
+                &.Toggle {
+                    &::before {
+                        content: fa-content($fa-var-caret-right);
+                        text-align: center;
+                        display: inline-block;
+                        width: 20px;
+                        font-family: "Font Awesome 5 Pro";
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            &.Expanded {
+                > a.Toggle::before {
+                    content: fa-content($fa-var-caret-down);
+                }
+            }
+        }
+
+        div:not(.Expanded) {
+            > div {
+                display: none;
+            }
+        }
+
+        div.DepartmentItem {
+            &:last-child {
+                //border-bottom: solid 1px $Color-Grey-Light;
+            }
+        }
+
+        div.PrototypeTypeItem {
+        }
+
+        div.PrototypeItem {
+        }
+
+        div.VersionItem {
+        }
+
+        div.InstanceItem {
+            padding: 0 20px;
+
+            a::after {
+                content: fa-content($fa-var-long-arrow-right);
+                margin: 0 5px 0 5px;
+                font-family: "Font Awesome 5 Pro";
+            }
+
+            span {
+                &.Green {
+                    color: $Color-Green-Regular !important;
+                }
+
+                &.Yellow {
+                    color: $Color-Yellow-Regular !important;
+                }
+
+                &.Red {
+                    color: $Color-Red-Regular !important;
+                }
+            }
+        }
+    }
+}
+

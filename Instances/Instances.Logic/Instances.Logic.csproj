@@ -85,6 +85,8 @@
     <Compile Include="Messages\InstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />
     <Compile Include="Messages\GetPrototypeResponse.cs" />
+    <Compile Include="Messages\LifeCycleResponse.cs" />
+    <Compile Include="Messages\OverviewResponse.cs" />
     <Compile Include="Messages\InstanceResponse.cs" />
     <Compile Include="Messages\SaveInstanceRequest.cs" />
     <Compile Include="Models\CheckLists\Lock.cs" />

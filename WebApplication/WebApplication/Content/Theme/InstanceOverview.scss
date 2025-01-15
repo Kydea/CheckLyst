@@ -1,0 +1,86 @@
+﻿@import "FontAwesome/_variables.scss";
+@import "_Library.scss";
+
+body div.InstanceOverview {
+    #Result {
+        color: $Color-Grey-Dark;
+
+        div.Item {
+            border: solid 1px $Color-Grey-Light;
+            border-bottom: none;
+            line-height: 30px;
+
+            > div:not(.Values) {
+                display: none;
+                margin: 0px 20px 0 20px;
+            }
+
+            div.Values {
+                padding: 0 20px;
+                span.Value {
+                    color: black;
+                    margin: 0 10px 0 5px;
+                }
+            }
+
+            a {
+                color: $Color-Grey-Dark !important;
+                display: block;
+
+                > span {
+                    color: black !important;
+                }
+
+                &:hover {
+                    color: black !important;
+                    text-decoration: none;
+                }
+
+                &.Toggle {
+                    &::before {
+                        content: fa-content($fa-var-caret-right);
+                        text-align: center;
+                        display: inline-block;
+                        width: 20px;
+                        font-family: "Font Awesome 5 Pro";
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            &.Expanded {
+                > a.Toggle::before {
+                    content: fa-content($fa-var-caret-down);
+                }
+
+                > div {
+                    display: block;
+                }
+            }
+        }
+
+        div.DepartmentItem {
+            &:last-child {
+                border-bottom: solid 1px $Color-Grey-Light;
+            }
+        }
+
+        div.PrototypeTypeItem {
+        }
+
+        div.PrototypeItem {
+        }
+
+        div.VersionItem {
+        }
+
+        div.InstanceItem {
+            padding: 0 20px;
+            a::after {
+                content: fa-content($fa-var-long-arrow-right);
+                margin: 0 5px 0 5px;
+                font-family: "Font Awesome 5 Pro";
+            }
+        }
+    }
+}

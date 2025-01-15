@@ -1,0 +1,55 @@
+﻿body div.InstanceOverview #Result {
+  color: #666;
+}
+body div.InstanceOverview #Result div.Item {
+  border: solid 1px #ccc;
+  border-bottom: none;
+  line-height: 30px;
+}
+body div.InstanceOverview #Result div.Item > div:not(.Values) {
+  display: none;
+  margin: 0px 20px 0 20px;
+}
+body div.InstanceOverview #Result div.Item div.Values {
+  padding: 0 20px;
+}
+body div.InstanceOverview #Result div.Item div.Values span.Value {
+  color: black;
+  margin: 0 10px 0 5px;
+}
+body div.InstanceOverview #Result div.Item a {
+  color: #666 !important;
+  display: block;
+}
+body div.InstanceOverview #Result div.Item a > span {
+  color: black !important;
+}
+body div.InstanceOverview #Result div.Item a:hover {
+  color: black !important;
+  text-decoration: none;
+}
+body div.InstanceOverview #Result div.Item a.Toggle::before {
+  content: "\f0da";
+  text-align: center;
+  display: inline-block;
+  width: 20px;
+  font-family: "Font Awesome 5 Pro";
+  font-weight: bold;
+}
+body div.InstanceOverview #Result div.Item.Expanded > a.Toggle::before {
+  content: "\f0d7";
+}
+body div.InstanceOverview #Result div.Item.Expanded > div {
+  display: block;
+}
+body div.InstanceOverview #Result div.DepartmentItem:last-child {
+  border-bottom: solid 1px #ccc;
+}
+body div.InstanceOverview #Result div.InstanceItem {
+  padding: 0 20px;
+}
+body div.InstanceOverview #Result div.InstanceItem a::after {
+  content: "\f178";
+  margin: 0 5px 0 5px;
+  font-family: "Font Awesome 5 Pro";
+}

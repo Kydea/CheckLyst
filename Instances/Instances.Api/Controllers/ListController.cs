@@ -35,18 +35,18 @@ namespace CheckListManager.Instances.Api.Controllers
 
         [HttpPost]
         [Route("Overview")]
-        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> Overview(Message<InstanceFilters> request)
         {
-            return Ok(await _listService.GetDataAsync(Identity, request));
+            return Ok(await _listService.OverviewAsync(Identity, request.Data));
         }
 
         [HttpPost]
         [Route("LifeCycle")]
-        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> LifeCycle(Message<InstanceFilters> request)
         {
-            return Ok(await _listService.GetDataAsync(Identity, request));
+            return Ok(await _listService.LifeCycleAsync(Identity, request.Data));
         }
     }
 }

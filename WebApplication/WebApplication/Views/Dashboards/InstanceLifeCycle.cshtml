@@ -1,12 +1,14 @@
 @{
-    ViewBag.Title = "Dashboard";
+    ViewBag.Title = "Instance life overview";
 }
-
 
 <div class="InstanceLifeCycle">
     <h1>Instance life cycle</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar Hidden">
+        <a id="ExportButton" href="#" class="Button"><i class="Icon fa fa-caret-down"></i> Export</a>
+        <a id="ListButton" href="#" class="Button"><i class="Icon fa fa-list"></i> List</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -27,30 +29,13 @@
             </label>
         </form>
     </div>
-    <div class="ShadowPanel">
-        diagram
+    <div class="ShadowPanel Hidden" id="Result">
     </div>
 </div>
 
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
-        var
-            formSelector = "form#Filters",
-            formElement = $(formSelector);
-
-        searchPage = new matematici.SearchPage({
-            pageName: "Instances",
-            filterFormSelector: formSelector,
-            resultGridSelector: "div#Content table.Grid",
-            bindEvent: "Bind",
-            getDataEvent: "LifeCycle",
-            searchButtonLabel: "submit",
-            readOnly: true,
-            breadCrumbs: [
-                { content: "instance life cycle" }
-            ]
-        });
-
+        new instances.LifeCycle("form#Filters", "Result");
         callback.call();
     };
 </script>

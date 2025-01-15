@@ -58,6 +58,8 @@
     <Compile Include="IInstancesRepository.cs" />
     <Compile Include="Models\InstanceExceptionRecord.cs" />
     <Compile Include="Models\InstanceFilters.cs" />
+    <Compile Include="Models\LifeCycleRecord.cs" />
+    <Compile Include="Models\OverviewRecord.cs" />
     <Compile Include="Models\InstanceRecord.cs" />
     <Compile Include="Models\InstanceRelation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
