@@ -3,6 +3,7 @@
         lifeCycle = this,
         actionBar = document.getElementsByClassName("ActionBar")[0],
         resultContainer = document.getElementById(resultSelector),
+        maxCount,
 
         createToggleButton = function (container, label, description) {
             var anchor = document.createElement("a");
@@ -23,7 +24,9 @@
         createEmptyCounter = function (previousElement, previousCounter) {
             var
                 span,
-                div;
+                div,
+                maxHeight = 55
+                minHeight = 5;
 
             if (previousElement) {
                 div = document.createElement("div");
@@ -32,13 +35,17 @@
 
                 var
                     total = previousCounter.green + previousCounter.yellow + previousCounter.red,
+                    height = total / maxCount * (maxHeight - minHeight) + minHeight,
                     percentage;
+
+                if (height < 5 || height > 50 || !height) console.log(previousCounter.green, previousCounter.yellow, previousCounter.red, height);
 
                 span = document.createElement("span");
                 span.classList.add("Green");
                 div.appendChild(span);
                 percentage = previousCounter.green / total * 100;
                 span.style.setProperty("width", percentage + "%")
+                span.style.setProperty("height", height + "px")
                 span.title = previousCounter.green + " intances (" + Math.round(percentage) + "% of the " + total + " in total) under 80% of life cicle";
 
                 span = document.createElement("span");
@@ -46,6 +53,7 @@
                 div.appendChild(span);
                 percentage = previousCounter.yellow / total * 100;
                 span.style.setProperty("width", percentage + "%")
+                span.style.setProperty("height", height + "px")
                 span.title = previousCounter.yellow + " intances (" + Math.round(percentage) + "% of the " + total + " in total) over 80% of life cicle";
 
                 span = document.createElement("span");
@@ -53,6 +61,7 @@
                 div.appendChild(span);
                 percentage = previousCounter.red / total * 100;
                 span.style.setProperty("width", percentage + "%")
+                span.style.setProperty("height", height + "px")
                 span.title = previousCounter.red + " intances (" + Math.round(percentage) + "% of the " + total + " in total) over 100% of life cicle";
             }
 
@@ -79,6 +88,24 @@
         resultContainer.innerHTML = "";
         resultContainer.classList.remove("Hidden");
         actionBar.classList.remove("Hidden");
+
+        maxCount = 0;
+        var length = 0;
+        for (var index in result.records) {
+            var record = result.records[index];
+            if (department == undefined)
+                department = record.department;
+            if (department != record.department) {
+                department = record.department;
+                if (length > maxCount) maxCount = length;
+                length = 0;
+                version = null;
+            }
+            ++length;
+        }
+        if (length > maxCount) maxCount = length;
+
+        deparment = undefined;
 
         for (var index in result.records) {
             var record = result.records[index];
@@ -144,7 +171,6 @@
             span = document.createElement("span")
             anchor.appendChild(span);
             span.innerText = " (" + record.state + ", " + record.days + " days of life / " + record.lifeCycle + " days of life cicle = ";
-
 
             span = document.createElement("span")
             anchor.appendChild(span);

@@ -158,7 +158,7 @@
                 if (e.path != "/")
                     $("a", matematici.elements.menu).each(function () {
                         var a = $(this);
-						if (a.attr("href") && a.attr("href").indexOf(e.path) >= 0) {
+						if (a.attr("href") && a.attr("href").endsWith(e.path)) {
                             a.parent().addClass("Current").closest(".MenuItem").addClass("Current");
                             return true;
                         }
