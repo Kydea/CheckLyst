@@ -39,15 +39,18 @@ namespace CheckListManager.Instances.Data
                 "and (:from = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') >= :from) " +
                 "and (:to = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') <= :to) " +
                 "and (:tagValue = '' or exists(select 1 from \"CheckLists\".\"InstanceTags\" it where it.\"Instance\" = i.\"ID\" and (:tagCode = '' or it.\"Tag\" = :tagCode) and upper(it.\"Value\") like '%' || :tagValue || '%')) " +
+                "and (:lifeCycleFrom = -1 or pv.\"LifeCycle\" > 0 and round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") >= :lifeCycleFrom) " +
+                "and (:lifeCycleTo = -1 or pv.\"LifeCycle\" > 0 and round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") < :lifeCycleTo) " +
+                "and (:lifeCycleFrom = -1 and :lifeCycleTo = -1 or pv.\"VersionState\" <> 'Draft' and pv.\"VersionState\" <> 'In progress' and pv.\"LifeCycle\" > 0 and i.\"Year\" <> 0 and i.\"InstanceState\" in ('In progress', 'Confirmed')) " +
                 "and (" +
                     ":exceptionState = '' " +
                     "or :exceptionState = 'include' and exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\") " +
                     "or :exceptionState = 'exclude' and not exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\")" +
-                ")" +
+                ") " +
                 "and (" +
                     ":exceptionDescription = '' " +
                     "or exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\" and upper(iev.\"Description\") like '%' || :exceptionDescription || '%')" +
-                ")" +
+                ") " +
                 "and (" +
                     "i.\"Year\" = 0 and exists (" +
                         "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'Preview') g " +
@@ -64,6 +67,7 @@ namespace CheckListManager.Instances.Data
                 "i.\"ID\", i.\"Code\", " +
                 "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
                 "i.\"Number\", i.\"InstanceState\" \"State\", i.\"Description\", d.\"Name\" \"DepartmentName\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "case when pv.\"LifeCycle\" = 0 then null else extract(day from now() - i.\"CreatedOn\") || ' of ' || pv.\"LifeCycle\" || ' (' || round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") || '%)' end \"LifeCycle\", " +
                 "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
             INSTANCES_BASE_QUERY +
             "order by i.\"ID\" desc ";
@@ -124,7 +128,9 @@ namespace CheckListManager.Instances.Data
                 exceptionState = filters.ExceptionState ?? string.Empty,
                 exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
                 limit = itemsPerPage,
-                offset = (currentPage - 1) * itemsPerPage
+                offset = (currentPage - 1) * itemsPerPage,
+                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleTo = filters.LifeCycleTo ?? -1
             };
 
             var Count = await Read<int>(INSTANCES_COUNT_QUERY, Filters);
@@ -165,7 +171,9 @@ namespace CheckListManager.Instances.Data
                 tagCode = filters.TagCode ?? string.Empty,
                 tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
                 exceptionState = filters.ExceptionState ?? string.Empty,
-                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleTo = filters.LifeCycleTo ?? -1
             };
 
             var List = await Read<OverviewRecord>(OVERVIEW_QUERY, Filters);
@@ -196,7 +204,9 @@ namespace CheckListManager.Instances.Data
                 tagCode = filters.TagCode ?? string.Empty,
                 tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
                 exceptionState = filters.ExceptionState ?? string.Empty,
-                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleTo = filters.LifeCycleTo ?? -1
             };
 
             var List = await Read<LifeCycleRecord>(LIFE_CYCLE_QUERY, Filters);

@@ -21,6 +21,7 @@ body div.InstanceLifeCycle {
                 span {
                     display: block;
                     height: 20px;
+                    cursor: pointer;
 
                     &.Green {
                         background-color: $Color-Green-Regular;

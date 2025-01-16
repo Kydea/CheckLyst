@@ -24,5 +24,8 @@ namespace CheckListManager.Instances.Data.Models
         public DateTime? To { get; set; }
         public string ExceptionState { get; set; }
         public string ExceptionDescription { get; set; }
+        public int? LifeCycleFrom { get; set; }
+        public int? LifeCycleTo { get; set; }
+
     }
 }

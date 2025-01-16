@@ -91,6 +91,9 @@ namespace CheckListManager.Instances.Logic.List
                     },
                     Value = form.ExceptionState
                 };
+
+                response.Fields["LifeCycleFrom"] = new Field { Value = form.LifeCycleFrom.ToString() };
+                response.Fields["LifeCycleTo"] = new Field { Value = form.LifeCycleTo.ToString() };
             }
 
             if (form.Source == null || form.Source == "department")

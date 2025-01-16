@@ -62,6 +62,13 @@
                     <i class="Icon fal fa-exclamation" />
                     <input type="text" name="exceptionDescription" />
                 </label>
+                <label class="Clearing Controls2">
+                    <span>life cycle % range</span>
+                    <i class="Icon fal fa-clock" />
+                    <input type="text" name="lifeCycleFrom" class="mask-pint" maxlength="3" />
+                    <i class="Icon fal fa-clock" />
+                    <input type="text" name="lifeCycleTo" class="mask-pint" maxlength="3" />
+                </label>
             </div>
         </form>
 
@@ -79,6 +86,7 @@
                     <th>Prototype type</th>
                     <th>Prototype</th>
                     <th>Version</th>
+                    <th>Life cycle</th>
                     <th>Created By</th>
                     <th>Created On</th>
                     <th>Modified By</th>
@@ -98,6 +106,7 @@
                     <td data-column="prototypeTypeName"></td>
                     <td data-column="prototypeName"></td>
                     <td data-column="version"></td>
+                    <td data-column="lifeCycle" style="white-space: nowrap;"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>

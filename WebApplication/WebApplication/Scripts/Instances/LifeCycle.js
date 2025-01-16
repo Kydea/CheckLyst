@@ -4,7 +4,6 @@
         actionBar = document.getElementsByClassName("ActionBar")[0],
         resultContainer = document.getElementById(resultSelector),
         maxCount,
-
         createToggleButton = function (container, label, description) {
             var anchor = document.createElement("a");
             container.appendChild(anchor);
@@ -21,12 +20,24 @@
             }
         },
 
-        createEmptyCounter = function (previousElement, previousCounter) {
+        createEmptyCounter = function (previousElement, previousCounter, department, prototypeType, prototype, version) {
             var
                 span,
                 div,
-                maxHeight = 55
-            minHeight = 5;
+                maxHeight = 55,
+                minHeight = 5,
+
+                openList = function (from, to) {
+                    var parameters = "?";
+                    if (from != null) parameters += "lifeCycleFrom=" + from + "&";
+                    if (to != null) parameters += "lifeCycleTo=" + to + "&";
+                    if (department != null) parameters += "department=" + department + "&";
+                    if (prototypeType != null) parameters += "prototypeType=" + prototypeType + "&";
+                    if (prototype != null) parameters += "prototype=" + prototype + "&";
+                    if (version != null) parameters += "version=" + version + "&";
+                    parameters += "advancedSearch=true";
+                    window.open(matematici.urls.instances.list + parameters, "_blank");
+                }
 
             if (previousElement) {
                 div = document.createElement("div");
@@ -38,15 +49,16 @@
                     height = total / maxCount * (maxHeight - minHeight) + minHeight,
                     percentage;
 
-                if (height < 5 || height > 50 || !height) console.log(previousCounter.green, previousCounter.yellow, previousCounter.red, height);
-
                 span = document.createElement("span");
                 span.classList.add("Green");
                 div.appendChild(span);
                 percentage = previousCounter.green / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.green + " intances (" + Math.round(percentage) + "% of the " + total + " in total) under 80% of life cicle";
+                span.title = previousCounter.green + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) under 80% of life cicle (click to open the list)";
+                span.addEventListener("click", function () {
+                    openList(null, 80);
+                });
 
                 span = document.createElement("span");
                 span.classList.add("Yellow");
@@ -54,7 +66,10 @@
                 percentage = previousCounter.yellow / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.yellow + " intances (" + Math.round(percentage) + "% of the " + total + " in total) over 80% of life cicle";
+                span.title = previousCounter.yellow + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) over 80% of life cicle (click to open the list)";
+                span.addEventListener("click", function () {
+                    openList(80, 100);
+                });
 
                 span = document.createElement("span");
                 span.classList.add("Red");
@@ -62,7 +77,10 @@
                 percentage = previousCounter.red / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.red + " intances (" + Math.round(percentage) + "% of the " + total + " in total) over 100% of life cicle";
+                span.title = previousCounter.red + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) over 100% of life cicle (click to open the list)";
+                span.addEventListener("click", function () {
+                    openList(100, null);
+                });
             }
 
             return { green: 0, yellow: 0, red: 0 };
@@ -70,6 +88,8 @@
 
         resultHandler = function (result) {
             var
+                previousRecord = {},
+
                 department,
                 prototypeType,
                 prototype,
@@ -110,8 +130,8 @@
                 var record = result.records[index];
 
                 if (department != record.department) {
-                    department = record.department
-                    departmentCounter = createEmptyCounter(departmentElement, departmentCounter);
+                    department = record.department;
+                    departmentCounter = createEmptyCounter(departmentElement, departmentCounter, previousRecord.department);
                     departmentElement = document.createElement("div");
                     resultContainer.appendChild(departmentElement);
                     departmentElement.classList.add("DepartmentItem", "Item");
@@ -120,8 +140,8 @@
                 }
 
                 if (prototypeType != record.prototypeType) {
-                    prototypeType = record.prototypeType
-                    prototypeTypeCounter = createEmptyCounter(prototypeTypeElement, prototypeTypeCounter);
+                    prototypeType = record.prototypeType;
+                    prototypeTypeCounter = createEmptyCounter(prototypeTypeElement, prototypeTypeCounter, previousRecord.department, previousRecord.prototypeType);
                     prototypeTypeElement = document.createElement("div");
                     departmentElement.appendChild(prototypeTypeElement);
                     prototypeTypeElement.classList.add("PrototypeTypeItem", "Item");
@@ -130,8 +150,8 @@
                 }
 
                 if (prototype != record.prototypeName) {
-                    prototype = record.prototypeName
-                    prototypeCounter = createEmptyCounter(prototypeElement, prototypeCounter);
+                    prototype = record.prototypeName;
+                    prototypeCounter = createEmptyCounter(prototypeElement, prototypeCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype);
                     prototypeElement = document.createElement("div");
                     prototypeTypeElement.appendChild(prototypeElement);
                     prototypeElement.classList.add("PrototypeItem", "Item");
@@ -140,13 +160,15 @@
                 }
 
                 if (version != record.version) {
-                    version = record.version
-                    versionCounter = createEmptyCounter(versionElement, versionCounter);
+                    version = record.version;
+                    versionCounter = createEmptyCounter(versionElement, versionCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype, previousRecord.version);
                     versionElement = document.createElement("div");
                     prototypeElement.appendChild(versionElement);
                     versionElement.classList.add("VersionItem", "Item");
                     createToggleButton(versionElement, "version", record.version + " (life cicle: " + record.lifeCycle + " days)");
                 }
+
+                previousRecord = { department: record.department, prototypeType: record.prototypeType, prototype: record.prototypeName, version: record.version };
 
                 var
                     percentage = Math.round(record.days / record.lifeCycle * 100),
@@ -187,10 +209,10 @@
                 ++versionCounter[counter];
             }
 
-            createEmptyCounter(departmentElement, departmentCounter);
-            createEmptyCounter(prototypeTypeElement, prototypeTypeCounter);
-            createEmptyCounter(prototypeElement, prototypeCounter);
-            createEmptyCounter(versionElement, versionCounter);
+            createEmptyCounter(departmentElement, departmentCounter, previousRecord.department);
+            createEmptyCounter(prototypeTypeElement, prototypeTypeCounter, previousRecord.department, previousRecord.prototypeType);
+            createEmptyCounter(prototypeElement, prototypeCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype);
+            createEmptyCounter(versionElement, versionCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototypeName, previousRecord.version);
 
             resultContainer
         },

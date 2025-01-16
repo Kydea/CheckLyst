@@ -15,6 +15,7 @@ namespace CheckListManager.Instances.Data.Models
         public int Number { get; set; }
         public string Description { get; set; }
         public string State { get; set; }
+        public string LifeCycle { get; set; }
         public string DepartmentName { get; set; }
         public string PrototypeTypeName { get; set; }
         public string PrototypeName { get; set; }
