@@ -41,7 +41,8 @@
 
                 department.prototypeTypes.push({
                     id: record.id,
-                    name: record.name
+                    name: record.name,
+                    lifeCycle: record.lifeCycle
                 });
             }
         },
@@ -92,6 +93,16 @@
                         model.departmentName = department.next().val();
                         model.prototypeType = prototypeType.val();
                         model.prototypeTypeName = prototypeType.next().val();
+
+                        departmentLoop:
+                        for (var departmentIndex in departments)
+                            for (var prototypeTypeIndex in departments[departmentIndex].prototypeTypes) {
+                                var prototypeTypeRecord = departments[departmentIndex].prototypeTypes[prototypeTypeIndex];
+                                if (prototypeTypeRecord.id == model.prototypeType) {
+                                    model.lifeCycle = prototypeTypeRecord.lifeCycle;
+                                    break departmentLoop;
+                                }
+                            }
                         if (!options.readOnly)
                             base.updateModel(model);
 

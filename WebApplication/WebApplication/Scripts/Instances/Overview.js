@@ -84,7 +84,6 @@
 
             resultContainer.innerHTML = "";
             resultContainer.classList.remove("Hidden");
-            actionBar.classList.remove("Hidden");
 
             for (var index in result.records) {
                 var record = result.records[index];
@@ -174,6 +173,10 @@
                 breadCrumbs: [
                     { content: "instance overview" }
                 ],
+            });
+
+            document.getElementById("ListButton").addEventListener("click", function (e) {
+                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString(), "_blank").focus()
             });
         };
 

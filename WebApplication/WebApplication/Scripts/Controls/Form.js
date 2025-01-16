@@ -11,17 +11,7 @@
         changeHandlers = [],
 
         popupLink = function () {
-            var
-                data = {},
-                parameters = [],
-                url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-
-            prepareRequestData(data, false);
-
-            for (var index in data)
-                parameters.push(index + "=" + encodeURIComponent(data[index]));
-            if (parameters.length)
-                url += "?" + parameters.join("&");
+            var url = window.location.protocol + "//" + window.location.host + window.location.pathname + prepareRequestString();
 
             matematici.dialog.show("link builder", url, [{
                     hidden: true,
@@ -37,6 +27,18 @@
             );
 
             matematici.dialog.setWidth("1000px");
+        },
+
+        prepareRequestString = function () {
+            var
+                data = {},
+                parameters = [];
+
+            prepareRequestData(data, false);
+
+            for (var index in data)
+                parameters.push(index + "=" + encodeURIComponent(data[index]));
+            return parameters.length ? "?" + parameters.join("&") : "";
         },
 
         setup = function () {
@@ -373,6 +375,7 @@
     this.handleResult = handleResult;
     this.onChange = onChange;
     this.saveForm = saveForm;
+    this.prepareRequestString = prepareRequestString;
 
     this.addChangeHandler = function (handler) {
         changeHandlers.push(handler);

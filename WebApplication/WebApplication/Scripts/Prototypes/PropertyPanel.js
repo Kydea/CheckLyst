@@ -110,7 +110,8 @@
                 "Description", "A short description of the prototype.",
                 function () { $("h2 span", item.getElement()).text(model.description); }
             ));
-            properties.push(new prototypes.Property(
+            var lifeCycleProperty;
+            properties.push(lifeCycleProperty = new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "lifeCycle", { number: true, maxLength: 4 }).setCheck([
                     {
                         action: function (value) {
@@ -140,7 +141,9 @@
             ));
             properties.push(new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
                 readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0
-            }), "Prototype Type", "Department and Prototype type of the prototype."));
+            }), "Prototype Type", "Department and Prototype type of the prototype.", function () {
+                lifeCycleProperty.setValue();
+            }));
             properties.push(new prototypes.Property(
                 this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
                     action: function (value) {

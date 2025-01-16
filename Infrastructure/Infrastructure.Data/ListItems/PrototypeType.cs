@@ -12,5 +12,6 @@ namespace CheckListManager.Infrastructure.Data.ListItems
         public string DepartmentName { get; set; }
         public long ID { get; set; }
         public string Name { get; set; }
+        public int? LifeCycle { get; set; }
     }
 }

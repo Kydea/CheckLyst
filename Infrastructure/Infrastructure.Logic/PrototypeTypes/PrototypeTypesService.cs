@@ -112,7 +112,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 await _commonRepository
                 .GetPrototypeTypesAsync(identity, -1, Form?.FunctionGroup, Form?.Function)
             )
-                .Select(pt => new PrototypeTypesSyntheticRow { ID = pt.ID, Name = pt.Name, Department = pt.Department, DepartmentName = pt.DepartmentName }).ToList();
+                .Select(pt => new PrototypeTypesSyntheticRow { ID = pt.ID, Name = pt.Name, Department = pt.Department, DepartmentName = pt.DepartmentName, LifeCycle = pt.LifeCycle }).ToList();
 
         private async Task<PrototypeTypesResponse> ValidateAsync(IDefaultIdentity identity, PrototypeTypesRequest record)
         {
