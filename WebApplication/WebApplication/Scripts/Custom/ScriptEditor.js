@@ -18,7 +18,7 @@
             destination.descriptionFormulaString = source.descriptionFormulaString;
             destination.fileNameFormulaString = source.fileNameFormulaString;
             destination.ftpExport = source.ftpExport;
-            destination.instanceConfirmationWorkFlow = source.instanceConfirmationWorkFlow;
+            //destination.instanceConfirmationWorkFlow = source.instanceConfirmationWorkFlow;
             destination.itemIDSequence = source.itemIDSequence;
             destination.typeName = source.typeName;
             destination.lifeCycle = source.lifeCycle;
