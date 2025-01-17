@@ -165,5 +165,8 @@ namespace CheckListManager.Instances.Logic.List
             {
                 Records = await _instancesRepository.LifeCycleAsync(identity, filters)
             };
+
+        public async Task<List<InstanceRecord>> ExportAsync(InstanceFilters filters) =>
+            await _instancesRepository.ExportAsync(filters);
     }
 }

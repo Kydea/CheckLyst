@@ -14,5 +14,6 @@ namespace CheckListManager.Instances.Logic.List
         Task<PagingResponse<List<InstanceRecord>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<InstanceFilters> form);
         Task<OverviewResponse> OverviewAsync(IDefaultIdentity identity, InstanceFilters filters);
         Task<LifeCycleResponse> LifeCycleAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<List<InstanceRecord>> ExportAsync(InstanceFilters form);
     }
 }

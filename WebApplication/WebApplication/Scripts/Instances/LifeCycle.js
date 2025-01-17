@@ -36,6 +36,7 @@
                     if (prototype != null) parameters += "prototype=" + prototype + "&";
                     if (version != null) parameters += "version=" + version + "&";
                     parameters += "advancedSearch=true";
+                    //console.log(matematici.urls.instances.list + parameters);
                     window.open(matematici.urls.instances.list + parameters, "_blank");
                 }
 
@@ -57,7 +58,7 @@
                 span.style.setProperty("height", height + "px")
                 span.title = previousCounter.green + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) under 80% of life cicle (click to open the list)";
                 span.addEventListener("click", function () {
-                    openList(null, 80);
+                    openList(0, 80);
                 });
 
                 span = document.createElement("span");
@@ -124,7 +125,7 @@
             }
             if (length > maxCount) maxCount = length;
 
-            deparment = undefined;
+            department = undefined;
 
             for (var index in result.records) {
                 var record = result.records[index];
@@ -168,7 +169,7 @@
                     createToggleButton(versionElement, "version", record.version + " (life cicle: " + record.lifeCycle + " days)");
                 }
 
-                previousRecord = { department: record.department, prototypeType: record.prototypeType, prototype: record.prototypeName, version: record.version };
+                previousRecord = { department: record.department, prototypeType: record.prototypeType, prototype: record.prototype, version: record.version };
 
                 var
                     percentage = Math.round(record.days / record.lifeCycle * 100),
@@ -233,7 +234,7 @@
             });
 
             document.getElementById("ListButton").addEventListener("click", function (e) {
-                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString(), "_blank").focus()
+                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString() + "&lifeCycleFrom=0&advancedSearch=true", "_blank").focus()
             });
         };
 

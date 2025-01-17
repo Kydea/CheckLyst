@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
@@ -41,7 +42,7 @@ namespace CheckListManager.Instances.Data
                 "and (:tagValue = '' or exists(select 1 from \"CheckLists\".\"InstanceTags\" it where it.\"Instance\" = i.\"ID\" and (:tagCode = '' or it.\"Tag\" = :tagCode) and upper(it.\"Value\") like '%' || :tagValue || '%')) " +
                 "and (:lifeCycleFrom = -1 or pv.\"LifeCycle\" > 0 and round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") >= :lifeCycleFrom) " +
                 "and (:lifeCycleTo = -1 or pv.\"LifeCycle\" > 0 and round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") < :lifeCycleTo) " +
-                "and (:lifeCycleFrom = -1 and :lifeCycleTo = -1 or pv.\"VersionState\" <> 'Draft' and pv.\"VersionState\" <> 'In progress' and pv.\"LifeCycle\" > 0 and i.\"Year\" <> 0 and i.\"InstanceState\" in ('In progress', 'Confirmed')) " +
+                "and (:lifeCycleFrom = -1 and :lifeCycleTo = -1 or pv.\"VersionState\" <> 'Draft' and pv.\"VersionState\" <> 'In progress' and pv.\"LifeCycle\" > 0 and i.\"Year\" <> 0 and i.\"InstanceState\" in ('In progress', 'Completed')) " +
                 "and (" +
                     ":exceptionState = '' " +
                     "or :exceptionState = 'include' and exists(select 1 from \"CheckLists\".\"InstanceExpressionValues\" iev where iev.\"Instance\" = i.\"ID\" and iev.\"Exception\") " +
@@ -62,7 +63,7 @@ namespace CheckListManager.Instances.Data
                     ")" +
                 ") ";
 
-        private const string INSTANCES_LIST_QUERY_UNPAGED =
+        private const string INSTANCES_LIST_QUERY =
             "select " +
                 "i.\"ID\", i.\"Code\", " +
                 "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
@@ -70,16 +71,14 @@ namespace CheckListManager.Instances.Data
                 "case when pv.\"LifeCycle\" = 0 then null else extract(day from now() - i.\"CreatedOn\") || ' of ' || pv.\"LifeCycle\" || ' (' || round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") || '%)' end \"LifeCycle\", " +
                 "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
             INSTANCES_BASE_QUERY +
-            "order by i.\"ID\" desc ";
-
-        private const string INSTANCES_LIST_QUERY = INSTANCES_LIST_QUERY_UNPAGED + "limit :limit offset :offset";
+            "order by i.\"ID\" desc " +
+            "limit :limit offset :offset";
 
         private const string INSTANCES_COUNT_QUERY = "select count(*) " + INSTANCES_BASE_QUERY;
 
         private const string OVERVIEW_QUERY =
             "select " +
-                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
-                "i.\"CreatedOn\", i.\"CreatedBy\" " +
+                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\" " +
             INSTANCES_BASE_QUERY +
                 "and pv.\"VersionState\" <> 'Draft' " +
                 "and pv.\"VersionState\" <> 'In progress' " +
@@ -88,17 +87,21 @@ namespace CheckListManager.Instances.Data
 
         private const string LIFE_CYCLE_QUERY =
             "select " +
-                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
-                "extract(day from now() - i.\"CreatedOn\") \"Days\", pv.\"LifeCycle\", " +
-                "i.\"CreatedOn\", i.\"CreatedBy\" " +
+                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "extract(day from now() - i.\"CreatedOn\") \"Days\", pv.\"LifeCycle\" " +
             INSTANCES_BASE_QUERY +
-                "and pv.\"VersionState\" <> 'Draft' " +
-                "and pv.\"VersionState\" <> 'In progress' " +
-                "and pv.\"LifeCycle\" > 0 " +
-                "and i.\"Year\" <> 0 " +
-                "and i.\"InstanceState\" in ('In progress', 'Confirmed') " +
             "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
 
+        private const string EXPORT_QUERY =
+            "select " +
+                "i.\"ID\", i.\"Code\", " +
+                "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "extract(day from now() - i.\"CreatedOn\") \"LifeDays\", pv.\"LifeCycle\" \"PrototypeLifeCycle\", " +
+                "case when pv.\"LifeCycle\" = 0 then null else round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") || '%' end \"LifeCycle\", " +
+                "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +
+            INSTANCES_BASE_QUERY +
+            "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
 
         public async Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync
         (
@@ -205,11 +208,43 @@ namespace CheckListManager.Instances.Data
                 tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
                 exceptionState = filters.ExceptionState ?? string.Empty,
                 exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
-                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleFrom = filters.LifeCycleFrom ?? 0, //always applies life cycle extra filters
                 lifeCycleTo = filters.LifeCycleTo ?? -1
             };
 
             var List = await Read<LifeCycleRecord>(LIFE_CYCLE_QUERY, Filters);
+            return List.ToList();
+        }
+
+        public async Task<List<InstanceRecord>> ExportAsync
+        (
+            InstanceFilters filters
+        )
+        {
+            var Filters = new
+            {
+                company = filters.CompanyId,
+                user = filters.User,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleTo = filters.LifeCycleTo ?? -1
+            };
+
+            var List = await Read<InstanceRecord>(EXPORT_QUERY, Filters);
             return List.ToList();
         }
 
@@ -332,7 +367,7 @@ namespace CheckListManager.Instances.Data
             {
                 company,
                 department,
-                prototypetype = prototypeType, 
+                prototypetype = prototypeType,
                 functiongroup = versionState == VersionState.Draft || versionState == VersionState.InSimulation ? "Prototypes" : "Instances",
                 function = "Edit"
             };

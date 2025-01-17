@@ -18,6 +18,7 @@ namespace CheckListManager.Instances.Data.Models
         public string DepartmentName { get; set; }
         public string PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
+        public long Prototype { get; set; }
         public string PrototypeName { get; set; }
         public int Version { get; set; }
         public string CreatedBy { get; set; }

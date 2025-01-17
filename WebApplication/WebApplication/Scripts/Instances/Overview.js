@@ -19,43 +19,62 @@
             }
         },
 
-        createEmptyCounter = function (previousElement, previousCounter) {
+        createEmptyCounter = function (previousElement, previousCounter, department, prototypeType, prototype, version) {
             var
+                anchor,
                 span,
                 div;
 
             if (previousElement) {
+                var url = matematici.urls.instances.list + "?";
+                if (department != null) url += "department=" + department + "&";
+                if (prototypeType != null) url += "prototypeType=" + prototypeType + "&";
+                if (prototype != null) url += "prototype=" + prototype + "&";
+                if (version != null) url += "version=" + version + "&";
+
                 div = document.createElement("div");
                 previousElement.insertBefore(div, previousElement.childNodes[1]);
                 div.classList.add("Values");
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.innerText = "in progress instances:";
+                anchor = document.createElement("a");
+                div.appendChild(anchor);
+                anchor.innerText = "in progress instances:";
+                anchor.setAttribute("href", url + "state=In progress");
+                anchor.setAttribute("target", "_blank");
+                anchor.title = "click to open the list"
                 span = document.createElement("span");
                 span.classList.add("Value");
                 div.appendChild(span);
                 span.innerText = previousCounter.progress;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.innerText = "completed instances:";
+                anchor = document.createElement("a");
+                div.appendChild(anchor);
+                anchor.innerText = "completed instances:";
+                anchor.setAttribute("href", url + "state=Completed");
+                anchor.setAttribute("target", "_blank");
+                anchor.title = "click to open the list"
                 span = document.createElement("span");
                 span.classList.add("Value");
                 div.appendChild(span);
                 span.innerText = previousCounter.completed;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.innerText = "confirmed instances:";
+                anchor = document.createElement("a");
+                div.appendChild(anchor);
+                anchor.innerText = "confirmed instances:";
+                anchor.setAttribute("href", url + "state=Confirmed");
+                anchor.setAttribute("target", "_blank");
+                anchor.title = "click to open the list"
                 span = document.createElement("span");
                 span.classList.add("Value");
                 div.appendChild(span);
                 span.innerText = previousCounter.confirmed;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.innerText = "deleted instances:";
+                anchor = document.createElement("a");
+                div.appendChild(anchor);
+                anchor.innerText = "deleted instances:";
+                anchor.setAttribute("href", url + "state=Deleted");
+                anchor.setAttribute("target", "_blank");
+                anchor.title = "click to open the list"
                 span = document.createElement("span");
                 span.classList.add("Value");
                 div.appendChild(span);
@@ -67,6 +86,8 @@
 
         resultHandler = function (result) {
             var
+                previousRecord = {},
+
                 department,
                 prototypeType,
                 prototype,
@@ -90,7 +111,7 @@
 
                 if (department != record.department) {
                     department = record.department
-                    departmentCounter = createEmptyCounter(departmentElement, departmentCounter);
+                    departmentCounter = createEmptyCounter(departmentElement, departmentCounter, previousRecord.department);
                     departmentElement = document.createElement("div");
                     resultContainer.appendChild(departmentElement);
                     departmentElement.classList.add("DepartmentItem", "Item");
@@ -100,7 +121,7 @@
 
                 if (prototypeType != record.prototypeType) {
                     prototypeType = record.prototypeType
-                    prototypeTypeCounter = createEmptyCounter(prototypeTypeElement, prototypeTypeCounter);
+                    prototypeTypeCounter = createEmptyCounter(prototypeTypeElement, prototypeTypeCounter, previousRecord.department, previousRecord.prototypeType);
                     prototypeTypeElement = document.createElement("div");
                     departmentElement.appendChild(prototypeTypeElement);
                     prototypeTypeElement.classList.add("PrototypeTypeItem", "Item");
@@ -110,7 +131,7 @@
 
                 if (prototype != record.prototypeName) {
                     prototype = record.prototypeName
-                    prototypeCounter = createEmptyCounter(prototypeElement, prototypeCounter);
+                    prototypeCounter = createEmptyCounter(prototypeElement, prototypeCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype);
                     prototypeElement = document.createElement("div");
                     prototypeTypeElement.appendChild(prototypeElement);
                     prototypeElement.classList.add("PrototypeItem", "Item");
@@ -120,12 +141,14 @@
 
                 if (version != record.version) {
                     version = record.version
-                    versionCounter = createEmptyCounter(versionElement, versionCounter);
+                    versionCounter = createEmptyCounter(versionElement, versionCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype, previousRecord.version);
                     versionElement = document.createElement("div");
                     prototypeElement.appendChild(versionElement);
                     versionElement.classList.add("VersionItem", "Item");
                     createToggleButton(versionElement, "version", record.version)
                 }
+
+                previousRecord = { department: record.department, prototypeType: record.prototypeType, prototype: record.prototype, version: record.version };
 
                 var instanceElement = document.createElement("div");
                 versionElement.appendChild(instanceElement);
@@ -152,16 +175,16 @@
                 ++versionCounter[counter];
             }
 
-            createEmptyCounter(departmentElement, departmentCounter);
-            createEmptyCounter(prototypeTypeElement, prototypeTypeCounter);
-            createEmptyCounter(prototypeElement, prototypeCounter);
-            createEmptyCounter(versionElement, versionCounter);
+            createEmptyCounter(departmentElement, departmentCounter, previousRecord.department);
+            createEmptyCounter(prototypeTypeElement, prototypeTypeCounter, previousRecord.department, previousRecord.prototypeType);
+            createEmptyCounter(prototypeElement, prototypeCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototype);
+            createEmptyCounter(versionElement, versionCounter, previousRecord.department, previousRecord.prototypeType, previousRecord.prototypeName, previousRecord.version);
 
             resultContainer
         },
 
         initialize = function () {
-            new matematici.SearchPage({
+            var searchPage = new matematici.SearchPage({
                 pageName: "Instances",
                 filterFormSelector: formSelector,
                 resultGridSelector: "div#Content table.Grid",
@@ -176,7 +199,7 @@
             });
 
             document.getElementById("ListButton").addEventListener("click", function (e) {
-                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString(), "_blank").focus()
+                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString() + "&lifeCycleFrom=0&advancedSearch=true", "_blank").focus()
             });
         };
 

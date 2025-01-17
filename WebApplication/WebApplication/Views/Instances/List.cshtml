@@ -3,6 +3,7 @@
 
     <div class="ActionBar">
         <a id="LinkButton" href="#" class="Button Icon"><i class="Icon fa fa-link"></i></a>
+        <a id="ExportButton" href="#" class="Button"><i class="Icon fa fa-caret-down"></i> Export</a>
         <a id="AddButton" href="#" class="Button"><i class="Icon fa fa-plus"></i> New instance</a>
     </div>
 
@@ -170,6 +171,12 @@
                         matematici.clipboard.copy(url);
                     }
                 }]);
+        });
+
+        $("#ExportButton").on("click", function () {
+            searchPage.getForm().trigger("Export", function (result) {
+                location = searchPage.getForm().getElement().attr("action") + "/Export?Token=" + result.token;
+            })
         });
 
         if (matematici.tokenManager.checkRole("Instances#Create#"))

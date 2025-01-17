@@ -27,5 +27,7 @@ namespace CheckListManager.Instances.Data.Models
         public int? LifeCycleFrom { get; set; }
         public int? LifeCycleTo { get; set; }
 
+        public long? CompanyId { get; set; }
+        public string User {  get; set; }
     }
 }

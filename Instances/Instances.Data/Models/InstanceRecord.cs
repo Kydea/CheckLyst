@@ -15,9 +15,14 @@ namespace CheckListManager.Instances.Data.Models
         public int Number { get; set; }
         public string Description { get; set; }
         public string State { get; set; }
+        public int? PrototypeLifeCycle { get; set; }
+        public int LifeDays { get; set; }
         public string LifeCycle { get; set; }
+        public int Department { get; set; }
         public string DepartmentName { get; set; }
+        public int PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
+        public int Prototype { get; set; }
         public string PrototypeName { get; set; }
         public int Version { get; set; }
         public List<InstanceExceptionRecord> Exceptions { get; set; }

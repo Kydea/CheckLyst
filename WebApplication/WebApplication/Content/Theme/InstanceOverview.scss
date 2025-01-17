@@ -17,6 +17,11 @@ body div.InstanceOverview {
 
             div.Values {
                 padding: 0 20px;
+
+                a {
+                    display: inline;
+                }
+
                 span.Value {
                     color: black;
                     margin: 0 10px 0 5px;
@@ -76,6 +81,7 @@ body div.InstanceOverview {
 
         div.InstanceItem {
             padding: 0 20px;
+
             a::after {
                 content: fa-content($fa-var-long-arrow-right);
                 margin: 0 5px 0 5px;
