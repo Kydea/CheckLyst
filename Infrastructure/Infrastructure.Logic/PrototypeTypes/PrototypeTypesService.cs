@@ -222,9 +222,9 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ApprovationWorkFlow = record.ApprovationWorkFlow,
                         ObsolescenceWorkFlow = record.ObsolescenceWorkFlow,
                         PrototypesFTPServerEnabled = record.PrototypesFTPServer.HasValue,
-                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default,
+                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default(long?),
                         InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
-                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default
+                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
                     });
                     await AuditAsync(identity, TrailAction.PrototypeTypeUpdated, record);
                 }
