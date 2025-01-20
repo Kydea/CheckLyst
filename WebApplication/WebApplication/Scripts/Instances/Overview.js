@@ -202,7 +202,7 @@
             document.getElementById("ListButton").addEventListener("click", function (e) {
                 var parameters = searchPage.getForm().prepareRequestString();
                 if (parameters == "") parameters = "?";
-                window.open(matematici.urls.instances.list + parameters + "&lifeCycleFrom=0&advancedSearch=true", "_blank").focus()
+                window.open(matematici.urls.instances.list + parameters + "&advancedSearch=true", "_blank").focus()
             });
         };
 
