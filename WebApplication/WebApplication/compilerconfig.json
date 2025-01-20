@@ -217,10 +217,6 @@
   },
   {
     "outputFile": "Content/Theme/InstanceLifeCycle.css",
-    "inputFile": "Content/Theme/InstanceOverview.scss"
-  },
-  {
-    "outputFile": "Content/Theme/InstanceLifeCycle.css",
     "inputFile": "Content/Theme/InstanceLifeCycle.scss"
   }
 ]

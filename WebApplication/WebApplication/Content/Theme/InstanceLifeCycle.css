@@ -1,37 +1,42 @@
-﻿body div.InstanceOverview #Result {
+﻿body div.InstanceLifeCycle #Result {
   color: #666;
 }
-body div.InstanceOverview #Result div.Item {
-  border: solid 1px #ccc;
-  border-bottom: none;
+body div.InstanceLifeCycle #Result div.Item {
   line-height: 30px;
 }
-body div.InstanceOverview #Result div.Item > div:not(.Values) {
-  display: none;
+body div.InstanceLifeCycle #Result div.Item > div:not(.Values) {
   margin: 0px 20px 0 20px;
 }
-body div.InstanceOverview #Result div.Item div.Values {
-  padding: 0 20px;
+body div.InstanceLifeCycle #Result div.Item div.Values {
+  padding: 0 20px 10px;
+  display: flex;
 }
-body div.InstanceOverview #Result div.Item div.Values a {
-  display: inline;
+body div.InstanceLifeCycle #Result div.Item div.Values span {
+  display: block;
+  height: 20px;
+  cursor: pointer;
 }
-body div.InstanceOverview #Result div.Item div.Values span.Value {
-  color: black;
-  margin: 0 10px 0 5px;
+body div.InstanceLifeCycle #Result div.Item div.Values span.Green {
+  background-color: #009688;
 }
-body div.InstanceOverview #Result div.Item a {
+body div.InstanceLifeCycle #Result div.Item div.Values span.Yellow {
+  background-color: #ffba00;
+}
+body div.InstanceLifeCycle #Result div.Item div.Values span.Red {
+  background-color: #cc0000;
+}
+body div.InstanceLifeCycle #Result div.Item a {
   color: #666 !important;
   display: block;
 }
-body div.InstanceOverview #Result div.Item a > span {
+body div.InstanceLifeCycle #Result div.Item a > span.Black {
   color: black !important;
 }
-body div.InstanceOverview #Result div.Item a:hover {
+body div.InstanceLifeCycle #Result div.Item a:hover {
   color: black !important;
   text-decoration: none;
 }
-body div.InstanceOverview #Result div.Item a.Toggle::before {
+body div.InstanceLifeCycle #Result div.Item a.Toggle::before {
   content: "\f0da";
   text-align: center;
   display: inline-block;
@@ -39,20 +44,26 @@ body div.InstanceOverview #Result div.Item a.Toggle::before {
   font-family: "Font Awesome 5 Pro";
   font-weight: bold;
 }
-body div.InstanceOverview #Result div.Item.Expanded > a.Toggle::before {
+body div.InstanceLifeCycle #Result div.Item.Expanded > a.Toggle::before {
   content: "\f0d7";
 }
-body div.InstanceOverview #Result div.Item.Expanded > div {
-  display: block;
+body div.InstanceLifeCycle #Result div:not(.Expanded) > div {
+  display: none;
 }
-body div.InstanceOverview #Result div.DepartmentItem:last-child {
-  border-bottom: solid 1px #ccc;
-}
-body div.InstanceOverview #Result div.InstanceItem {
+body div.InstanceLifeCycle #Result div.InstanceItem {
   padding: 0 20px;
 }
-body div.InstanceOverview #Result div.InstanceItem a::after {
+body div.InstanceLifeCycle #Result div.InstanceItem a::after {
   content: "\f178";
   margin: 0 5px 0 5px;
   font-family: "Font Awesome 5 Pro";
+}
+body div.InstanceLifeCycle #Result div.InstanceItem span.Green {
+  color: #009688 !important;
+}
+body div.InstanceLifeCycle #Result div.InstanceItem span.Yellow {
+  color: #ffba00 !important;
+}
+body div.InstanceLifeCycle #Result div.InstanceItem span.Red {
+  color: #cc0000 !important;
 }
