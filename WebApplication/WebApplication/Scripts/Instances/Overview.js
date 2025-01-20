@@ -200,7 +200,9 @@
             });
 
             document.getElementById("ListButton").addEventListener("click", function (e) {
-                window.open(matematici.urls.instances.list + searchPage.getForm().prepareRequestString() + "&lifeCycleFrom=0&advancedSearch=true", "_blank").focus()
+                var parameters = searchPage.getForm().prepareRequestString();
+                if (parameters == "") parameters = "?";
+                window.open(matematici.urls.instances.list + parameters + "&lifeCycleFrom=0&advancedSearch=true", "_blank").focus()
             });
         };
 
