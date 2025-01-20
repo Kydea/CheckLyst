@@ -105,7 +105,8 @@
 					})
 				],
 
-				breadcrumbs: options.breadCrumbs
+                breadcrumbs: options.breadCrumbs,
+                helpPage: options.helpPage
             });
 
             if (advancedSearchPanel.length == 1) 

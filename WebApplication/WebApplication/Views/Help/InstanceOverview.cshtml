@@ -1,2 +1,30 @@
-﻿<h3>Instance overview</h3>
-The Instance overview displays a statistc values of the in progress instances.
+﻿@Html.Partial("SearchPage", new HelpPage
+{
+    Title = "Instance overview",
+    RecordsName = "instances",
+    ReadOnly = true,
+    P1 = "Click on a row to open the instance manager for that record.",
+
+    Buttons = new Field[]
+    {
+        new Field("List", "Opens the instances search form."),
+
+    },
+    Filters = new Field[] {
+        new Field("Department / prototype type", "The department and prototype type of the instances prototype."),
+        new Field("Prototype / version", "The prototype and version number of the instances.")
+    }
+})
+
+<h4>Result</h4>
+<p>
+    The result counts the instances in progress, completed, confirmed and deleted for the the department shown in the label.
+</p>
+
+<p>
+    By clicking on the label of the department, a the counts are divided per prototype types and so on with the prototypes and the prototype versions. By clicking on the prototype version label the list with all the corresponding instances is shown. The label of the instance shows the code and the state. By clicking on the label of instances, that instance is opened in a new tab of the browser.
+</p>
+
+<p>
+    By clicking on the counters, the instances list search form is opened in a new tab of the browser with the parameters that identifies the instances counted.
+</p>

@@ -186,6 +186,7 @@
         initialize = function () {
             var searchPage = new matematici.SearchPage({
                 pageName: "Instances",
+                helpPage: "InstanceOverview",
                 filterFormSelector: formSelector,
                 resultGridSelector: "div#Content table.Grid",
                 bindEvent: "Bind",

@@ -1,2 +1,39 @@
-﻿<h3>Instance life cycle</h3>
-The Instance life cycle displays a diagram of the life cycle of the instances.
+﻿@Html.Partial("SearchPage", new HelpPage
+{
+    Title = "Instance life cyle",
+    RecordsName = "instances",
+    ReadOnly = true,
+    P1 = "Click on a row to open the instance manager for that record.",
+
+    Buttons = new Field[]
+    {
+        new Field("List", "Opens the instances search form."),
+
+    },
+    Filters = new Field[] {
+        new Field("Department / prototype type", "The department and prototype type of the instances prototype."),
+        new Field("Prototype / version", "The prototype and version number of the instances.")
+    }
+})
+
+<h4>Diagram</h4>
+<p>
+    The diagram displays bars representing the instances not yet confirmed in the department shown in the label. The width of each bar is horizontally divided into three:
+    <ul>
+        <li><strong>green:</strong> the instances that have a life in days under the 80% of the life cycle of the corresponding prototype,</li>
+        <li><strong>yellow:</strong> the instances that have a life in days under the 100% of the life cycle of the corresponding prototype,</li>
+        <li><strong>red:</strong> the instances that have a life in days over the 100% of the life cycle of the corresponding prototype.</li>
+    </ul>
+</p>
+
+<p>
+    By clicking on the label of the department, a sub-diagram is shown for the prototype types and so on with the prototypes and the prototype versions. The label of the prototype version shows the life cyle of that specific prototype. Finally, by clicking on the prototype version label the list of the corresponding instances is shown. The label of the instance shows the code, the state and the life cycle. By clicking on the label of instances, that instance is opened in a new tab of the browser.
+</p>
+
+<p>
+    By clicking on the bars, the instances list search form is opened in a new tab of the browser with the parameters that identifies the instances in the clicked bar.
+</p>
+
+<p>
+    The height of the bar is proportional to the total number of instances represented by the bar.
+</p>
