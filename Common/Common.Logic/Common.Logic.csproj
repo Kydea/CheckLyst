@@ -139,6 +139,7 @@
     <Compile Include="Models\CheckLists\ConfigurationError.cs" />
     <Compile Include="Models\CheckLists\ICheckListInstanceLink.cs" />
     <Compile Include="Models\Expressions\ElementProperties\InstanceLinkProperty.cs" />
+    <Compile Include="Models\Expressions\Functions\InstanceProperty.cs" />
     <Compile Include="Models\ExternalSources\Parameter.cs" />
     <Compile Include="Models\ExternalSources\ExternalSource.cs" />
     <Compile Include="Dependency\DependencyRelation.cs" />

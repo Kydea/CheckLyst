@@ -13,6 +13,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         string FileNameFormulaString { get; set; }
         bool FTPExport { get; set; }
 
+        Dictionary<string, object> InstanceRuntimeValues { get; } 
         PascalCaseDictionary<string, Expression> Expressions { get; }
         PascalCaseDictionary<string, ExternalSource> ExternalSources { get; }
 

@@ -92,6 +92,13 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             meta: "function",
             comment: "returns a time with the provided hour and minute"
         },
+        {
+            content: "InstanceProperty(${1:property})",
+            name: "InstanceProperty",
+            scope: "expression",
+            meta: "function",
+            comment: "returns the property of the instance or an error if the property does not exist\n\nthe existing properties are:\n\"InstanceCompany\",\n\"InstanceDepartment\",\n\"InstanceDepartmentName\",\n\"InstancePrototypeType\",\n\"InstancePrototypeTypeName\",\n\"InstancePrototype\",\n\"InstancePrototypeName\",\n\"InstanceVersion\",\n\"InstanceYear\",\n\"InstanceNumber\""
+        },
 
         //string funtions
         {

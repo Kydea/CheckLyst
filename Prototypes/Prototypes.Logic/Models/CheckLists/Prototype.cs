@@ -17,6 +17,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public Dictionary<string, ICheckListElement> Elements { get; } = new Dictionary<string, ICheckListElement>();
         public PascalCaseDictionary<string, Expression> Expressions { get; } = new PascalCaseDictionary<string, Expression>();
         public PascalCaseDictionary<string, ExternalSource> ExternalSources { get; } = new PascalCaseDictionary<string, ExternalSource>();
+        public Dictionary<string, object> InstanceRuntimeValues => new Dictionary<string, object> {
+                { "InstanceCompany", "" },
+                { "InstanceDepartment", "" },
+                { "InstanceDepartmentName", "" },
+                { "InstancePrototypeType", "" },
+                { "InstancePrototypeTypeName", "" },
+                { "InstancePrototype", "" },
+                { "InstancePrototypeName", "" },
+                { "InstanceVersion", "" },
+                { "InstanceYear", "" },
+                { "InstanceNumber", "" }
+            };
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();
         public string DescriptionFormulaString { get; set; }
