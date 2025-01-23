@@ -292,7 +292,8 @@
 
                     if (!tableContent && !isHeader) {
                         var
-                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration,
+                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration, directImport,
+
                             toggleIteratorControls = function () {
                                 var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
                                 showAsTable.getType().setReadOnly(!itaratorCommandsEnabled);
@@ -301,6 +302,7 @@
                                 addIteration.getType().setReadOnly(!itaratorCommandsEnabled);
                                 removeIteration.getType().setReadOnly(!itaratorCommandsEnabled);
                                 moveIteration.getType().setReadOnly(!itaratorCommandsEnabled);
+                                directImport.getType().setReadOnly(!itaratorCommandsEnabled);
 
                                 if (!model.iterator) {
                                     model.instanceIterationsNumber = 0;
@@ -310,6 +312,7 @@
                                     model.addIterationCondition = 1;
                                     model.removeIterationCondition = 1;
                                     model.moveIterationCondition = 1
+                                    model.directImportCondition = 2;
                                     model.dumpExternalSourceName = null;
 
                                     instanceIterationsNumber.setValue();
@@ -320,6 +323,7 @@
                                 addIteration.setValue();
                                 removeIteration.setValue();
                                 moveIteration.setValue();
+                                directImport.setValue();
                             };
 
                         properties.push(new prototypes.Property(
@@ -377,6 +381,17 @@
                             }
                         });
                         properties.push(moveIteration);
+
+                        directImport = new prototypes.Property(
+                            this, new prototypes.ExpressionProperty(model, "directImport", "direct-import", false, false, 2), "Direct import",
+                            "Defines if import is made directly without prompting the results to choose."
+                        ).setValueParser(function (node) {
+                            if (!model.iterator) {
+                                node.text("");
+                                return true;
+                            }
+                        });
+                        properties.push(directImport);
 
                         setTimeout(toggleIteratorControls, 0);
                     }

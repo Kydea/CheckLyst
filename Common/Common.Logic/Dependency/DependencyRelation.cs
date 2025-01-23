@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public class DependencyRelation
     {
-        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown, Iterations, AddIteration, RemoveIteration, MoveIteration, StateChange, Code, Parameter }
+        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown, Iterations, AddIteration, RemoveIteration, MoveIteration, StateChange, Code, Parameter, DirectImport }
 
         public DependencyRelation()
         { }

@@ -30,6 +30,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string RemoveIterationExpressionCode { get; set; }
         public Conditions MoveIterationCondition { get; set; } = Conditions.True;
         public string MoveIterationExpressionCode { get; set; }
+        public Conditions DirectImportCondition { get; set; } = Conditions.False;
+        public string DirectImportExpressionCode { get; set; }
         [JsonIgnore]
         public string ModifiedBy { get; }
         [JsonIgnore]
@@ -119,6 +121,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 RemoveIterationExpressionCode = RemoveIterationExpressionCode,
                 MoveIterationCondition = MoveIterationCondition,
                 MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DirectImportCondition = DirectImportCondition,
+                DirectImportExpressionCode = DirectImportExpressionCode,
                 DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
@@ -141,6 +145,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (MoveIterationCondition == Conditions.Expression)
                 Result &= BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+
+            if (DirectImportCondition == Conditions.Expression)
+                Result &= BindExpression(DirectImportExpressionCode, DependencyRelation.Properties.DirectImport, "direct-import");
 
             if (DumpExternalSourceName != null)
             {
@@ -189,6 +196,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
 
             if (MoveIterationCondition == Conditions.Expression)
                 Result &= CheckExpression("move-iteration", MoveIterationExpressionCode, DataType.Boolean);
+
+            if (DirectImportCondition == Conditions.Expression)
+                Result &= CheckExpression("direct-import", DirectImportExpressionCode, DataType.Boolean);
 
             foreach (Item Item in Items)
                 Result &= Item.Check();

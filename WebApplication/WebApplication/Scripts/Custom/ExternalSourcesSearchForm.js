@@ -1,4 +1,6 @@
-﻿matematici.ExternalSourcesSearchForm = function (itemId, name, multiSelection) {
+﻿matematici.ExternalSourcesSearchForm = function (itemId, name, multiSelection, directImport) {
+    console.log(directImport);
+
     var
         element,
         page = 0,
@@ -29,7 +31,7 @@
             selectedRows = value ? totalRows : 0;
             selectionCheckBox.indeterminate = false;
             selectionCheckBox.value = value != true;
-            confirmButton.toggle(selectedRows > 0);
+            confirmButton.toggle(selectedRows > 0 || directImport);
         },
 
         refreshFixedHeader = function () {
@@ -201,7 +203,7 @@
             for (var index = 0; index < columns.length; ++index)
                 data.columns.push(columns[index]);
 
-            $("tr td:first-child input:checked", tableBody).each(function () {
+            $("tr td:first-child input" + (directImport ? "" : ":checked"), tableBody).each(function () {
                 data.rows.push($(this).parent().parent().data("row"));
             });
             new instances.Event(instances.Events.import, itemId, data).done(function (result) {
@@ -245,8 +247,11 @@
                 toggleNoRecord(page == 0 && (!rows || !rows.length));
                 toggleNext(rows && rows.length >= 20 && page < 4);
                 refreshFixedHeader();
-                autoCenter.center();
 
+                if (directImport)
+                    confirm();
+                else
+                    autoCenter.center();
             });
         };
 

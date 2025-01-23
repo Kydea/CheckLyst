@@ -207,7 +207,7 @@
                                             icon: "file-import",
                                             data: setupModel.externalSources[externalSourceIndex],
                                             handler: function (name) {
-                                                new matematici.ExternalSourcesSearchForm(id, name, true);
+                                                new matematici.ExternalSourcesSearchForm(id, name, true, setupModel.directImport);
                                             }
                                         });
                                     }
@@ -236,8 +236,8 @@
             element.setAttribute("data-id", model.id);
             if (model.iterator) {
                 actionButtonsBar.classList.toggle("Hidden", !model.addIterationButton);
+                addButton.classList.toggle("Hidden", model.directImport);
                 element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
-                element.classList.toggle("HideMoveButton", !model.moveIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
             }
 
