@@ -62,6 +62,7 @@ namespace CheckListManager.Common.Logic.Dependency
                 Property == Properties.AddIteration ? "add iteration button" :
                 Property == Properties.RemoveIteration ? "remove iteration button" :
                 Property == Properties.MoveIteration ? "move iteration button" :
+                Property == Properties.DirectImport ? "direct import" :
                 Property == Properties.StateChange ? "state change" :
                 Property == Properties.Code ? "code" :
                 Property == Properties.Parameter ? "parameter" :

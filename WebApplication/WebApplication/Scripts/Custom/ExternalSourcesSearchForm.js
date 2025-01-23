@@ -1,6 +1,4 @@
 ﻿matematici.ExternalSourcesSearchForm = function (itemId, name, multiSelection, directImport) {
-    console.log(directImport);
-
     var
         element,
         page = 0,
@@ -93,7 +91,7 @@
         setup = function () {
             matematici.elements.body.addClass("CheckListGrid");
             element = $("<div />").addClass("CheckListGrid").appendTo(matematici.elements.body);
-            var container = $("<div />").appendTo($("<div />").addClass("Container ExternalSources").appendTo(element));
+            var container = $("<div />").appendTo($("<div />").addClass("Container ExternalSources " + (directImport ? "Hidden" : "")).appendTo(element));
             if (multiSelection) container.parent().addClass("MultiSelection");
 
             autoCenter = new matematici.AutoCenter(container.parent());

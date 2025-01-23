@@ -255,6 +255,13 @@
                     iterationCommands.style.display = readOnly ? "none" : "";
             }
             if (elementInformation) elementInformation.update(model);
+            if (model.directImport) {
+                var imported = false;
+                for (var iterationIndex in model.iterations)
+                    if (!model.iterations[iterationIndex].removed)
+                        imported = true;
+                importButton.classList.toggle("ReadOnly", imported);
+            }
         };
 
     this.appendElement = function () {

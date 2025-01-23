@@ -32,6 +32,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool MoveIterationButton { get; set; }
         public Conditions MoveIterationCondition { get; set; } = Conditions.True;
         public string MoveIterationExpressionCode { get; set; }
+        public Conditions DirectImportCondition { get; set; } = Conditions.True;
+        public string DirectImportExpressionCode { get; set; }
+        public bool DirectImport { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
         public string DumpExternalSourceName { get; set; }
@@ -48,6 +51,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     ItemModel.AddIterationButton = AddIterationButton;
                     ItemModel.RemoveIterationButton = RemoveIterationButton;
                     ItemModel.MoveIterationButton = MoveIterationButton;
+                    ItemModel.DirectImport = DirectImport;
                     if (DumpExternalSourceName != null) ItemModel.DumpExternalSourceName = DumpExternalSourceName;
                     if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
                 }
@@ -76,6 +80,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     MoveIterationButton =
                         MoveIterationCondition == Conditions.True
                         || MoveIterationCondition == Conditions.Expression && CheckList?.GetExpressionValue(MoveIterationExpressionCode, this)?.Value as bool? == true;
+                    break;
+                case DependencyRelation.Properties.DirectImport:
+                    DirectImport =
+                        DirectImportCondition == Conditions.True
+                        || DirectImportCondition == Conditions.Expression && CheckList?.GetExpressionValue(DirectImportExpressionCode, this)?.Value as bool? == true;
                     break;
                 case DependencyRelation.Properties.Iterations:
                     //at the moment this is handled directly into InstanceManagerService
@@ -199,6 +208,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 RemoveIterationExpressionCode = RemoveIterationExpressionCode,
                 MoveIterationCondition = MoveIterationCondition,
                 MoveIterationExpressionCode = MoveIterationExpressionCode,
+                DirectImportCondition = DirectImportCondition,
+                DirectImportExpressionCode = DirectImportExpressionCode,
                 DumpExternalSourceName = DumpExternalSourceName,
                 Group = parent
             };
@@ -293,6 +304,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.AddIteration);
                 MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.RemoveIteration);
                 MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.MoveIteration);
+                MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.DirectImport);
             }
 
             var Iterations = this.Iterations.Where(i => !i.Removed);
@@ -340,6 +352,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     BindExpression(RemoveIterationExpressionCode, DependencyRelation.Properties.RemoveIteration, "remove-iteration");
                 if (MoveIterationCondition == Conditions.Expression)
                     BindExpression(MoveIterationExpressionCode, DependencyRelation.Properties.MoveIteration, "move-iteration");
+                if (DirectImportCondition == Conditions.Expression)
+                    BindExpression(DirectImportExpressionCode, DependencyRelation.Properties.DirectImport, "direct-import");
             }
 
             if (Iterator) //this is called only for instances existing before v. 2.0.0, because BuildDependencies is called only once per instance when no iteration exists
