@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using Newtonsoft.Json.Linq;
@@ -21,9 +22,15 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
             DataType = DataType.Text;
         }
 
+        public override void BuildDependencies(ICheckList CheckList, Expression Expression)
+        {
+            base.BuildDependencies(CheckList, Expression);
+            Expression.AddDependingRelation(DependencyRelation.Properties.Value, (DependencyNode)CheckList, DependencyRelation.Properties.StateChange);
+        }
+
         protected override TypedValue Evaluate(IElementsBranch ElementsBranch, TypedValue ArgumentValue) =>
             ElementsBranch.CheckList.InstanceRuntimeValues.TryGetValue(ArgumentValue.TextValue, out var value) ?
-                new TypedValue(DataType.Text, value) :
+                new TypedValue(DataType.Text, value?.ToString()) :
                 new TypedValue(DataType.Error, $"Invalid property {ArgumentValue.TextValue}");
 
         public override string ToString() =>

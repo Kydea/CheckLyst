@@ -27,7 +27,9 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 { "InstancePrototypeName", "" },
                 { "InstanceVersion", "" },
                 { "InstanceYear", "" },
-                { "InstanceNumber", "" }
+                { "InstanceNumber", "" },
+                { "InstanceID", "" },
+                { "InstanceCode", "" }
             };
         public ICheckListGroup Header { get; set; }
         public List<ICheckListPage> Pages { get; } = new List<ICheckListPage>();

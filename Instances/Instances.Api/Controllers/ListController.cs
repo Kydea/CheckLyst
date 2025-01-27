@@ -84,6 +84,7 @@ namespace CheckListManager.Instances.Api.Controllers
                 "ID",
                 "Year",
                 "Number",
+                "Description",
                 "State",
                 "Department",
                 "DepartmentName",
@@ -104,7 +105,8 @@ namespace CheckListManager.Instances.Api.Controllers
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<InstanceRecord>(Header, "Instances", i => new string[] {
                 i.Id.ToString(),
                 i.Year,
-                i.Number.ToString(), 
+                i.Number.ToString(),
+                i.Description,
                 i.State,
                 i.Department.ToString(),
                 i.DepartmentName,
