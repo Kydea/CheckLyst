@@ -9,6 +9,7 @@ create table "CheckLists"."PrototypeTypes"
 	"Department" bigint not null references "Infrastructure"."Departments",
 
 	"LifeCycle" uint,
+	constraint "PrototypeTypes_LifeCycle" check ("LifeCycle" is null or "LifeCycle" > 0),
     
 	"ApprovationWorkFlow" bigint references "WorkFlows"."WorkFlows",
 	"ObsolescenceWorkFlow" bigint references "WorkFlows"."WorkFlows",
@@ -35,8 +36,6 @@ create table "CheckLists"."Prototypes"
 	"Company" bigint not null references "Infrastructure"."Companies",
 	"Department" bigint not null references "Infrastructure"."Departments",
 	"PrototypeType" bigint not null references "CheckLists"."PrototypeTypes",
-
-	"LifeCycle" uint,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
@@ -78,6 +77,9 @@ create table "CheckLists"."PrototypeVersions"
 	"InstanceConfirmationWorkFlow" bigint references "WorkFlows"."WorkFlows",	
 
 	"Data" text, --replace with no sql table
+
+	"LifeCycle" uint,
+	constraint "PrototypeVersions_LifeCycle" check ("LifeCycle" is null or "LifeCycle" > 0),
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

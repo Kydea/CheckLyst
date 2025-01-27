@@ -90,6 +90,7 @@
         properties = [];
 
         if (model.typeName == "Prototype") {
+            var editRole = model.version == null || matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "##") || matematici.tokenManager.checkRole("Prototypes#Edit#" + model.department + "#" + model.prototypeType + "#");
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "name", {
                     readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0,
@@ -112,7 +113,7 @@
             ));
             var lifeCycleProperty;
             properties.push(lifeCycleProperty = new prototypes.Property(
-                this, new prototypes.SimpleValueProperty(model, "lifeCycle", { number: true, maxLength: 4 }).setCheck([
+                this, new prototypes.SimpleValueProperty(model, "lifeCycle", { number: true, maxLength: 4, readOnly: !editRole }).setCheck([
                     {
                         action: function (value) {
                             var intValue = parseInt(value);
@@ -140,10 +141,9 @@
                 "The state of the prototype. This property is not editable. Use the action <strong>buttons</strong> to change the state of the version."
             ));
             properties.push(new prototypes.Property(this, new prototypes.PrototypeTypeProperty(model, {
-                readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0
-            }), "Prototype Type", "Department and Prototype type of the prototype.", function () {
-                lifeCycleProperty.setValue();
-            }));
+                readOnly: state != prototypes.Prototype.states.draft || prototypes.prototype.getPrototypeKey().version > 0 || prototypes.prototype.getPrototypeKey().id > 0,
+                lifeCycleProperty: lifeCycleProperty
+            }), "Prototype Type", "Department and Prototype type of the prototype."));
             properties.push(new prototypes.Property(
                 this, new prototypes.DateProperty(model, "validFrom", { readOnly: state != prototypes.Prototype.states.draft }).setCheck([{
                     action: function (value) {

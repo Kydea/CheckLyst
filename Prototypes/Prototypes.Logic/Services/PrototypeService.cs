@@ -291,7 +291,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             else
             {
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
-                if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable"); //now there are properties always editable
+                //if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable"); //now there are properties always editable
                 if (
                     (PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10000 /*ignored under milliseconds*/
                     || PrototypeVersion.ModifiedBy != request.ModifiedBy
@@ -342,6 +342,22 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Date = DateTimeOffset.UtcNow,
                     CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
                     CheckListID = PrototypeVersion.Prototype
+                });
+            else
+                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                {
+                    Company = identity.CompanyId,
+                    User = identity.Code,
+                    Action = TrailAction.PrototypeChanged,
+                    Date = DateTimeOffset.UtcNow,
+                    CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
+                    CheckListID = PrototypeVersion.Prototype,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        PrototypeVersion.LifeCycle,
+                        PrototypeVersion.ModifiedOn,
+                        PrototypeVersion.ModifiedBy
+                    })
                 });
 
             return new PrototypeResponse

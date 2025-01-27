@@ -81,7 +81,8 @@
                 exportButton = $("a.Export", buttonGroup),
                 downloadButton = $("a.Download", buttonGroup);
 
-            if (!matematici.canClose) saveButton.removeClass("Hidden"); //some property is always editable
+            if (!matematici.canClose) //some property can always be editable                
+                saveButton.removeClass("Hidden"); 
 
             switch (model.state) {
                 case prototypes.Prototype.states.active:
@@ -720,7 +721,7 @@
                     data = JSON.stringify({
                         id: prototypeKey.id,
                         version: prototypeKey.version,
-                        lifeCycle: model.lifeCycle,
+                        lifeCycle: model.lifeCycle == 0 ? null : model.lifeCycle,
                         modifiedOn: moment.parseZone(concurrencyInformation.modifiedOn),
                         modifiedby: concurrencyInformation.modifiedBy,
                         validFrom: model.validFrom,

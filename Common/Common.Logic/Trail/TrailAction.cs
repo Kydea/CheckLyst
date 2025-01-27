@@ -32,6 +32,7 @@
         public const string PrototypeStateAutoChanged = "Prototype state auto-changed";
         public const string PrototypeStateChangeProposed = "Prototype state change proposed";
         public const string PrototypeSignatureIssued = "Prototype signature issued";
+        public const string PrototypeChanged = "Prototype changed";
 
         public const string InstanceCreated = "Instance created";
         public const string InstanceOpened = "Instance opened";

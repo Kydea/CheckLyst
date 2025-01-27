@@ -6,6 +6,7 @@
         prototypeType,
         prototypeTypes,
         departments,
+        suspended = false,
 
         loadPrototypeTypes = function () {
             $.ajax({
@@ -50,6 +51,7 @@
         refreshPrototypeTypes = function (initialValue) {
             prototypeType.empty();
             var departmentIndex = department.prop('selectedIndex');
+            suspended = true;
             if (departmentIndex >= 0) {
                 var prototypeTypes = departments[departmentIndex].prototypeTypes;
                 for (var index in prototypeTypes)
@@ -57,6 +59,7 @@
                 prototypeType.val(initialValue).change();
             } else
                 prototypeType.val(null).change();
+            suspended = false;
 
             setTimeout(function () {
                 matematici.AutoComplete.get(prototypeType[0]).refresh();
@@ -94,17 +97,21 @@
                         model.prototypeType = prototypeType.val();
                         model.prototypeTypeName = prototypeType.next().val();
 
-                        departmentLoop:
-                        for (var departmentIndex in departments)
-                            for (var prototypeTypeIndex in departments[departmentIndex].prototypeTypes) {
-                                var prototypeTypeRecord = departments[departmentIndex].prototypeTypes[prototypeTypeIndex];
-                                if (prototypeTypeRecord.id == model.prototypeType) {
-                                    model.lifeCycle = prototypeTypeRecord.lifeCycle;
-                                    break departmentLoop;
-                                }
-                            }
-                        if (!options.readOnly)
+                        if (!options.readOnly) {
                             base.updateModel(model);
+                            if (!suspended && (!model.errors || !model.errors.length)) {
+                                departmentLoop:
+                                for (var departmentIndex in departments)
+                                    for (var prototypeTypeIndex in departments[departmentIndex].prototypeTypes) {
+                                        var prototypeTypeRecord = departments[departmentIndex].prototypeTypes[prototypeTypeIndex];
+                                        if (prototypeTypeRecord.id == model.prototypeType) {
+                                            model.lifeCycle = prototypeTypeRecord.lifeCycle;
+                                            break departmentLoop;
+                                        }
+                                    }
+                                options.lifeCycleProperty.setValue();
+                            }
+                        }
 
                         if (!!model.prototypeType && model.errors)
                             base.setError(model.errors, ["department", "prototype-type"], null);

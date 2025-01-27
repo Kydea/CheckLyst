@@ -56,7 +56,7 @@
                 percentage = previousCounter.green / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.green + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) under 80% of life cicle (click to open the list)";
+                span.title = previousCounter.green + " instances (" + Math.round(percentage) + "% of the " + total + " total instances) under 80% of life cicle (click to open the list)";
                 span.addEventListener("click", function () {
                     openList(0, 80);
                 });
@@ -67,7 +67,7 @@
                 percentage = previousCounter.yellow / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.yellow + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) over 80% of life cicle (click to open the list)";
+                span.title = previousCounter.yellow + " instances (" + Math.round(percentage) + "% of the " + total + " total instances) over 80% of life cicle (click to open the list)";
                 span.addEventListener("click", function () {
                     openList(80, 100);
                 });
@@ -78,7 +78,7 @@
                 percentage = previousCounter.red / total * 100;
                 span.style.setProperty("width", percentage + "%")
                 span.style.setProperty("height", height + "px")
-                span.title = previousCounter.red + " intances (" + Math.round(percentage) + "% of the " + total + " total instances) over 100% of life cicle (click to open the list)";
+                span.title = previousCounter.red + " instances (" + Math.round(percentage) + "% of the " + total + " total instances) over 100% of life cicle (click to open the list)";
                 span.addEventListener("click", function () {
                     openList(100, null);
                 });

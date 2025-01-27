@@ -39,6 +39,7 @@ values
 	('Prototype signature issued'),
 	('Prototype export completed'),
 	('Prototype export failed'),
+	('Prototype changed'),
 
 	('Instance created'),
 	('Instance opened'),

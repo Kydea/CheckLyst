@@ -82,7 +82,6 @@ namespace CheckListManager.Instances.Api.Controllers
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
             var Header = new string[] {
                 "ID",
-                "Code",
                 "Year",
                 "Number",
                 "State",
@@ -104,7 +103,6 @@ namespace CheckListManager.Instances.Api.Controllers
             var Rows = await _listService.ExportAsync(data);
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<InstanceRecord>(Header, "Instances", i => new string[] {
                 i.Id.ToString(),
-                i.Code,
                 i.Year,
                 i.Number.ToString(), 
                 i.State,
