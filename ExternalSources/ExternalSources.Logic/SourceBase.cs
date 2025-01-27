@@ -34,7 +34,7 @@ namespace CheckListManager.ExternalSources.Logic
         {
             var SourceType = Type.GetType($"CheckListManager.ExternalSources.Logic.{Class}.Source");
             if (SourceType == null || SourceType.IsAssignableFrom(typeof(SourceBase)))
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Class: " + Class);
             var SourceBase = (SourceBase)Activator.CreateInstance(SourceType);
             SourceBase.Code = Code;
             SourceBase.Password = Password;
