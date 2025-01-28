@@ -149,9 +149,10 @@
                 scrollablePanel.show();
                 refreshFixedHeader();
 
-                if (hasEditableParameters)
+                if (hasEditableParameters) {
+                    if (directImport) $("div.Container.ExternalSources").removeClass("Hidden");
                     autoCenter.center();
-                else
+                } else
                     searchButton.click();
             });
         },

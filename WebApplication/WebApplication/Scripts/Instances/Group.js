@@ -260,7 +260,7 @@
                 for (var iterationIndex in model.iterations)
                     if (!model.iterations[iterationIndex].removed)
                         imported = true;
-                importButton.classList.toggle("ReadOnly", imported);
+                importButton.classList.toggle("ReadOnly", imported || readOnly);
             }
         };
 
