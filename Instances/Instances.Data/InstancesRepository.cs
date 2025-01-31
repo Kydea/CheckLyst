@@ -96,7 +96,7 @@ namespace CheckListManager.Instances.Data
             "select " +
                 "i.\"ID\", " +
                 "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
-                "i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", i.\"Description\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
                 "extract(day from now() - i.\"CreatedOn\") \"LifeDays\", pv.\"LifeCycle\" \"PrototypeLifeCycle\", " +
                 "case when pv.\"LifeCycle\" = 0 then null else round(100 * extract(day from now() - i.\"CreatedOn\") / pv.\"LifeCycle\") || '%' end \"LifeCycle\", " +
                 "i.\"CreatedOn\", i.\"CreatedBy\", i.\"ModifiedOn\", i.\"ModifiedBy\" " +

@@ -354,9 +354,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     CheckListID = PrototypeVersion.Prototype,
                     Information = JsonConvert.SerializeObject(new
                     {
-                        PrototypeVersion.LifeCycle,
-                        PrototypeVersion.ModifiedOn,
-                        PrototypeVersion.ModifiedBy
+                        PrototypeVersion.LifeCycle
                     })
                 });
 

@@ -77,7 +77,7 @@
                     columnsCount += size.columnsCount;
                     if (size.columnsCount > 1)
                         cell.attr("colspan", size.columnsCount);
-                } else 
+                } else
                     columnsCount++;
             }
 
@@ -108,8 +108,8 @@
 
         create = function () {
             tableContent = !parent.isPage() && (parent.isTable() || parent.isTableContent());
-			table = !tableContent && setupModel.showAsTable;
-            subRow = !parent.isTable() && tableContent; 
+            table = !tableContent && setupModel.showAsTable;
+            subRow = !parent.isTable() && tableContent;
             element = parent.isTable() ? document.createElement("tr") : subRow ? parent.getElement() : document.createElement("div");
 
             if (table) {
@@ -171,7 +171,7 @@
                     element.appendChild(iterationCommands);
                 }
 
-				if (group.isGroup() && !group.isTableContent()) {
+                if (group.isGroup() && !group.isTableContent()) {
                     elementInformation = new instances.ElementInformation(element);
                     if (setupModel && setupModel.iterator) {
                         actionButtonsBar = document.createElement("div");
@@ -199,7 +199,7 @@
                             importButton.appendChild(i);
                             importButton.innerHTML += "Import"
                             importButton.addEventListener("click", function () {
-                                if (!readOnly) {
+                                if (!readOnly && !importButton.classList.contains("ReadOnly")) {
                                     var buttons = [{ text: "Cancel", icon: "times", cancelButton: true }];
                                     for (var externalSourceIndex in setupModel.externalSources.sort().reverse()) {
                                         buttons.push({
@@ -219,6 +219,13 @@
                     }
                 }
             }
+        },
+
+        isEmpty = function (model) {
+            for (var iterationIndex in model.iterations)
+                if (!model.iterations[iterationIndex].removed)
+                    return false;
+            return true;
         },
 
         update = function (model) {
@@ -255,13 +262,7 @@
                     iterationCommands.style.display = readOnly ? "none" : "";
             }
             if (elementInformation) elementInformation.update(model);
-            if (model.directImport) {
-                var imported = false;
-                for (var iterationIndex in model.iterations)
-                    if (!model.iterations[iterationIndex].removed)
-                        imported = true;
-                importButton.classList.toggle("ReadOnly", imported || readOnly);
-            }
+            if (importButton && model.directImport) importButton.classList.toggle("ReadOnly", readOnly || !isEmpty(model));
         };
 
     this.appendElement = function () {
