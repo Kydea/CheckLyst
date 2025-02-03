@@ -58,6 +58,7 @@ namespace CheckListManager.ExternalSources.Logic.REST
             int rowCount = 0;
             List<List<string>> rows = new List<List<string>>();
             ParameterValues = Parameters;
+            var currentPage = Page < 0 ? 0 : Page;
             try
             {
                 using (var client = new HttpClient())
@@ -144,12 +145,12 @@ namespace CheckListManager.ExternalSources.Logic.REST
                                                     GetJsonValue(item, value.RelativePath) ?? "" :
                                                     ParseParameter(value.AbsolutePath);
 
-                                        if (rowCount >= PAGE_SIZE * Page && rowCount < PAGE_SIZE * (Page + 1))
+                                        if (rowCount >= GetPageSize(Page) * currentPage && rowCount < GetPageSize(Page) * (currentPage + 1))
                                             rows.Add(result);
 
                                         ++rowCount;
 
-                                        if (rowCount == PAGE_SIZE * (Page + 1))
+                                        if (rowCount == GetPageSize(Page) * (currentPage + 1))
                                             return rows;
                                     }
                             }

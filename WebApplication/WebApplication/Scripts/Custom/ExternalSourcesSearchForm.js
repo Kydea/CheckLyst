@@ -215,7 +215,7 @@
             var
                 url = itemId != null ? matematici.urls.instances.api + "/GetExternalSourceRows" : matematici.urls.dataSources.api + "/Data/Test",
                 data = itemId != null ?
-                    { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: page } } :
+                    { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: directImport ? page : -1 } } :
                     { code: name, parameters: parameterValues, page: page, decimalSeparator: localStorage.decimalSeparator, timeZone: localStorage.timeZone };
 
             $.ajax(url, {

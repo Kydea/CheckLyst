@@ -133,12 +133,13 @@ namespace CheckListManager.ExternalSources.Logic.SAP
 
             var Row = 0;
             string Line = null;
-            for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && Row < PAGE_SIZE * (Page + 1); ++PhaseIndex)
+            var currentPage = Page < 0 ? 0 : Page;
+            for (var PhaseIndex = 0; PhaseIndex < Phase.RowCount && Row < GetPageSize(Page) * (currentPage + 1); ++PhaseIndex)
             {
                 Phase.CurrentIndex = PhaseIndex;
                 if (Line != (Line = Phase.GetString("RESOURCE"))) //Takes the first row for each resource
                 {
-                    if (Row >= PAGE_SIZE * Page)
+                    if (Row >= GetPageSize(Page) * currentPage)
                         yield return new List<string> {
                             Header.GetString("ORDER_NUMBER")?.TrimStart('0'),
                             Header.GetString("PROD_SCHED_PROFILE"),

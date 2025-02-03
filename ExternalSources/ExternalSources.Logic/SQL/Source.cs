@@ -87,7 +87,7 @@ namespace CheckListManager.ExternalSources.Logic.SQL
                     ParameterType == "DateTime" ? DateTime.TryParseExact(ParameterValue, new string[] { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" }, null, DateTimeStyles.AssumeUniversal, out dateTimeResult) ? dateTimeResult : default(DateTime?) :
                     ParameterType == "Time" ? TimeSpan.TryParseExact(ParameterValue, new string[] { "hh\\:mm", "hh\\:mm\\:ss" }, null, out var timeSpanResult) ? timeSpanResult : default(TimeSpan?) :
                     (object)ParameterValue :
-                ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) ? true : false :
+                ParameterType == "Boolean" ? "true".Equals(ParameterValue, StringComparison.InvariantCultureIgnoreCase) :
                 ParameterType == "Number" ? string.IsNullOrEmpty(ParameterValue) ? default(decimal?) : decimal.TryParse(ParameterValue.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out decimalResult) ? decimalResult : default(decimal?) :
                 ParameterType == "Date" ? DateTimeOffset.TryParseExact(ParameterValue, "yyyy-MM-dd", null, DateTimeStyles.AssumeUniversal, out var dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
                 ParameterType == "DateTime" ? DateTimeOffset.TryParseExact(ParameterValue, new string[] { "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss" }, null, DateTimeStyles.AssumeUniversal, out dateTimeOffsetResult) ? dateTimeOffsetResult : default(DateTimeOffset?) :
@@ -151,7 +151,8 @@ namespace CheckListManager.ExternalSources.Logic.SQL
         public override Task<IEnumerable<List<string>>> GetDataAsync(Dictionary<string, string> Parameters, int Page, string DecimalSeparator, string TimeZone)
         {
             var stopWatch = Stopwatch.StartNew();
-            var Result = LoadData(Parameters, Page * PAGE_SIZE, PAGE_SIZE).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
+            var currentPage = Page < 0 ? 0 : Page;
+            var Result = LoadData(Parameters, currentPage * GetPageSize(Page), GetPageSize(Page)).Tables[0].AsEnumerable().Select(r => r.ItemArray.Select(v => Format(v, DecimalSeparator, TimeZone)).ToList());
             stopWatch.Stop();
             OperationTime = stopWatch.Elapsed.TotalMilliseconds;
             return Task.FromResult(Result.AsEnumerable());
