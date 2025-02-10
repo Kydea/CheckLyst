@@ -230,7 +230,7 @@
                 readOnly: true,
                 filterHandler: resultHandler,
                 breadCrumbs: [
-                    { content: "instance overview" }
+                    { content: "instance life cycle" }
                 ],
             });
 
