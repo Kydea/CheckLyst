@@ -47,9 +47,6 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             var FalseValue = FalsePart.GetValue(ElementsBranch, IterationIndexes, TimeZone);
             if (ConditionValue == null || TrueValue == null || FalseValue == null) throw new NullReferenceException("Software design error");
             if (ConditionValue.Type == DataType.Error) return ConditionValue;
-            if (TrueValue.Type == DataType.Error) return TrueValue;
-            if (FalseValue.Type == DataType.Error) return FalseValue;
-
             return !ConditionValue.IsNull && ConditionValue.BooleanValue ? TrueValue : FalseValue;
         }
 
