@@ -2238,7 +2238,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
             else if (attachment.FileType == Attachment.FileTypes.Pdf)
             {
-                if (extension != ".pdf")
+                if (extension?.ToLower() != ".pdf")
                     throw new InstanceException("The attachment has to be a pdf document");
             }
             else
