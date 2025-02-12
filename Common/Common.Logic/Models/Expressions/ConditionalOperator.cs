@@ -42,12 +42,9 @@ namespace CheckListManager.Common.Logic.Models.Expressions
 
         public override TypedValue GetValue(IElementsBranch ElementsBranch, Dictionary<string, int> IterationIndexes, string TimeZone)
         {
-            var ConditionValue = Condition.GetValue(ElementsBranch, IterationIndexes, TimeZone);
-            var TrueValue = TruePart.GetValue(ElementsBranch, IterationIndexes, TimeZone);
-            var FalseValue = FalsePart.GetValue(ElementsBranch, IterationIndexes, TimeZone);
-            if (ConditionValue == null || TrueValue == null || FalseValue == null) throw new NullReferenceException("Software design error");
+            var ConditionValue = Condition.GetValue(ElementsBranch, IterationIndexes, TimeZone) ?? throw new NullReferenceException("Software design error");
             if (ConditionValue.Type == DataType.Error) return ConditionValue;
-            return !ConditionValue.IsNull && ConditionValue.BooleanValue ? TrueValue : FalseValue;
+            return (!ConditionValue.IsNull && ConditionValue.BooleanValue ? TruePart.GetValue(ElementsBranch, IterationIndexes, TimeZone) : FalsePart.GetValue(ElementsBranch, IterationIndexes, TimeZone)) ?? throw new NullReferenceException("Software design error");
         }
 
         public override string ToString()
