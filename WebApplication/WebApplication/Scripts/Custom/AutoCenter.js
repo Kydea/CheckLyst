@@ -12,6 +12,7 @@
                     if (sibling.css("position") != "absolute") 
                         occupiedHeight += sibling.outerHeight();
                 });
+                if (matematici.appMode) occupiedHeight += 50;
                 scrollablePanel.css("max-height", "calc(100vh - " + occupiedHeight + "px)");
                 var fixedHeader = scrollablePanel.data("GridFixedHeader");
                 if (fixedHeader && fixedHeader.resize) fixedHeader.resize();
