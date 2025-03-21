@@ -17,6 +17,7 @@
         table = false,
         tableContent = false,
         readOnly,
+        directImport,
         tableElement,
         tableBody,
         pageIndex,
@@ -207,7 +208,7 @@
                                             icon: "file-import",
                                             data: setupModel.externalSources[externalSourceIndex],
                                             handler: function (name) {
-                                                new matematici.ExternalSourcesSearchForm(id, name, true, setupModel.directImport);
+                                                new matematici.ExternalSourcesSearchForm(id, name, true, directImport);
                                             }
                                         });
                                     }
@@ -230,6 +231,7 @@
 
         update = function (model) {
             readOnly = !!model.readOnly;
+            directImport = !!model.directImport;
 			if (title) title.innerHTML = model.descriptionValue;
             if (!group.isPage()) {
                 id = model.id;
@@ -243,7 +245,7 @@
             element.setAttribute("data-id", model.id);
             if (model.iterator) {
                 actionButtonsBar.classList.toggle("Hidden", !model.addIterationButton);
-                addButton.classList.toggle("Hidden", model.directImport);
+                addButton.classList.toggle("Hidden", directImport);
                 element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
             }
@@ -262,7 +264,7 @@
                     iterationCommands.style.display = readOnly ? "none" : "";
             }
             if (elementInformation) elementInformation.update(model);
-            if (importButton && model.directImport) importButton.classList.toggle("ReadOnly", readOnly || !isEmpty(model));
+            if (importButton && directImport) importButton.classList.toggle("ReadOnly", readOnly || !isEmpty(model));
         };
 
     this.appendElement = function () {
