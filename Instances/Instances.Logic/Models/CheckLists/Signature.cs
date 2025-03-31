@@ -111,13 +111,13 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                         CheckItem(Item);
         }
 
-        public void TrySign(string UserCode)
+        public void TrySign(string UserCode, DateTimeOffset Now)
         {
             try
             {
                 Signed = true;
                 SignedBy = UserCode;
-                ModifiedOn = SignedOn = DateTimeOffset.UtcNow;
+                ModifiedOn = SignedOn = Now;
                 History.Add(new SignatureRecord ()); 
 
                 UpdateChain(Instance, DependencyRelation.Properties.Signature);

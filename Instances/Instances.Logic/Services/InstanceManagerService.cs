@@ -1771,7 +1771,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (signature.Signed)
                 throw new Exception("The signature is already signed");
 
-            signature.TrySign(userCode);
+            signature.TrySign(userCode, DateTimeOffset.Now);
         }
 
         private async Task<Element> HandleSignatureAsync(InstanceCacheObject cacheObject, IDefaultIdentity identity, InstanceEventRequest request)
@@ -1796,7 +1796,8 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!request.Simple && string.IsNullOrEmpty(request.Pin))
                     throw new InstanceException("Provide your PIN");
 
-                signature.TrySign(identity.Code);
+                var Now = DateTimeOffset.UtcNow;
+                signature.TrySign(identity.Code, Now);
 
                 try
                 {
@@ -1816,7 +1817,6 @@ namespace CheckListManager.Instances.Logic.Services
                 )
                     throw new InstanceException($"The signature must be applied by an user with level {signature.SignatureLevel}");
 
-                var Now = DateTimeOffset.UtcNow;
                 cacheObject.ModifiedBy = identity.Code;
                 cacheObject.ModifiedOn = Now;
                 signature.Sign(identity.Code, identity.Description, Now);
