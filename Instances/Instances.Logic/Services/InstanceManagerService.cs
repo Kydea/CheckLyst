@@ -2142,47 +2142,48 @@ namespace CheckListManager.Instances.Logic.Services
                 return;
 
             var rowDictionary = columns.ToDictionary(k => k, v => default(string));
-            var iterationsId = new List<int>(rows.Count);
+            var iterationsId = new List<int>(rows?.Count ?? 0);
             var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
             group.ModifiedBy = identity.Code;
             group.ModifiedOn = DateTimeOffset.UtcNow;
             group.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.Iterations);
             var iterationIndex = group.Iterations.Count(i => !i.Removed);
-            foreach (var row in rows)
-            {
-                var iteration = group.AddIteration();
-                group.SetupIterationIntexes(iteration, ref iterationIndex);
-                iterationsId.Add(iteration.Id);
-                for (var index = 0; index < columns.Count; ++index)
-                    rowDictionary[columns[index]] = row[index];
-                ExternalSource.Values = rowDictionary;
-
-                var IterationChildren = new List<DependencyNode>();
-                iteration.GetAllChildren(IterationChildren);
-                IterationChildren = IterationChildren.Where(x => x != null).ToList();
-
-                foreach (var Child in IterationChildren.Cast<Element>())
+            if (rows != null)
+                foreach (var row in rows)
                 {
-                    //the children of the added iterations are all marked as changed
-                    Child.MarkAllAsChanged(Roots);
+                    var iteration = group.AddIteration();
+                    group.SetupIterationIntexes(iteration, ref iterationIndex);
+                    iterationsId.Add(iteration.Id);
+                    for (var index = 0; index < columns.Count; ++index)
+                        rowDictionary[columns[index]] = row[index];
+                    ExternalSource.Values = rowDictionary;
 
-                    //the fields bound to the external source are update directly
-                    if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code)
+                    var IterationChildren = new List<DependencyNode>();
+                    iteration.GetAllChildren(IterationChildren);
+                    IterationChildren = IterationChildren.Where(x => x != null).ToList();
+
+                    foreach (var Child in IterationChildren.Cast<Element>())
                     {
-                        Field.Update(DependencyRelation.Properties.Value);
+                        //the children of the added iterations are all marked as changed
+                        Child.MarkAllAsChanged(Roots);
 
-                        //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
-                        var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
-                        IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                        //the fields bound to the external source are update directly
+                        if (Child is Field Field && Field.ExternalSourceName == ExternalSource.Code)
+                        {
+                            Field.Update(DependencyRelation.Properties.Value);
+
+                            //the iterator model item are marked as changed by the iteration child involved and then skipped to avoid all the iterations of the iterator are updated with last value
+                            var IteratorModelItem = ((Item)Child).FindIteratorModelItem();
+                            IteratorModelItem.MarkNodeAsUnchanged(DependencyRelation.Properties.Value);
+                        }
                     }
                 }
-            }
             group.SetupIterationsIndexes();
 
             DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
             //call audit trail only after the rest of the process has worked
-            for (var rowIndex = 0; rowIndex < rows.Count; ++rowIndex)
+            for (var rowIndex = 0; rows != null && rowIndex < rows.Count; ++rowIndex)
             {
                 for (var columnIndex = 0; columnIndex < columns.Count; ++columnIndex)
                     rowDictionary[columns[columnIndex]] = rows[rowIndex][columnIndex];
