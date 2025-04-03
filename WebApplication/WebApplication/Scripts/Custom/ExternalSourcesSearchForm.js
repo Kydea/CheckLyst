@@ -242,6 +242,8 @@
                     }
                     totalRows += rows.length;
                 }
+                else
+                    matematici.dialog.show("warning", "No record found.");
 
                 toggleNoRecord(page == 0 && (!rows || !rows.length));
                 toggleNext(rows && rows.length >= 20 && page < 4);
