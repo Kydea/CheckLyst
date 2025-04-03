@@ -242,7 +242,7 @@
                     }
                     totalRows += rows.length;
                 }
-                else
+                else if (directImport)
                     matematici.dialog.show("warning", "No record found.");
 
                 toggleNoRecord(page == 0 && (!rows || !rows.length));
