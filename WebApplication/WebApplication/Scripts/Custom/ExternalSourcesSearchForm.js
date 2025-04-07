@@ -127,9 +127,13 @@
                 data = itemId != null ?
                     { instanceCode: instances.instance.getCode(), externalSourceCode: name, itemId: itemId } :
                     { code: name };
-            $.ajax(url, {
+            $.ajax({
+                url: url,
                 method: "post",
-                data: data
+                data: data,
+                errorHandler: directImport ? function (result) {
+                    confirm();
+                } : null
             }).done(function (result) {
                 var hasEditableParameters = false;
                 for (var index in result.parameters) {
@@ -218,9 +222,13 @@
                     { data: { instanceCode: instances.instance.getCode(), parameters: parameterValues, itemId: itemId, externalSourceCode: name, page: directImport ? -1 : page } } :
                     { code: name, parameters: parameterValues, page: page, decimalSeparator: localStorage.decimalSeparator, timeZone: localStorage.timeZone };
 
-            $.ajax(url, {
+            $.ajax({
+                url: url, 
                 method: "post",
-                data: data
+                data: data,
+                errorHandler: directImport ? function (result) {
+                    confirm();
+                } : null
             }).done(function (result) {
                 if (page == 0) {
                     tableBody.empty();
