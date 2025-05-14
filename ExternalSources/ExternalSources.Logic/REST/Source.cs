@@ -104,7 +104,8 @@ namespace CheckListManager.ExternalSources.Logic.REST
                             catch { throw exception; }
                         }
 
-                        LastResponse = Responses[commandIndex++] = JToken.Parse(await response.Content.ReadAsStringAsync());
+                        var content = await response.Content.ReadAsStringAsync();
+                        LastResponse = Responses[commandIndex++] = string.IsNullOrWhiteSpace(content) ? null : JToken.Parse(content);
 
                         if (command.Rules != null)
                             foreach (var rule in command.Rules)
@@ -128,7 +129,7 @@ namespace CheckListManager.ExternalSources.Logic.REST
                         foreach (var row in Model.Rows)
                             if (row.CommandIndex == command.Index)
                             {
-                                var jToken = ParsePath(row.RowsPath);
+                                var jToken = ParsePath(ParseParameters(row.RowsPath));
 
                                 var array =
                                     jToken is JArray jArray ? jArray :
