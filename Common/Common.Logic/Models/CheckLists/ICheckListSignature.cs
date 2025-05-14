@@ -16,5 +16,6 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		string SignedBy { get; set; }
 		DateTimeOffset SignedOn { get; set; }
 		string SignerDescription { get; set; }
+        string CommandExternalSourceName { get; set; }
     }
 }

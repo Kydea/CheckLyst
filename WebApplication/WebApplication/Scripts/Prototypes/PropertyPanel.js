@@ -233,7 +233,7 @@
                 ));
                 properties.push(new prototypes.Property(
                     this, new prototypes.SignatureProperty(model, { readOnly: state != prototypes.Prototype.states.draft }), "Signature",
-                    "Determines which signature locks the element. For iterators with a code, it is present alse a Source on which perform a data export when the signature is issued."
+                    "Determines which signature locks the element. For iterators with a code, it is present alse a Source on which a data export is performed when the signature is issued."
                 ));
             }
 
@@ -542,6 +542,10 @@
                     properties.push(new prototypes.Property(
                         this, new prototypes.BooleanProperty(model, "acceptsPin"), "Accepts PIN",
                         "If checked, the signature users can issue this signature using their PIN."
+                    ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.DataSourceProperty(model, "commandExternalSourceName"), "Command source",
+                        "A data source to call once signed."
                     ));
                     break;
                 case "InstanceLink":

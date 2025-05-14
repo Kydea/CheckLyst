@@ -24,6 +24,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string ModifiedBy => SignedBy;
         public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
         public string SignerDescription { get; set; }
+        public string CommandExternalSourceName { get; set; }
+
 
         public override dynamic GetViewModel(bool ReportModel)
         {
@@ -86,7 +88,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 				AcceptsPin = AcceptsPin,
                 SignatureLevel = SignatureLevel,
                 SendEmail = SendEmail,
-                SendEmailAddress = SendEmailAddress
+                SendEmailAddress = SendEmailAddress,
+                CommandExternalSourceName = CommandExternalSourceName
 			};
 
 			Copy(this, signature);

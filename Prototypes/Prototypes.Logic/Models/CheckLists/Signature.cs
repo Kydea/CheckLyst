@@ -29,6 +29,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public string ModifiedBy { get; }
         [JsonIgnore]
         public DateTimeOffset? ModifiedOn { get; }
+        public string CommandExternalSourceName { get; set; }
 
         public override bool BuildDependencies()
         {
@@ -42,6 +43,18 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Result = false;
             }
 
+            if (CommandExternalSourceName != null)
+            {
+                var CommandResult = true;
+                if (!CheckList.ExternalSources.TryGetValue(CommandExternalSourceName, out var ExternalSourceNode))
+                {
+                    Errors.Add(new ConfigurationError("command-source", $"External source {CommandExternalSourceName} not found"));
+                    CommandResult = false;
+                }
+                Result &= CommandResult;
+            }
+
+
             return Result;
         }
 
@@ -52,7 +65,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Group = parent,
                 ButtonLabel = ButtonLabel,
                 Cancelable = Cancelable,
-                AcceptsPin = AcceptsPin
+                AcceptsPin = AcceptsPin,
+                CommandExternalSourceName = CommandExternalSourceName
             };
 
             Copy(this, signature);

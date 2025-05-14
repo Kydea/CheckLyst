@@ -1042,7 +1042,7 @@ namespace CheckListManager.Instances.Logic.Services
             return list;
         }
 
-        private async Task ExportSignedIterators(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
+        private async Task DataSourceCalls(InstanceCacheObject cacheObject, IDefaultIdentity identity, Signature signature)
         {
             foreach (var Element in signature.GetBranchElements().Values)
                 if (Element is Group Group && Group.SignatureCode == signature.Code && Group.DumpExternalSourceName != null)
@@ -1074,6 +1074,36 @@ namespace CheckListManager.Instances.Logic.Services
                         Logger.Error(Exception, $"Error while exporting the content of {Element}");
                         throw new InstanceException($"Error while exporting the content of {Element}", Exception);
                     }
+
+            if (signature.CommandExternalSourceName != null)
+                try
+                {
+                    if (!cacheObject.Instance.ExternalSources.TryGetValue(signature.CommandExternalSourceName, out var externalSource))
+                        throw new InstanceException("Invalid external source");
+
+                    var dataSource = await GetExternalSource(cacheObject, signature.CommandExternalSourceName);
+                    var dataSourceParameters = GetExternalSourceParameters(cacheObject, externalSource, dataSource, signature);
+                    var parameters = dataSourceParameters.ToDictionary(k => k.Name, v => v.Value);
+
+                    var token = identity.Code + ":" + Guid.NewGuid();
+                    await _redisCache.SetAsync($"Token:{token}", new DataRequest
+                    {
+                        code = cacheObject.Instance.ExternalSources[signature.CommandExternalSourceName].DataSource,
+                        parameters = parameters,
+                        page = 0,
+                        decimalSeparator = await _settingService.DecimalSeparatorAsync(identity.CompanyId),
+                        timeZone = (await _commonRepository.GetCompanyAsync(identity.CompanyId)).TimeZone
+                    }, "S2S", new TimeSpan(0, 1, 0));
+                    var response = await _client.PostAsync("DataSources/Data/GetDataSourceRows", new TokenRequest { token = token });
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        throw new Exception(responseData);
+                }
+                catch (Exception Exception)
+                {
+                    Logger.Error(Exception, $"Error while invoking command {signature.CommandExternalSourceName} the content of {signature.ToString()}");
+                    throw new InstanceException($"Error while invoking command {signature.CommandExternalSourceName} the content of {signature.ToString()}", Exception);
+                }
         }
 
         public async Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity)
@@ -1820,7 +1850,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.ModifiedBy = identity.Code;
                 cacheObject.ModifiedOn = Now;
                 signature.Sign(identity.Code, identity.Description, Now);
-                await ExportSignedIterators(cacheObject, identity, signature);
+                await DataSourceCalls(cacheObject, identity, signature);
 
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);

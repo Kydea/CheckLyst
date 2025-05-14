@@ -500,6 +500,7 @@
     <Content Include="Scripts\Prototypes\TargetProperty.js" />
     <Content Include="Scripts\Prototypes\UploadProperty.js" />
     <Content Include="Scripts\Prototypes\CountDownToProperty.js" />
+    <Content Include="Scripts\Prototypes\DataSourceProperty.js" />
     <Content Include="Scripts\Prototypes\ValueTypeProperty.js" />
     <Content Include="Scripts\Prototypes\WorkFlowProperty.js" />
     <Content Include="Scripts\Prototypes\ExpressionsList.js" />
