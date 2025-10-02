@@ -276,8 +276,6 @@ namespace CheckListManager.Instances.Data
 
             await SaveChangesAsync();
 
-            await Entities.Entry(instance).ReloadAsync();
-
             return instance;
         }
 

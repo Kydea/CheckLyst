@@ -23,6 +23,7 @@ namespace CheckListManager.Common.Data
         public string ParameterName { get; set; }
         public string ParameterType { get; set; }
         public string ClauseType { get; set; }
+        public bool CaseSensitive { get; set; }
     
         public virtual Reports Reports { get; set; }
     }
