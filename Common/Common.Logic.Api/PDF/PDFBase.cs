@@ -57,7 +57,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                 DocumentBuilder = new MigraDocBuilder()
                 {
-                    Unicode = true, // allow unicode charset
                     OnPageReady = OnPageReady
                 };
                 

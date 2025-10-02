@@ -25,7 +25,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public PdfPage FirstPage { get; private set; }
 
-        public bool Unicode { get; set; }
         public Action<int, PdfPage, XGraphics> OnPageReady { private get; set; } = null;
 
         public MigraDocBuilder()
@@ -98,7 +97,6 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     using (XGraphics gfx = XGraphics.FromPdfPage(page))
                     {
                         OnPageReady?.Invoke(index, page, gfx);
-                        gfx.MUH = Unicode ? PdfFontEncoding.Unicode : PdfFontEncoding.WinAnsi;
                         DocumentRenderer.RenderPage(gfx, index + 1);
                     }
 
