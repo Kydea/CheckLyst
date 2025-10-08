@@ -317,7 +317,7 @@
             if (currentRow) toggleRow(currentRow);
 
             var
-                tableTop = tableBody.children[0].getBoundingClientRect().top + window.pageYOffset,
+                tableTop = tableBody.children[0].getBoundingClientRect().top + window.scrollY,
                 rowHeight = tableBody.children[0].offsetHeight,
                 firstRowIndex = Math.floor((window.scrollY - tableTop) / 40);
 

@@ -110,11 +110,10 @@
 
         resetForm: function () {
             var form = $("form", matematici.elements.content);
-            if (form.size() > 0) {
-                form.unbind();
+            if (form.length > 0) {
+                form.off();
                 form.data('validator', null);
                 $.validator.unobtrusive.parse(matematici.elements.content);
-                form.validate(form.data("unobtrusiveValidation").options);
             }
         },
 

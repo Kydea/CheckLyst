@@ -68,7 +68,7 @@
 
 		setup = function () {
 			if (!options) options = {};
-			select($("> .TabLabels a.Selected", element).prevAll("a").size());
+			select($("> .TabLabels a.Selected", element).prevAll("a").length);
 
 			element
 				.data("tab", tab)
@@ -76,7 +76,7 @@
                     e.preventDefault();
                     //e.stopPropagation();
 
-                    select($(this).prevAll("a").size());
+                    select($(this).prevAll("a").length);
 
                     for (var index in handlers)
                         handlers[index].call(this, currentItem);

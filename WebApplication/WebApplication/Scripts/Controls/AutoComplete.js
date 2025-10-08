@@ -63,9 +63,9 @@
                     e.stopPropagation();
                     if (!list.hasClass("Locked")) {
                         if (multiple)
-                            toggleItem($(this).prevAll().size());
+                            toggleItem($(this).prevAll().length);
                         else {
-                            setCurrentItem($(this).prevAll().size());
+                            setCurrentItem($(this).prevAll().length);
                             hideList();
                         }
                     }
@@ -96,8 +96,8 @@
                 showList();
                 setTimeout(function () {
                     if (!initialized) deferredInitialization();
-                    input.focus();
-                    input.select();
+                    input.trigger("focus");
+                    input.trigger("select");
                 }, 0);
             });
             labelNode.addEventListener("click", function (e) {
@@ -108,7 +108,7 @@
                 if (open)
                     hideList();
                 else
-                    labelNode.focus();
+                    labelNode.trigger("focus");
                 e.preventDefault();
                 e.stopPropagation();
             });
@@ -267,7 +267,7 @@
 
         setCurrentItem = function (value) {
             if (currentItem != null) items.eq(currentItem).removeClass("Selected");
-            currentItem = items.size() == 0 ? null : value < 0 ? 0 : items.size() <= value ? items.size() - 1 : value;
+            currentItem = items.length == 0 ? null : value < 0 ? 0 : items.length <= value ? items.length - 1 : value;
             if (currentItem != null) {
                 var
                     item = items.eq(currentItem).addClass("Selected"),
@@ -375,7 +375,7 @@
                 });
 
             items = $("a", list);
-            if (items.size() == 0)
+            if (items.length == 0)
                 list.append(noRow);
             setWidth();
         };

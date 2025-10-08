@@ -4,7 +4,7 @@
         element = $(selector).hide(),
         noRecordRow = $("tr.NoRecord", selector).remove(),
         prototypeRow = $("tbody tr", selector).remove(),
-        columnNumber = prototypeRow.children().size(),
+        columnNumber = prototypeRow.children().length,
         tableBody = $("tbody", element),
         paginator,
 

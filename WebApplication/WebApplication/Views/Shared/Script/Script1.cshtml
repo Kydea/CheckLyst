@@ -67,8 +67,6 @@
     });
 
 
-    if (Modernizr.touch) matematici.touch.init();
-
     matematici.appMode = "@(ViewBag.AppMode ? "1" : "0")" == "1";
     matematici.navigator.setBasePath("@Url.Content("~/")").setLastPath("@Request.RawUrl");
     matematici.navigator.checkEventHandlers();
@@ -125,21 +123,21 @@
                     container = $("div.Blip"),
                     button = $("div.Blip");
 
-                if (container.size() == 0) {
+                if (container.length == 0) {
                     container = $("div.Dialog");
                     button = $(selector, container);
                 }
 
-                if (container.size() == 0) {
+                if (container.length == 0) {
                     container = $("div.Popup, div.CheckListGrid").last();
                     button = $(selector, container);
                 }
 
-                if (container.size() == 0)
+                if (container.length == 0)
                     button = $(selector);
 
-                if (button.size() > 0) {
-                    button.last().click();
+                if (button.length > 0) {
+                    button.last().trigger("click");
                     e.preventDefault();
                 }
 

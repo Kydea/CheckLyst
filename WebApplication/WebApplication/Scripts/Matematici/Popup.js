@@ -46,7 +46,7 @@ matematici.popup = function () {
 				if (button.defaultButton) button.content.addClass("DefaultButton GreyGreenButton");
 				if (button.cancelButton)
 					addCloseButton(function () {
-						button.content.click();
+						button.content.trigger("click");
 					});
 				if (button.id) button.content.attr("id", button.id);
 			}

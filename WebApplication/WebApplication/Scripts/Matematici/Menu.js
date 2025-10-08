@@ -90,7 +90,7 @@
 
 		$(".MenuItem .SubMenu", menu).each(function () {
 			var item = $(this);
-			item.parent().toggle(item.children().filter(":not(.Hidden)").size() > 0);
+			item.parent().toggle(item.children().filter(":not(.Hidden)").length > 0);
 		});
 	};
 
