@@ -199,20 +199,12 @@
     <Content Include="Content\Theme\ItemsList.css">
       <DependentUpon>ItemsList.scss</DependentUpon>
     </Content>
-    <Content Include="Content\Theme\jQuery-UI.css">
-      <DependentUpon>jQuery-UI.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-icons_222222_256x240.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-icons_454545_256x240.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-icons_888888_256x240.png" />
-    <Content Include="Content\Theme\JQuery-UI\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\Theme\jquery-ui.css" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_444444_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_555555_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_777620_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_777777_256x240.png" />
+    <Content Include="Content\Theme\JQuery-UI\ui-icons_cc0000_256x240.png" />
     <Content Include="Content\Theme\JQuery-UI\ui-icons_ffffff_256x240.png" />
     <Content Include="Content\Theme\Layout.css">
       <DependentUpon>Layout.scss</DependentUpon>
@@ -326,6 +318,8 @@
     <Content Include="Scripts\Instances\LifeCycle.js" />
     <Content Include="Scripts\Instances\Overview.js" />
     <Content Include="Scripts\Instances\InstanceLink.js" />
+    <Content Include="Scripts\Libraries\jquery-migrate-3.4.1.js" />
+    <Content Include="Scripts\Libraries\jquery-ui-1.14.1.js" />
     <Content Include="Scripts\Libraries\pako.1.0.11.js" />
     <Content Include="Scripts\Includes\zxing-0.18.5.js" />
     <Content Include="Scripts\Matematici\Profiler.js" />
@@ -449,28 +443,18 @@
     <Content Include="Content\Theme\ReportEditor.scss" />
     <Content Include="Content\Theme\InstanceOverview.scss" />
     <Content Include="Content\Theme\InstanceLifeCycle.scss" />
-    <None Include="Scripts\Libraries\jquery-2.1.4.intellisense.js" />
-    <Content Include="Scripts\Libraries\jquery-2.1.4.js" />
-    <Content Include="Scripts\Libraries\jquery-ui-1.11.4.js" />
+    <Content Include="Scripts\Libraries\jquery-3.7.1.js" />
     <Content Include="Scripts\Libraries\jquery.activity-indicator-1.0.0.js" />
     <Content Include="Scripts\Libraries\jquery.address-1.6.js" />
-    <Content Include="Scripts\Libraries\jquery.cookie.js" />
     <Content Include="Scripts\Libraries\jquery.keyfilter.js" />
-    <Content Include="Scripts\Libraries\jquery.unobtrusive-ajax.js" />
-    <Content Include="Scripts\Libraries\jquery.unveil.js" />
-    <None Include="Scripts\Libraries\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\Libraries\jquery.validate.js" />
     <Content Include="Scripts\Libraries\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\Libraries\knockout-3.3.0.js" />
-    <Content Include="Scripts\Libraries\MicrosoftAjax.js" />
-    <Content Include="Scripts\Libraries\modernizr-2.8.3.js" />
     <Content Include="Scripts\Libraries\moment-2.24.0.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
     <Content Include="Scripts\Matematici\Clipboard.js" />
     <Content Include="Scripts\Matematici\Popup.js" />
     <Content Include="Scripts\Matematici\Dialog.js" />
-    <Content Include="Scripts\Matematici\Easings.js" />
     <Content Include="Scripts\Matematici\Extensions.js" />
     <Content Include="Scripts\Matematici\Hamburger.js" />
     <Content Include="Scripts\Matematici\Loader.js" />
@@ -478,7 +462,6 @@
     <Content Include="Scripts\Matematici\Navigator.js" />
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
-    <Content Include="Scripts\Matematici\Touch.js" />
     <Content Include="Scripts\Prototypes\ParametersProperty.js" />
     <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
@@ -624,7 +607,6 @@
     <Content Include="Content\Theme\Grid.scss" />
     <Content Include="Content\Theme\Help.scss" />
     <Content Include="Content\Theme\Instance.scss" />
-    <Content Include="Content\Theme\jQuery-UI.scss" />
     <Content Include="Content\Theme\Layout.scss" />
     <Content Include="Content\Theme\Loader.scss" />
     <Content Include="Content\Theme\Login.scss" />
@@ -654,7 +636,6 @@
     <Content Include="Views\Shared\Script\Script1.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Default\Dashboard.cshtml" />
-    <Content Include="Scripts\Libraries\jquery-2.1.4.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
@@ -676,9 +657,6 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.4\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin, Version=4.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
