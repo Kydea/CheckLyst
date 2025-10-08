@@ -42,14 +42,14 @@ namespace CheckListManager.Common.Logic.Services
             }
         }
         
-        public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken))
+        public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default)
         {
             var body = Encoding.UTF8.GetBytes(message);
             _channel.BasicPublish(DefaultExchange, queueName, null, body);
             return Task.CompletedTask;
         }
 
-        public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken))
+        public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default)
             => SendMessageAsync(queueName, data.ToJson(), cancellationToken);
 
         private async Task<T[]> ReceiveAsync<T>(string queueName, Func<string, ulong, T> handler)
@@ -60,7 +60,7 @@ namespace CheckListManager.Common.Logic.Services
                 if (result == null)
                     return new T[0];
                 
-                var body = result.Body;
+                var body = result.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
                 var item = handler(message, result.DeliveryTag);
@@ -74,18 +74,18 @@ namespace CheckListManager.Common.Logic.Services
         }
 
         public Task<QueueMessage[]> ReceiveMessagesAsync(string queueName, int maxNumberOfMessages = 10,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return ReceiveAsync(queueName, (message, tag) => new QueueMessage(tag.ToString(), message));
         }
 
         public Task<QueueMessage<T>[]> ReceiveObjectsAsync<T>(string queueName, int maxNumberOfMessages = 10,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             return ReceiveAsync(queueName, (message, tag) => new QueueMessage<T>(tag.ToString(), message.ToObject<T>()));
         }
 
-        public Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default(CancellationToken))
+        public Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default)
         {
             _channel.BasicAck(ulong.Parse(messageHandle), false);
             return Task.CompletedTask;

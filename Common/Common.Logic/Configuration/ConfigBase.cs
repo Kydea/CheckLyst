@@ -17,6 +17,7 @@ using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 using RabbitMQ.Client;
 using RedLockNet;
 using RedLockNet.SERedis;
@@ -206,7 +207,7 @@ namespace CheckListManager.Common.Logic.Configuration
 
 		private IMapper CreateMapper()
 		{
-			return new Mapper(new MapperConfiguration(OnCreateMapper));
+            return new Mapper(new MapperConfiguration(OnCreateMapper, NullLoggerFactory.Instance));
 		}
 
 		protected virtual void OnCreateMapper(IMapperConfigurationExpression mapperConfig)

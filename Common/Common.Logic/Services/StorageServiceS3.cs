@@ -90,7 +90,7 @@ namespace CheckListManager.Common.Logic.Services
                 }
 
                 continuationToken = response.ContinuationToken;
-            } while (response.IsTruncated);
+            } while (response.IsTruncated == true);
 
             return true;
         }
