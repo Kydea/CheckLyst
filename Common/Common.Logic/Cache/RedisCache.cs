@@ -4,20 +4,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using Newtonsoft.Json;
-using RedLock;
+using RedLockNet;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
 using StackExchange.Redis;
 
 namespace CheckListManager.Common.Logic.Cache
 {
 	public class RedisCache : IRedisCache
 	{
-		private readonly Lazy<IRedisLockFactory> _lockFactory;
+		private readonly Lazy<RedLockFactory> _lockFactory;
 
 		private ITransaction _transaction;
 
 		private Lazy<IDatabase> Database { get; }
 
-		public RedisCache(IRedisSetup redisSetup, Lazy<IRedisLockFactory> lockFactory)
+		public RedisCache(IRedisSetup redisSetup, Lazy<RedLockFactory> lockFactory)
 		{
 			_lockFactory = lockFactory;
 			Database = new Lazy<IDatabase>(() => redisSetup.Connection.Value.GetDatabase());
@@ -131,7 +133,7 @@ namespace CheckListManager.Common.Logic.Cache
 			if (!retry.HasValue)
 				retry = TimeSpan.FromSeconds(1); //time between two attempts
 
-			return _lockFactory.Value.CreateAsync(ResolveKey(key, regionName), expiry.Value, wait.Value, retry.Value, cancellationToken)
+			return _lockFactory.Value.CreateLockAsync(ResolveKey(key, regionName), expiry.Value, wait.Value, retry.Value, cancellationToken)
 				.ContinueWith(t => new LockObject(t.Result), cancellationToken);
 		}
 

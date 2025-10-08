@@ -18,8 +18,9 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.Services;
 using RabbitMQ.Client;
-using RedLock;
-
+using RedLockNet;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
 using Parameter = Autofac.Core.Parameter;
 
 namespace CheckListManager.Common.Logic.Configuration
@@ -60,12 +61,19 @@ namespace CheckListManager.Common.Logic.Configuration
 				.As<IRedisSetup>()
 				.SingleInstance();
 
-			builder.RegisterType<RedisLockFactory>()
-				.As<IRedisLockFactory>()
-				.SingleInstance()
-				.UsingConstructor(typeof(RedisLockEndPoint[]));
+            builder.Register(c =>
+            {
+                var redisSetup = c.Resolve<IRedisSetup>();
+                var multiplexers = new List<RedLockMultiplexer>
+				{
+					new RedLockMultiplexer(redisSetup.Connection.Value)
+				};
 
-			builder.RegisterAssemblyTypes(Assemblies)
+                return RedLockFactory.Create(multiplexers);
+            })
+            .SingleInstance();
+
+            builder.RegisterAssemblyTypes(Assemblies)
 				.AssignableTo<ISingletonService>()
 				.AsImplementedInterfaces()
 				.SingleInstance();
@@ -78,7 +86,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			builder.RegisterInstance(CreateMapper())
 				.SingleInstance();
 
-			builder.RegisterType<RedisLockEndPoint>()
+			builder.RegisterType<RedLockEndPoint>()
 				.AsSelf()
 				.SingleInstance()
 				.OnActivating(OnConfiguringRedis);
@@ -159,7 +167,7 @@ namespace CheckListManager.Common.Logic.Configuration
 			}
 		}
 
-		private static void OnConfiguringRedis(IActivatingEventArgs<RedisLockEndPoint> e)
+		private static void OnConfiguringRedis(IActivatingEventArgs<RedLockEndPoint> e)
 		{
 			var configuration = e.Context.Resolve<IConfigurationService>();
 			e.Instance.EndPoint = new DnsEndPoint(configuration.RedisHost, configuration.RedisPort);
