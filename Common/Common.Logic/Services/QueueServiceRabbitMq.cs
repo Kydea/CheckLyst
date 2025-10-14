@@ -42,14 +42,14 @@ namespace CheckListManager.Common.Logic.Services
             }
         }
         
-        public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default)
+        public Task SendMessageAsync(string queueName, string message, CancellationToken cancellationToken = default(CancellationToken))
         {
             var body = Encoding.UTF8.GetBytes(message);
             _channel.BasicPublish(DefaultExchange, queueName, null, body);
             return Task.CompletedTask;
         }
 
-        public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default)
+        public Task SendObjectAsync<T>(string queueName, T data, CancellationToken cancellationToken = default(CancellationToken))
             => SendMessageAsync(queueName, data.ToJson(), cancellationToken);
 
         private async Task<T[]> ReceiveAsync<T>(string queueName, Func<string, ulong, T> handler)
@@ -85,7 +85,7 @@ namespace CheckListManager.Common.Logic.Services
             return ReceiveAsync(queueName, (message, tag) => new QueueMessage<T>(tag.ToString(), message.ToObject<T>()));
         }
 
-        public Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default)
+        public Task DeleteMessageAsync(string queueName, string messageHandle, CancellationToken cancellationToken = default(CancellationToken))
         {
             _channel.BasicAck(ulong.Parse(messageHandle), false);
             return Task.CompletedTask;
