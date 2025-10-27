@@ -1,128 +1,115 @@
-﻿matematici.DatePicker = function (selector) {
-	var
-		datePicker = this,
-		element = $(selector),
-		date,
-		calendar = null,
-		min,
-		max,
-		needToParse = false,
+﻿matematici.DatePicker = function (node, min, max) {
+    var
+        datePicker = this,
+        needToParse,
+        icon,
 
-		isEnabled = function () {
-			return !element.hasClass("Disabled") && !element.prop("readonly");
-		},
+        isEnabled = function () {
+            return !node.classList.contains("Disabled") && !node.hasAttribute("readonly");
+        },
 
-		getCurrentDate = function () {
-			var today = new Date();
-			today.setHours(0, 0, 0, 0);
-			return today;
-		},
+        open = function (e) {
+            if (!isEnabled()) return;
 
-		createCalendar = function () {
-			calendar = matematici.DatePicker.calendar = new matematici.Calendar();
-		},
+            e.preventDefault();
+            e.stopPropagation();
 
-		open = function (e) {
-			if (!isEnabled()) return;
+            matematici.elements.window.on("resize.datePicker", close);
+            node.focus();
+            node.select();
 
-			e.preventDefault();
-			e.stopPropagation();
+            if (matematici.calendar == null)
+                matematici.calendar = new matematici.Calendar();
+            else if (matematici.calendar.isVisible() && matematici.calendar.getDatePicker() == datePicker)
+                return;
 
-			element.focus().select();
+            matematici.calendar.setDates(null);
+            matematici.calendar.setRange(min, max);
+            matematici.calendar.setDatePicker(datePicker);
 
-			if (calendar == null)
-				createCalendar();
-			else if (calendar.isVisible() && calendar.getDatePicker() == datePicker)
-				return;
+            var
+                bodyOffset = document.body.getBoundingClientRect(),
+                offset = node.getBoundingClientRect();
+            matematici.calendar.open(offset.top - bodyOffset.top + node.offsetHeight + 5, offset.left - bodyOffset.left);
 
-			calendar.setDates(null);
-			calendar.setRange(min, max);
-			calendar.setDatePicker(datePicker);
-			var offset = element.offset();
-			calendar.open(offset.top + element.outerHeight() + 5, offset.left);
+            setTimeout(function () {
+                $(document).on("click.datePicker", close);
+            }, 0);
+        },
 
-			setTimeout(function () {
-				$(document).on("click.datePicker", close);
-			}, 0);
-		},
+        close = function () {
+            matematici.calendar.close();
+            matematici.elements.window.off("resize.datePicker");
+            $(document).off("click.datePicker");
+        },
 
-		setDate = function (value, local) {
-			var formattedDate = matematici.dateFormatter.format(value, !!local);
-			date = formattedDate.valid ? moment(value).toDate() : null;
-			element
-				.data("date", date)
-				.val(formattedDate.date)
-				.change();
-		},
+        parse = function () {
+            try {
+                var value = node.value;
+                if (!!value) {
+                    var momentDate = moment(value, matematici.dateFormatter.dateFormat);
+                    node.value = momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "";
+                } else
+                    node.value = "";
+            } catch (error) {
+                console.log(error, node.value);
+                node.value = "";
+            }
+            if (matematici.calendar) matematici.calendar.close();
+        },
 
-		close = function () {
-			calendar.close();
-			$(document).off("click.datePicker");
-		},
+        initialize = function () {
+            node.setAttribute("autocomplete", "off");
+            node.addEventListener("change", function () {
+                if (needToParse) parse();
+            });
+            node.addEventListener("focus", function () { needToParse = true; });
+            node.addEventListener("blur", function () { needToParse = false; });
+            node.addEventListener("click", open);
 
-		parse = function () {
-			try {
-				var value = element.val();
-				if (!!value) {
-					var momentDate = moment(value, matematici.dateFormatter.dateFormat);
-					date = momentDate.isValid() ? momentDate.toDate() : null;
-					element.val(momentDate.isValid() ? momentDate.format(matematici.dateFormatter.dateFormat) : "");
-				} else {
-					date = null;
-					element.val("");
-				}
-				calendar.close();
-			}
-			catch (error) {
-				console.log(error, date, element.val());
-				date = null;
-				element.val("");
-			}
-			element.data("date", date)
-		},
+            icon = document.createElement("i");
+            icon.className = "Icon fal fa-calendar-alt";
+            icon.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (matematici.calendar.isVisible() && matematici.calendar.getDatePicker() == datePicker)
+                    close();
+                else
+                    open(e);
+            });
+            node.parentNode.insertBefore(icon, node);
 
-		setup = function () {
-			if (!matematici.DatePicker.calendar) createCalendar();
-			calendar = matematici.DatePicker.calendar
+            matematici.DatePicker.map.set(node, datePicker);
+            parse();
+        },
 
-			var
-				minAttribute = element.data("min"),
-				maxAttribute = element.data("max");
-			if (minAttribute) min = new Date(minAttribute);
-			if (maxAttribute) max = new Date(maxAttribute);
+        destroy = function () {
+            icon.remove();
+            delete icon;
+            matematici.DatePicker.map.delete(node)
+            delete datePicker;
+        };
 
-			element
-				.data("datePicker", datePicker)
-				.on("change", function () {
-					if (needToParse) parse();
-				})
-				.on("focus", function () { needToParse = true; })
-				.on("blur", function () { needToParse = false; })
-				.on("click", open);
+    this.setValue = function (value) {
+        node.value = value;
+        parse();
+        node.dispatchEvent(new Event('change', { 'bubbles': true }));
+    };
 
-			$("<i />")
-				.addClass("Icon fi flaticon-calendar")
-				.insertBefore(element)
-				.on("click", function (e) {
-					e.preventDefault();
-					if (calendar.isVisible() && calendar.getDatePicker() == datePicker) close();
-					else open(e);
-				});
+    this.getValue = function () {
+        return node.value;
+    };
 
-			matematici.elements.window.on("resize", function () {
-				close();
-			});
+    this.destroy = destroy;
 
-			parse();
-		};
-
-	this.setDate = function (value, local) {
-		setDate(value, local);
-	};
-
-	this.getDate = function () {
-		return date;
-	};
-
-	setup();
+    initialize();
 };
+
+matematici.DatePicker.map = new WeakMap();
+matematici.DatePicker.get = function (node) {
+    return matematici.DatePicker.map.get(node);
+};
+
+matematici.destroyers.push(function (context) {
+    matematici.DatePicker.map = new WeakMap();
+    matematici.DatePicker.current = null;
+});

@@ -11,35 +11,38 @@ matematici.dialog = function () {
 			if (button.textarea) {
 				var textArea = $("<textarea />").addClass("Textarea");
 				button.content = $("<div />");
-				button.content.prepend(textArea);
-				if (button.text) button.content.prepend($("<label />").text(button.text));
+                button.content.prepend(textArea);
 				if (button.val) textArea.val(button.val);
 				if (button.readOnly) textArea.prop("readonly", true).addClass("ReadOnly");
 				if (button.handler) textArea.on("click", button.handler);
 				if (button.height) textArea.height(button.height);
+                if (button.marginTop) textArea.css("margin-top", button.marginTop);
 				container.append(button.content);
 			} else if (button.text || button.hidden) {
-				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text).on("click", function () {
-					if (button.handler) {
-						if (!button.handler.call(this, button.data)) {
+				button.content = $("<a />").addClass("Button").text((button.icon ? " " : "") + button.text);
+
+				if (button.disabled)
+					button.content.addClass("Disabled");
+				else
+					button.content.on("click", function () {
+						if (!button.handler)
+							matematici.dialog.close();
+						else if (!button.handler.call(this, button.data)) {
 							matematici.dialog.close();
 						}
-					} else
-						matematici.dialog.close();
-				});
-				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
+					});
+                if (button.icon) button.content.prepend($("<i />").addClass("Icon " + (options.iconPrefix || "fa") + " fa-" + button.icon));
 				if (button.hidden) button.content.hide();
+
 				if (button.defaultButton) button.content.addClass("DefaultButton");
 				if (button.title) button.content.attr("title", button.title);
-				if (button.cancelButton) {
+				if (button.cancelButton) 
 					container
-						.append($("<a />").attr("href", "#").addClass("CloseButton")
-							.append($("<i />").addClass("fi flaticon-times-circle"))
+                        .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
+                            .append($("<i />").addClass("fas fa-times-circle"))
 							.on("click", function () {
 								button.content.click();
 							}));
-					button.content.addClass("CancelButton");
-				}
 				if (button.id) button.content.attr("id");
 
 				buttons.prepend(button.content);
@@ -73,8 +76,8 @@ matematici.dialog = function () {
 				element.addClass(options.cssClass);
 				matematici.elements.body.addClass("Dialog-" + options.cssClass);
 			}
-			if (options.title)
-				container.append($("<h2 />").html(options.title));
+            if (options.title)
+                container.append($("<h2 />").html(options.title));
 
 			if (options.content) container.append($("<div />").addClass("Content").append(options.content));
 			if (options.buttons) setButtons(options.buttons);
@@ -86,7 +89,12 @@ matematici.dialog = function () {
 			element.show();
 		};
 
-	return {
+    return {
+
+        center: function () {
+            autoCenter.center();
+        },
+        
 		close: function () {
 			if (element) {
 				if (closeHandler) closeHandler();
@@ -99,7 +107,7 @@ matematici.dialog = function () {
 				autoCenter.destroy();
 				closeHandler = null;
 			}
-		},
+        },
 
 		getData: function () {
 			return options.data;
@@ -112,8 +120,8 @@ matematici.dialog = function () {
 		show: function (titleOrSettings, content, buttons) {
 			if (content || buttons) {
 				options.title = titleOrSettings;
-				options.content = content || "";
-				options.buttons = buttons || { text: "ok", icon: "check" };
+                options.content = content || "";
+                options.buttons = buttons || { text: "ok", icon: "check", defaultButton: true, cancelButton: true };
 			} else if (titleOrSettings)
 				options = titleOrSettings;
 
@@ -132,7 +140,7 @@ matematici.dialog = function () {
 		},
 
 		popupMenu: function (buttons, data) {
-			titleOrSettings = { title: "", content: "", cssClass: "PopupMenu", buttons: buttons, data: data };
+			titleOrSettings = { title: "", content: "", cssClass: "PopupMenu", buttons: buttons, data: data, iconPrefix: "fal" };
 			matematici.dialog.show(titleOrSettings);
 		},
 
@@ -154,7 +162,7 @@ matematici.dialog = function () {
 
 		setCloseHandler: function (value) {
 			setCloseHandler(value);
-		}
+        }
 	};
 
 }();
@@ -172,7 +180,11 @@ matematici.dialog = function () {
             - or -
             text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
             handler - type: function, description: called when the button is clicked
-            icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
+            icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
+			hidden - type: boolean, description: the button is hidden
+			disabled - type: boolean, description: the button is disabled
+			defaultButton - type: boolean, description: the click action is invoked when user press return
+			cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)
 
     or:
         show(settings) 
@@ -190,8 +202,9 @@ matematici.dialog = function () {
                 - or -
                 text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
                 handler - type: function, description: called when the button is clicked
-                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
+                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
 				hidden - type: boolean, description: the button is hidden
+				disabled - type: boolean, description: the button is disabled
 				defaultButton - type: boolean, description: the click action is invoked when user press return
 				cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)
 
@@ -201,6 +214,10 @@ matematici.dialog = function () {
 
     or:
         error(settings)
+        see show(...)
+
+    or: 
+        popupMenu(buttons)
         see show(...)
 
  */

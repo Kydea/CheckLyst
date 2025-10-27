@@ -1,15 +1,15 @@
 matematici.popup = function () {
-
 	var
 		element,
 		container,
 		options = {},
 		autoCenter,
-		closeHandler,
+        closeHandler,
+        title,
 
 		ajax = function () {
 			if (options.errorHandler)
-				options.aiax.suppressErrors = true;
+				options.ajax.suppressErrors = true;
 			$.ajax(options.ajax)
 				.done(function (result) {
 					options.content = result;
@@ -41,12 +41,12 @@ matematici.popup = function () {
 					} else
 						matematici.popup.close();
 				});
-				if (button.icon) button.content.prepend($("<i />").addClass("fi flaticon-" + button.icon));
+				if (button.icon) button.content.prepend($("<i />").addClass("Icon fa fa-" + button.icon));
 				if (button.hidden) button.content.hide();
 				if (button.defaultButton) button.content.addClass("DefaultButton GreyGreenButton");
 				if (button.cancelButton)
 					addCloseButton(function () {
-						button.content.click();
+						button.content.trigger("click");
 					});
 				if (button.id) button.content.attr("id", button.id);
 			}
@@ -58,7 +58,7 @@ matematici.popup = function () {
 		addCloseButton = function (handler) {
 			container
 				.append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
-					.append($("<i />").addClass("fi flaticon-times-circle"))
+                    .append($("<i />").addClass("fas fa-times-circle"))
 					.on("click", handler));
 		},
 
@@ -89,7 +89,7 @@ matematici.popup = function () {
 				matematici.elements.body.addClass("Popup-" + options.cssClass);
 			}
 			if (options.title)
-				container.append($("<h2 />").html(options.title));
+                container.append(title = $("<h2 />").html(options.title));
 
 			if (options.content) container.append(options.content);
 			if (options.buttons) setButtons(options.buttons);
@@ -126,7 +126,11 @@ matematici.popup = function () {
 
 		getSender: function () {
 			return options.sender;
-		},
+        },
+
+        getOptions: function () {
+            return options;
+        },
 
 		show: function (settings) {
 			options = settings;
@@ -145,11 +149,19 @@ matematici.popup = function () {
 
 		getElement: function () {
 			return element;
-		},
+        },
+
+        getButtonsBar: function () {
+            return container.children("div.Buttons");
+        },
 
 		getResult: function () {
 			return result;
-		},
+        },
+
+        getTitle: function () {
+            return $("h2", element);
+        },
 
 		setButtons: function (value) {
 			setButtons(value);
@@ -164,7 +176,7 @@ matematici.popup = function () {
 		},
 
 		center: function () {
-			autoCenter.center();
+			autoCenter && autoCenter.center();
 		},
 
 		addCloseButton: function (handler) {
@@ -196,7 +208,7 @@ matematici.popup = function () {
                 - or -
                 text - type: String, description: the text of the button (i.e. <a class="Button">[text]</a>)
                 handler - type: function, description: called when the button is clicked
-                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fi flaticon[icon]"></i> [text]</a>)
+                icon - type: function, description: the icon of the button (i.e. <a class="Button"><i class="fa fa-[icon]"></i> [text]</a>)
 				hidden - type: boolean, description: the button is hidden
 				defaultButton - type: boolean, description: the click action is invoked when user press return
 				cancelButton - type: boolean, description: the click action is invoked when user press esc, a close button accociated is displayed (also if this button is hidden)

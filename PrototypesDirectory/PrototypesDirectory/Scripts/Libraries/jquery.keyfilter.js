@@ -128,19 +128,19 @@ by akzhan (https://github.com/akzhan)
     };
 
     $.fn.keyfilter = function (re) {
-        return this.keypress(function (e) {
+        return this.on('keydown', function (e) {
             if (e.ctrlKey || e.altKey) {
                 return;
             }
             var k = getKey(e);
-            if ($.browser.mozilla && (isNavKeyPress(e) || k == Keys.BACKSPACE || (k == Keys.DELETE && e.charCode == 0))) {
+            if (isNavKeyPress(e) || k === Keys.BACKSPACE || k === Keys.DELETE) {
                 return;
             }
             var c = getCharCode(e), cc = String.fromCharCode(c), ok = true;
             if (!$.browser.mozilla && (isSpecialKey(e) || !cc)) {
                 return;
             }
-            if ($.isFunction(re)) {
+            if (typeof re === 'function') {
                 ok = re.call(this, cc);
             }
             else {
@@ -159,7 +159,7 @@ by akzhan (https://github.com/akzhan)
         version: 1.7
     });
 
-    $(document).ready(function () {
+    $(function () {
         var tags = $('input[class*=mask],textarea[class*=mask]');
         for (var key in $.fn.keyfilter.defaults.masks) {
             tags.filter('.mask-' + key).keyfilter($.fn.keyfilter.defaults.masks[key]);

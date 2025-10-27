@@ -1,25 +1,56 @@
 ﻿matematici.SearchPage = function (options) {
-	var
-		searchPage = this,
-		grid,
-		form,
-		paginator,
-		filtered = false,
+    var
+        searchPage = this,
+        grid,
+        form,
+        paginator,
+        filtered = false,
+        advancedSearchPanel = $("div.AdvancedSearch", options.filterFormSelector),
+        advancedSearchButton,
+        advancedSearchMode = false,
 
-		filterHandler = function (result) {
-			grid.update(result.data);
-			paginator.setPage(result.currentPage, result.pagesCount);
-			filtered = true;
-		},
+        filterHandler = function (result) {
+            grid.update(result.data, options.updateHandler);
+            paginator.setPage(result.currentPage, result.pagesCount);
+            filtered = true;
+            options.filterHandler && options.filterHandler(result);
+        },
 
-		closeHandler = function () {
-			matematici.canClose = true;
-			matematici.save = null;
-			if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
-		},
+        closeHandler = function () {
+            matematici.canClose = true;
+            matematici.save = null;
+            if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
+        },
+
+        setAdvancedSearchMode = function (value) {
+            advancedSearchMode = value;
+
+            if (advancedSearchPanel.length == 0) return;
+
+            if (advancedSearchMode) {
+                advancedSearchPanel.slideDown();
+                advancedSearchButton.addClass("Open");
+                grid.getElement().addClass("AdvancedSearch")
+
+                setTimeout(function () {
+                    $("select.AutoComplete", advancedSearchPanel).each(function (index) {
+                        var autoComplete = matematici.AutoComplete.get(this);
+                        if (autoComplete) autoComplete.refresh();
+                    });
+                }, 0);
+            } else {
+                advancedSearchPanel.slideUp();
+                advancedSearchButton.removeClass("Open");
+                grid.getElement().removeClass("AdvancedSearch")
+            };
+        },
+
+        toggleAdvancedSearch = function () {
+            setAdvancedSearchMode(!advancedSearchMode);
+        },
 
 		setup = function () {
-			options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole(options.pageName + "#Edit#");
+            options.readOnly = options.readOnly != null ? options.readOnly : !matematici.tokenManager.checkRole((options.functionGroup || options.pageName) + "#Edit#");
 			if (!options.readOnly)
 				new matematici.ActionBar("div.ActionBar").add("Add", function () {
 					matematici.popup.show({
@@ -28,15 +59,22 @@
 						sender: form,
 						closeHandler: closeHandler
 					});
-				}, null, "plus");
+                }, null, "plus");
 
-			$(options.filterFormSelector).append(
-				$("<a />")
-					.attr({ href: "#", id: "ApplyButton" })
-					.addClass("Button GreyYellowButton DefaultButton")
-					.text("search")
-					.prepend($("<i />").addClass("fi flaticon-arrow-right"))
-			);
+            $(options.filterFormSelector).append($("<a />")
+                .attr({ href: "#", id: "ApplyButton" })
+                .addClass("Button GreyYellowButton DefaultButton")
+                .text(options.searchButtonLabel || "search")
+                .prepend($("<i />").addClass("Icon fa fa-caret-right"))
+            );
+
+            if (advancedSearchPanel.length == 1)
+                advancedSearchButton = $("<a />")
+                    .addClass("AdvancedSearch")
+                    .text("Advanced search")
+                    .on("click", toggleAdvancedSearch)
+                    .attr("href", "#")
+                    .append($("<i >").addClass("Icon fal fa-caret-down"));
 
 			new matematici.Page({
 				name: options.pageName,
@@ -50,13 +88,14 @@
 								sender: form,
 								closeHandler: closeHandler
 							});
-						}
+                        },
+                        setCellValueHandler: options.setCellValueHandler
 					}),
 					form = new matematici.Form(options.filterFormSelector, {
 						bindEvent: options.bindEvent,
 						applyButton: {
 							button: "#ApplyButton",
-							event: "GetData",
+							event: options.getDataEvent || "GetData",
 							handler: filterHandler,
 						},
 						searchPage: searchPage
@@ -66,9 +105,13 @@
 					})
 				],
 
-				breadcrumbs: options.breadCrumbs
-			});
-		};
+                breadcrumbs: options.breadCrumbs,
+                helpPage: options.helpPage
+            });
+
+            if (advancedSearchPanel.length == 1) 
+                form.getElement().addClass("AdvancedSearch").append(advancedSearchButton);
+        };
 
 	searchPage.isReadOnly = function () {
 		return options.readOnly;
@@ -76,7 +119,15 @@
 
 	searchPage.getForm = function () {
 		return form;
-	};
+    };
+
+    searchPage.isAdvancedSearchMode = function () {
+        return advancedSearchMode;
+    };
+
+    searchPage.setAdvancedSearchMode = function (value) {
+        setAdvancedSearchMode(value); 
+    };
 
 	setup();
 }

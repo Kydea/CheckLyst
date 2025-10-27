@@ -1,5 +1,4 @@
 ﻿matematici.Calendar = function (selector) {
-
     var
         calendar = this,
         dates = [],
@@ -40,8 +39,8 @@
             element
                 .addClass("Calendar")
                 .append(elements.month = $("<span />").addClass("Month"))
-				.append(elements.previous = $("<a />").addClass("Arrow PreviousMonth").attr("href", "#").append($("<i />").addClass("fi flaticon-angle-left")))
-				.append(elements.next = $("<a />").addClass("Arrow NextMonth").attr("href", "#").append($("<i />").addClass("fi flaticon-angle-right")))
+				.append(elements.previous = $("<a />").addClass("Arrow PreviousMonth").attr("href", "#").append($("<i />").addClass("fa fa-caret-left")))
+				.append(elements.next = $("<a />").addClass("Arrow NextMonth").attr("href", "#").append($("<i />").addClass("fa fa-caret-right")))
                 .append(elements.table = $("<table />").addClass("Plain")
                     .append($("<tr />")
                         .append($("<th />").text(matematici.Calendar.translations.it.dayInitials[1]))
@@ -73,9 +72,8 @@
                 )
                 .on("click", "td.Active", function () {
                     var item = $(this);
-					if (clickHandler) clickHandler(item);
-					var value = matematici.dateFormatter.parse(values.year, values.month, item.text(), true).toDate();
-					if (elements.datePicker) elements.datePicker.setDate(value, true);
+                    if (clickHandler) clickHandler(item);
+                    if (elements.datePicker) elements.datePicker.setValue(("" + values.year).padStart(4, "0") + "-" + ("" + values.month).padStart(2, "0") + "-" + ("" + item.text()).padStart(2, "0"));
                     if (popup) calendar.close();
                 })
                 .on("click", "a.PreviousMonth.Active", function () {
@@ -89,7 +87,10 @@
                     e.preventDefault();
                 });
 
-            if (!popup) calendar.setDate(getCurrentDate());
+            if (!popup) {
+                var date = getCurrentDate();
+                calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
+            }
         }
 
     this.setMonth = function (month, year) {
@@ -134,7 +135,7 @@
                             for (index in attributes[datesIndex].data)
                                 cell.data(index, attributes[datesIndex].data[index]);
                         }
-                        date = new Date(date.setDate(date.getDate() + 1));
+                        date = new Date(date.setUTCDate(date.getUTCDate() + 1));
                     }
                 }
             }
@@ -142,14 +143,19 @@
         });
     }
 
-	this.setDate = function (value) {
-        values.date = value;
-        calendar.setMonth(value.getUTCMonth() + 1, value.getUTCFullYear());
-    }
-
     this.setDatePicker = function (value) {
-		elements.datePicker = value;
-		calendar.setDate(elements.datePicker.getDate() || getCurrentDate());
+        elements.datePicker = value;
+        var
+            text = elements.datePicker.getValue(),
+            tokens = text == "" || !text ? [] : text.split("-"),
+            year = tokens.length == 3 ? parseInt(tokens[0]) : NaN,
+            month = tokens.length == 3 ? parseInt(tokens[1]) : NaN;
+
+        if (isNaN(year) || isNaN(month) || year < 0 || year > 9999 || month < 1 || month > 12) {
+            var date = getCurrentDate();
+            calendar.setMonth(date.getUTCMonth() + 1, date.getUTCFullYear());
+        } else
+            calendar.setMonth(month, year);
     };
 
     this.open = function (top, left) {
@@ -200,4 +206,3 @@ matematici.Calendar.translations = {
         days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     }
 }
-
