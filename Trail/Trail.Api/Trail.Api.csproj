@@ -118,15 +118,6 @@
     <Reference Include="RedLock.StrongName, Version=1.7.5.0, Culture=neutral, PublicKeyToken=1dffde0a6c007f07, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RedLock.net.StrongName.1.7.5\lib\net45\RedLock.StrongName.dll</HintPath>
     </Reference>
-    <Reference Include="RedLockNet.Abstractions.StrongName, Version=2.1.0.0, Culture=neutral, PublicKeyToken=1dffde0a6c007f07, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RedLock.net.StrongName.2.1.0\lib\net461\RedLockNet.Abstractions.StrongName.dll</HintPath>
-    </Reference>
-    <Reference Include="RedLockNet.SERedis.StrongName, Version=2.1.0.0, Culture=neutral, PublicKeyToken=1dffde0a6c007f07, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RedLock.net.StrongName.2.1.0\lib\net461\RedLockNet.SERedis.StrongName.dll</HintPath>
-    </Reference>
-    <Reference Include="StackExchange.Redis.StrongName, Version=1.2.6.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\StackExchange.Redis.StrongName.1.2.6\lib\net46\StackExchange.Redis.StrongName.dll</HintPath>
-    </Reference>
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
