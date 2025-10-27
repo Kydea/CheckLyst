@@ -63,13 +63,13 @@
       <HintPath>..\..\packages\Autofac.8.4.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="AutoMapper, Version=15.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoMapper.15.0.1\lib\netstandard2.0\AutoMapper.dll</HintPath>
+      <HintPath>..\..\packages\AutoMapper.15.1.0\lib\netstandard2.0\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AWSSDK.Core.4.0.1.1\lib\net472\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.Core.4.0.1.2\lib\net472\AWSSDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.SQS, Version=4.0.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AWSSDK.SQS.4.0.1.11\lib\net472\AWSSDK.SQS.dll</HintPath>
+      <HintPath>..\..\packages\AWSSDK.SQS.4.0.1.12\lib\net472\AWSSDK.SQS.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>..\..\packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
@@ -225,8 +225,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\..\packages\AWSSDK.SQS.4.0.1.11\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
-    <Analyzer Include="..\..\packages\AWSSDK.SQS.4.0.1.11\analyzers\dotnet\cs\SharedAnalysisCode.dll" />
+    <Analyzer Include="..\..\packages\AWSSDK.SQS.4.0.1.12\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
+    <Analyzer Include="..\..\packages\AWSSDK.SQS.4.0.1.12\analyzers\dotnet\cs\SharedAnalysisCode.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
