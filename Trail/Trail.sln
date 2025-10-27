@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Data", "..\Common\Common.Data\Common.Data.csproj", "{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{46EB6579-4A1B-4D35-9077-F44DA34E034E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Core", "..\Common\Common.Core\Common.Core.csproj", "{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{197A9710-7B74-44B7-8984-5FA487B873A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logic.Api", "..\Common\Common.Logic.Api\Common.Logic.Api.csproj", "{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}"
 EndProject
@@ -18,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Terminal", "Trail.Terminal\Trail.Terminal.csproj", "{23C7D6C0-62B6-481A-805F-88F26F56CF93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Data", "Trail.Data\Trail.Data.csproj", "{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Tests", "Trail.Tests\Trail.Tests.csproj", "{822E6AC6-7A4B-432D-9C34-FFD29132B4BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logic.Terminal", "..\Common\Common.Logic.Terminal\Common.Logic.Terminal.csproj", "{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}"
 EndProject
@@ -33,8 +29,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Api", "Trail.Api\Trail.Api.csproj", "{EC509A88-99D6-4DC2-943B-464E495F672D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Core.Web", "..\Common\Common.Core.Web\Common.Core.Web.csproj", "{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.QueueTests", "Trail.QueueTests\Trail.QueueTests.csproj", "{29EB545E-A5D5-4BD5-8C00-A70D6F31849F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,10 +60,6 @@ Global
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Release|Any CPU.Build.0 = Release|Any CPU
-		{822E6AC6-7A4B-432D-9C34-FFD29132B4BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{822E6AC6-7A4B-432D-9C34-FFD29132B4BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{822E6AC6-7A4B-432D-9C34-FFD29132B4BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{822E6AC6-7A4B-432D-9C34-FFD29132B4BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F42D2988-A390-4BE2-A5A1-58BB34B29BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -86,10 +76,6 @@ Global
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29EB545E-A5D5-4BD5-8C00-A70D6F31849F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29EB545E-A5D5-4BD5-8C00-A70D6F31849F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29EB545E-A5D5-4BD5-8C00-A70D6F31849F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29EB545E-A5D5-4BD5-8C00-A70D6F31849F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,10 +85,8 @@ Global
 		{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC} = {46EB6579-4A1B-4D35-9077-F44DA34E034E}
 		{BE658746-48A9-4AF2-B2B6-A13A7D6DE439} = {46EB6579-4A1B-4D35-9077-F44DA34E034E}
 		{351C3388-67B1-46EE-8FD1-5A63277B3C0C} = {46EB6579-4A1B-4D35-9077-F44DA34E034E}
-		{822E6AC6-7A4B-432D-9C34-FFD29132B4BA} = {197A9710-7B74-44B7-8984-5FA487B873A0}
 		{F42D2988-A390-4BE2-A5A1-58BB34B29BF0} = {46EB6579-4A1B-4D35-9077-F44DA34E034E}
 		{2FAFFF00-D5EB-4BB0-B70B-38290D88C871} = {46EB6579-4A1B-4D35-9077-F44DA34E034E}
-		{29EB545E-A5D5-4BD5-8C00-A70D6F31849F} = {197A9710-7B74-44B7-8984-5FA487B873A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16C90538-1A4A-446F-8656-8B7935BCB09C}
