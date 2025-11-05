@@ -16,14 +16,14 @@
 			var value = validityStartType.filter(":checked").val();
 			validityStartMessage.toggle(value != "2");
 			validityStart.toggle(value == "2").prev().toggle(value == "2");
-			validityStart.change();
+			validityStart.trigger("change");
 		},
 
 		validityEndChanged = function () {
 			var value = validityEndType.filter(":checked").val();
 			$("span", validityEndMessage.toggle(value != "2")).hide().filter("[data-value='" + value + "']").show();
 			validityEnd.toggle(value == "2").prev().toggle(value == "2");
-			validityEnd.change();
+			validityEnd.trigger("change");
 		},
 
 		getModel = function (approved) {

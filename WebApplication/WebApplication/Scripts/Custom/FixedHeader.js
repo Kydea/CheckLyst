@@ -32,7 +32,7 @@
         };
 
     this.initialize = function () {
-        if (grid.size() == 0 || !grid.is(":visible")) return;
+        if (grid.length == 0 || !grid.is(":visible")) return;
         fixedHeader.insertBefore(grid);
         headerCells.each(function () {
             var cell = $(this);

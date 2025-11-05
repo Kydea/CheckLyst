@@ -357,7 +357,7 @@
                         .append($("<td />").addClass("NoRecord").attr("colspan", "4").text("(no column)"))
                     )
                 ).on("click", "tr.Handler td:not(.Inactive)", function () {
-                    select($(this).parent().prevAll().size());
+                    select($(this).parent().prevAll().length);
                 });
 
             var

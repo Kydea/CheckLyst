@@ -19,7 +19,7 @@
         closeHandler = function () {
             matematici.canClose = true;
             matematici.save = null;
-            if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.click();
+            if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.trigger("click");
         },
 
         setAdvancedSearchMode = function (value) {

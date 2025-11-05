@@ -49,9 +49,9 @@
             uploadButton.addEventListener("click", function () {
                 if (readOnly) return;
                 if (model.fileType == "pdf")
-                    input.click();
+                    input.trigger("click");
                 else if (matematici.appMode) 
-                    input.click()
+                    input.trigger("click");
                 else if (restrictToCamera)
                     new matematici.ImageUpload(model);
                 else
@@ -68,7 +68,7 @@
                             text: "Upload",
                             icon: "paperclip",
                             handler: function () {
-                                input.click();
+                                input.trigger("click")
                             }
                         }
                     ]);
@@ -122,7 +122,7 @@
         } else if (readOnly)
             return false;
         else {
-            input.click();
+            input.trigger("click")
             return true;
         }
     }

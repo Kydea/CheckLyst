@@ -28,7 +28,7 @@
                 e.stopPropagation();
 
             	var
-					index = $(this).parent().prevAll().size(),
+					index = $(this).parent().prevAll().length,
 					unlockHandler = function () {
 						var buttons = $(this).closest("div.Buttons");
 

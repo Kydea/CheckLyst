@@ -117,7 +117,7 @@
                 dayOfWeek = (date.getUTCDay() + 6) % 7, //0: monday .. 6: sunday
                 datesIndex = 0;
 
-            for (var rowIndex = 0; rowIndex <= rows.size() && date.getUTCMonth() + 1 == month; ++rowIndex) {
+            for (var rowIndex = 0; rowIndex <= rows.length && date.getUTCMonth() + 1 == month; ++rowIndex) {
                 row = rows.eq(rowIndex).show();
                 $("td", row).removeClass();
 

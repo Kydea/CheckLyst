@@ -32,7 +32,7 @@
                 if (!oldModel.key && model.key) //in case the image was previously enqueued to be deleted...
                     prototypes.prototype.ensureImageWillNotBeDeleted(model.key);
             }
-            $("input:not(.ReadOnly)", propertyValue).change();
+            $("input:not(.ReadOnly)", propertyValue).trigger("change");
             currentProperty && currentProperty.getType().destroy && currentProperty.getType().destroy();
 
             if (prototypes.prototype.getModel().state == prototypes.Prototype.states.draft)

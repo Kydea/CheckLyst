@@ -188,7 +188,7 @@
                     )
                 ).append(tableBody = $("<tbody />")
                 ).on("click", "tr.Handler td:not(.Inactive)", function () {
-                    select($(this).parent().prevAll().size());
+                    select($(this).parent().prevAll().length);
                 });
 
             noRecord = $("<tr />").addClass("NoRecord").append($("<td />").addClass("NoRecord").attr("colspan", "8").text("(no items)"));

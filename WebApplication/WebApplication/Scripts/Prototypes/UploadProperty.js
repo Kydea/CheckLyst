@@ -66,7 +66,7 @@
         var form = $("<form />").attr("enctype", "multipart/form-data");
 
         if (!options.readOnly)
-            form.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.click(); }));
+            form.append($("<a />").attr("href", "#").addClass("Button").text("upload").append($("<i />").addClass("Icon fa fa-paperclip")).on("click", function () { input.trigger("click"); }));
 
         form.append(previewButton = $("<a />")
             .attr("href", "#")

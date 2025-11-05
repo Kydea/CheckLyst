@@ -56,9 +56,9 @@
                 var prototypeTypes = departments[departmentIndex].prototypeTypes;
                 for (var index in prototypeTypes)
                     prototypeType.append($("<option />").text(prototypeTypes[index].name).attr("value", prototypeTypes[index].id));
-                prototypeType.val(initialValue).change();
+                prototypeType.val(initialValue).trigger("change");
             } else
-                prototypeType.val(null).change();
+                prototypeType.val(null).trigger("change");
             suspended = false;
 
             setTimeout(function () {

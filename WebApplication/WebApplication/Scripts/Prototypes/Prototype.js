@@ -271,13 +271,13 @@
                 selectByElementId("Prototype");
             else {
                 if (className != "Page") findItem(model, id, null, result);
-                if (result.item && result.page) $("#Page" + result.page, element).click();
+                if (result.item && result.page) $("#Page" + result.page, element).trigger("click");
                 selectByElementId(className + id);
             }
         },
 
         selectByElementId = function (elementId) {
-            $("#" + elementId, element).removeClass("Current").removeClass("Selected").click(); //class "Selected" is for the tab when current item is a page
+            $("#" + elementId, element).removeClass("Current").removeClass("Selected").trigger("click"); //class "Selected" is for the tab when current item is a page
         },
 
         select = function (event, item) {
@@ -768,7 +768,7 @@
                         if (currentItemId) {
                             //restores current item
                             currentItem = null;
-                            $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").click(); //Selected is for the tab when current item is a page
+                            $("#" + currentItemId, element).removeClass("Current").removeClass("Selected").trigger("click"); //Selected is for the tab when current item is a page
                         }
 
                         $("div.ActionBar a.ExpressionsList").removeClass("Invalid");

@@ -67,7 +67,7 @@
             expressionsButton = $("a.ExpressionsButton", actionBar);
             exceptionsButton = $("a.ExceptionsButton", actionBar);
 
-            if ($("a:not(.Hidden)", buttonGroup).size() == 0)
+            if ($("a:not(.Hidden)", buttonGroup).length == 0)
                 buttonGroup.hide();
         },
 
