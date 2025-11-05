@@ -280,7 +280,7 @@
                 parameters = data && data.parameters && JSON.parse(data.parameters);
 
             tab.getLabels().filter(".Parameters." + classSelect.val()).each(function () {
-                var tabPage = tab.getItem($(this).prevAll().size());
+                var tabPage = tab.getItem($(this).prevAll().length);
                 $("*[name]", tabPage.tab).each(function () {
                     var field = $(this);
                     field.val(parameters && parameters[field.attr("name")] || "");

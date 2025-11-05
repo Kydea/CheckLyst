@@ -74,11 +74,11 @@
                         $(this).attr("name", "signature" + index + "." + signatureIndex);
                     });
                 }),
-                count = steps.size();
+                count = steps.length;
 
             steps.eq(0).children("h3").next().toggle(count > 1);
             if (!detailPage.isReadOnly() && tab.getCurrentItem().index == 1)
-               addStepButton.toggle($("div.Step", formElement).size() < maxSteps);
+               addStepButton.toggle($("div.Step", formElement).length < maxSteps);
             resize();
         },
 
@@ -89,7 +89,7 @@
                         .children("span")
                         .text(index == 0 ? "A user with one of the levels" : "and a user with one of the levels");
                 }),
-                count = labels.size();
+                count = labels.length;
 
             labels.eq(0).next().toggle(count > 1);
             $("a.Button.Add", step).toggle(count < 5);
@@ -229,6 +229,6 @@
         $("div.Buttons a.Button", detailPage.getElement()).hide();
     else
         tab.addHandler(function (item) {
-            addStepButton.toggle(item.index == 1 && $("div.Step", formElement).size() < maxSteps);
+            addStepButton.toggle(item.index == 1 && $("div.Step", formElement).length < maxSteps);
         });
 </script>

@@ -67,7 +67,7 @@
                         { text: "cancel", hidden: false, icon: "times", cancelButton: true }
                     ],
                 });
-                setTimeout(function () { input.focus(); }, 1);
+                setTimeout(function () { input[0].focus(); }, 1);
             } else {
                 trigger();
                 if (event === "Delete") return false; // Close dialog in case event is delete and reason is not required
