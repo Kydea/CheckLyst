@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Api;
+using CheckListManager.Common.Logic.Api.Licence;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Infrastructure.Logic.Companies;
 using CheckListManager.Infrastructure.Logic.Tools;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 

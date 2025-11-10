@@ -48,7 +48,8 @@ insert into "Configuration"."Settings" ("Code") values
 	('MaximumNumberOfPINFailure'),
 	('PINDaysLife'),
 	('WarningUserInactivityDays'),
-	('MaximumUserInactivityDays');
+	('MaximumUserInactivityDays'),
+	('License');
 
 
 create table "Configuration"."SettingValues"

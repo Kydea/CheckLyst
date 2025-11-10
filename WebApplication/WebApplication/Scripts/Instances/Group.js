@@ -245,7 +245,7 @@
             element.setAttribute("data-id", model.id);
             if (model.iterator) {
                 actionButtonsBar.classList.toggle("Hidden", !model.addIterationButton);
-                addButton.classList.toggle("Hidden", directImport);
+                addButton.classList.toggle("Hidden", importButton && directImport);
                 element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
             }
