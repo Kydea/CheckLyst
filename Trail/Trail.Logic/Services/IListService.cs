@@ -8,7 +8,7 @@ namespace CheckListManager.Trail.Logic.Services
 {
     public interface IListService: IService
     {
-        Task<List<TrailMessage>> GetDataAsync(long Company, ListRequest form);
-        Task<PagingResponse<List<TrailMessage>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
+        Task<List<TrailRow>> GetDataAsync(long Company, ListRequest form);
+        Task<PagingResponse<List<TrailRow>>> GetDataAsync(long Company, PagingRequest<ListRequest> form);
     }
 }

@@ -130,7 +130,7 @@ namespace CheckListManager.Trail.Api.Controllers
             };
 
             var Rows = await _listService.GetDataAsync(Data.CompanyId.Value, Data);
-            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailMessage>(Header, "AuditTrail", tm =>
+            return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailRow>(Header, "AuditTrail", tm =>
                 new string[] {
                     tm.ID.ToString(),
                     tm.Date.ToLocalTime(Data.TimeZone).ToString(),

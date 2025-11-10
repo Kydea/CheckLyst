@@ -15,11 +15,11 @@ namespace CheckListManager.Trail.Logic.Services
             _trailRepository = trailRepository;
         }
 
-        public async Task<List<TrailMessage>> GetDataAsync(long companyId, ListRequest form)
+        public async Task<List<TrailRow>> GetDataAsync(long companyId, ListRequest form)
             =>
                 await _trailRepository.GetRecordsAsync(
                     companyId,
-                    r => new TrailMessage
+                    r => new TrailRow
                     {
                         ID = r.ID,
                         Date = r.Date,
@@ -41,11 +41,11 @@ namespace CheckListManager.Trail.Logic.Services
                     r => r.Date
                 );
 
-        public async Task<PagingResponse<List<TrailMessage>>> GetDataAsync(long companyId, PagingRequest<ListRequest> form)
+        public async Task<PagingResponse<List<TrailRow>>> GetDataAsync(long companyId, PagingRequest<ListRequest> form)
             =>
                 await _trailRepository.GetRecordsAsync(
                     companyId,
-                    r => new TrailMessage
+                    r => new TrailRow
                     {
                         ID = r.ID,
                         Date = r.Date,
