@@ -34,12 +34,14 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IUserRepository _userRepository;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
+        private readonly ICommonRepository _commonRepository;
 
-        public GroupService(IUserRepository userRepository, IQueueService queueService, ISettingService settingService)
+        public GroupService(IUserRepository userRepository, IQueueService queueService, ISettingService settingService, ICommonRepository commonRepository)
         {
             _userRepository = userRepository;
             _queueService = queueService;
             _settingService = settingService;
+            _commonRepository = commonRepository;
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, GroupsRequest request) =>
@@ -266,7 +268,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         });
         }
 
-        private void BuildConflicts(DefaultIdentity identity, GroupRequest record, Groups Group)
+        private void BuildConflicts(GroupRequest record, Groups Group)
         {
             if (record.ConflictingGroups != null)
                 foreach (var conflictingGroup in record.ConflictingGroups)
@@ -305,7 +307,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             foreach (var conflict in conflicts)
             {
                 var group = await _userRepository.GetGroupAsync(identity.CompanyId, conflict);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -336,10 +338,10 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     BuildFunctions(identity, record, Group);
                     await _userRepository.AddGroupAsync(identity, Group);
-                    BuildConflicts(identity, record, Group);
+                    BuildConflicts(record, Group);
                     await _userRepository.SaveChangesAsync();
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -376,11 +378,11 @@ namespace CheckListManager.AccessControl.Logic.Services
                     };
 
                     BuildFunctions(identity, record, Group);
-                    BuildConflicts(identity, record, Group);
+                    BuildConflicts(record, Group);
                     var ExistingConflicts = new List<string>();
                     var ExistingGroup = await _userRepository.EditGroupAsync(identity, Group, ExistingConflicts);
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -415,7 +417,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 var group = await _userRepository.GetGroupAsync(identity.CompanyId, record.Code);
                 var conflicts = group.GroupConflicts.Select(c => c.Group2).ToList();
                 await _userRepository.DeleteGroupAsync(identity.CompanyId, record.Code);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,

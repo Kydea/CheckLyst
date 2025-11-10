@@ -37,18 +37,26 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IUserSessionRepository _userSessionRepository;
         private readonly IHashService _hashService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
         private readonly IRedisCache _cache;
         private readonly ISettingService _settingService;
         private readonly IEmailServiceBase _emailService;
 
-        public UserService(IUserRepository userRepository, IUserSessionRepository userSessionRepository,
-            IHashService hashService, IQueueService queueService, IRedisCache cache, ISettingService settingService,
-            IConfigurationService configurationService, IEmailServiceBase emailService)
+        public UserService(
+            IUserRepository userRepository, 
+            IUserSessionRepository userSessionRepository,
+            IHashService hashService, 
+            IQueueService queueService,
+            ICommonRepository commonRepository,
+            IRedisCache cache, 
+            ISettingService settingService,
+            IEmailServiceBase emailService)
         {
             _userRepository = userRepository;
             _userSessionRepository = userSessionRepository;
             _hashService = hashService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
             _cache = cache;
             _settingService = settingService;
             _emailService = emailService;
@@ -85,21 +93,19 @@ namespace CheckListManager.AccessControl.Logic.Services
                 else if (!_hashService.ValidateHash(password, user.Password))
                     throw new AuthenticationException(105, "Password not valid");
 
-                await Task.WhenAll(
-                    _userRepository.UserLoginCompleteAsync(user),
-                    _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-                    {
-                        Company = user.Company,
-                        User = user.Code,
-                        Action = TrailAction.Login,
-                        Date = DateTimeOffset.UtcNow
-                    })
-                );
+                await _userRepository.UserLoginCompleteAsync(user);
+                await _commonRepository.AddTrailRecordAsync(new Records
+                {
+                    Company = user.Company,
+                    User = user.Code,
+                    Action = TrailAction.Login,
+                    Date = DateTimeOffset.UtcNow
+                });
             }
             catch (AuthenticationException authenticationException)
             {
                 var forgiven = await _userRepository.UserPasswordFailedAsync(user);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = companyId.Value,
                     User = code,
@@ -109,7 +115,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 });
 
                 if (!forgiven)
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = companyId.Value,
                         User = "(system)",
@@ -196,7 +202,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             catch (AuthenticationException)
             {
                 if (!await _userRepository.UserPINFailedAsync(user))
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = companyId.Value,
                         User = "(system)",
@@ -265,7 +271,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         _cache.RemoveAsync(token, IdentityCacheRegion),
                         _userSessionRepository.SetExpiresOnAsync(token, DateTimeOffset.UtcNow)
                     );
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -644,7 +650,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     await _userRepository.AddAsync(identity, User);
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -687,7 +693,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     await _userRepository.EditAsync(identity, User);
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -718,7 +724,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new Exception("Users cannot delete themselves.");
 
                 await _userRepository.DeleteAsync(identity.CompanyId, record.Code);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -753,14 +759,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                 {
                     user.Enabled = false;
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = company,
                         User = "(system)",
                         Action = TrailAction.UserDisabled,
                         Date = DateTimeOffset.UtcNow,
                         Information = user.Code
-                    }, cancellationToken);
+                    });
                     if (!string.IsNullOrEmpty(user.Email))
                         await _queueService.SendObjectAsync(QueueName.Email,
                             new EmailMessage(user.Company, "User disabled",
@@ -808,14 +814,14 @@ namespace CheckListManager.AccessControl.Logic.Services
                 foreach (var user in users)
                 {
                     user.PIN = null;
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = company,
                         User = "(system)",
                         Action = TrailAction.PINDisabled,
                         Date = DateTimeOffset.UtcNow,
                         Information = user.Code
-                    }, cancellationToken);
+                    });
                 }
                 await _userRepository.SaveChangesAsync();
             }

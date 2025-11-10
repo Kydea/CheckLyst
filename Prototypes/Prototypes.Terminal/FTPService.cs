@@ -91,18 +91,18 @@ namespace CheckListManager.Prototypes.Terminal
                     }
                 };
                 await _queueService.DeleteMessageAsync(QueueName.PrototypesFTP, message.MessageHandle, cancellationToken);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Action = TrailAction.PrototypeExportCompleted,
                     Company = message.Message.Company,
                     CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
                     CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(Information)
-                }, cancellationToken);
+                });
             }
             catch (Exception exception)
             {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Action = TrailAction.PrototypeExportFailed,
                     Company = message.Message.Company,
@@ -114,7 +114,7 @@ namespace CheckListManager.Prototypes.Terminal
                         File = message.Message.Path,
                         Error = exception.Message
                     })
-                }, cancellationToken);
+                });
 
                 Logger.Error(exception);
 

@@ -24,9 +24,14 @@
                     <input type="text" name="name" />
                 </label>
 
-                <label>
+                <label class="Clearing">
                     <span>Time zone</span>
                     <select name="timeZone"></select>
+                </label>
+
+                <label>
+                    <span>Online</span>
+                    <input type="checkbox" name="online" />
                 </label>
 
                 <label class="Clearing Configurator">
@@ -232,7 +237,7 @@
                     input.attr({ type: "text", maxlength: 1000 });
 
                 if (!editable) matematici.controls.setEditable(input, false);
-                setTimeout(function () { input.focus(); }, 100);
+                setTimeout(function () { input[0].focus(); }, 100);
             }
 
             return input;
@@ -304,6 +309,16 @@
             completeHandler: completeHandler,
             parametersPrepareHandler: parametersPrepareHandler,
             width: "800px",
+
+            buttons: [{
+                icon: "check",
+                text: "set online",
+                hidden: data.online,
+                id: "Online",
+                handler: function () {
+                    return detailPage.clickHandler($(this), "SetOnline", null, false);
+                }
+            }]
         }),
 
         settingDetails = {

@@ -78,7 +78,7 @@ namespace CheckListManager.Instances.Terminal
             {
                 var Settings = await Send(message.Message);
                 await _queueService.DeleteMessageAsync(QueueName.InstancesFTP, message.MessageHandle, cancellationToken);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Action = TrailAction.InstanceExportCompleted,
                     Company = message.Message.Company,
@@ -100,11 +100,11 @@ namespace CheckListManager.Instances.Terminal
                             }
                         }
                     )
-                }, cancellationToken);
+                });
             }
             catch (Exception exception)
             {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Action = TrailAction.InstanceExportFailed,
                     Company = message.Message.Company,
@@ -116,7 +116,7 @@ namespace CheckListManager.Instances.Terminal
                         File = message.Message.Path,
                         Error = exception.Message
                     })
-                }, cancellationToken);
+                });
                 await _emailService.LogErrorAsync(exception, "Error sending FTP file");
 
                 Logger.Error(exception);

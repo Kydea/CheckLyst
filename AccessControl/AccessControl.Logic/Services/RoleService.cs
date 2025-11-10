@@ -35,12 +35,14 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IUserRepository _userRepository;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
+        private readonly ICommonRepository _commonRepository;
 
-        public RoleService(IUserRepository userRepository, IQueueService queueService, ISettingService settingService)
+        public RoleService(IUserRepository userRepository, IQueueService queueService, ISettingService settingService, ICommonRepository commonRepository)
         {
             _userRepository = userRepository;
             _queueService = queueService;
             _settingService = settingService;
+            _commonRepository = commonRepository;
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, RolesRequest request) =>
@@ -231,7 +233,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     await _userRepository.AddRoleAsync(identity, Role);
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -269,7 +271,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     await _userRepository.EditRoleAsync(identity, Role);
 
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = identity.CompanyId,
                         User = identity.Code,
@@ -297,7 +299,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             try
             {
                 await _userRepository.DeleteRoleAsync(identity.CompanyId, record.Code);
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,

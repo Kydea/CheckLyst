@@ -1,8 +1,12 @@
 ﻿using CheckListManager.Common.Core.Cache;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Data
@@ -22,6 +26,7 @@ namespace CheckListManager.Common.Data
         public Task<List<ListItems.Company>> GetCompaniesAsync() => 
             _memoryCache.GetOrAddAsync("Companies", key =>
                 Entities.Companies
+                    .Where (c => c.Online)
                     .OrderBy(c => c.Name).ThenBy(c => c.ID)
                     .Select(c => new ListItems.Company
                     {
@@ -177,5 +182,22 @@ namespace CheckListManager.Common.Data
                 !PrototypeTypeRow.InstancesFTPServerEnabled ? null : await Entities.FTPServers.SingleOrDefaultAsync(ftps =>
                     ftps.Company == CompanyID && (!PrototypeTypeRow.InstancesFTPServer.HasValue && ftps.InstancesDefault || ftps.ID == PrototypeTypeRow.InstancesFTPServer));
         }
+
+        public async Task AddTrailRecordAsync(Records record)
+        {
+            Entities.Records.Add(record);
+            await SaveChangesAsync();
+        }
+
+        public Task AuditAsync(IDefaultIdentity identity, string action, object information) =>
+            AddTrailRecordAsync(new Records
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = action,
+                Date = DateTimeOffset.UtcNow,
+                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
+            });
+
     }
 }

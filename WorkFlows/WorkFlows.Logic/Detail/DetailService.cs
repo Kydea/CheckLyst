@@ -19,16 +19,19 @@ namespace CheckListManager.WorkFlows.Logic.Detail
         private readonly IWorkFlowsRepository _workFlowsRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         public DetailService(
             IWorkFlowsRepository workFlowsRepository,
             ISettingService settingService,
-            IQueueService queueService
+            IQueueService queueService,
+            ICommonRepository commonRepository
         )
         {
             _workFlowsRepository = workFlowsRepository;
             _settingService = settingService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
         private async Task<DetailResponse> Validate(IDefaultIdentity identity, DetailRequest record)
@@ -237,7 +240,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                 ReasonForChange = record.Reason,
                 record.Steps
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
@@ -247,19 +250,7 @@ namespace CheckListManager.WorkFlows.Logic.Detail
                 ID = id,
                 ReasonForChange = reason
             };
-            return AuditAsync(identity, action, information);
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
+            return _commonRepository.AuditAsync(identity, action, information);
         }
     }
 }

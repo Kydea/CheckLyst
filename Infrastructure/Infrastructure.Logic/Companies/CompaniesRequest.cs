@@ -13,6 +13,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
         public long? ID { get; set; }
         public string Name { get; set; }
         public string TimeZone { get; set; }
+        public bool Online { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Password2 { get; set; }

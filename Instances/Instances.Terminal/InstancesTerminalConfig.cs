@@ -50,12 +50,5 @@ namespace CheckListManager.Instances.Terminal
 				.AsSelf()
 				.InstancePerDependency();
 		}
-
-		protected override void OnCreateMapper(IMapperConfigurationExpression mapperConfig)
-		{
-			base.OnCreateMapper(mapperConfig);
-
-			mapperConfig.CreateMap<TrailMessage, Records>();
-		}
 	}
 }

@@ -19,6 +19,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
         Task<PagingResponse<List<CompaniesRow>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<CompaniesRequest> form);
         Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest record);
         Task<CompaniesResponse> EditAsync(IDefaultIdentity identity, CompaniesRequest record);
+        Task<CompaniesResponse> SetOnlineAsync(IDefaultIdentity identity, long id, string reason);
         Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest data);
     }
 }

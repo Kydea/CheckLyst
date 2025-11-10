@@ -334,7 +334,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             await _prototypeRepository.SaveChangesAsync();
 
             if (NewVersion)
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -344,7 +344,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     CheckListID = PrototypeVersion.Prototype
                 });
             else
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -381,7 +381,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             await _prototypeRepository.DeletePrototypeVersionAsync(identity, request.ID, request.Version);
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
@@ -426,7 +426,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             }
 
             if (request.StateProposed && request.State == VersionState.Approved) //we track both the state change and the proposed state for the workflow
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -437,7 +437,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Information = VersionState.InApproval
                 });
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
@@ -510,7 +510,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 User = "(system)"
             });
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = PrototypeVersion.Prototypes.Company,
                 Action = TrailAction.PrototypeStateAutoChanged,
@@ -522,7 +522,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             });
         }
 
-        public async Task UpdatePrototypeVersionsState(CancellationToken CancellationToken)
+        public async Task UpdatePrototypeVersionsState(CancellationToken cancellationToken)
         {
             var PrototypeVersions = await _prototypeRepository.GetPrototypeVersionsAsync(pv =>
                 pv.VersionState == VersionState.Approved && pv.ValidFrom <= DateTimeOffset.UtcNow
@@ -531,7 +531,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             foreach (var PrototypeVersion in PrototypeVersions)
                 try
                 {
-                    if (CancellationToken.IsCancellationRequested) return;
+                    if (cancellationToken.IsCancellationRequested) return;
 
                     var UtcNow = DateTimeOffset.UtcNow;
 
@@ -566,12 +566,12 @@ namespace CheckListManager.Prototypes.Logic.Services
                         Version = PrototypeVersion.Version,
                         State = State,
                         Path = $"{PrototypeVersion.Prototypes.Companies.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Departments.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.PrototypeTypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Prototypes.Name?.Replace('#', '-') ?? ""}#{PrototypeVersion.Version}#{PrototypeVersion.Description?.Replace('#', '-') ?? ""}"
-                    }, CancellationToken);
+                    }, cancellationToken);
                 }
                 catch (Exception Exception)
                 {
                     Logger.Error(Exception);
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = PrototypeVersion.Prototypes.Company,
                         Action = TrailAction.JobError,
@@ -584,7 +584,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                             Job = "UpdatePrototypes",
                             Exception = Exception.Message
                         })
-                    }, CancellationToken);
+                    });
                     await _emailService.LogErrorAsync(Exception, "Error updating prototype version state");
                 }
         }

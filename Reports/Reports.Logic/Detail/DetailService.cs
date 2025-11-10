@@ -12,6 +12,7 @@ using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
 using System.Data;
 using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Common.Data;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -21,18 +22,21 @@ namespace CheckListManager.Reports.Logic.Detail
         private readonly IReportViewerRepository _reportViewerRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         public DetailService(
             IReportsRepository reportsRepository,
             IReportViewerRepository reportViewerRepository,
             ISettingService settingService,
-            IQueueService queueService
+            IQueueService queueService,
+            ICommonRepository commonRepository
         )
         {
             _reportsRepository = reportsRepository;
             _reportViewerRepository = reportViewerRepository;
             _settingService = settingService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
         private void AddListError(Dictionary<string, ValidationError> List, int Index, string FieldName, string Message)
@@ -353,7 +357,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 ReportClauses = record.Clauses,
                 ReasonForChange = record.Reason
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
@@ -363,19 +367,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 ID = id,
                 ReasonForChange = reason
             };
-            return AuditAsync(identity, action, information);
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
+            return _commonRepository.AuditAsync(identity, action, information);
         }
     }
 }

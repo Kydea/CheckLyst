@@ -187,9 +187,9 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ApprovationWorkFlow = record.ApprovationWorkFlow,
                         ObsolescenceWorkFlow = record.ObsolescenceWorkFlow,
                         PrototypesFTPServerEnabled = record.PrototypesFTPServer.HasValue,
-                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default(long?),
+                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default,
                         InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
-                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
+                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default
                     });
                     record.ID = prototypeType.ID;
                     await AuditAsync(identity, TrailAction.PrototypeTypeCreated, record);
@@ -222,9 +222,9 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                         ApprovationWorkFlow = record.ApprovationWorkFlow,
                         ObsolescenceWorkFlow = record.ObsolescenceWorkFlow,
                         PrototypesFTPServerEnabled = record.PrototypesFTPServer.HasValue,
-                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default(long?),
+                        PrototypesFTPServer = record.PrototypesFTPServer >= 0 ? record.PrototypesFTPServer : default,
                         InstancesFTPServerEnabled = record.InstancesFTPServer.HasValue,
-                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default(long?)
+                        InstancesFTPServer = record.InstancesFTPServer >= 0 ? record.InstancesFTPServer : default
                     });
                     await AuditAsync(identity, TrailAction.PrototypeTypeUpdated, record);
                 }
@@ -276,7 +276,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 record.InstancesFTPServer,
                 ReasonForChange = record.Reason,
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
@@ -286,19 +286,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
                 ID = id,
                 ReasonForChange = reason
             };
-            return AuditAsync(identity, action, information);
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
+            return _commonRepository.AuditAsync(identity, action, information);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Logic.Queue;
@@ -21,6 +22,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         private readonly IInfrastructureRepository _infrastructureRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         private readonly Func<Common.Data.FTPServers, FTPServersRow> _mapperFunc;
         private readonly Expression<Func<Common.Data.FTPServers, FTPServersRow>> _mapper = d => new FTPServersRow
@@ -48,12 +50,14 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
         public FTPServersService(
             IInfrastructureRepository infrastructureRepository,
             ISettingService settingService,
-            IQueueService queueService
+            IQueueService queueService,
+            ICommonRepository commonRepository
         )
         {
             _infrastructureRepository = infrastructureRepository;
             _settingService = settingService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
 
             _mapperFunc = _mapper.Compile();
         }
@@ -244,7 +248,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 record.PrototypesDefault,
                 ReasonForChange = record.Reason,
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
@@ -254,19 +258,7 @@ namespace CheckListManager.Infrastructure.Logic.FTPServers
                 ID = id,
                 ReasonForChange = reason
             };
-            return AuditAsync(identity, action, information);
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
+            return _commonRepository.AuditAsync(identity, action, information);
         }
     }
 }

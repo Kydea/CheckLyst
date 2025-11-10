@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Data", "..\Common\Common.Data\Common.Data.csproj", "{91482922-D6BA-4DF1-9A9C-88F3087A7B5D}"
 EndProject
@@ -12,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logic.Api", "..\Common\Common.Logic.Api\Common.Logic.Api.csproj", "{BE658746-48A9-4AF2-B2B6-A13A7D6DE439}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logic", "..\Common\Common.Logic\Common.Logic.csproj", "{351C3388-67B1-46EE-8FD1-5A63277B3C0C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Terminal", "Trail.Terminal\Trail.Terminal.csproj", "{23C7D6C0-62B6-481A-805F-88F26F56CF93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trail.Data", "Trail.Data\Trail.Data.csproj", "{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}"
 EndProject
@@ -52,10 +50,6 @@ Global
 		{351C3388-67B1-46EE-8FD1-5A63277B3C0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{351C3388-67B1-46EE-8FD1-5A63277B3C0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{351C3388-67B1-46EE-8FD1-5A63277B3C0C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23C7D6C0-62B6-481A-805F-88F26F56CF93}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}.Release|Any CPU.ActiveCfg = Release|Any CPU

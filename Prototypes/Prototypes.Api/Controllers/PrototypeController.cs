@@ -249,7 +249,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
                 _configurationService
             );
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = Data.CompanyId.Value,
                 User = Data.UserCode,

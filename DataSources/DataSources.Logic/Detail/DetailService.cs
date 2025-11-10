@@ -10,6 +10,7 @@ using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
+using CheckListManager.Common.Data;
 
 namespace CheckListManager.DataSources.Logic.Detail
 {
@@ -18,16 +19,19 @@ namespace CheckListManager.DataSources.Logic.Detail
         private readonly IDataSourcesRepository _dataSourcesRepository;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         public DetailService(
             IDataSourcesRepository dataSourcesRepository,
             ISettingService settingService,
-            IQueueService queueService
+            IQueueService queueService,
+            ICommonRepository commonRepository
         )
         {
             _dataSourcesRepository = dataSourcesRepository;
             _settingService = settingService;
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
         private async Task<DetailResponse> ValidateAsync(IDefaultIdentity identity, DetailRequest record)
@@ -174,7 +178,7 @@ namespace CheckListManager.DataSources.Logic.Detail
                 Password = new string('*', Math.Min(3, record.Password?.Length ?? 0)), // Avoid to log password from UI
                 ReasonForChange = record.Reason
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, string code, string reason)
@@ -184,19 +188,7 @@ namespace CheckListManager.DataSources.Logic.Detail
                 Code = code,
                 ReasonForChange = reason
             };
-            return AuditAsync(identity, action, information);
+            return _commonRepository.AuditAsync(identity, action, information);
         }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
-        }        
     }
 }

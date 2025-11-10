@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Email;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
@@ -17,15 +18,18 @@ namespace CheckListManager.Infrastructure.Logic.Email
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IQueueService _queueService;
+        private readonly ICommonRepository _commonRepository;
 
         public EmailService(
             IQueueService queueService,
-            ISettingService settingService) : base(settingService)
+            ISettingService settingService,
+            ICommonRepository commonRepository) : base(settingService)
         {
             _queueService = queueService;
+            _commonRepository = commonRepository;
         }
 
-        public async Task ProcessEmailMessagesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task ProcessEmailMessagesAsync(CancellationToken cancellationToken = default)
         {
             bool idle;
             do
@@ -43,20 +47,18 @@ namespace CheckListManager.Infrastructure.Logic.Email
             while (!idle);
         }
 
-        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message, CancellationToken cancellationToken = default(CancellationToken))
+        private async Task ProcessMessageAsync(QueueMessage<EmailMessage> message, CancellationToken cancellationToken = default)
         {
             try
             {
                 await SendInternal(message.Message);
 
-                var deleteTask = _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
                 if (message.Message.TrailMessage != null)
                 {
                     var recipients = message.Message.To.Concat(message.Message.Cc).ToArray();
                     message.Message.TrailMessage.Information.Recipients = recipients;
                     message.Message.TrailMessage.Information.Subject = message.Message.Subject;
-
-                    var trailTask = _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = message.Message.Company,
                         User = message.Message.TrailMessage.User,
@@ -68,16 +70,14 @@ namespace CheckListManager.Infrastructure.Logic.Email
                         {
                             TypeNameHandling = TypeNameHandling.None
                         })
-                    }, cancellationToken);
-
-                    await Task.WhenAll(deleteTask, trailTask);
+                    });
                 }
-                else
-                    await deleteTask;
+
+                await _queueService.DeleteMessageAsync(QueueName.Email, message.MessageHandle, cancellationToken);
             }
             catch (Exception exception)
             {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Action = TrailAction.EmailFailed,
                     User = message.Message.TrailMessage?.User,
@@ -85,7 +85,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
                     CheckListCode = message.Message.TrailMessage?.CheckListCode,
                     CheckListID = message.Message.TrailMessage?.CheckListID,
                     Information = exception.Message,
-                }, cancellationToken);
+                });
 
                 Logger.Error(exception);
             }

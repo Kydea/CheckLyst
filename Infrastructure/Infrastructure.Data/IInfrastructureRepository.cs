@@ -13,6 +13,7 @@ namespace CheckListManager.Infrastructure.Data
 	{
 
         Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company, List<SettingValue> settings);
+        Task SetCompanyOnlineAsync(IDefaultIdentity identity, long id);
         Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings);
         Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? id);
 

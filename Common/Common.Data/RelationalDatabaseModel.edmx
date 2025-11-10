@@ -232,6 +232,7 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+          <Property Name="Online" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -2179,6 +2180,7 @@
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Companies_TimeZone_fkey" FromRole="Companies" ToRole="TimeZones" />
           <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.Groups_Company_fkey" FromRole="Companies" ToRole="Groups" />
           <NavigationProperty Name="Roles" Relationship="RelationalDatabaseModel.Roles_Company_fkey" FromRole="Companies" ToRole="Roles" />
+          <Property Name="Online" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Departments">
           <Key>
@@ -4433,6 +4435,7 @@
           <EntitySetMapping Name="Companies">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Companies">
               <MappingFragment StoreEntitySet="Companies">
+                <ScalarProperty Name="Online" ColumnName="Online" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />

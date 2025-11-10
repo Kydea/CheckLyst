@@ -87,7 +87,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (PrototypeVersion.VersionState == VersionState.Obsolete && PrototypeVersion.ValidUntil == null)
                     PrototypeVersion.ValidUntil = Now;
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -163,7 +163,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             Instance.InstanceState = State;
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
@@ -369,8 +369,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
                     information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
-                
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -400,8 +400,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
                     information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
-                
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,

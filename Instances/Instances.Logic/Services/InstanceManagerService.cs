@@ -115,13 +115,10 @@ namespace CheckListManager.Instances.Logic.Services
 
         private async Task<InstanceCacheObject> GetCacheObjectAsync(long company, string code, bool includeData, bool ignoreCache)
         {
-            var cacheObject = ignoreCache ? default(InstanceCacheObject) : await _instanceCache.GetAsync(code, includeData);
+            var cacheObject = ignoreCache ? default : await _instanceCache.GetAsync(code, includeData);
             if (cacheObject == null)
             {
-                var instance = await _instancesRepository.GetAsync(company, code);
-                if (instance == null)
-                    throw new InstanceException("Instance not found");
-
+                var instance = await _instancesRepository.GetAsync(company, code) ?? throw new InstanceException("Instance not found");
                 cacheObject = await CreateInstanceFromDatabase(company, instance);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     cacheObject.NeedToCache = true;
@@ -351,7 +348,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw;
                 }
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -412,7 +409,7 @@ namespace CheckListManager.Instances.Logic.Services
                     await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
                 cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -440,9 +437,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             try
             {
-                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true);
-                if (cacheObject == null)
-                    throw new InstanceException("Instance state not valid");
+                var cacheObject = await GetCacheObjectForEditAsync(identity, code, true) ?? throw new InstanceException("Instance state not valid");
                 if (!(cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation) && cacheObject.InstanceState == InstanceState.Progress && string.IsNullOrWhiteSpace(note))
                     throw new InstanceException("Provide a note for the deletion");
                 if (
@@ -453,7 +448,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 await DeleteInstanceAsync(cacheObject, identity, note);
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -480,8 +475,8 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (Group != null)
                 foreach (var Item in Group.Items)
-                    if (Item is ICheckListGroup)
-                        AddTags(Tags, InstanceID, (ICheckListGroup)Item);
+                    if (Item is ICheckListGroup group)
+                        AddTags(Tags, InstanceID, group);
                     else if (!string.IsNullOrWhiteSpace(Item.Description) && (Item.TypeName == "Field" || Item.TypeName == "Signature") && !Tags.ContainsKey(Item.Description))
                     {
                         var Description = Item.Description.Length > 47 ? Item.Description.Substring(0, 47) + "..." : Item.Description;
@@ -678,10 +673,7 @@ namespace CheckListManager.Instances.Logic.Services
         {
             if (cacheObject.InstanceState == InstanceState.Progress)
             {
-                var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code);
-                if (row == null)
-                    throw new InstanceException("Instance not found");
-
+                var row = await _instancesRepository.GetAsync(cacheObject.CompanyId, cacheObject.Code) ?? throw new InstanceException("Instance not found");
                 if (cacheObject.VersionState == VersionState.Draft || cacheObject.VersionState == VersionState.InSimulation)
                 {
                     _instancesRepository.DeleteInstance(row);
@@ -1101,8 +1093,8 @@ namespace CheckListManager.Instances.Logic.Services
                 }
                 catch (Exception Exception)
                 {
-                    Logger.Error(Exception, $"Error while invoking command {signature.CommandExternalSourceName} the content of {signature.ToString()}");
-                    throw new InstanceException($"Error while invoking command {signature.CommandExternalSourceName} the content of {signature.ToString()}", Exception);
+                    Logger.Error(Exception, $"Error while invoking command {signature.CommandExternalSourceName} the content of {signature}");
+                    throw new InstanceException($"Error while invoking command {signature.CommandExternalSourceName} the content of {signature}", Exception);
                 }
         }
 
@@ -1180,9 +1172,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         public async Task<List<HistoryRow>> History(DefaultIdentity identity, long id)
         {
-            var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id);
-            if (Instance == null)
-                throw new InstanceException("Instance not found");
+            var Instance = await _instancesRepository.GetAsync(identity.CompanyId, id) ?? throw new InstanceException("Instance not found");
             if (!HasPermission(identity, "View", Instance.PrototypeVersions.VersionState, Instance.Prototypes.Department, Instance.Prototypes.PrototypeType))
                 throw new UnauthorizedAccessException();
 
@@ -1290,7 +1280,7 @@ namespace CheckListManager.Instances.Logic.Services
                 catch (Exception Exception)
                 {
                     Logger.Error(Exception);
-                    await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                    await _commonRepository.AddTrailRecordAsync(new Records
                     {
                         Company = Notification.Instances.Company,
                         Action = TrailAction.JobError,
@@ -1303,7 +1293,7 @@ namespace CheckListManager.Instances.Logic.Services
                             Job = "SendNotifications",
                             Exception = Exception.Message
                         })
-                    }, cancellationToken);
+                    });
                     await _emailService.LogErrorAsync(Exception, "Error sending notification");
                 }
         }
@@ -1334,7 +1324,7 @@ namespace CheckListManager.Instances.Logic.Services
                 lockObject?.Dispose();
             }
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
@@ -1540,10 +1530,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var page = cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null;
-            if (page == null)
-                throw new InstanceException("Page not found");
-
+            var page = (cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null) ?? throw new InstanceException("Page not found");
             if (cacheObject.Instance.ReadOnly) return;
 
             UnlockPages(cacheObject.Instance, userCode);
@@ -1610,7 +1597,7 @@ namespace CheckListManager.Instances.Logic.Services
                     formattedValue = loggedValue = string.Empty;
                 }
             }
-            else if (!field.ValueType.TryParse(value, out var parsedValue))
+            else if (!field.ValueType.TryParse(value, out _))
                 field.ConversionError = true;
 
             field.ModifiedBy = userCode;
@@ -1623,7 +1610,7 @@ namespace CheckListManager.Instances.Logic.Services
                 TypedValue = value
             });
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = userCode,
@@ -1650,10 +1637,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
-            if (field == null)
-                throw new InstanceException($"Field {itemId} not found");
-
+            var field = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null) ?? throw new InstanceException($"Field {itemId} not found");
             if (field.ReadOnly)
                 return null;
 
@@ -1665,10 +1649,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var field = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null;
-            if (field == null)
-                throw new InstanceException($"Field {itemId} not found");
-
+            var field = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Field : null) ?? throw new InstanceException($"Field {itemId} not found");
             if (field.ReadOnly)
                 return null;
 
@@ -1690,10 +1671,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var group = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null;
-            if (group == null)
-                throw new InstanceException("Group not found");
-
+            var group = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null) ?? throw new InstanceException("Group not found");
             if (!group.Iterator || !group.AddIterationButton)
                 throw new InstanceException("Invalid operation");
 
@@ -1704,7 +1682,7 @@ namespace CheckListManager.Instances.Logic.Services
                 group.SetupIterationsIndexes();
                 group.ModifiedBy = userCode;
                 group.ModifiedOn = DateTimeOffset.UtcNow;
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = cacheObject.CompanyId,
                     User = userCode,
@@ -1725,10 +1703,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var iteration = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null;
-            if (iteration == null)
-                throw new InstanceException("Group not found");
-
+            var iteration = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null) ?? throw new InstanceException("Group not found");
             if (!iteration.Group.Iterator || !((Group)iteration.Group).RemoveIterationButton)
                 throw new InstanceException("Invalid operation");
 
@@ -1739,7 +1714,7 @@ namespace CheckListManager.Instances.Logic.Services
             group.SetupIterationsIndexes();
             group.ModifiedBy = userCode;
             group.ModifiedOn = DateTimeOffset.UtcNow;
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = userCode,
@@ -1758,10 +1733,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var iteration = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null;
-            if (iteration == null)
-                throw new InstanceException("Group not found");
-
+            var iteration = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Iteration : null) ?? throw new InstanceException("Group not found");
             if (!iteration.Group.Iterator || !((Group)iteration.Group).MoveIterationButton)
                 throw new InstanceException("Invalid operation");
 
@@ -1772,7 +1744,7 @@ namespace CheckListManager.Instances.Logic.Services
             group.SetupIterationsIndexes();
             group.ModifiedBy = userCode;
             group.ModifiedOn = DateTimeOffset.UtcNow;
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = userCode,
@@ -1791,10 +1763,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var signature = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null;
-            if (signature == null)
-                throw new InstanceException("Signature not found");
-
+            var signature = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null) ?? throw new InstanceException("Signature not found");
             if (signature.ReadOnly)
                 throw new InstanceException("Invalid operation");
 
@@ -1811,10 +1780,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!request.ItemId.HasValue)
                     throw new InstanceException("Item id not sent");
 
-                var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
-                if (signature == null)
-                    throw new InstanceException("Signature not found");
-
+                var signature = (cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null) ?? throw new InstanceException("Signature not found");
                 if (signature.ReadOnly)
                     throw new InstanceException("Invalid operation");
 
@@ -1856,7 +1822,7 @@ namespace CheckListManager.Instances.Logic.Services
                     await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 TrackChanges(cacheObject, request.Username);
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -1876,7 +1842,7 @@ namespace CheckListManager.Instances.Logic.Services
                     { "Id", request.ItemId.ToString() },
                     { "ErrorMessage", e.Message }
                 };
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -1898,10 +1864,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!request.ItemId.HasValue)
                     throw new InstanceException("Item id not sent");
 
-                var signature = cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null;
-                if (signature == null)
-                    throw new InstanceException("Signature not found");
-
+                var signature = (cacheObject.Instance.Items.ContainsKey(request.ItemId.Value) ? cacheObject.Instance.Items[request.ItemId.Value] as Signature : null) ?? throw new InstanceException("Signature not found");
                 if (!signature.Signed)
                     throw new Exception("The signature is not signed");
 
@@ -1931,7 +1894,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -1950,7 +1913,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
             catch (Exception e)
             {
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -1974,10 +1937,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var signature = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null;
-            if (signature == null)
-                throw new InstanceException("Signature not found");
-
+            var signature = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Signature : null) ?? throw new InstanceException("Signature not found");
             if (!signature.Signed)
                 throw new Exception("The signature is not signed");
 
@@ -2003,10 +1963,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var page = cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null;
-            if (page == null)
-                throw new InstanceException("Page not found");
-
+            var page = (cacheObject.Instance.Pages.Count > itemId.Value ? cacheObject.Instance.Pages[itemId.Value] as Page : null) ?? throw new InstanceException("Page not found");
             if (cacheObject.Instance.ReadOnly)
                 return;
 
@@ -2021,13 +1978,9 @@ namespace CheckListManager.Instances.Logic.Services
                 throw new InstanceException("Item id not sent");
 
             var element =
-                itemId > 0 ?
+                (itemId > 0 ?
                     cacheObject.Instance.Items.ContainsKey(itemId.Value) ? (ICheckListElement)cacheObject.Instance.Items[itemId.Value] : null :
-                    cacheObject.Instance.Pages.Count > -itemId.Value ? cacheObject.Instance.Pages[-itemId.Value] : null;
-
-            if (element == null)
-                throw new InstanceException("Element not found");
-
+                    cacheObject.Instance.Pages.Count > -itemId.Value ? cacheObject.Instance.Pages[-itemId.Value] : null) ?? throw new InstanceException("Element not found");
             if (!cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation))
                 throw new InvalidOperationException("A count down can be skipped only for preview and simulation instances");
 
@@ -2048,7 +2001,7 @@ namespace CheckListManager.Instances.Logic.Services
                     await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);
                 }
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,
                     User = identity.Code,
@@ -2071,7 +2024,7 @@ namespace CheckListManager.Instances.Logic.Services
 
         private void TrackChanges(InstanceCacheObject cacheObject, string userCode)
         {
-            foreach (Page Page in cacheObject.Instance.Pages)
+            foreach (Page Page in cacheObject.Instance.Pages.Cast<Page>())
                 if (Page.Lock != null && Page.Lock.User == userCode)
                     Page.Lock.LastUpdate = DateTimeOffset.UtcNow;
 
@@ -2140,7 +2093,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
             }
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = identity.Code,
@@ -2164,10 +2117,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (!itemId.HasValue)
                 throw new InstanceException("Item id not sent");
 
-            var group = cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null;
-            if (group == null)
-                throw new InstanceException($"Group {itemId} not found");
-
+            var group = (cacheObject.Instance.Items.ContainsKey(itemId.Value) ? cacheObject.Instance.Items[itemId.Value] as Group : null) ?? throw new InstanceException($"Group {itemId} not found");
             if (group.ReadOnly || !cacheObject.Instance.ExternalSources.TryGetValue(externalSourceName, out var ExternalSource))
                 return;
 
@@ -2218,7 +2168,7 @@ namespace CheckListManager.Instances.Logic.Services
                 for (var columnIndex = 0; columnIndex < columns.Count; ++columnIndex)
                     rowDictionary[columns[columnIndex]] = rows[rowIndex][columnIndex];
 
-                await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+                await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = cacheObject.CompanyId,
                     User = identity.Code,
@@ -2291,7 +2241,7 @@ namespace CheckListManager.Instances.Logic.Services
             attachment.ModifiedBy = identity.Code;
             attachment.ModifiedOn = DateTimeOffset.UtcNow;
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = identity.Code,
@@ -2364,7 +2314,7 @@ namespace CheckListManager.Instances.Logic.Services
                 cacheObject.Instance.ChildInstances.Remove(itemId.Value);
             }
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = identity.Code,
@@ -2429,7 +2379,7 @@ namespace CheckListManager.Instances.Logic.Services
 
             instanceLink.Attach(instanceLink.AttachedInstanceID.Value, instanceRecord.Code, newInstanceLinkRecord);
 
-            await _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
+            await _commonRepository.AddTrailRecordAsync(new Records
             {
                 Company = cacheObject.CompanyId,
                 User = identity.Code,

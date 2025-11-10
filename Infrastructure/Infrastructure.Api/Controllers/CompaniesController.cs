@@ -89,5 +89,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         {
             return Ok(await _companiesService.LoadAsync(Identity, request.Data));
         }
+
+        [HttpPost]
+        [Route("SetOnline")]
+        [Authorize(Roles = "Companies#Edit")]
+        public async Task<IHttpActionResult> SetOnline(Message<CompaniesRequest> request)
+        {
+            return Ok(await _companiesService.SetOnlineAsync(Identity, request.Data.ID.Value, request.Data.Reason));
+        }
     }
 }

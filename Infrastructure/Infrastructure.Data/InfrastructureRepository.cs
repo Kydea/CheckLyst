@@ -9,6 +9,7 @@ using System.Data.Entity;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Infrastructure.Data.ListItems;
+using CheckListManager.Common.Data.ListItems;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -20,8 +21,7 @@ namespace CheckListManager.Infrastructure.Data
 
         private async Task<Companies> GetCompany(IDefaultIdentity identity, long id)
         {
-            var Company = await Entities.Companies.SingleOrDefaultAsync(c => (identity.CompanyId == 1 || c.ID == identity.CompanyId) && c.ID == id);
-            if (Company == null) throw new DatabaseException($"Company {id} not found");
+            var Company = await Entities.Companies.SingleOrDefaultAsync(c => (identity.CompanyId == 1 || c.ID == identity.CompanyId) && c.ID == id) ?? throw new DatabaseException($"Company {id} not found");
             return Company;
         }
 
@@ -33,6 +33,7 @@ namespace CheckListManager.Infrastructure.Data
             var ExistingCompany = await GetCompany(identity, company.ID);
             ExistingCompany.Name = company.Name;
             ExistingCompany.TimeZone = company.TimeZone;
+            ExistingCompany.Online = company.Online;
             ExistingCompany.ModifiedOn = DateTimeOffset.UtcNow;
             ExistingCompany.ModifiedBy = identity.Code;
             var newSettingsDictionary = settings.ToDictionary(s => s.Code, s => s.Value);
@@ -50,6 +51,15 @@ namespace CheckListManager.Infrastructure.Data
 
             await SaveChangesAsync();
             return company;
+        }
+
+        public async Task SetCompanyOnlineAsync(IDefaultIdentity identity, long id)
+        {
+            var ExistingCompany = await GetCompany(identity, id);
+            ExistingCompany.Online = true;
+            ExistingCompany.ModifiedOn = DateTimeOffset.UtcNow;
+            ExistingCompany.ModifiedBy = identity.Code;
+            await SaveChangesAsync();
         }
 
         public async Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings)
@@ -88,8 +98,7 @@ namespace CheckListManager.Infrastructure.Data
 
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
         {
-            var Department = await Entities.Departments.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (Department == null) throw new DatabaseException($"Department {id} not found");
+            var Department = await Entities.Departments.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id) ?? throw new DatabaseException($"Department {id} not found");
             return Department;
         }
 
@@ -121,8 +130,7 @@ namespace CheckListManager.Infrastructure.Data
 
         private async Task<PrototypeTypes> GetPrototypeTypeAsync(IDefaultIdentity identity, long id)
         {
-            var PrototypeType = await Entities.PrototypeTypes.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (PrototypeType == null) throw new DatabaseException($"Prototype type {id} not found");
+            var PrototypeType = await Entities.PrototypeTypes.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id) ?? throw new DatabaseException($"Prototype type {id} not found");
             return PrototypeType;
         }
 
@@ -161,8 +169,7 @@ namespace CheckListManager.Infrastructure.Data
 
         public async Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id)
         {
-            var FTPServer = await Entities.FTPServers.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (FTPServer == null) throw new DatabaseException($"FTP server {id} not found");
+            var FTPServer = await Entities.FTPServers.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id) ?? throw new DatabaseException($"FTP server {id} not found");
             return FTPServer;
         }
 

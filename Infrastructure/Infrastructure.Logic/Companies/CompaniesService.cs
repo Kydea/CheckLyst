@@ -78,6 +78,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         ID = c.ID,
                         Name = c.Name,
                         TimeZone = c.TimeZone,
+                        Online = c.Online,
                         CreatedBy = c.CreatedBy,
                         CreatedOn = c.CreatedOn,
                         ModifiedBy = c.ModifiedBy,
@@ -213,6 +214,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                     {
                         Name = record.Name,
                         TimeZone = record.TimeZone,
+                        Online = record.Online,
                         CreatedOn = DateTimeOffset.Now,
                         CreatedBy = identity.Code
                     }, new Users
@@ -224,7 +226,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         Enabled = true
                     }, record.Settings);
                     record.ID = company.ID;
-                    await AuditAsync(identity, TrailAction.CompanyCreated, new
+                    await _commonRepository.AuditAsync(identity, TrailAction.CompanyCreated, new
                     {
                         record.ID,
                         record.Name,
@@ -256,13 +258,16 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             if (response.Valid)
                 try
                 {
+                    if (record.ID.Value == 1 && !record.Online)
+                        throw new Exception("This company cannot be set offlne");
                     await _infrastructureRepository.EditCompanyAsync(identity, new Common.Data.Companies
                     {
                         ID = record.ID.Value,
                         Name = record.Name,
-                        TimeZone = record.TimeZone
+                        TimeZone = record.TimeZone,
+                        Online = record.Online
                     }, record.Settings);
-                    await AuditAsync(identity, TrailAction.CompanyUpdated, new
+                    await _commonRepository.AuditAsync(identity, TrailAction.CompanyUpdated, new
                     {
                         record.ID,
                         record.Name,
@@ -285,6 +290,18 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
+        public async Task<CompaniesResponse> SetOnlineAsync(IDefaultIdentity identity, long id, string reason)
+        {
+            await _infrastructureRepository.SetCompanyOnlineAsync(identity, id);
+            await _commonRepository.AuditAsync(identity, TrailAction.CompanyUpdated, new
+            {
+                online = true,
+                ReasonForChange = reason
+            });
+
+            return new CompaniesResponse();
+        }
+
         public async Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest record)
         {
             if (identity.CompanyId != 1 && identity.CompanyId != record.ID) throw new UnauthorizedAccessException();
@@ -293,18 +310,6 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             {
                 Settings = settings
             };
-        }
-
-        private Task AuditAsync(IDefaultIdentity identity, string action, object information)
-        {
-            return _queueService.SendObjectAsync(QueueName.Trail, new TrailMessage
-            {
-                Company = identity.CompanyId,
-                User = identity.Code,
-                Action = action,
-                Date = DateTimeOffset.UtcNow,
-                Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
-            });
         }
     }
 }

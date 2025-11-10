@@ -17,6 +17,7 @@ create table "Infrastructure"."Companies"
     "ID" bigserial primary key,
     "Name" varchar (50) not null,
 	"TimeZone" varchar (100) not null references "Infrastructure"."TimeZones",
+	"Online" boolean not null default true,
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

@@ -1,5 +1,6 @@
 ﻿using CheckListManager.Common.Core.Web.Security;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CheckListManager.Common.Data
@@ -21,5 +22,7 @@ namespace CheckListManager.Common.Data
         Task<List<Users>> GetAppointedUsersAsync(long CompanyID, string FunctionGroup, string Function, long Department, long PrototypeType, string LevelName, IEnumerable<string> Levels);
         Task<FTPServers> GetPrototypesFTPServerAsync(long CompanyID, long PrototypeType);
         Task<FTPServers> GetInstancesFTPServerAsync(long CompanyID, long PrototypeType);
+        Task AddTrailRecordAsync(Records record);
+        Task AuditAsync(IDefaultIdentity identity, string action, object information);
     }
 }

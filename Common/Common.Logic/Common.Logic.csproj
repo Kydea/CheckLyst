@@ -346,7 +346,6 @@
     <Compile Include="Services\StorageServiceFileSystem.cs" />
     <Compile Include="Services\StorageServiceS3.cs" />
     <Compile Include="Trail\TrailAction.cs" />
-    <Compile Include="Trail\TrailMessage.cs" />
     <Compile Include="Cache\IRedisCache.cs" />
     <Compile Include="Cache\IRedisSetup.cs" />
     <Compile Include="Cache\LockObject.cs" />
