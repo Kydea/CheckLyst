@@ -1,0 +1,75 @@
+@{
+    ViewBag.Title = "License manager";
+}
+
+<div class="LicenseManager">
+    <h1>License manager</h1>
+
+    <div class="ActionBar">
+        <a id="Generate" href="@BaseUrl/Infrastructure/License/GeneratePrivateKey" target="_blank" class="Button"><i class="Icon fa fa-cog"></i> Generate new key</a>
+    </div>
+
+    <div class="ShadowPanel">
+        <form id="LicenseManagerForm" action="@BaseUrl/Infrastructure/License">
+            <label class="FullWidth">
+                <span>Private key</span>
+                <textarea name="PrivateKey"></textarea>
+            </label>
+            <label class="Clearing">
+                <span>Expiration</span>
+                <input type="text" name="Expiration" class="DatePicker" />
+            </label>
+            <label class="Clearing">
+                <span>Companies count</span>
+                <input type="text" name="CompaniesCount" class="mask-pint" />
+            </label>
+            <label>
+                <span>Prototype types count</span>
+                <input type="text" name="PrototypeTypesCount" class="mask-pint" />
+            </label>
+            <label>
+                <span>Prototypes count</span>
+                <input type="text" name="PrototypesCount" class="mask-pint" />
+            </label>
+            <label>
+                <span>Users count</span>
+                <input type="text" name="UsersCount" class="mask-pint" />
+            </label>
+            <label class="Clearing FullWidth">
+                <span>Signature</span>
+                <textarea id="PrivateKey" readonly="readonly"></textarea>
+            </label>
+            <label class="Clearing FullWidth">
+                <span>Public key (internal use)</span>
+                <textarea id="PublicKey" readonly="readonly"></textarea>
+            </label>
+        </form>
+    </div>
+    <div class="Clearing"></div>
+</div>
+
+<script type="text/javascript">
+    var formSelector = "form#LicenseManagerForm";
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "LicenseManager",
+            filterFormSelector: formSelector,
+            getDataEvent: "GenerateSecrets",
+            searchButtonLabel: "submit",
+            readOnly: true,
+            breadCrumbs: [
+                { content: "license manager" }
+            ],
+            filterHandler: function (data) {
+                console.log(data);
+                $("textarea[name=PrivateKey]", formSelector).val(data.PrivateKey);
+                $("textarea#PrivateKey").val(data.Signature);
+                $("textarea#PublicKey").val(data.PublicKey);
+            }
+        });
+
+        $("input.mask-pint").keyfilter(/[\d]/)
+
+        callback.call();
+    };
+</script>

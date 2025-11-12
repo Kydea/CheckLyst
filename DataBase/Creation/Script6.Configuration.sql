@@ -49,8 +49,12 @@ insert into "Configuration"."Settings" ("Code") values
 	('PINDaysLife'),
 	('WarningUserInactivityDays'),
 	('MaximumUserInactivityDays'),
-	('License');
-
+	('LicenseExpiration'),
+	('LicenseCompaniesCount'),
+	('LicensePrototypeTypesCount'),
+	('LicensePrototypesCount'),
+	('LicenseUserCount'),
+	('LicenseSignature');
 
 create table "Configuration"."SettingValues"
 (

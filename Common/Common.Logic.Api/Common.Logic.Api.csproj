@@ -284,10 +284,6 @@
     <Compile Include="Json\CustomJsonTextReader.cs" />
     <Compile Include="Json\CustomJsonTextWriter.cs" />
     <Compile Include="Json\DateTimeOffsetJsonConverter.cs" />
-    <Compile Include="Licence\ILicenseService.cs" />
-    <Compile Include="Licence\LicenseEnvelope.cs" />
-    <Compile Include="Licence\LicensePayload.cs" />
-    <Compile Include="Licence\LicenseService.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Messages\TokenRequest.cs" />
     <Compile Include="Messages\PagingRequest.cs" />

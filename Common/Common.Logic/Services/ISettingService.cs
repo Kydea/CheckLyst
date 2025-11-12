@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CheckListManager.Common.Core.Services;
 using CheckListManager.Common.Data;
+using CheckListManager.Common.Logic.Licence;
 
 namespace CheckListManager.Common.Logic.Services
 {
@@ -32,5 +34,6 @@ namespace CheckListManager.Common.Logic.Services
         Task<int> MaximumUserInactivityDaysAsync(long companyId);
         Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId);
         Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId);
+        Task<LicenseModel> License(long companyId);
     }
 }

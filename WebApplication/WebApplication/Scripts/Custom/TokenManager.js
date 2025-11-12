@@ -118,7 +118,7 @@
             localStorage.userName = result.name;
             localStorage.decimalSeparator = result.decimalSeparator;
 
-            matematici.menu.toggleItemsByRole();
+            matematici.menu.toggleItems();
             matematici.userPanel.update();
         },
 

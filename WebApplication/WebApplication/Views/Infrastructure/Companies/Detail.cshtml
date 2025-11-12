@@ -10,6 +10,7 @@
                 <a href="#">Security settings</a>
                 <a href="#">Email configuration</a>
                 <a href="#">Messages</a>
+                <a id="LicenseTab" href="#">License</a>
             </div>
             <div class="Tab">
                 <label>
@@ -122,6 +123,19 @@
 
                 <div class="Clearing"></div>
             </div>
+            <div class="Tab">
+                <table class="Grid License">
+                    <thead>
+                        <tr>
+                            <th>parameter</th>
+                            <th>value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <div class="Clearing"></div>
+            </div>
         </div>
     </form>
 
@@ -142,6 +156,7 @@
             Security: $("table.Security tbody", formElement),
             Email: $("table.Email tbody", formElement),
             Messages: $("table.Messages tbody", formElement),
+            License: $("table.License tbody", formElement),
         },
 
         initHandler = function (detailPage) {
@@ -233,6 +248,10 @@
                     input.attr({ type: "text", maxlength: 9 });
                 } else if (detail.mask == "password")
                     input.attr("type", "password");
+                else if (detail.mask == "date") {
+                    input.attr("type", "text");
+                    new matematici.DatePicker(input);
+                }
                 else 
                     input.attr({ type: "text", maxlength: 1000 });
 
@@ -352,11 +371,43 @@
                 group: "Environment",
                 default: false
             },
-            License: {
-                label: "License",
-                note: "The license of the company.",
+
+            //License
+            LicenseExpiration: {
+                label: "Expiration",
+                note: "Expiration date",
+                mask: "date",
+                group: "License"
+            },
+            LicenseCompaniesCount: {
+                label: "Companies count",
+                note: "Maximum number of companies",
+                mask: "pint",
+                group: "License"
+            },
+            LicensePrototypeTypesCount: {
+                label: "Prototype types count",
+                note: "Maximum number of prototype types",
+                mask: "pint",
+                group: "License"
+            },
+            LicensePrototypesCount: {
+                label: "Prototypes count",
+                note: "Maximum number of prototypes",
+                mask: "pint",
+                group: "License"
+            },
+            LicenseUserCount: {
+                label: "User count",
+                note: "Maximum number of users",
+                mask: "pint",
+                group: "License"
+            },
+            LicenseSignature: {
+                label: "Signature",
+                note: "Signature of the license",
                 textArea: true,
-                group: "Environment"
+                group: "License"
             },
 
             //Security
@@ -478,6 +529,7 @@
         };
 
     $("label.Configurator", formElement).toggle(isNew);
+    $("a#LicenseTab").toggle(id == 1);
 
     formElement.on("click", "tr.Handler", showSetting);
 

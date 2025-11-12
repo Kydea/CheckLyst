@@ -1,7 +1,4 @@
 ﻿using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Api.Licence;
-using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Infrastructure.Logic.Companies;
 using CheckListManager.Infrastructure.Logic.Tools;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Api.Licence;
+using CheckListManager.Common.Logic.Licence;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Infrastructure.Logic.Companies;
 using CheckListManager.Infrastructure.Logic.Tools;
@@ -17,17 +17,12 @@ namespace CheckListManager.Infrastructure.Api.Controllers
     [RoutePrefix("License")]
     public class LicenseController : BaseApiController
     {
-        private ILicenseService _licenseService;
-
-        public LicenseController(ILicenseService licenseService)
-        {
-            _licenseService = licenseService;
-        }
-
+        [HttpGet]
         [Route("GeneratePrivateKey")]
-        public IHttpActionResult GenerateLicenceKey()
+        [AllowAnonymous]
+        public IHttpActionResult GeneratePrivateKey()
         {
-            string privateKeyXml = _licenseService.GeneratePrivateKey();
+            string privateKeyXml = LicenseService.GeneratePrivateKey();
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(privateKeyXml, Encoding.UTF8, "application/xml")
@@ -36,16 +31,16 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             return ResponseMessage(response);
         }
 
-        [Route("ExtractPublicKey")]
-        public IHttpActionResult ExtractPublicKey(string privateKey)
+        [Route("GenerateSecrets")]
+        public IHttpActionResult GenerateSecrets(Message<LicenseManagerRequest> request)
         {
-            string publicKeyXml = _licenseService.ExtractPublicKey(privateKey);
-            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            var response = new LicenseManagerResponse
             {
-                Content = new StringContent(publicKeyXml, Encoding.UTF8, "application/xml")
+                PublicKey = LicenseService.ExtractPublicKey(request.Data.PrivateKey),
+                Signature = LicenseService.Sign(request.Data, request.Data.PrivateKey)
             };
 
-            return ResponseMessage(response);
+            return Json(response);
         }
     }
 }

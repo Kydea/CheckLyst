@@ -1,22 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Configuration;
+using CheckListManager.Common.Logic.Licence;
 
 namespace CheckListManager.Common.Logic.Services
 {
-	public class SettingService : ISettingService
-	{
-		private const string RegionName = "Setting";
+    public class SettingService : ISettingService
+    {
+        private const string RegionName = "Setting";
 
-		private readonly ISettingRepository _settingRepository;
-		private readonly IMemoryCache _cache;
+        private readonly ISettingRepository _settingRepository;
+        private readonly IMemoryCache _cache;
 
-		public SettingService(ISettingRepository settingRepository, IMemoryCache cache)
-		{
-			_settingRepository = settingRepository;
-			_cache = cache;
-		}
+        public SettingService(ISettingRepository settingRepository, IMemoryCache cache)
+        {
+            _settingRepository = settingRepository;
+            _cache = cache;
+        }
 
         public void Clear(long companyId)
         {
@@ -60,52 +62,52 @@ namespace CheckListManager.Common.Logic.Services
         }
 
         public Task<string> SmtpHostAsync(long companyId)
-		{
-			const string code = "SmtpHost";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        {
+            const string code = "SmtpHost";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<int> SmtpPortAsync(long companyId)
-		{
-			const string code = "SmtpPort";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
-		}
+        public Task<int> SmtpPortAsync(long companyId)
+        {
+            const string code = "SmtpPort";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
 
-		public Task<string> SmtpUsernameAsync(long companyId)
-		{
-			const string code = "SmtpUsername";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> SmtpUsernameAsync(long companyId)
+        {
+            const string code = "SmtpUsername";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<string> SmtpPasswordAsync(long companyId)
-		{
-			const string code = "SmtpPassword";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> SmtpPasswordAsync(long companyId)
+        {
+            const string code = "SmtpPassword";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<string> EmailSenderAsync(long companyId)
-		{
-			const string code = "EmailSender";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> EmailSenderAsync(long companyId)
+        {
+            const string code = "EmailSender";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<string> UserBlockMessageAsync(long companyId)
-		{
-			const string code = "UserBlockMessage";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> UserBlockMessageAsync(long companyId)
+        {
+            const string code = "UserBlockMessage";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<string> UserBlockWarningMessageAsync(long companyId)
-		{
-			const string code = "UserBlockWarningMessage";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> UserBlockWarningMessageAsync(long companyId)
+        {
+            const string code = "UserBlockWarningMessage";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
-		public Task<string> SignatureMessageAsync(long companyId)
-		{
-			const string code = "SignatureMessage";
-			return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
-		}
+        public Task<string> SignatureMessageAsync(long companyId)
+        {
+            const string code = "SignatureMessage";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<string>(companyId, code), RegionName);
+        }
 
         public Task<string> InstanceMessageAsync(long companyId)
         {
@@ -145,8 +147,8 @@ namespace CheckListManager.Common.Logic.Services
 
         public Task<bool> RequireUserReasonAsync(long companyId)
         {
-	        const string code = "RequireUserReason";
-	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
+            const string code = "RequireUserReason";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<bool>(companyId, code), RegionName);
         }
 
         public Task<int> InactivityTimeoutSecondsAsync(long companyId)
@@ -187,37 +189,58 @@ namespace CheckListManager.Common.Logic.Services
 
         public Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId)
         {
-	        const string code = "PrototypesAttachmentMaxSizeBytes";
-	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+            const string code = "PrototypesAttachmentMaxSizeBytes";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
         public Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId)
         {
-	        const string code = "InstancesAttachmentMaxSizeBytes";
-	        return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+            const string code = "InstancesAttachmentMaxSizeBytes";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
+        }
+
+        public Task<LicenseModel> License(long companyId)
+        {
+            const string code = "License";
+            return _cache.GetOrAddAsync($"{code}-{companyId}", async key =>
+            {
+                var model = new LicenseModel
+                {
+                    Payload = new LicensePayload
+                    {
+                        Expiration = await Load<DateTimeOffset?>(companyId, "LicenseExpiration"),
+                        CompaniesCount = await Load<long?>(companyId, "LicenseCompaniesCount"),
+                        PrototypeTypesCount = await Load<long?>(companyId, "LicensePrototypeTypesCount"),
+                        ProtoypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
+                        UsersCount = await Load<long?>(companyId, "LicenseUsersCount")
+                    }
+                };
+                var signature = await Load<string>(companyId, "LicenseSignature");
+
+                LicenseService.VerifyLicense(model.Payload, signature);
+
+                return model;
+            }, RegionName, TimeSpan.FromDays(1));
         }
 
         private async Task<T> Load<T>(long companyId, string code)
-		{
-			var configuration = await _settingRepository.GetAsync(companyId, code);
-			if (configuration == null)
-				return default(T);
+        {
+            var configuration = (await _settingRepository.GetAsync(companyId, code)) ?? default;
+            var value = GetValue<T>(configuration.CurrentValue);
+            return value;
+        }
 
-			var value = GetValue<T>(configuration.CurrentValue);
-			return value;
-		}
+        private static T GetValue<T>(string value)
+        {
+            var type = typeof(T);
+            if (type == typeof(int))
+                return int.TryParse(value, out var i) ? (T)(object)i : default;
+            if (type == typeof(bool))
+                return bool.TryParse(value, out var i) ? (T)(object)i : default;
+            if (type == typeof(string))
+                return (T)(object)value;
 
-		private static T GetValue<T>(string value)
-		{
-			var type = typeof(T);
-			if (type == typeof(int))
-				return int.TryParse(value, out var i) ? (T)(object)i : default(T);
-			if (type == typeof(bool))
-				return bool.TryParse(value, out var i) ? (T)(object)i : default(T);
-			if (type == typeof(string))
-				return (T)(object)value;
-
-			return default(T);
-		}
-	}
+            return default;
+        }
+    }
 }

@@ -50,6 +50,12 @@ namespace CheckListManager.WebApplication.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        [Route("LicenseManager")]
+        public ActionResult LicenseManager()
+        {
+            return ConditionalView();
+        }
+
         [AllowAnonymous]
         [Route("Ping")]
         public ActionResult Ping()

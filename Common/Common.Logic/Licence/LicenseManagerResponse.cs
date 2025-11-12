@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Common.Logic.Api.Licence
+namespace CheckListManager.Common.Logic.Licence
 {
-    public class LicenseEnvelope
+    public class LicenseManagerResponse
     {
-        public LicensePayload Payload { get; set; }
+        public string PublicKey { get; set; }
         public string Signature { get; set; }
     }
 }

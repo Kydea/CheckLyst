@@ -12,8 +12,7 @@
     };
 
     var NAV_KEYS = new Set([
-        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-        'Home', 'End', 'Tab', 'Escape', 'Enter'
+        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Tab', 'Escape', 'Enter'
     ]);
 
     function isPrintableKey(e) {
@@ -74,15 +73,13 @@
         version: '2.0.0'
     });
 
-    // Inizializzazione come nel tuo codice: attacca per classi .mask-*
     $(function () {
         var tags = $('input[class*=mask],textarea[class*=mask]');
         var masks = $.fn.keyfilter.defaults.masks;
-        for (var key in masks) {
-            if (Object.prototype.hasOwnProperty.call(masks, key)) {
+        for (var key in masks)
+            if (Object.prototype.hasOwnProperty.call(masks, key))
                 tags.filter('.mask-' + key).keyfilter(masks[key]);
-            }
-        }
+            
     });
 
 })(jQuery);

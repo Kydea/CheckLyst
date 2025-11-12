@@ -75,7 +75,7 @@
 			});
 		};
 
-	this.toggleItemsByRole = function () {
+	this.toggleItems = function () {
 		$("li[data-role]", menu).each(function () {
             var
                 item = $(this),
@@ -91,6 +91,15 @@
 		$(".MenuItem .SubMenu", menu).each(function () {
 			var item = $(this);
 			item.parent().toggle(item.children().filter(":not(.Hidden)").length > 0);
+		});
+
+        var currentCompany = matematici.tokenManager.getCompany();
+		$("li[data-company]", menu).each(function () {
+			var
+				item = $(this),
+				visible = currentCompany == item.data("company");
+
+			item.toggle(visible).toggleClass("Hidden", !visible);
 		});
 	};
 
