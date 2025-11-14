@@ -220,7 +220,7 @@ namespace CheckListManager.Common.Logic.Services
                 LicenseService.VerifyLicense(model.Payload, signature);
 
                 return model;
-            }, RegionName, TimeSpan.FromDays(1));
+            }, RegionName, TimeSpan.FromMinutes(1));
         }
 
         private async Task<T> Load<T>(long companyId, string code)
