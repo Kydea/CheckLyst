@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Configuration;
-using CheckListManager.Common.Logic.Licence;
+using CheckListManager.Common.Logic.License;
 
 namespace CheckListManager.Common.Logic.Services
 {
@@ -47,6 +47,7 @@ namespace CheckListManager.Common.Logic.Services
             _cache.Remove($"MaximumUserInactivity-{companyId}", RegionName);
             _cache.Remove($"PrototypesAttachmentMaxSizeBytes-{companyId}", RegionName);
             _cache.Remove($"InstancesAttachmentMaxSizeBytes-{companyId}", RegionName);
+            _cache.Remove($"License-{companyId}", RegionName);
         }
 
         public Task<string> LDAPHostAsync(long companyId)
@@ -199,7 +200,7 @@ namespace CheckListManager.Common.Logic.Services
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key => await Load<int>(companyId, code), RegionName);
         }
 
-        public Task<LicenseModel> License(long companyId)
+        public Task<LicenseModel> LicenseAsync(long companyId)
         {
             const string code = "License";
             return _cache.GetOrAddAsync($"{code}-{companyId}", async key =>
@@ -211,7 +212,7 @@ namespace CheckListManager.Common.Logic.Services
                         Expiration = await Load<DateTimeOffset?>(companyId, "LicenseExpiration"),
                         CompaniesCount = await Load<long?>(companyId, "LicenseCompaniesCount"),
                         PrototypeTypesCount = await Load<long?>(companyId, "LicensePrototypeTypesCount"),
-                        ProtoypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
+                        PrototypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
                         UsersCount = await Load<long?>(companyId, "LicenseUsersCount")
                     }
                 };
@@ -220,13 +221,13 @@ namespace CheckListManager.Common.Logic.Services
                 LicenseService.VerifyLicense(model.Payload, signature);
 
                 return model;
-            }, RegionName, TimeSpan.FromMinutes(1));
+            }, RegionName);
         }
 
         private async Task<T> Load<T>(long companyId, string code)
         {
             var configuration = (await _settingRepository.GetAsync(companyId, code)) ?? default;
-            var value = GetValue<T>(configuration.CurrentValue);
+            var value = GetValue<T>(configuration?.CurrentValue);
             return value;
         }
 
@@ -235,6 +236,10 @@ namespace CheckListManager.Common.Logic.Services
             var type = typeof(T);
             if (type == typeof(int))
                 return int.TryParse(value, out var i) ? (T)(object)i : default;
+            if (type == typeof(long?))
+                return long.TryParse(value, out var i) ? (T)(object)i : default;
+            if (type == typeof(DateTimeOffset?))
+                return DateTimeOffset.TryParse(value, out var i) ? (T)(object)i : default;
             if (type == typeof(bool))
                 return bool.TryParse(value, out var i) ? (T)(object)i : default;
             if (type == typeof(string))

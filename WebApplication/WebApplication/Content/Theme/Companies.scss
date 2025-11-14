@@ -8,13 +8,18 @@ body.Companies {
     }
 
     div.Dialog {
+        label {
+            width: 100%;
+            max-width: unset;
+            margin: 0 0 20px 0 !important;
+            padding-top: 0;
+        }
+
         div.Content {
             input, select {
-
             }
 
             div.Note {
-                margin-top: 20px;
                 color: $Color-Grey-Dark;
             }
         }

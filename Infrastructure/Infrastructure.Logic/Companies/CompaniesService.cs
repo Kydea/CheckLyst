@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Cache;
@@ -10,6 +11,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.License;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
@@ -202,40 +204,48 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
-        public async Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest record)
+        public async Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest request)
         {
             if (identity.CompanyId != 1) throw new UnauthorizedAccessException();
 
-            var response = await ValidateAsync(identity, record);
+            var licensedCount = (await _settingService.LicenseAsync()).Payload.CompaniesCount;
+            if (licensedCount.HasValue)
+            {
+                var currentCount = await _infrastructureRepository.CountCompaniesAsync(true) - 1;//administration company excluded
+                if (licensedCount.Value <= currentCount)
+                    throw new LicenseException("The maximum number of online companies allowed by the license has been reached");
+            }
+
+            var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
                     var company = await _infrastructureRepository.AddCompanyAsync(identity, new Common.Data.Companies
                     {
-                        Name = record.Name,
-                        TimeZone = record.TimeZone,
-                        Online = record.Online,
+                        Name = request.Name,
+                        TimeZone = request.TimeZone,
+                        Online = request.Online,
                         CreatedOn = DateTimeOffset.Now,
                         CreatedBy = identity.Code
                     }, new Users
                     {
-                        Code = record.Username,
+                        Code = request.Username,
                         Description = "(Administrator)",
-                        Password = _hashService.HashStringToBytes(record.Password),
+                        Password = _hashService.HashStringToBytes(request.Password),
                         CreatedOn = DateTimeOffset.Now,
                         Enabled = true
-                    }, record.Settings);
-                    record.ID = company.ID;
+                    }, request.Settings);
+                    request.ID = company.ID;
                     await _commonRepository.AuditAsync(identity, TrailAction.CompanyCreated, new
                     {
-                        record.ID,
-                        record.Name,
-                        record.TimeZone,
-                        record.Username,
-                        record.Settings,
-                        ReasonForChange = record.Reason,
+                        request.ID,
+                        request.Name,
+                        request.TimeZone,
+                        request.Username,
+                        request.Settings,
+                        ReasonForChange = request.Reason,
                     });
-                    _settingService.Clear(record.ID.Value);
+                    _settingService.Clear(request.ID.Value);
                 }
                 catch (Exception Exception)
                 {
@@ -250,32 +260,36 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             return response;
         }
 
-        public async Task<CompaniesResponse> EditAsync(IDefaultIdentity identity, CompaniesRequest record)
+        public async Task<CompaniesResponse> EditAsync(IDefaultIdentity identity, CompaniesRequest request)
         {
-            if (identity.CompanyId != record.ID) throw new UnauthorizedAccessException();
+            if (identity.CompanyId != request.ID) throw new UnauthorizedAccessException();
 
-            var response = await ValidateAsync(identity, record);
+            var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
-                    if (record.ID.Value == 1 && !record.Online)
+                    if (request.ID.Value == 1 && !request.Online)
                         throw new Exception("This company cannot be set offlne");
+
                     await _infrastructureRepository.EditCompanyAsync(identity, new Common.Data.Companies
                     {
-                        ID = record.ID.Value,
-                        Name = record.Name,
-                        TimeZone = record.TimeZone,
-                        Online = record.Online
-                    }, record.Settings);
+                        ID = request.ID.Value,
+                        Name = request.Name,
+                        TimeZone = request.TimeZone,
+                        Online = request.Online
+                    }, request.Settings);
                     await _commonRepository.AuditAsync(identity, TrailAction.CompanyUpdated, new
                     {
-                        record.ID,
-                        record.Name,
-                        record.TimeZone,
-                        record.Settings,
-                        ReasonForChange = record.Reason,
+                        request.ID,
+                        request.Name,
+                        request.TimeZone,
+                        request.Settings,
+                        ReasonForChange = request.Reason,
                     });
-                    _settingService.Clear(record.ID.Value);
+                    _settingService.Clear(request.ID.Value);
+
+                    if (request.ID.Value == 1)
+                        await CheckLicenseAsync(identity, request.ID.Value);
                 }
                 catch (Exception Exception)
                 {
@@ -300,6 +314,11 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             });
 
             return new CompaniesResponse();
+        }
+
+        public async Task CheckLicenseAsync(IDefaultIdentity identity, long id)
+        {
+            await _settingService.LicenseAsync();
         }
 
         public async Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest record)

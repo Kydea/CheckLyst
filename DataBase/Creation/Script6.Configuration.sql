@@ -53,7 +53,7 @@ insert into "Configuration"."Settings" ("Code") values
 	('LicenseCompaniesCount'),
 	('LicensePrototypeTypesCount'),
 	('LicensePrototypesCount'),
-	('LicenseUserCount'),
+	('LicenseUsersCount'),
 	('LicenseSignature');
 
 create table "Configuration"."SettingValues"

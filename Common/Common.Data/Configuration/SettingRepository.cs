@@ -11,7 +11,6 @@ namespace CheckListManager.Common.Data.Configuration
 		{
 		}
 
-		[SuppressMessage("ReSharper", "ImplicitlyCapturedClosure")]
 		public async Task<Setting> GetAsync(long companyId, string code)
 		{
 			var query =

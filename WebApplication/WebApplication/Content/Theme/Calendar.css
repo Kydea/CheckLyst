@@ -7,12 +7,12 @@
 }
 div.Calendar.Calendar-Popup {
   position: absolute;
-  z-index: 105;
+  z-index: 992;
   display: none;
   background: white;
 }
 div.Calendar.Calendar-Popup.Calendar {
-  z-index: 105;
+  z-index: 992;
 }
 div.Calendar a:hover {
   text-decoration: none;

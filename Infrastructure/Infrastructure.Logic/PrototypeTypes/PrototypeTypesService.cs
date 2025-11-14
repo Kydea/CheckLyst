@@ -7,6 +7,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.License;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
@@ -175,6 +176,14 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 
         public async Task<PrototypeTypesResponse> Add(IDefaultIdentity identity, PrototypeTypesRequest record)
         {
+            var licensedCount = (await _settingService.LicenseAsync()).Payload.PrototypeTypesCount;
+            if (licensedCount.HasValue)
+            {
+                var currentCount = await _infrastructureRepository.CountPrototypeTypesAsync();
+                if (licensedCount.Value <= currentCount)
+                    throw new LicenseException("The maximum number of prototype types allowed by the license has been reached");
+            }
+
             var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try

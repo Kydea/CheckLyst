@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Common.Logic.Licence
+namespace CheckListManager.Common.Logic.License
 {
     public static class LicenseService
     {
@@ -57,7 +57,6 @@ namespace CheckListManager.Common.Logic.Licence
             if (payload.Expiration.HasValue && payload.Expiration.Value < DateTimeOffset.UtcNow)
                 throw new LicenseException("License expired");
 
-
             if (string.IsNullOrWhiteSpace(signature))
                 throw new LicenseException("Empty signature");
 
@@ -65,7 +64,7 @@ namespace CheckListManager.Common.Logic.Licence
             {
                 signatureBytes = Convert.FromBase64String(signature);
             }
-            catch (Exception e)
+            catch
             {
                 throw new LicenseException("The signature is not a valid Base64 string");
             }

@@ -1,7 +1,12 @@
 ﻿body.Companies div#CompaniesDetailPage table.Grid {
   margin-top: 18px;
 }
+body.Companies div.Dialog label {
+  width: 100%;
+  max-width: unset;
+  margin: 0 0 20px 0 !important;
+  padding-top: 0;
+}
 body.Companies div.Dialog div.Content div.Note {
-  margin-top: 20px;
   color: #666;
 }

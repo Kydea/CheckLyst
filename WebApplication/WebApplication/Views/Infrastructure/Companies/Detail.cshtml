@@ -207,7 +207,7 @@
                         tr;
 
                     if (detail == null) alert("Unexpected setting: " + setting.code);
-                    
+
                     tr = createRow(setting.code, isNew ? detail.default : setting.value);
                     tableBody[settingDetails[setting.code].group].append(tr);
                 }
@@ -250,9 +250,8 @@
                     input.attr("type", "password");
                 else if (detail.mask == "date") {
                     input.attr("type", "text");
-                    new matematici.DatePicker(input);
-                }
-                else 
+                    new matematici.DatePicker(input[0]);
+                } else
                     input.attr({ type: "text", maxlength: 1000 });
 
                 if (!editable) matematici.controls.setEditable(input, false);
@@ -269,11 +268,12 @@
                 value = tr.data("value"),
                 detail = settingDetails[code],
                 content = $("<div />"),
+                label,
                 input,
                 buttons;
 
-            content.append($("<label />").attr("for", "SettingValue").text(settingDetails[code].label));
-            input = createSettingField(content, code, value, detail);
+            content.addClass("Module").append(label = $("<label />").text(settingDetails[code].label));
+            input = createSettingField(label, code, value, detail);
             content.append($("<div />").addClass("Note").text(settingDetails[code].note));
 
             if (currentCompany == data.id)
@@ -332,7 +332,7 @@
             buttons: [{
                 icon: "check",
                 text: "set online",
-                hidden: data.online,
+                hidden: !data || data.online,
                 id: "Online",
                 handler: function () {
                     return detailPage.clickHandler($(this), "SetOnline", null, false);
@@ -381,7 +381,7 @@
             },
             LicenseCompaniesCount: {
                 label: "Companies count",
-                note: "Maximum number of companies",
+                note: "Maximum number of companies (excluding the administration company)",
                 mask: "pint",
                 group: "License"
             },
@@ -397,7 +397,7 @@
                 mask: "pint",
                 group: "License"
             },
-            LicenseUserCount: {
+            LicenseUsersCount: {
                 label: "User count",
                 note: "Maximum number of users",
                 mask: "pint",
@@ -406,6 +406,7 @@
             LicenseSignature: {
                 label: "Signature",
                 note: "Signature of the license",
+                mask: "password",
                 textArea: true,
                 group: "License"
             },

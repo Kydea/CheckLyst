@@ -1,5 +1,5 @@
 ﻿using CheckListManager.Common.Logic.Api;
-using CheckListManager.Common.Logic.Licence;
+using CheckListManager.Common.Logic.License;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Infrastructure.Logic.Companies;
 using CheckListManager.Infrastructure.Logic.Tools;
@@ -37,7 +37,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             var response = new LicenseManagerResponse
             {
                 PublicKey = LicenseService.ExtractPublicKey(request.Data.PrivateKey),
-                Signature = LicenseService.Sign(request.Data, request.Data.PrivateKey)
+                Signature = LicenseService.Sign(new LicensePayload {
+                    Expiration = request.Data.Expiration,
+                    CompaniesCount = request.Data.CompaniesCount,
+                    PrototypeTypesCount = request.Data.PrototypeTypesCount,
+                    PrototypesCount = request.Data.PrototypesCount,
+                    UsersCount = request.Data.UsersCount
+                }, request.Data.PrivateKey)
             };
 
             return Json(response);

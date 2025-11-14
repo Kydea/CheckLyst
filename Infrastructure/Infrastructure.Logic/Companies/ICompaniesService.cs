@@ -20,6 +20,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
         Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest record);
         Task<CompaniesResponse> EditAsync(IDefaultIdentity identity, CompaniesRequest record);
         Task<CompaniesResponse> SetOnlineAsync(IDefaultIdentity identity, long id, string reason);
+        Task CheckLicenseAsync(IDefaultIdentity identity, long id);
         Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest data);
     }
 }

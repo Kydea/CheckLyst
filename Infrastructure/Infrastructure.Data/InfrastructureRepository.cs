@@ -39,7 +39,7 @@ namespace CheckListManager.Infrastructure.Data
             var newSettingsDictionary = settings.ToDictionary(s => s.Code, s => s.Value);
             var oldSettingsDictionary = (await GetSettingValues(company.ID)).ToDictionary(s => s.Setting, s => s);
             foreach (var key in oldSettingsDictionary.Keys)
-                if (key != "SmtpPassword" || newSettingsDictionary[key] != null)
+                if ((key != "SmtpPassword" && key != "LicenseSignature") || newSettingsDictionary[key] != null)
                 {
                     oldSettingsDictionary[key].Value = newSettingsDictionary[key] ?? "";
                     oldSettingsDictionary[key].ModifiedOn = DateTimeOffset.UtcNow;
@@ -88,12 +88,14 @@ namespace CheckListManager.Infrastructure.Data
             return company;
         }
 
+        public Task<long> CountCompaniesAsync(bool? online) => Entities.Companies.LongCountAsync(c => online == true && c.Online || online == false && !c.Online || online == null);
+
         public async Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? company) =>
             await Entities
                 .Settings.OrderBy(s => s.Code)
                 .Select(s => 
                     s.SettingValues.Where(sv => sv.Company == company)
-                    .Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Setting == "SmtpPassword" ? null : sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null })
+                    .Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Setting == "SmtpPassword" || sv.Setting == "LicenseSignature" ? null : sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null })
                 .ToListAsync();
 
         private async Task<Departments> GetDepartment(IDefaultIdentity identity, long id)
@@ -161,6 +163,8 @@ namespace CheckListManager.Infrastructure.Data
             return prototypeType;
         }
 
+        public Task<long> CountPrototypeTypesAsync() => Entities.PrototypeTypes.LongCountAsync();
+
         public async Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id)
         {
             Entities.PrototypeTypes.Remove(await GetPrototypeTypeAsync(identity, id));
@@ -209,6 +213,7 @@ namespace CheckListManager.Infrastructure.Data
             Entities.FTPServers.Remove(await GetFTPServerAsync(identity, id));
             await SaveChangesAsync();
         }
+
         public async Task<PagingResponse<List<TResult>>> GetCompaniesAsync<TResult>(
             IDefaultIdentity identity,
             Expression<Func<Companies, TResult>> select,

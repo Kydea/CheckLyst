@@ -42,7 +42,7 @@
 
             if (!settings.suppressErrors) {
                 var dialogSettings = {
-                    title: "Error",
+                    title: jqxhr.status == 403 ? "License violation" : "Error",
                     content: message,
                     cssClass: "Error",
                     buttons: { text: "ok", icon: "check", defaultButton: true, cancelButton: true }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Common.Logic.Licence
+namespace CheckListManager.Common.Logic.License
 {
     public class LicenseManagerResponse
     {

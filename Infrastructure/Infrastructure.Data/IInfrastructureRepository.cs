@@ -15,6 +15,7 @@ namespace CheckListManager.Infrastructure.Data
         Task<Companies> EditCompanyAsync(IDefaultIdentity identity, Companies company, List<SettingValue> settings);
         Task SetCompanyOnlineAsync(IDefaultIdentity identity, long id);
         Task<Companies> AddCompanyAsync(IDefaultIdentity identity, Companies company, Users configurator, List<SettingValue> settings);
+        Task<long> CountCompaniesAsync(bool? online);
         Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? id);
 
         Task<Departments> EditDepartmentAsync(IDefaultIdentity identity, Departments department);
@@ -23,6 +24,7 @@ namespace CheckListManager.Infrastructure.Data
 
         Task<PrototypeTypes> EditPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
         Task<PrototypeTypes> AddPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
+        Task<long> CountPrototypeTypesAsync();
         Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id);
 
         Task<FTPServers> EditFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer);
@@ -31,27 +33,11 @@ namespace CheckListManager.Infrastructure.Data
         Task<FTPServers> GetFTPServerAsync(IDefaultIdentity identity, long id);
 
         Task<List<WorkFlows>> GetWorkFlows(long companyId);
+        Task<PagingResponse<List<TResult>>> GetCompaniesAsync<TResult>(IDefaultIdentity identity, Expression<Func<Companies, TResult>> select, string name, int currentPage, int itemsPerPage);
+        Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(IDefaultIdentity identity, Expression<Func<Departments, TResult>> select, string name, int currentPage, int itemsPerPage);
+        Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(IDefaultIdentity identity, Expression<Func<PrototypeTypes, TResult>> select, long? department, string name, int currentPage, int itemsPerPage);
+        Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(IDefaultIdentity identity, Expression<Func<FTPServers, TResult>> select, string name, string host, int currentPage, int itemsPerPage);
 
-        Task<PagingResponse<List<TResult>>> GetCompaniesAsync<TResult>(
-            IDefaultIdentity identity,
-            Expression<Func<Companies, TResult>> select, 
-            string name, int currentPage, int itemsPerPage);
-
-        Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(
-            IDefaultIdentity identity,
-            Expression<Func<Departments, TResult>> select,
-            string name, int currentPage, int itemsPerPage);
-
-        Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(
-            IDefaultIdentity identity,
-            Expression<Func<PrototypeTypes, TResult>> select,
-            long? department, string name, 
-            int currentPage, int itemsPerPage);
-
-        Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(
-            IDefaultIdentity identity,
-            Expression<Func<FTPServers, TResult>> select,
-            string name, string host, int currentPage, int itemsPerPage);
-
-        Task<List<string>> GetTimeZonesAsync();    }
+        Task<List<string>> GetTimeZonesAsync();
+    }
 }

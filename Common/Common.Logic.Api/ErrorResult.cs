@@ -15,11 +15,13 @@ namespace CheckListManager.Common.Logic.Api
 	{
 		private readonly HttpRequestMessage _request;
 		private ResponseMessage _message;
+		private readonly HttpStatusCode _statusCode;
 
-		public ErrorResult(HttpRequestMessage request, ResponseMessage message)
+        public ErrorResult(HttpRequestMessage request, ResponseMessage message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError) 
 		{
 			_request = request;
 			_message = message;
+			_statusCode = statusCode;
         }
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
@@ -29,7 +31,7 @@ namespace CheckListManager.Common.Logic.Api
 				_message = new ResponseMessage();
 				_message.Messages.Add("An error has occurred.");
 			}
-			return Task.FromResult(_request.CreateResponse(HttpStatusCode.InternalServerError, _message));
+			return Task.FromResult(_request.CreateResponse(_statusCode, _message));
 		}
 	}
 }
