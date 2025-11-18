@@ -17,13 +17,7 @@ namespace CheckListManager.Prototypes.Data
             Expression<Func<Common.Data.Prototypes, TKey>> order);
 
         Task<List<SyntheticRecord>> GetPrototypesAsync(IDefaultIdentity identity);
-
-        Task<PagingResponse<List<PrototypeRecord>>> GetPrototypeVersionsAsync(
-            IDefaultIdentity identity,
-            PrototypeFilters filters,
-            int currentPage,
-            int itemsPerPage);
-
+        Task<PagingResponse<List<PrototypeRecord>>> GetPrototypeVersionsAsync(IDefaultIdentity identity, PrototypeFilters filters, int currentPage, int itemsPerPage);
         Task<Common.Data.Prototypes> GetPrototypeAsync(DefaultIdentity defaultIdentity, long id);
         Task<PrototypeVersions> GetPrototypeVersionAsync(long companyId, long prototype, int version);
         Task CheckNewVersionAsync(long companyId, long prototype);
@@ -31,10 +25,8 @@ namespace CheckListManager.Prototypes.Data
         void AddPrototypeVersion(PrototypeVersions prototypeVersion);
         Task DeletePrototypeVersionAsync(DefaultIdentity defaultIdentity, long prototype, int version);
         void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags);
-        
-        Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state,
-            bool proposed);
-
+        Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed);
         Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters);
+        Task<long> CountPrototypesAsync();
     }
 }

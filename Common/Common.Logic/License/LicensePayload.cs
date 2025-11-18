@@ -8,7 +8,7 @@ namespace CheckListManager.Common.Logic.License
 {
     public class LicensePayload
     {
-        public DateTimeOffset? Expiration { get; set; }
+        public DateTime? Expiration { get; set; }
         public long? CompaniesCount { get; set; }
         public long? PrototypeTypesCount { get; set; }
         public long? PrototypesCount{ get; set; }

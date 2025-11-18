@@ -4,5 +4,5 @@ insert into "Configuration"."Settings" values ('LicenseExpiration');
 insert into "Configuration"."Settings" values ('LicenseCompaniesCount');
 insert into "Configuration"."Settings" values ('LicensePrototypeTypesCount');
 insert into "Configuration"."Settings" values ('LicensePrototypesCount');
-insert into "Configuration"."Settings" values ('LicenseUserCount');
+insert into "Configuration"."Settings" values ('LicenseUsersCount');
 insert into "Configuration"."Settings" values ('LicenseSignature');

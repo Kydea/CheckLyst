@@ -20,6 +20,7 @@ using CheckListManager.Common.Logic.Email;
 using NLog;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Common.Logic.License;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -32,6 +33,7 @@ namespace CheckListManager.Prototypes.Logic.Services
         private readonly IStorageService _storageService;
         private readonly IConfigurationService _configurationService;
         private readonly IInstancesService _instancesService;
+        private readonly ISettingService _settingService;
         private readonly IEmailServiceBase _emailService;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -43,6 +45,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             IStorageService storageService,
             IConfigurationService configurationService,
             IInstancesService instancesService,
+            ISettingService settingService,
             IEmailServiceBase emailService
         )
         {
@@ -53,6 +56,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             _storageService = storageService;
             _configurationService = configurationService;
             _instancesService = instancesService;
+            _settingService = settingService;
             _emailService = emailService;
         }
 
@@ -219,6 +223,14 @@ namespace CheckListManager.Prototypes.Logic.Services
                 request.PrototypeType.HasValue && !identity.HasPermission("Prototypes", "Edit", request.Department.Value, request.PrototypeType.Value)
             )
                 throw new UnauthorizedAccessException();
+
+            var licensedCount = (await _settingService.LicenseAsync()).Payload.PrototypesCount;
+            if (licensedCount.HasValue)
+            {
+                var currentCount = await _prototypeRepository.CountPrototypesAsync();
+                if (licensedCount.Value <= currentCount)
+                    throw new LicenseException("The maximum number of prototypes allowed by the license has been reached");
+            }
 
             request.CheckList.Errors.Clear();
             request.CheckList.Setup(false);

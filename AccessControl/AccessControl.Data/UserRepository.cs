@@ -284,8 +284,11 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public Task<Roles> GetRoleAsync(long companyId, string code)
-            => Entities.Roles.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
+        public Task<long> CountUsersAsync(bool? enabled) =>
+            Entities.Users.LongCountAsync(u => enabled == true && u.Enabled || enabled == false && !u.Enabled || !enabled.HasValue);
+
+        public Task<Roles> GetRoleAsync(long companyId, string code) => 
+            Entities.Roles.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
         private IQueryable<Roles> GetRolesAsync(long company, string code)
         {

@@ -267,10 +267,11 @@ namespace CheckListManager.Prototypes.Data
             return result;
         }
 
-        public async Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters)
-        {
-            return await Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
-        }
+        public Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters) =>
+            Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
+
+        public Task<long> CountPrototypesAsync() => 
+            Entities.Prototypes.LongCountAsync();
 
     }
 }

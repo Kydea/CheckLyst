@@ -29,6 +29,7 @@ namespace CheckListManager.AccessControl.Data
         Task<Users> AddAsync(DefaultIdentity identity, Users user);
         Task<Users> EditAsync(DefaultIdentity identity, Users user);
         Task DeleteAsync(long companyId, string code);
+        Task<long> CountUsersAsync(bool? enabled);
 
         Task<Roles> GetRoleAsync(long companyId, string code);
         Task<List<Roles>> GetRolesAsync(long companyId, string code, int skip, int take);

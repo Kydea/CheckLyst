@@ -62,14 +62,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#View, Instances#Create")]
         public async Task<IHttpActionResult> Open(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.OpenAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.OpenAsync(Identity, request));
         }
 
         [HttpPost]
@@ -77,14 +70,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Clone(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.CloneAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.CloneAsync(Identity, request));
         }
 
 
@@ -109,14 +95,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Version(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.VersionAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.VersionAsync(Identity, request));
         }
 
         [HttpPost]
@@ -124,14 +103,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Create(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.CreateAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.CreateAsync(Identity, request));
         }
 
         [HttpPost]
@@ -139,15 +111,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public IHttpActionResult Verify(PrototypeRequest request)
         {
-            try
-            {
-                request.Parse(_converters);
-                return Ok(_prototypeService.Verify(request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            request.Parse(_converters);
+            return Ok(_prototypeService.Verify(request));
         }
 
         [HttpPost]
@@ -155,15 +120,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Save(PrototypeRequest request)
         {
-            try
-            {
-                request.Parse(_converters);
-                return Ok(await _prototypeService.SaveAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            request.Parse(_converters);
+            return Ok(await _prototypeService.SaveAsync(Identity, request));
         }
 
         [HttpPost]
@@ -171,15 +129,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> Delete(PrototypeRequest request)
         {
-            try
-            {
-                await _prototypeService.DeleteAsync(Identity, request);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            await _prototypeService.DeleteAsync(Identity, request);
+            return Ok();
         }
 
         [HttpPost]
@@ -187,14 +138,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit, Prototypes#Preview")]
         public async Task<IHttpActionResult> SetState(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.SetStateAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.SetStateAsync(Identity, request));
         }
 
         [HttpPost]
@@ -202,14 +146,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#View")]
         public async Task<IHttpActionResult> History(PrototypeRequest request)
         {
-            try
-            {
-                return Ok(await _prototypeService.History(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.History(Identity, request));
         }
 
         [HttpPost]
@@ -269,27 +206,20 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#Edit")]
         public async Task<IHttpActionResult> UploadAttachment(UploadAttachmentRequest request)
         {
-            try
-            {
-                if (request.Id < 0 || request.Version < 0)
-                    throw new Exception("Prototype not saved");
+            if (request.Id < 0 || request.Version < 0)
+                throw new Exception("Prototype not saved");
 
-                if (request.Attachment == null)
-                    throw new Exception("No attachment has been uploaded");
+            if (request.Attachment == null)
+                throw new Exception("No attachment has been uploaded");
 
-                if (!request.Attachment.MediaType.StartsWith("image/"))
-                    throw new Exception("The file uploaded is not supported");
+            if (!request.Attachment.MediaType.StartsWith("image/"))
+                throw new Exception("The file uploaded is not supported");
 
-                var maxSize = await _settingService.PrototypesAttachmentMaxSizeBytesAsync(Identity.CompanyId);
-                if (request.Attachment.Buffer.Length > maxSize)
-                    throw new Exception($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
+            var maxSize = await _settingService.PrototypesAttachmentMaxSizeBytesAsync(Identity.CompanyId);
+            if (request.Attachment.Buffer.Length > maxSize)
+                throw new Exception($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
 
-                return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
         }
 
         [HttpGet]
@@ -297,18 +227,11 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [Authorize(Roles = "Prototypes#View, Instances#View")]
         public async Task<IHttpActionResult> DownloadAttachment([FromUri]ProcessAttachmentRequest request)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(request.Key))
-                    throw new Exception("Key must have a value");
+            if (string.IsNullOrEmpty(request.Key))
+                throw new Exception("Key must have a value");
 
-                var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
-                return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
-            }
-            catch (Exception e)
-            {
-                return Error(e);
-            }
+            var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
+            return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
         }
 
         #endregion

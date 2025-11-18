@@ -19,6 +19,7 @@ using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Logic.Email;
+using CheckListManager.Common.Logic.License;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
@@ -631,6 +632,14 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
         {
+            var licensedCount = (await _settingService.LicenseAsync()).Payload.UsersCount;
+            if (licensedCount.HasValue)
+            {
+                var currentCount = await _userRepository.CountUsersAsync(true);
+                if (licensedCount.Value <= currentCount)
+                    throw new LicenseException("The maximum number of users allowed by the license has been reached");
+            }
+
             var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try

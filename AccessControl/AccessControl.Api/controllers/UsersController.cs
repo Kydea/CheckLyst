@@ -53,14 +53,7 @@ namespace CheckListManager.AccessControl.Api.Controllers
         [Authorize(Roles = "Users#Edit")]
         public async Task<IHttpActionResult> AddUser(Message<UserRequest> request)
         {
-            try
-            {
-                return Ok(await _userService.AddUserAsync(Identity, request.Data));
-            }
-            catch(Exception Exception)
-            {
-                return Error(Exception);
-            }
+            return Ok(await _userService.AddUserAsync(Identity, request.Data));
         }
 
         [HttpPost]

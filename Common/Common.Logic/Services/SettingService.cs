@@ -209,7 +209,7 @@ namespace CheckListManager.Common.Logic.Services
                 {
                     Payload = new LicensePayload
                     {
-                        Expiration = await Load<DateTimeOffset?>(companyId, "LicenseExpiration"),
+                        Expiration = await Load<DateTime?>(companyId, "LicenseExpiration"),
                         CompaniesCount = await Load<long?>(companyId, "LicenseCompaniesCount"),
                         PrototypeTypesCount = await Load<long?>(companyId, "LicensePrototypeTypesCount"),
                         PrototypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
@@ -221,7 +221,7 @@ namespace CheckListManager.Common.Logic.Services
                 LicenseService.VerifyLicense(model.Payload, signature);
 
                 return model;
-            }, RegionName);
+            }, RegionName, TimeSpan.FromMinutes(1));
         }
 
         private async Task<T> Load<T>(long companyId, string code)
@@ -238,8 +238,8 @@ namespace CheckListManager.Common.Logic.Services
                 return int.TryParse(value, out var i) ? (T)(object)i : default;
             if (type == typeof(long?))
                 return long.TryParse(value, out var i) ? (T)(object)i : default;
-            if (type == typeof(DateTimeOffset?))
-                return DateTimeOffset.TryParse(value, out var i) ? (T)(object)i : default;
+            if (type == typeof(DateTime?))
+                return DateTime.TryParse(value, out var i) ? (T)(object)i : default;
             if (type == typeof(bool))
                 return bool.TryParse(value, out var i) ? (T)(object)i : default;
             if (type == typeof(string))
