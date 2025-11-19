@@ -71,11 +71,32 @@ namespace CheckListManager.Prototypes.Data
                 "and (:prototypetype = -1 or p.\"PrototypeType\" = :prototypetype) " +
                 "and (:state = '' or pv.\"VersionState\" = :state) " +
                 "and (:name = '' or upper(p.\"Name\") like '%' || :name || '%') " +
-                "and (:pending = 'Include' or :pending = 'Exclude' and pv.\"ProposedState\" is null or :pending = 'Filter' and not pv.\"ProposedState\" is null) " +
+                "and (:pending = 'Include' or :pending = 'Exclude' and pv.\"ProposedState\" is null or :pending = 'Filter' and not pv.\"ProposedState\" is null or :pending = 'Own' and not pv.\"ProposedState\" is null) " +
                 "and exists (" +
                     "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Prototypes', 'View') g " +
                     "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
-                ") ";
+                ") " +
+                "and (" + 
+                    ":pending <> 'Own' " +
+                    " or " +
+                        "exists (select 1 from \"Security\".\"GetGrantedUsers\" (p.\"Company\", p.\"Department\", p.\"PrototypeType\", 'Prototypes', 'Approve') u where u.\"Code\" = :user) " +
+                        "and exists (" +
+                            "select 1 " +
+                            "from " +
+                                "\"WorkFlows\".\"WorkFlowApplications\" wfa " +
+                                "inner join \"WorkFlows\".\"WorkFlowApplicationSteps\" wfas on wfa.\"ID\" = wfas.\"WorkFlowApplication\" " +
+                                "inner join \"WorkFlows\".\"WorkFlowApplicationStepTags\" wfast on wfas.\"ID\" = wfast.\"WorkFlowApplicationStep\" " +
+                            "where " +
+                                "wfa.\"Prototype\" = p.\"ID\" " +
+                                "and wfas.\"User\" is null " + 
+                                "and not exists (select 1 from \"WorkFlows\".\"WorkFlowApplicationSteps\" ps where wfas.\"WorkFlowApplication\" = ps.\"WorkFlowApplication\" and ps.\"User\" is null and wfas.\"Step\" > ps.\"Step\") " +
+                                "and not exists (select 1 from \"WorkFlows\".\"WorkFlowApplicationSteps\" ps where wfas.\"WorkFlowApplication\" = ps.\"WorkFlowApplication\" and ps.\"User\" = :user and wfas.\"Step\" = ps.\"Step\") " +
+                                "and (" +
+                                    "wfast.\"Tag\" is null " +
+                                    "or exists (select 1 from \"Security\".\"UserLevels\" ul where ul.\"Company\" = p.\"Company\" and ul.\"User\" = :user and ul.\"Department\" = p.\"Department\" and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = p.\"PrototypeType\") and ul.\"PrototypeWorkFlowLevel\" = wfast.\"Tag\") " +
+                                ") " +
+                    ")" +
+                ")";
         private const string PROTOTYPE_VERSIONS_LIST_QUERY = 
             "select " +
                 "p.\"ID\", p.\"Name\", pv.\"Description\", pv.\"VersionState\" \"State\", pv.\"Version\", pv.\"ValidFrom\" \"ValidityFrom\", pv.\"ValidUntil\" \"ValidityUntil\", " +
@@ -185,6 +206,8 @@ namespace CheckListManager.Prototypes.Data
             else if (prototypeVersion.VersionState == VersionState.InSimulation && state == VersionState.Draft && !proposed)
             {
                 prototypeVersion.VersionState = state;
+                prototypeVersion.ProposedState = null;
+                prototypeVersion.ProposedDate = null;
                 prototypeVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                 {
                     Prototype = prototypeVersion.Prototype,

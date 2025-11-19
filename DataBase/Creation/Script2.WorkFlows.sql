@@ -62,17 +62,10 @@ create table "WorkFlows"."WorkFlowApplications"
 	--the followin constraint is added in the script Script3.CheckLists.sql
 	--constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 
-	"Document" bigint, 
-	"DocumentVersion" int,
-	check("Document" is null and "DocumentVersion" is null or not "Document" is null and not "DocumentVersion" is null),
-	--the following constraint is added in the script Script8.Documents.sql
-	--constraint "WorkFlowApplications_DocumentVersion" foreign key ("Document", "Version") references "Documents"."DocumentVersions" on delete cascade,
-
 	constraint Check_WorkFlowApplications_Target check
 	(
-		not "Prototype" is null and "Instance" is null and "Document" is null 
-		or "Prototype" is null and not "Instance" is null and "Document" is null 
-		or "Prototype" is null and "Instance" is null and not "Document" is null 
+		not "Prototype" is null and "Instance" is null
+		or "Prototype" is null and not "Instance" is null
 	),
 
 	"WorkFlowAction" varchar (50) references "WorkFlows"."WorkFlowActions",
