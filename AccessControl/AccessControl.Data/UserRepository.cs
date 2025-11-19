@@ -34,7 +34,7 @@ namespace CheckListManager.AccessControl.Data
 
         private const string EXPORT_QUERY =
             "select " +
-                "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\", " +
+                "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\",  u.\"NumberOfPasswordAttempts\", " +
                 "g.\"Group\", g.\"Department\", d.\"Name\" \"DepartmentName\", g.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
                 "g.\"Role\", g.\"FunctionGroup\", g.\"Function\", (" +
                     "select \"SignatureLevel\" " +
@@ -82,8 +82,15 @@ namespace CheckListManager.AccessControl.Data
                 "and (:corporateID = '' or u.\"CorporateID\" ilike '%' || :corporateID || '%') " +
                 "and (:group = '' or exists (select 1 from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\" and ug.\"Group\" ilike '%' || :group || '%')) " +
                 "and (:role = '' or exists (select 1 from \"Security\".\"UserRoles\" ur where ur.\"Company\" = u.\"Company\" and ur.\"User\" = u.\"Code\" and ur.\"Role\" ilike '%' || :role || '%')) " +
+                "and (:failedLogins is null or u.\"NumberOfPasswordAttempts\" >= :failedLogins) " +
+                "and ( " +
+                    ":inactivityDays is null " +
+                    "or (u.\"LastLoginOn\" is null and date_part('day', now() - u.\"CreatedOn\") >= :inactivityDays) " +
+                    "or (u.\"LastLoginOn\" is not null and date_part('day', now() - u.\"LastLoginOn\") >= :inactivityDays " +
+                ") " +
+                "and (:enabled = 'All' or :enabled = 'Enabled' and u.\"Enabled\" or :enabled = 'Disabled' and not u.\"Enabled\") " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
-        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group, string role)
+        public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
         {
             var List = await Read<ExportRow>(EXPORT_QUERY, new
             {
@@ -92,7 +99,10 @@ namespace CheckListManager.AccessControl.Data
                 description = description?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
                 corporateID = corporateID?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
                 group = group?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
-                role = role?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty
+                role = role?.Replace("_", "\\_").Replace("%", "\\%") ?? string.Empty,
+                failedLogins,
+                inactivityDays,
+                enabled
             });
             return List.ToList();
         }
@@ -218,27 +228,34 @@ namespace CheckListManager.AccessControl.Data
             return await Entities.Users.Where(x => x.Company == company && x.PIN != null && x.PINChangeDate < Threshold).ToListAsync();
         }
 
-        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role)
+        private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
             =>
             Entities.Users
-                .Where(
-                    u => u.Company == company
-                        && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
-                        && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
-                        && (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
-                        && (group == string.Empty || u.UserGroups.Any(ug => ug.Group.ToUpper().Contains(group.ToUpper())))
-                        && (role == string.Empty || u.UserRoles.Any(ug => ug.Role.ToUpper().Contains(role.ToUpper())))
+                .Where(u => 
+                    u.Company == company
+                    && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
+                    && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
+                    && (corporateID == string.Empty || u.CorporateID != null && u.CorporateID.ToUpper().Contains(corporateID.ToUpper()))
+                    && (group == string.Empty || u.UserGroups.Any(ug => ug.Group.ToUpper().Contains(group.ToUpper())))
+                    && (role == string.Empty || u.UserRoles.Any(ug => ug.Role.ToUpper().Contains(role.ToUpper())))
+                    && (failedLogins == null || u.NumberOfPasswordAttempts >= failedLogins.Value)
+                    && (
+                        inactivityDays == null
+                        || (u.LastLoginOn == null && DbFunctions.DiffDays(u.CreatedOn, DateTimeOffset.UtcNow) >= inactivityDays.Value)
+                        || (u.LastLoginOn != null && DbFunctions.DiffDays(u.LastLoginOn, DateTimeOffset.UtcNow) >= inactivityDays.Value)
+                    )
+                    && (enabled == "All" || enabled == "Enabled" && u.Enabled || enabled == "Disabled" && !u.Enabled)
                 );
 
-        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int skip, int take)
-            => GetAsync(companyId, code, description, corporateID, group, role)
+        public Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled, int skip, int take)
+            => GetAsync(companyId, code, description, corporateID, group, role, failedLogins, inactivityDays, enabled)
                 .OrderBy(u => u.Code)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
 
-        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID, string group, string role)
-            => GetAsync(company, code, description, corporateID, group, role).CountAsync();
+        public Task<int> CountUsersAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
+            => GetAsync(company, code, description, corporateID, group, role, failedLogins, inactivityDays, enabled).CountAsync();
 
         public async Task<Users> AddAsync(DefaultIdentity identity, Users user)
         {
@@ -252,8 +269,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
         {
-            var existingUser = await GetAsync(identity.CompanyId, user.Code);
-            if (existingUser == null) throw new DatabaseException($"User {user.Code} not found");
+            var existingUser = await GetAsync(identity.CompanyId, user.Code) ?? throw new DatabaseException($"User {user.Code} not found");
             existingUser.Description = user.Description;
             existingUser.Email = user.Email;
             existingUser.CorporateID = user.CorporateID;
@@ -277,9 +293,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task DeleteAsync(long company, string code)
         {
-            var user = await GetAsync(company, code);
-            if (user == null) throw new DatabaseException($"User {code} not found");
-
+            var user = await GetAsync(company, code) ?? throw new DatabaseException($"User {code} not found");
             Entities.Users.Remove(user);
             await SaveChangesAsync();
         }
@@ -321,8 +335,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<Roles> EditRoleAsync(DefaultIdentity identity, Roles role)
         {
-            var existingRole = await GetRoleAsync(identity.CompanyId, role.Code);
-            if (existingRole == null) throw new DatabaseException($"Role {role.Code} not found");
+            var existingRole = await GetRoleAsync(identity.CompanyId, role.Code) ?? throw new DatabaseException($"Role {role.Code} not found");
             existingRole.FunctionGroup = role.FunctionGroup;
             existingRole.ModifiedOn = DateTimeOffset.UtcNow;
             existingRole.ModifiedBy = identity.Code;
@@ -334,8 +347,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task DeleteRoleAsync(long company, string code)
         {
-            var role = await GetRoleAsync(company, code);
-            if (role == null) throw new DatabaseException($"Role {code} not found");
+            var role = await GetRoleAsync(company, code) ?? throw new DatabaseException($"Role {code} not found");
 
             Entities.Roles.Remove(role);
             await SaveChangesAsync();
@@ -383,8 +395,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group, List<string> existingConflicts)
         {
-            var existingGroup = await GetGroupAsync(identity.CompanyId, group.Code);
-            if (existingGroup == null) throw new DatabaseException($"Group {group.Code} not found");
+            var existingGroup = await GetGroupAsync(identity.CompanyId, group.Code) ?? throw new DatabaseException($"Group {group.Code} not found");
             existingGroup.Description = group.Description;
             existingGroup.ModifiedOn = DateTimeOffset.UtcNow;
             existingGroup.ModifiedBy = identity.Code;
@@ -403,8 +414,7 @@ namespace CheckListManager.AccessControl.Data
 
         public async Task DeleteGroupAsync(long company, string code)
         {
-            var user = await GetGroupAsync(company, code);
-            if (user == null) throw new DatabaseException($"Group {code} not found");
+            var user = await GetGroupAsync(company, code) ?? throw new DatabaseException($"Group {code} not found");
 
             Entities.Groups.Remove(user);
             await SaveChangesAsync();

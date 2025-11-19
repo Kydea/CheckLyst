@@ -37,6 +37,24 @@
                 <i class="Icon fal fa-user-cog"></i>
                 <input type="text" name="role" />
             </label>
+
+            <label class="Clearing">
+                <span>Inactivity days</span>
+                <input type="text" name="inactivityDays" maxlength="18" />
+            </label>
+            <label>
+                <span>Failed logins</span>
+                <input type="text" name="failedLogins" maxlength="18" />
+            </label>
+            <label>
+                <span>Enabled</span>
+                <i class="Icon fal fa-check"></i>
+                <select name="enabled">
+                    <option value="All">(ignore)</option>
+                    <option value="Enabled">Only enabled users</option>
+                    <option value="Disabled">Only disabled users</option>
+                </select>
+            </label>
         </form>
 
         <table class="Grid">
@@ -48,6 +66,7 @@
                     <th>Corporate ID</th>
                     <th>Enabled</th>
                     <th>Last login</th>
+                    <th>Failed logins</th>
                     <th>Created by</th>
                     <th>Created on</th>
                     <th>Modified by</th>
@@ -62,6 +81,7 @@
                     <td data-column="corporateID"></td>
                     <td data-column="enabled" data-type="Boolean"></td>
                     <td data-column="lastLoginOn" data-type="DateTimeOffset"></td>
+                    <td data-column="numberOfPasswordAttempts"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
                     <td data-column="modifiedBy"></td>
@@ -132,6 +152,9 @@
                 location = form.getElement().attr("action") + "/Export?Token=" + result.token;
             })
         });
+
+        $("input[name=failedLogins]").keyfilter(/[\d]/);
+        $("input[name=inactivityDays]").keyfilter(/[\d]/);
 
         callback.call();
     };

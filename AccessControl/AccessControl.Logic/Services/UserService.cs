@@ -288,13 +288,13 @@ namespace CheckListManager.AccessControl.Logic.Services
         }
 
         public async Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request) =>
-            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group, request.Role);
+            await _userRepository.GetUsersForExportAsync(companyId, request.Code, request.Description, request.CorporateID, request.Group, request.Role, request.FailedLogins, request.InactivityDays, request.Enabled);
 
         public async Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request)
         {
             var take = request.ItemsPerPage;
-            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role, request.Skip, take);
-            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role);
+            var users = await _userRepository.GetUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role, request.Data.FailedLogins, request.Data.InactivityDays, request.Data.Enabled, request.Skip, take);
+            var count = await _userRepository.CountUsersAsync(companyId, request.Data.Code, request.Data.Description, request.Data.CorporateID, request.Data.Group, request.Data.Role, request.Data.FailedLogins, request.Data.InactivityDays, request.Data.Enabled);
 
             var response = users.Select(u => new UsersResponse
             {
@@ -304,6 +304,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 CorporateID = u.CorporateID,
                 Enabled = u.Enabled,
                 AuthenticationCode = u.AuthenticationCode,
+                NumberOfPasswordAttempts = u.NumberOfPasswordAttempts,
                 LastLoginOn = u.LastLoginOn,
                 CreatedBy = u.CreatedBy,
                 CreatedOn = u.CreatedOn,
