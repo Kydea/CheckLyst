@@ -9,5 +9,6 @@
         public string CompanyName { get; set; }
         public string UserCode { get; set; }
         public string TimeZone { get; set; }
+        public string AttachmentKey { get; set; }
     }
 }

@@ -18,19 +18,25 @@
         },
 
         view = function () {
-            var url = matematici.urls.instances.api + "/DownloadAttachment?";
-            url += "code=" + instances.instance.getCode();
-            url += "&key=" + key;
-            url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
-
-            if (model.fileType === "images")
-                matematici.imageViewer.show("Preview", url);
-            else if (model.fileType === "pdf") {
-                if (matematici.appMode)
-                    window.webkit.messageHandlers.instances.postMessage("file: " + url);
-                else
-                    window.open(url);
-            }
+            var url = matematici.urls.instances.api + "/GetDownloadAttachmentToken";
+            $.ajax({
+                type: "post",
+                url: url,
+                data: { 
+                    code: instances.instance.getCode(),
+                    attachmentKey: key
+                }
+            }).done(function (result) {
+                url = matematici.urls.instances.api + "/DownloadAttachment?token=" + (result && result.token);
+                if (model.fileType === "images")
+                    matematici.imageViewer.show("Preview", url);
+                else if (model.fileType === "pdf") {
+                    if (matematici.appMode)
+                        window.webkit.messageHandlers.instances.postMessage("file: " + url);
+                    else
+                        window.open(url);
+                }
+            });
         },
 
         setup = function () {
@@ -68,7 +74,7 @@
                             text: "Upload",
                             icon: "paperclip",
                             handler: function () {
-                                input.trigger("click")
+                                input.click();
                             }
                         }
                     ]);

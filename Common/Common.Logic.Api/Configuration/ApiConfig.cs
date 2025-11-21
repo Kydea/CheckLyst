@@ -99,6 +99,12 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 				return next.Invoke();
 			});
+            /*
+			 * to use a token in url, not needed anymore
+			 * this is not completely secure and gives problem when the token grows too much (IE limit of 2048 characters in url)
+			 * we are currenly only using one time specific redis token
+			 * 
+			 * delete this comment once the v.4 has been fully tested
 			app.Use((context, next) =>
 			{
 				if (!context.Request.Headers.ContainsKey("Authorization"))
@@ -112,7 +118,8 @@ namespace CheckListManager.Common.Logic.Api.Configuration
 
 				return next.Invoke();
 			});
-			ConfigureWebApi();
+			*/
+            ConfigureWebApi();
 			ConfigureAuth(app);
 			app.UseWebApi(_configuration);
 		}

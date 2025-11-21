@@ -60,7 +60,7 @@ instances.Event = function (type, itemId, data, accessToken, suppressError, file
 				done = null;
 			} else
 				instances.instance.update(result);
-		}).error(function () {
+		}).fail(function () {
 			if (error) error();
 		});
     };
