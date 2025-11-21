@@ -25,14 +25,16 @@ namespace CheckListManager.AccessControl.Logic.Services
 
 		Task<List<ExportRow>> GetFunctionsAsync(long companyId, UsersRequest request);
 		Task<PagingResponse<List<UsersResponse>>> GetUsersAsync(long companyId, PagingRequest<UsersRequest> request);
+        Task<UserResponse> BindAsync(UsersRequest data);
 
         Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request);
         Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record);
         Task<UserResponse> DeleteUserAsync(DefaultIdentity identity, UserRequest record);
+        Task SetTimeZoneAsync(DefaultIdentity identity, string value);
 
-		Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default(CancellationToken));
-		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default(CancellationToken));
-        Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups);
+        Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default);
+		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default);
+        Task<List<Tuple<string, string>>> GetConflictsAsync(IDefaultIdentity identity, List<string> groups);
     }
 }

@@ -28,7 +28,7 @@ namespace CheckListManager.Common.Logic.Api.Json
                 writer.WriteNull();
             else
             {
-                var timeZone = ((CustomJsonTextWriter)writer).Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
+                var timeZone = ((CustomJsonTextWriter)writer).Request.Headers.TryGetValues("ClientTimeZone", out var ClientTimeZones) ? ClientTimeZones.Single() : null;
                 JToken.FromObject(((DateTimeOffset)value).ToLocalTime(timeZone)).WriteTo(writer);
             }
         }
@@ -37,11 +37,7 @@ namespace CheckListManager.Common.Logic.Api.Json
         
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var customReader = (reader as CustomJsonTextReader);
-            var timeZone = customReader == null ? TimeZoneInfo.Utc.Id : customReader.Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
-            //var timeZone = ((CustomJsonTextReader)reader).Request.Headers.TryGetValues("CompanyTimeZone", out var CompanyTimeZones) ? CompanyTimeZones.Single() : null;
-            //should replace the previous two lines once fixed the cast exception for prototypes with signatures
-
+            var timeZone = !(reader is CustomJsonTextReader customReader) ? TimeZoneInfo.Utc.Id : customReader.Request.Headers.TryGetValues("ClientTimeZone", out var ClientTimeZones) ? ClientTimeZones.Single() : null;
             if (reader.Value == null)
                 return null;
             else if (reader.Value is DateTime dateTimeValue)
@@ -52,7 +48,7 @@ namespace CheckListManager.Common.Logic.Api.Json
                     return new DateTimeOffset(dateTimeValue, TimeSpan.Zero).ToLocalTime(timeZone);
             }
             else if (reader.Value is string stringValue)
-                return DateTimeOffsetHelper.Parse(stringValue, timeZone, out var Ambiguous, out var TimeSpans);
+                return DateTimeOffsetHelper.Parse(stringValue, timeZone, out _, out _);
             else
                 throw new ArgumentException("Invalid serialized DateTimeOffset type");
         }

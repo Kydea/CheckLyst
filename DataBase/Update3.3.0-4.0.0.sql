@@ -1,4 +1,5 @@
 alter table "Infrastructure"."Companies" add "Online" boolean not null default true;
+alter table "Security"."Users" add "TimeZone" varchar (100) references "Infrastructure"."TimeZones";
 
 insert into "Configuration"."Settings" values ('LicenseExpiration');
 insert into "Configuration"."Settings" values ('LicenseCompaniesCount');

@@ -41,8 +41,8 @@ namespace CheckListManager.Common.Core.Network
 			_client.DefaultRequestHeaders.Authorization = incomingMessage.Headers.Authorization;
 			if (incomingMessage.Headers.TryGetValues(AwsTraceHeader, out var trace))
 				_client.DefaultRequestHeaders.TryAddWithoutValidation(AwsTraceHeader, trace.First());
-            if (incomingMessage.Headers.TryGetValues("CompanyTimeZone", out var companyTimeZone))
-                _client.DefaultRequestHeaders.TryAddWithoutValidation("CompanyTimeZone", companyTimeZone.Single());
+            if (incomingMessage.Headers.TryGetValues("ClientTimeZone", out var clientTimeZone))
+                _client.DefaultRequestHeaders.TryAddWithoutValidation("ClientTimeZone", clientTimeZone.Single());
 
             _configured = true;
 		}

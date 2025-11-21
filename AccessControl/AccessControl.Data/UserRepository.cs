@@ -277,6 +277,7 @@ namespace CheckListManager.AccessControl.Data
             existingUser.Enabled = user.Enabled;
             if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
             existingUser.AuthenticationCode = user.AuthenticationCode;
+            existingUser.TimeZone = user.TimeZone;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;
             Entities.UserGroups.RemoveRange(existingUser.UserGroups);
@@ -300,6 +301,13 @@ namespace CheckListManager.AccessControl.Data
 
         public Task<long> CountUsersAsync(bool? enabled) =>
             Entities.Users.LongCountAsync(u => enabled == true && u.Enabled || enabled == false && !u.Enabled || !enabled.HasValue);
+
+        public async Task SetTimeZoneAsync(long companyId, string code, string value)
+        {
+            var user = await GetAsync(companyId, code) ?? throw new DatabaseException($"User {code} not found");
+            user.TimeZone = value == "-" ? null : value;
+            await SaveChangesAsync();
+        }
 
         public Task<Roles> GetRoleAsync(long companyId, string code) => 
             Entities.Roles.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());

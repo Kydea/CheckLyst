@@ -59,7 +59,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
             CompaniesResponse response = new CompaniesResponse();
             if (Form.Source == null)
             {
-                var TimeZones = (await _infrastructureRepository.GetTimeZonesAsync()).Select(tz => new Option(tz, tz));
+                var TimeZones = (await _commonRepository.GetTimeZonesAsync()).Select(tz => new Option(tz, tz));
                 response.Fields["TimeZone"] = new Field
                 {
                     Options = TimeZones

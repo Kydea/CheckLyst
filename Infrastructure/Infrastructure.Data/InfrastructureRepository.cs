@@ -340,11 +340,5 @@ namespace CheckListManager.Infrastructure.Data
                 .Where(wf => wf.Company == companyId)
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
-
-        public async Task<List<string>> GetTimeZonesAsync() =>
-            await Entities.TimeZones
-                .OrderBy(wf => wf.Code)
-                .Select(wf => wf.Code)
-                .ToListAsync();
     }
 }

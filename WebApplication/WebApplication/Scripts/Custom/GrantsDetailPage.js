@@ -404,6 +404,19 @@
             tab.getItem(instancesTab).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
                 applyConstraintToInstanceGrant(matematici.AutoComplete.get(this), value, on);
             });
+
+            if (page == "Users") {
+                var
+                    sender = detailPage.getSender(),
+                    form = detailPage.getForm(),
+                    data = {
+                        fields: {
+                            timeZone: sender.getBindResult().fields.timeZone
+                        }
+                    };
+
+                form.handleResult(data);
+            }
         },
 
         completeHandler = function () {

@@ -129,7 +129,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "decimalSeparator", user.Companies.SettingValues.SingleOrDefault(c => c.Setting == "DecimalSeparator")?.Value ?? "*" },
                 { "code", user.Code },
                 { "name", user.Description },
-                { "timeZone", user.Companies.TimeZone },
+                { "timeZone", user.TimeZone ?? user.Companies.TimeZone },
+                { "companyTimeZone", user.Companies.TimeZone },
                 { "roles", string.Join(",", claims.Select(c => c + '#')) }
             };
         }

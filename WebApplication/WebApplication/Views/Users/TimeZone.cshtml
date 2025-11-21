@@ -1,0 +1,66 @@
+﻿<form class="TimeZone">
+    <div class="Simple">
+        <label class="Width200">
+            <span>Time zone</span>
+            <select id="TimeZone" data-nullable="(company time zone)"></select>
+        </label>
+    </div>
+</form>
+<div class="Buttons">
+    <a class="Button GreyYellowButton" href="#" id="Save"><i class="Icon fa fa-check"></i> Save </a>
+    <a class="Button GreyYellowButton" href="#" id="Once"><i class="Icon fa fa-check"></i> Use once</a>
+</div>
+
+<script type="text/javascript">
+
+    var
+        data = matematici.popup.getData(),
+        element = matematici.popup.getElement().addClass("TimeZone"),
+        select = $("#TimeZone", element),
+
+        load = function () {
+            $.ajax({
+                type: "post",
+                url: matematici.urls.api + "/Infrastructure/Information/TimeZones",
+                contentType: "application/json; charset=utf-8"
+            }).done(function (result) {
+                for(var index in result) {
+                    var
+                        timeZone = result[index],
+                        option = $("<option></option>").val(timeZone).text(timeZone);
+                    select.append(option);
+                }
+                new matematici.AutoComplete(select);
+                select.val(localStorage.timeZone == localStorage.companyTimeZone ? null : localStorage.timeZone);
+            });
+        },
+
+        save = function (once) {
+            var
+                timeZone = $("#TimeZone", element).val(),
+                handler = function () {
+                    localStorage.timeZone = timeZone || localStorage.companyTimeZone;
+                    matematici.clock.update();
+                    matematici.popup.close();
+                    matematici.blip.ok();
+                };
+
+            if (once)
+                handler();
+            else
+                $.ajax({
+                    type: "post",
+                    url: matematici.urls.api + "/AccessControl/Users/SetTimeZone",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ data: timeZone == null || localStorage.companyTimeZone == timeZone ? "-" : timeZone })
+                }).done(function (result) {
+                    handler();
+                });
+        };
+
+    $("#Save", element).on("click", function () { save(false); });
+    $("#Once", element).on("click", function () { save(true); });
+    matematici.popup.addCloseButton();
+
+    load();
+</script>

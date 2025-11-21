@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using CheckListManager.Common.Logic.DataEngine;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
 	public sealed class UserRequest
-	{
+    {
 		public string Code { get; set; }
 		public bool Enabled { get; set; }
 		public string Password { get; set; }
@@ -13,6 +14,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
 		public string Email { get; set; }
 		public string CorporateID { get; set; }
         public string AuthenticationCode { get; set; }
+        public string TimeZone { get; set; }
         public Grant[] GeneralFunctions { get; set; }
         public Grant[] PrototypeFunctions { get; set; }
         public Grant[] InstanceFunctions { get; set; }

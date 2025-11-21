@@ -199,5 +199,10 @@ namespace CheckListManager.Common.Data
                 Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
             });
 
+        public Task<List<string>> GetTimeZonesAsync() =>
+            Entities.TimeZones
+                .OrderBy(wf => wf.Code)
+                .Select(wf => wf.Code)
+                .ToListAsync();
     }
 }

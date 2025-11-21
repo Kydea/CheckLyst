@@ -48,7 +48,7 @@ ace.define("ace/snippets/expression", ["require", "exports", "module"], function
             name: "DateTimeIncrement",
             scope: "expression",
             meta: "function",
-            comment: "returns the provided date (considered as date time woth 0 hours and minutes) or date-time incremented by the provided years, months, days, hours and minutes"
+            comment: "returns the provided date (considered as date time with 0 hours and minutes) or date-time incremented by the provided years, months, days, hours and minutes"
         },
         {
             content: "Error(${1:error message})",

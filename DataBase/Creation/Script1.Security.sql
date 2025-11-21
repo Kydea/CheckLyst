@@ -23,6 +23,7 @@ create table "Security"."Users"
 
 	"LastLoginOn" timestamptz,
 	"LastLoginFailedOn" timestamptz,
+	"TimeZone" varchar (100) references "Infrastructure"."TimeZones",
 
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,

@@ -18,11 +18,14 @@ namespace CheckListManager.Common.Data
         public TimeZones()
         {
             this.Companies = new HashSet<Companies>();
+            this.Users = new HashSet<Users>();
         }
     
         public string Code { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Companies> Companies { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Users> Users { get; set; }
     }
 }

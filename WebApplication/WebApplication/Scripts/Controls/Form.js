@@ -13,7 +13,8 @@
         popupLink = function () {
             var url = window.location.protocol + "//" + window.location.host + window.location.pathname + prepareRequestString();
 
-            matematici.dialog.show("link builder", url, [{
+            matematici.dialog.show("link builder", url, 
+                [{
                     hidden: true,
                     cancelButton: true
                 }, {

@@ -637,6 +637,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Default\Dashboard.cshtml" />
     <Content Include="Views\Default\LicenseManager.cshtml" />
+    <Content Include="Views\Users\TimeZone.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

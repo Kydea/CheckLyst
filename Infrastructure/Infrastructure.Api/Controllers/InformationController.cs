@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -21,11 +22,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
     [RoutePrefix("Information")]
     public class InformationController : BaseApiController
     {
+        private readonly ICommonRepository _commonRepository;
         private readonly IConfigurationService _configurationService;
 
-        public InformationController(IConfigurationService configurationService)
+        public InformationController(IConfigurationService configurationService, ICommonRepository commonRepository)
         {
             _configurationService = configurationService;
+            _commonRepository = commonRepository;
         }
 
         [HttpPost]
@@ -69,5 +72,14 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             Stream.Seek(0, SeekOrigin.Begin);
             return Content(HttpStatusCode.OK, Stream, new FileFormatter("image/jpeg"));
         }
+
+        [HttpPost]
+        [Route("TimeZones")]
+        public async Task<IHttpActionResult> GetTimeZone()
+        {
+            return Ok(await _commonRepository.GetTimeZonesAsync());
+        }
+
+
     }
 }

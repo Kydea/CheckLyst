@@ -137,6 +137,7 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.GroupConflicts" Width="1.5" PointX="20.125" PointY="29" />
         <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group1" />
         <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group2" />
+        <AssociationConnector Association="RelationalDatabaseModel.Users_TimeZone_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

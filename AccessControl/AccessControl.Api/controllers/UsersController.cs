@@ -33,6 +33,14 @@ namespace CheckListManager.AccessControl.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Bind")]
+        [Authorize(Roles = "Users#View")]
+        public async Task<IHttpActionResult> Bind(Message<UsersRequest> request)
+        {
+            return Ok(await _userService.BindAsync(request.Data));
+        }
+
+        [HttpPost]
         [Route("GetData")]
         [Authorize(Roles = "Users#View")]
         public async Task<IHttpActionResult> GetUsers(PagingRequest<UsersRequest> request)
@@ -77,7 +85,15 @@ namespace CheckListManager.AccessControl.Api.Controllers
         [Authorize(Roles = "Users#Edit")]
         public async Task<IHttpActionResult> GetConflicts(UserRequest request)
         {
-            return Ok(await _userService.GetConflicts(Identity, request.Groups));
+            return Ok(await _userService.GetConflictsAsync(Identity, request.Groups));
+        }
+
+        [HttpPost]
+        [Route("SetTimeZone")]
+        public async Task<IHttpActionResult> SetTimeZone(Message<string> request)
+        {
+            await _userService.SetTimeZoneAsync(Identity, request.Data);
+            return Ok();
         }
 
         [HttpPost]

@@ -1,6 +1,8 @@
-﻿namespace CheckListManager.AccessControl.Logic.Messages.Users
+﻿using CheckListManager.Common.Logic.DataEngine;
+
+namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
-	public sealed class UsersRequest
+	public sealed class UsersRequest: Request
 	{
         public long? CompanyId { get; set; }
         public string Code { get; set; }

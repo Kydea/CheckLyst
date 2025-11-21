@@ -61,7 +61,7 @@
             if (!settings.suppressToken) {
                 var token = settings.accessToken || localStorage.accessToken;
                 if (token) xhr.setRequestHeader("Authorization", "Bearer " + token);
-                if (localStorage.timeZone) xhr.setRequestHeader("CompanyTimeZone", localStorage.timeZone);
+                if (localStorage.timeZone) xhr.setRequestHeader("ClientTimeZone", localStorage.timeZone);
             }
         }
     });

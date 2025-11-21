@@ -24,5 +24,6 @@ namespace CheckListManager.Common.Data
         Task<FTPServers> GetInstancesFTPServerAsync(long CompanyID, long PrototypeType);
         Task AddTrailRecordAsync(Records record);
         Task AuditAsync(IDefaultIdentity identity, string action, object information);
+        Task<List<string>> GetTimeZonesAsync();
     }
 }

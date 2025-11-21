@@ -306,6 +306,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 AuthenticationCode = u.AuthenticationCode,
                 NumberOfPasswordAttempts = u.NumberOfPasswordAttempts,
                 LastLoginOn = u.LastLoginOn,
+                TimeZone = u.TimeZone,
                 CreatedBy = u.CreatedBy,
                 CreatedOn = u.CreatedOn,
                 ModifiedBy = u.ModifiedBy,
@@ -412,6 +413,32 @@ namespace CheckListManager.AccessControl.Logic.Services
             response.Valid = !response.Fields.Any();
             return response;
         }
+
+        public async Task<UserResponse> BindAsync(UsersRequest form)
+        {
+            UserResponse response = new UserResponse();
+            if (form.Source == null)
+            {
+                response.Fields["Code"] = new Field { Value = form.Code };
+                response.Fields["Description"] = new Field { Value = form.Description };
+                response.Fields["CorporateID"] = new Field { Value = form.CorporateID };
+                response.Fields["Group"] = new Field { Value = form.Group };
+                response.Fields["Role"] = new Field { Value = form.Role };
+                response.Fields["InactivityDays"] = new Field { Value = form.InactivityDays.ToString() };
+                response.Fields["FailedLogins"] = new Field { Value = form.FailedLogins.ToString() };
+
+                IEnumerable<Option> TimeZones = new List<Option> { new Option(null, "(default)") };
+                TimeZones = TimeZones.Union((await _commonRepository.GetTimeZonesAsync()).Select(tz => new Option(tz, tz)));
+                response.Fields["TimeZone"] = new Field
+                {
+                    Value = null,
+                    Options = TimeZones
+                };
+            }
+
+            return response;
+        }
+
 
         public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
         {
@@ -631,7 +658,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             });
         }
 
-        public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest record)
+        public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request)
         {
             var licensedCount = (await _settingService.LicenseAsync()).Payload.UsersCount;
             if (licensedCount.HasValue)
@@ -641,22 +668,23 @@ namespace CheckListManager.AccessControl.Logic.Services
                     throw new LicenseException("The maximum number of users allowed by the license has been reached");
             }
 
-            var response = await ValidateAsync(identity, record);
+            var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
                 {
                     var User = new Users
                     {
-                        Code = record.Code,
-                        Description = record.Description,
-                        Email = record.Email,
-                        CorporateID = record.CorporateID,
-                        Password = _hashService.HashStringToBytes(record.Password),
-                        AuthenticationCode = record.AuthenticationCode,
-                        Enabled = record.Enabled
+                        Code = request.Code,
+                        Description = request.Description,
+                        Email = request.Email,
+                        CorporateID = request.CorporateID,
+                        Password = _hashService.HashStringToBytes(request.Password),
+                        AuthenticationCode = request.AuthenticationCode,
+                        TimeZone = request.TimeZone,
+                        Enabled = request.Enabled
                     };
 
-                    BuildFunctions(identity, record, User);
+                    BuildFunctions(identity, request, User);
 
                     await _userRepository.AddAsync(identity, User);
 
@@ -666,7 +694,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         User = identity.Code,
                         Action = TrailAction.UserCreated,
                         Date = DateTimeOffset.UtcNow,
-                        Information = SerializeUserInformation(record, User.UserFunctions, User.UserLevels, User.UserRoles)
+                        Information = SerializeUserInformation(request, User.UserFunctions, User.UserLevels, User.UserRoles)
                     });
                 }
                 catch (Exception exception)
@@ -696,7 +724,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                         CorporateID = record.CorporateID,
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
-                        AuthenticationCode = record.AuthenticationCode
+                        AuthenticationCode = record.AuthenticationCode,
+                        TimeZone = record.TimeZone
                     };
 
                     BuildFunctions(identity, record, User);
@@ -759,6 +788,9 @@ namespace CheckListManager.AccessControl.Logic.Services
 
             return response;
         }
+
+        public Task SetTimeZoneAsync(DefaultIdentity identity, string value) =>
+            _userRepository.SetTimeZoneAsync(identity.CompanyId, identity.Code, value);
 
         public async Task CheckInactiveUsers(long company, CancellationToken cancellationToken = new CancellationToken())
         {
@@ -842,7 +874,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             }
         }
 
-        public async Task<List<Tuple<string, string>>> GetConflicts(IDefaultIdentity identity, List<string> groups)
+        public async Task<List<Tuple<string, string>>> GetConflictsAsync(IDefaultIdentity identity, List<string> groups)
         {
             var conflicts = await _userRepository.GetConflicts(identity.CompanyId, groups);
             return conflicts.Select(c => new Tuple<string, string>(c.Group1, c.Group2)).ToList();

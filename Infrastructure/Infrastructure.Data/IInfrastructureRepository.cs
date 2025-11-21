@@ -37,7 +37,5 @@ namespace CheckListManager.Infrastructure.Data
         Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(IDefaultIdentity identity, Expression<Func<Departments, TResult>> select, string name, int currentPage, int itemsPerPage);
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(IDefaultIdentity identity, Expression<Func<PrototypeTypes, TResult>> select, long? department, string name, int currentPage, int itemsPerPage);
         Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(IDefaultIdentity identity, Expression<Func<FTPServers, TResult>> select, string name, string host, int currentPage, int itemsPerPage);
-
-        Task<List<string>> GetTimeZonesAsync();
     }
 }

@@ -9,16 +9,21 @@
 						{ text: "Cancel", icon: "times", cancelButton: true },
 						{
 							text: "Logout", icon: "sign-out", handler: function () {
-                                matematici.dialog.close();
-                                window.location = matematici.urls.accessControl.login;
+								matematici.dialog.close();
+								window.location = matematici.urls.accessControl.login;
 								return true;
+							}
+						},
+						{
+							text: "Change time zone", icon: "globe", handler: function () {
+								timeZone();
 							}
 						},
 						{
 							text: "Change PIN", icon: "key", handler: function () {
 								profile(matematici.tokenManager.getUserCode());
 							}
-						},
+						}
 					]);
 				})
 				.on("click", "a.Add", function (e) {
@@ -27,12 +32,12 @@
 							{ text: "Cancel", icon: "times", cancelButton: true },
 							{ text: "Add", icon: "plus", handler: add }
 						],
-                        signers = matematici.tokenManager.getSigners();
+						signers = matematici.tokenManager.getSigners();
 
-                    for (var index in signers) {
-                        var signer = signers[index];
+					for (var index in signers) {
+						var signer = signers[index];
 						buttons.push({
-                            text: signer.code, icon: "user", title: signer.name, data: signer, handler: function (signer) {
+							text: signer.code, icon: "user", title: signer.name, data: signer, handler: function (signer) {
 								profile(signer.code, signer.accessToken || "-");
 							}
 						});
@@ -77,6 +82,48 @@
 				},
 			}
 
+			matematici.popup.show(options);
+		},
+
+		timeZone = function () {
+			options = {
+				title: "Time zone",
+				width: 460,
+				ajax: {
+					type: "post",
+					url: matematici.urls.users.timeZone,
+				},
+				data: {
+					signHandler: function (panel) {
+						if (panel.getPIN() == "")
+							matematici.dialog.error("PIN", "PIN is mandatory");
+						else if (panel.getPIN() != panel.getConfirmPIN())
+							matematici.dialog.error("PIN", "PIN and confirm pin must contain the same values");
+						else if (panel.getPIN().length < 6)
+							matematici.dialog.error("PIN", "PIN's length must be greater than 5 characters");
+						else if (!panel.getPassword())
+							matematici.dialog.error("PIN", "Provide your password");
+						else
+							$.ajax(matematici.urls.accessControl.setPIN, {
+								method: "post",
+								accessToken: accessToken,
+								data: {
+									password: panel.getPassword(),
+									pin: panel.getPIN()
+								}
+							}).done(function (result) {
+								matematici.popup.close();
+								matematici.blip.ok();
+							});
+					},
+
+					logoutHandler: function (panel) {
+						matematici.tokenManager.removeSigner(userCode);
+						matematici.popup.close();
+						matematici.blip.ok();
+					}
+				}
+			}
 			matematici.popup.show(options);
 		},
 
