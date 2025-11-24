@@ -214,7 +214,11 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Code" varchar (50),
 	"Description" varchar (100),
 	"Unique" int not null,
+
 	"Exception" boolean not null,
+
+	"Task" boolean,
+
 	"Notification" boolean not null, 
 	"NotificationNote" varchar (200), 
 	"NotificationEmail" varchar (200), 
@@ -228,6 +232,7 @@ create table "CheckLists"."InstanceExpressionValues"
 
 create index "Index_InstanceExpressionValues_Code" on "CheckLists"."InstanceExpressionValues"("Instance", "Code");
 create index "Index_InstanceExpressionValues_Notifications" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where "Notification" and not "Notified";
+create index "Index_InstanceExpressionValues_Tasks" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where not "Task" is null;
 
 create function "CheckLists"."ValidateUniqueExpressions"
 (
