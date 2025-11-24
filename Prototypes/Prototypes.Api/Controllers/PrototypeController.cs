@@ -19,12 +19,15 @@ using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using System.Linq;
 using static Dapper.SqlMapper;
+using NLog;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
     [RoutePrefix("Prototype")]
     public class PrototypeController : BaseApiController
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly IPrototypeService _prototypeService;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly JsonConverter[] _converters;
@@ -241,6 +244,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         public async Task<IHttpActionResult> DownloadAttachment([FromUri] string token)
         {
             var request = await _redisCache.GetAsync<ProcessAttachmentRequest>($"Token:{token}", "Download");
+            Logger.Error(token);
+            Logger.Error(JsonConvert.SerializeObject(request));
             await _redisCache.RemoveAsync($"Token:{token}", "Download");
             var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
             return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
