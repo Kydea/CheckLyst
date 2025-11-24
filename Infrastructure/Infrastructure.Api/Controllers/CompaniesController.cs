@@ -26,28 +26,14 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [AllowAnonymous]
         public async Task<IHttpActionResult> GetSyntheticData()
         {
-            try
-            {
-                return Ok(await _companiesService.GetSyntheticDataAsync());
-            }
-            catch (Exception e)
-            {
-                return Error(new Exception("Error retrieving the companies list", e));
-            }
+            return Ok(await _companiesService.GetSyntheticDataAsync());
         }
 
         [HttpGet]
         [Route("GetSettings")]
         public async Task<IHttpActionResult> GetSettings()
         {
-            try
-            {
-                return Ok(await _companiesService.GetSettingsAsync(Identity.CompanyId));
-            }
-            catch (Exception e)
-            {
-                return Error(new Exception("Error retrieving the company settings", e));
-            }
+            return Ok(await _companiesService.GetSettingsAsync(Identity.CompanyId));
         }
 
         [HttpPost]

@@ -9,7 +9,6 @@ using CheckListManager.AccessControl.Logic.Messages.Roles;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Formatters;
 using CheckListManager.Common.Logic.Api.Messages;

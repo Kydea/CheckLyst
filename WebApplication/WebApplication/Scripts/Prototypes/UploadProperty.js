@@ -54,7 +54,7 @@
                 url: url,
                 data: { 
                     id: prototypeKey.id,
-			        version, prototypeKey.version,
+			        version: prototypeKey.version,
 			        key: model[property]
                 }
             }).done(function (result) {

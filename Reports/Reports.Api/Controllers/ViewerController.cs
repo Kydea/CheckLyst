@@ -53,17 +53,8 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("GetReportData")]
         public async Task<IHttpActionResult> GetReportData(ReportRequest request)
         {
-            try
-            {
-                var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-                return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
-            }
-            catch (Exception Exception)
-            {
-                var Response = new ResponseMessage<Exception> { Data = Exception };
-                Response.Messages.AddRange(BuildErrorMessage(Exception));
-                return new ErrorResult(Request, Response);
-            }
+            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+            return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
         }
         
         [HttpPost]
@@ -71,17 +62,8 @@ namespace CheckListManager.Reports.Api.Controllers
         [Authorize(Roles = "Reports#Edit")]
         public async Task<IHttpActionResult> GetReportQuery(ReportRequest request)
         {
-            try
-            {
-                var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-                return Ok(await _reportViewerService.GetReportQuery(Identity, request, cancellationToken));
-            }
-            catch (Exception Exception)
-            {
-                var Response = new ResponseMessage<Exception> { Data = Exception };
-                Response.Messages.AddRange(BuildErrorMessage(Exception));
-                return new ErrorResult(Request, Response);
-            }
+            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+            return Ok(await _reportViewerService.GetReportQuery(Identity, request, cancellationToken));
         }
 
         [HttpPost]

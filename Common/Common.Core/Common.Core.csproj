@@ -103,6 +103,8 @@
     <Compile Include="Cache\ICache.cs" />
     <Compile Include="Cache\IMemoryCache.cs" />
     <Compile Include="Cache\MemoryCache.cs" />
+    <Compile Include="Exceptions\DatabaseException.cs" />
+    <Compile Include="Exceptions\HandledException.cs" />
     <Compile Include="Helpers\CompressionHelper.cs" />
     <Compile Include="Helpers\DecimalHelper.cs" />
     <Compile Include="Helpers\DateTimeOffsetHelper.cs" />

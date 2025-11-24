@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Core.Web.Security;
 using System;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.AccessControl.Data.Models;
-using CheckListManager.Common.Data.ListItems;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.AccessControl.Data
 {
@@ -427,13 +426,6 @@ namespace CheckListManager.AccessControl.Data
             Entities.Groups.Remove(user);
             await SaveChangesAsync();
         }
-
-        private const string CONFLICTS_QUERY = 
-            "select 1 " +
-            "from \"Security\".\"GroupConflicts\" gc " +
-            "where " +
-                "gc.\"Group1\" in (select ug.\"Group\" from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\") " +
-                "and gc.\"Group2\" in (select ug.\"Group\" from \"Security\".\"UserGroups\" ug where ug.\"Company\" = u.\"Company\" and ug.\"User\" = u.\"Code\") ";
 
         public async Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups)
         {

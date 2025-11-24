@@ -9,7 +9,7 @@ namespace CheckListManager.Common.Logic.Api.Messages
 			
 		}
 
-		public ResponseMessage(params string[] messages)
+		public ResponseMessage(IEnumerable<string> messages)
 		{
 			Messages.AddRange(messages);
 		}
@@ -29,7 +29,7 @@ namespace CheckListManager.Common.Logic.Api.Messages
 			
 		}
 
-		public ResponseMessage(params string[] messages) : base(messages)
+		public ResponseMessage(IEnumerable<string> messages) : base(messages)
 		{
 		}
 

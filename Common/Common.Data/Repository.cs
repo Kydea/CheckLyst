@@ -7,9 +7,9 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
-using CheckListManager.Common.Data.Exceptions;
 using NLog;
 using Npgsql;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.Common.Data
 {
@@ -32,8 +32,7 @@ namespace CheckListManager.Common.Data
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-                Entities?.Dispose();
+            if (disposing) Entities?.Dispose();
         }
 
         public async Task<int> SaveChangesAsync()
@@ -44,11 +43,11 @@ namespace CheckListManager.Common.Data
             }
             catch (DbUpdateException exception)
             {
-                throw GetUpdateException(exception);
+                throw ParseUpdateException(exception);
             }
             catch (DbEntityValidationException exception)
             {
-                throw GetValidationErrors(exception);
+                throw ParseValidationException(exception);
             }
             catch (DBConcurrencyException)
             {
@@ -63,68 +62,43 @@ namespace CheckListManager.Common.Data
 
         protected async Task<IEnumerable<T>> Read<T>(string query, dynamic parameters)
         {
-            try
-            {
-                if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
-                return Entities.Database.Connection.Query<T>(query, new DynamicParameters(parameters));
-            }
-            catch (AggregateException AggregateException)
-            {
-                throw new DatabaseAggregateException(AggregateException.InnerExceptions);
-            }
-            catch (Exception Exception)
-            {
-                throw new DatabaseException(Exception.Message, Exception.InnerException);
-            }
+            if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
+            return Entities.Database.Connection.Query<T>(query, new DynamicParameters(parameters));
         }
 
         protected async Task<T> Call<T>(string name, params Parameter[] parameters)
         {
-            try
-            {
-                if (Entities.Database.Connection.State != ConnectionState.Open)
-                    await Entities.Database.Connection.OpenAsync();
+            if (Entities.Database.Connection.State != ConnectionState.Open)
+                await Entities.Database.Connection.OpenAsync();
 
-                using (var command = Entities.Database.Connection.CreateCommand())
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = name;
-
-                    if (parameters != null)
-                        foreach (var parameter in parameters)
-                        {
-                            var p = command.CreateParameter();
-                            p.ParameterName = parameter.Name;
-                            if (parameter.DbType.HasValue)
-                                p.DbType = parameter.DbType.Value;
-                            if (parameter.Value != null)
-                                p.Value = parameter.Value;
-                            command.Parameters.Add(p);
-                        }
-
-                    return await command.ExecuteScalarAsync().ContinueWith(r => (T)r.Result);
-                }
-            }
-            catch (AggregateException AggregateException)
+            using (var command = Entities.Database.Connection.CreateCommand())
             {
-                throw new DatabaseAggregateException(AggregateException.InnerExceptions);
-            }
-            catch (Exception Exception)
-            {
-                throw new DatabaseException(Exception.Message, Exception.InnerException);
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = name;
+
+                if (parameters != null)
+                    foreach (var parameter in parameters)
+                    {
+                        var p = command.CreateParameter();
+                        p.ParameterName = parameter.Name;
+                        if (parameter.DbType.HasValue)
+                            p.DbType = parameter.DbType.Value;
+                        if (parameter.Value != null)
+                            p.Value = parameter.Value;
+                        command.Parameters.Add(p);
+                    }
+
+                return await command.ExecuteScalarAsync().ContinueWith(r => (T)r.Result);
             }
         }
 
-        private static DatabaseAggregateException GetValidationErrors(DbEntityValidationException exception)
+        private static AggregateException ParseValidationException(DbEntityValidationException exception)
         {
-            var exceptions =
-                exception.EntityValidationErrors.SelectMany(
-                    v => v.ValidationErrors.Select(e => new DatabaseException(e.ErrorMessage)));
-
-            return new DatabaseAggregateException(exceptions);
+            var exceptions = exception.EntityValidationErrors.SelectMany(v => v.ValidationErrors.Select(e => new DatabaseException(e.ErrorMessage)));
+            return new AggregateException(exceptions);
         }
 
-        private static DatabaseException GetUpdateException(Exception updateException)
+        private static DatabaseException ParseUpdateException(Exception updateException)
         {
             var exception = updateException;
             var type = typeof(PostgresException);
@@ -141,8 +115,8 @@ namespace CheckListManager.Common.Data
                         var tokens = constraintName.Split('_');
                         return
                             tokens.Length == 2 ?
-                                new DatabaseException(DatabaseError.PrimaryKeyViolation, $"Duplicated value for field {tokens[0]}.{tokens[1]}", exception) :
-                                new DatabaseException(DatabaseError.PrimaryKeyViolation, exception.Message, exception);
+                                new DatabaseException($"Duplicated value for field {tokens[0]}.{tokens[1]}", exception) :
+                                new DatabaseException(exception.Message, exception);
                     default:
                         return new DatabaseException(exception.Message, exception);
                 }

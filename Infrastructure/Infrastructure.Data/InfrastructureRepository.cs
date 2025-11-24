@@ -7,9 +7,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Data.Entity;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Infrastructure.Data.ListItems;
-using CheckListManager.Common.Data.ListItems;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.Infrastructure.Data
 {

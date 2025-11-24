@@ -5,13 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CheckListManager.Common.Core.Helpers;
-using CheckListManager.Common.Logic.Queue;
+using CheckListManager.Common.Core.Exceptions;
 using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
 using System.Data;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Data;
 
 namespace CheckListManager.Reports.Logic.Detail
@@ -156,9 +154,9 @@ namespace CheckListManager.Reports.Logic.Detail
                 {
                     await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, record.Query, record.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType));
                 }
-                catch (DatabaseException DatabaseException)
+                catch (DatabaseException databaseException)
                 {
-                    AddQueryError(response, DatabaseException.Message, DatabaseException.Position);
+                    AddQueryError(response, databaseException.Message, databaseException.Position);
                 }
                 catch (Exception Exception)
                 {

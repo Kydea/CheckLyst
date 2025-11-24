@@ -77,16 +77,7 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("GetColumns")]
         public async Task<IHttpActionResult> GetColumns(DetailRequest request)
         {
-            try
-            {
-                return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
-            }
-            catch (Exception Exception)
-            {
-                var Response = new ResponseMessage<Exception> { Data = Exception };
-                Response.Messages.AddRange(BuildErrorMessage(Exception));
-                return new ErrorResult(Request, Response);
-            }
+            return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
         }
     }
 }

@@ -2,14 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
-using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Data.Exceptions;
-using Dapper;
+using CheckListManager.Common.Core.Exceptions;
 using System.Data;
 
 namespace CheckListManager.Reports.Data
@@ -75,8 +72,7 @@ namespace CheckListManager.Reports.Data
                 Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.Online);
             }
 
-            var Report = await Query.SingleOrDefaultAsync(d => d.Company == company && d.ID == id);
-            if (Report == null) throw new DatabaseException($"Report {id} not found");
+            var Report = await Query.SingleOrDefaultAsync(d => d.Company == company && d.ID == id) ?? throw new DatabaseException($"Report {id} not found");
             return Report;
         }
 

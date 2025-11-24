@@ -138,15 +138,12 @@
     <Compile Include="Configuration\ISettingRepository.cs" />
     <Compile Include="Configuration\Setting.cs" />
     <Compile Include="Configuration\SettingRepository.cs" />
-    <Compile Include="DatabaseError.cs" />
     <Compile Include="DataSources.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Departments.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Exceptions\DatabaseAggregateException.cs" />
-    <Compile Include="Exceptions\DatabaseException.cs" />
     <Compile Include="Extensions\PrototypeTypes.cs" />
     <Compile Include="FTPServers.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>

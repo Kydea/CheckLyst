@@ -30,43 +30,22 @@ namespace CheckListManager.AccessControl.Api.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> SetPIN(ChangePINRequest request)
         {
-            try
-            {
-                await _userService.SetPINAsync(Identity.CompanyId, Identity.Code, request.Password, request.PIN);
-                return Ok();
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            await _userService.SetPINAsync(Identity.CompanyId, Identity.Code, request.Password, request.PIN);
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IHttpActionResult> Authenticate(AuthenticateRequest request)
         {
-            try
-            {
-                await _userService.AuthenticateAsync(Identity.CompanyId, request.Code, request.Password);
-                return Ok();
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            await _userService.AuthenticateAsync(Identity.CompanyId, request.Code, request.Password);
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IHttpActionResult> AuthenticateWithPIN(AuthenticateWithPINRequest request)
         {
-            try
-            {
-                await _userService.AuthenticateWithPINAsync(Identity.CompanyId, Identity.Code, request.PIN);
-                return Ok();
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            await _userService.AuthenticateWithPINAsync(Identity.CompanyId, Identity.Code, request.PIN);
+            return Ok();
         }
     }
 }

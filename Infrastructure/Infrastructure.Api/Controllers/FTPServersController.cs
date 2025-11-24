@@ -54,15 +54,8 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         [Authorize(Roles = "FTPServers#View")]
         public async Task<IHttpActionResult> Test(FTPServersRow request)
         {
-            try
-            {
-                var result = await _ftpServersService.Test(Identity, request.ID.Value);
-                return Ok(result);
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            var result = await _ftpServersService.Test(Identity, request.ID.Value);
+            return Ok(result);
         }
     }
 }
