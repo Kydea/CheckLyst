@@ -641,12 +641,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             return new UploadAttachmentResponse { Key = key, ImageName = imageName };
         }
 
-        public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
+        public async Task<StorageFile> DownloadAttachmentAsync(long companyId, ProcessAttachmentRequest request)
         {
             var startIndex = request.Key.IndexOf('/');
-            if (startIndex < 0)
-                throw new InvalidOperationException("Key format non valid");
-            var key = $"{identity.CompanyId}{request.Key.Substring(startIndex)}";
+            if (startIndex < 0) throw new InvalidOperationException("Key format non valid");
+            var key = $"{companyId}{request.Key.Substring(startIndex)}";
 
             return await _storageService.GetAsync(_configurationService.PrototypesStorageBucket, key);
         }

@@ -26,8 +26,6 @@ namespace CheckListManager.Prototypes.Api.Controllers
     [RoutePrefix("Prototype")]
     public class PrototypeController : BaseApiController
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IPrototypeService _prototypeService;
         private readonly IPrototypesRepository _prototypesRepository;
         private readonly JsonConverter[] _converters;
@@ -233,6 +231,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             if (string.IsNullOrEmpty(request.Key)) throw new Exception("Key must have a value");
             await _prototypeService.ValidateAttachmentRequest(Identity, request, false);
+            request.CompanyId = Identity.CompanyId;
             var token = Identity.Code + ":" + Guid.NewGuid();
             await _redisCache.SetAsync($"Token:{token}", request, "Download", new TimeSpan(0, 1, 0));
             return Ok(new { token });
@@ -244,10 +243,8 @@ namespace CheckListManager.Prototypes.Api.Controllers
         public async Task<IHttpActionResult> DownloadAttachment([FromUri] string token)
         {
             var request = await _redisCache.GetAsync<ProcessAttachmentRequest>($"Token:{token}", "Download");
-            Logger.Error(token);
-            Logger.Error(JsonConvert.SerializeObject(request));
             await _redisCache.RemoveAsync($"Token:{token}", "Download");
-            var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
+            var response = await _prototypeService.DownloadAttachmentAsync(request.CompanyId, request);
             return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
         }
 
