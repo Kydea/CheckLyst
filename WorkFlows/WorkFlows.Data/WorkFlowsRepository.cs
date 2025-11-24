@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
-using CheckListManager.Common.Data.Exceptions;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.WorkFlows.Data
 {
@@ -48,8 +48,7 @@ namespace CheckListManager.WorkFlows.Data
         }
         public async Task<Common.Data.WorkFlows> GetWorkFlowAsync(IDefaultIdentity identity, long id)
         {
-            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id);
-            if (WorkFlow == null) throw new DatabaseException($"Workflow {id} not found");
+            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.ID == id) ?? throw new DatabaseException($"Workflow {id} not found");
             return WorkFlow;
         }
 
@@ -83,15 +82,14 @@ namespace CheckListManager.WorkFlows.Data
 
         public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance)
         {
-            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (prototype != null && x.Prototype == prototype && x.Version == version || instance != null && x.Instance == instance) && x.Approved == null);
-            if (Application == null) throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
+            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (prototype != null && x.Prototype == prototype && x.Version == version || instance != null && x.Instance == instance) && x.Approved == null)
+                ?? throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
             return Application;
         }
 
         public async Task<WorkFlowApplicationSteps> GetWorkFlowApplicationStepAsync(IDefaultIdentity identity, long id)
         {
-            var Step = await Entities.WorkFlowApplicationSteps.SingleOrDefaultAsync(x => x.Company == identity.CompanyId && x.ID == id);
-            if (Step == null) throw new ArgumentException($"Workflow application step {id} not found");
+            var Step = await Entities.WorkFlowApplicationSteps.SingleOrDefaultAsync(x => x.Company == identity.CompanyId && x.ID == id) ?? throw new ArgumentException($"Workflow application step {id} not found");
             return Step;
         }
 
@@ -110,8 +108,7 @@ namespace CheckListManager.WorkFlows.Data
             )
                 throw new Exception("Access denied");
 
-            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow);
-            if (WorkFlow == null) throw new ArgumentException($"Workflow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
+            var WorkFlow = await Entities.WorkFlows.SingleOrDefaultAsync(x => x.Company == defaultIdentity.CompanyId && x.ID == workFlow) ?? throw new ArgumentException($"Workflow {defaultIdentity.CompanyId}.{workFlow} not found", nameof(workFlow));
 
             WorkFlowApplications WorkFlowApplication = null;
 

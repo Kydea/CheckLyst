@@ -34,14 +34,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         [Authorize(Roles = "Prototypes#Preview, Instances#Edit")]
         public async Task<IHttpActionResult> Create(CreateRequest request)
         {
-            try
-            {
-                return Ok(await _applicationService.CreateAsync(Identity, request));
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            return Ok(await _applicationService.CreateAsync(Identity, request));
         }
 
         [HttpPost]
@@ -49,15 +42,8 @@ namespace CheckListManager.WorkFlows.Api.Controllers
         [Authorize(Roles = "Prototypes#Approve, Instances#Confirm")]
         public async Task<IHttpActionResult> Sign(SignRequest request)
         {
-            try
-            {
-                var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
-                return Ok(await _applicationService.SignAsync(Identity, request, Company.TimeZone));
-            }
-            catch(Exception Exception)
-            {
-                return Error(Exception);
-            }
+            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
+            return Ok(await _applicationService.SignAsync(Identity, request, Company.TimeZone));
         }
     }
 }
