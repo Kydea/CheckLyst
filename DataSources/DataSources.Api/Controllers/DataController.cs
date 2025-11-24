@@ -29,14 +29,7 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Route("GetDataSource")]
         public async Task<IHttpActionResult> GetDataSource(Logic.Data.DataRequest request)
         {
-            try
-            {
-                return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code));
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            return Ok(await _dataService.GetDataSourceAsync(Identity.CompanyId, request.Code));
         }
 
         [Authorize(Roles = "Prototypes#View, DataSources#Edit")]
@@ -62,15 +55,8 @@ namespace CheckListManager.DataSources.Api.Controllers
         [Route("Test")]
         public async Task<IHttpActionResult> Test(Common.Logic.DataSources.DataRequest request)
         {
-            try
-            {
-                var JsonString = await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, request);
-                return Ok(JsonString);
-            }
-            catch (Exception Exception)
-            {
-                return Error(Exception);
-            }
+            var JsonString = await _dataService.GetDataSourceRowsAsync(Identity.CompanyId, request);
+            return Ok(JsonString);
         }
 
         [HttpPost]

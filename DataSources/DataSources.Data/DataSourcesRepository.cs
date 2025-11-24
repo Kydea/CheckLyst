@@ -8,7 +8,7 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
-using CheckListManager.Common.Data.Exceptions;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.DataSources.Data
 {
@@ -49,8 +49,7 @@ namespace CheckListManager.DataSources.Data
 
         private async Task<Common.Data.DataSources> GetDataSourceAsync(IDefaultIdentity identity, string code)
         {
-            var DataSource = await Entities.DataSources.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.Code == code);
-            if (DataSource == null) throw new DatabaseException($"Data source {code} not found");
+            var DataSource = await Entities.DataSources.SingleOrDefaultAsync(d => d.Company == identity.CompanyId && d.Code == code) ?? throw new DatabaseException($"Data source {code} not found");
             return DataSource;
         }
 
