@@ -23,6 +23,6 @@ namespace CheckListManager.Prototypes.Logic.Services
         Task UpdatePrototypeVersionsState(CancellationToken CancellationToken);
         Task ValidateAttachmentRequest(DefaultIdentity identity, AttachmentRequestBase request, bool isEdit);
         Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request);
-        Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request);
+        Task<StorageFile> DownloadAttachmentAsync(long companyId, ProcessAttachmentRequest request);
 	}
 }

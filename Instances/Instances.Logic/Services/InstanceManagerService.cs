@@ -679,7 +679,7 @@ namespace CheckListManager.Instances.Logic.Services
                     _instancesRepository.DeleteInstance(row);
                     await _storageService.DeleteRecursiveAsync(
                         _configurationService.InstancesStorageBucket,
-                        GetAttachmentKeyPrefix(identity, cacheObject.Code)
+                        GetAttachmentKeyPrefix(identity.CompanyId, cacheObject.Code)
                     );
                 }
                 else
@@ -1128,11 +1128,9 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        public async Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key)
+        public async Task<StorageFile> DownloadAttachmentAsync(long companyId, string cacheObjectCode, string key)
         {
-            if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(identity, cacheObjectCode)))
-                throw new InstanceException("Attachment key not valid");
-
+            if (key == null || !key.StartsWith(GetAttachmentKeyPrefix(companyId, cacheObjectCode))) throw new InstanceException("Attachment key not valid");
             return await _storageService.GetAsync(_configurationService.InstancesStorageBucket, key);
         }
 
@@ -1522,8 +1520,8 @@ namespace CheckListManager.Instances.Logic.Services
             }
         }
 
-        private static string GetAttachmentKeyPrefix(IDefaultIdentity identity, string cacheObjectCode)
-            => $"{identity.CompanyId}/{cacheObjectCode}/";
+        private static string GetAttachmentKeyPrefix(long companyId, string cacheObjectCode)
+            => $"{companyId}/{cacheObjectCode}/";
 
         private void HandlePageChangeAsync(InstanceCacheObject cacheObject, string userCode, int? itemId)
         {
@@ -2229,7 +2227,7 @@ namespace CheckListManager.Instances.Logic.Services
             if (file.Buffer.Length > maxSize)
                 throw new InstanceException($"The file exceed the file size limit of {maxSize.BytesCountToString()}");
 
-            var key = $"{GetAttachmentKeyPrefix(identity, cacheObject.Code)}{attachment.Id}{extension}";
+            var key = $"{GetAttachmentKeyPrefix(identity.CompanyId, cacheObject.Code)}{attachment.Id}{extension}";
             using (var memoryStream = new MemoryStream(file.Buffer))
             {
                 var success = await _storageService.PutAsync(_configurationService.InstancesStorageBucket, key, memoryStream);

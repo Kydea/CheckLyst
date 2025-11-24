@@ -244,7 +244,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         {
             var request = await _redisCache.GetAsync<ProcessAttachmentRequest>($"Token:{token}", "Download");
             await _redisCache.RemoveAsync($"Token:{token}", "Download");
-            var response = await _prototypeService.DownloadAttachmentAsync(request.CompanyId, request);
+            var response = await _prototypeService.DownloadAttachmentAsync(request.CompanyId.Value, request);
             return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
         }
 

@@ -4,6 +4,6 @@ namespace CheckListManager.Prototypes.Logic.Messages
     {
         public bool FormatAsBase64 { get; set; }
         public string Key { get; set; }
-        public long CompanyId { get; set; }
+        public long? CompanyId { get; set; }
     }
 }

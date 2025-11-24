@@ -31,7 +31,7 @@ namespace CheckListManager.Instances.Logic.Services
         Task<string> GetExternalSourceRows(string code, IDefaultIdentity identity, string externalSourceCode, int itemId, Dictionary<string, string> parameters, int page);
         Task<List<InstanceRelation>> GetParentInstances(string code, IDefaultIdentity identity);
         Task<List<InstanceEventRequest.Email>> GetInstanceEditors(string code, IDefaultIdentity identity);
-        Task<StorageFile> DownloadAttachmentAsync(IDefaultIdentity identity, string cacheObjectCode, string key);
+        Task<StorageFile> DownloadAttachmentAsync(long companyId, string cacheObjectCode, string key);
         Task InvalidateCacheAsync(DefaultIdentity identity, InvalidateCacheRequest request);
         Task SendNotificationsAsync(CancellationToken CancellationToken);
         void CheckViewPermission(IDefaultIdentity identity, InstanceCacheObject cacheObject);

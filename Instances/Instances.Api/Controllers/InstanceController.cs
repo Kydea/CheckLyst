@@ -320,7 +320,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var request = await _redisCache.GetAsync<InstanceRequest>($"Token:{token}", "Download");
             await _redisCache.RemoveAsync($"Token:{token}", "Download");
             var cacheObject = await _instanceManagerService.GetCacheObjectForDownloadAsync(request.CompanyId.Value, request.Code, false);
-            var response = await _instanceManagerService.DownloadAttachmentAsync(Identity, cacheObject.Code, request.AttachmentKey);
+            var response = await _instanceManagerService.DownloadAttachmentAsync(request.CompanyId.Value, cacheObject.Code, request.AttachmentKey);
             return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType));
         }
 
