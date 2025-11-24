@@ -29,7 +29,10 @@ namespace CheckListManager.Common.Logic.Api.Json
             else
             {
                 var timeZone = ((CustomJsonTextWriter)writer).Request.Headers.TryGetValues("ClientTimeZone", out var ClientTimeZones) ? ClientTimeZones.Single() : null;
-                JToken.FromObject(((DateTimeOffset)value).ToLocalTime(timeZone)).WriteTo(writer);
+                if (timeZone == null)
+                    writer.WriteNull();
+                else
+                    JToken.FromObject(((DateTimeOffset)value).ToLocalTime(timeZone)).WriteTo(writer);
             }
         }
 
