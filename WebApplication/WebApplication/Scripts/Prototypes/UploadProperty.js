@@ -48,14 +48,19 @@
 
 		preview = function () {
 			var prototypeKey = prototypes.prototype.getPrototypeKey();
-            var url =
-                prototypes.prototype.getElement().data("action") + "DownloadAttachment?" +
-			    "id=" + prototypeKey.id +
-			    "&version=" + prototypeKey.version +
-			    "&key=" + model[property] +
-			    "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
-
-			matematici.imageViewer.show("Preview", url);
+            var url = matematici.urls.prototypes.api + "/DownloadAttachment";
+            $.ajax({
+                type: "post",
+                url: url,
+                data: { 
+                    id: prototypeKey.id,
+			        version, prototypeKey.version,
+			        key: model[property]
+                }
+            }).done(function (result) {
+                url = url + "?token=" + (result && result.token);
+    			matematici.imageViewer.show("Preview", url);
+            });
 		};
 
     this.create = function (valuePanel, baseClass) {

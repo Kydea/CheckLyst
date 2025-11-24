@@ -10,18 +10,20 @@
 
 			var id = instances.instance.getPrototype();
 			var version = instances.instance.getVersion();
-			var department = instances.instance.getDepartment();
-			var prototypeType = instances.instance.getPrototypeType();
+            var url = matematici.urls.prototypes.api + "/DownloadAttachment";
+            $.ajax({
+                type: "post",
+                url: url,
+                data: { 
+                    id: id,
+			        version, version,
+			        key: model.key
+                }
+            }).done(function (result) {
+                url = url + "?token=" + (result && result.token);
+                matematici.imageViewer.show(title, url);
+            });
 
-			var url = instances.instance.getElement().data("api") + "/Prototypes/Prototype/DownloadAttachment?";
-			url += "id=" + id;
-			url += "&version=" + version;
-			url += "&department=" + department;
-			url += "&prototypeType=" + prototypeType;
-			url += "&key=" + model.key;
-			url += "&Authorization=" + encodeURIComponent("Bearer " + matematici.tokenManager.getAccessToken());
-
-            matematici.imageViewer.show(title, url);
             return true;
         },
 

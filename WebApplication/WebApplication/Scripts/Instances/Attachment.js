@@ -18,7 +18,7 @@
         },
 
         view = function () {
-            var url = matematici.urls.instances.api + "/GetDownloadAttachmentToken";
+            var url = matematici.urls.instances.api + "/DownloadAttachment";
             $.ajax({
                 type: "post",
                 url: url,
@@ -27,7 +27,7 @@
                     attachmentKey: key
                 }
             }).done(function (result) {
-                url = matematici.urls.instances.api + "/DownloadAttachment?token=" + (result && result.token);
+                url = url + "?token=" + (result && result.token);
                 if (model.fileType === "images")
                     matematici.imageViewer.show("Preview", url);
                 else if (model.fileType === "pdf") {

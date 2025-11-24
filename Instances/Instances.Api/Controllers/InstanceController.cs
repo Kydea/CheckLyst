@@ -299,9 +299,9 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
-        [Route("GetDownloadAttachmentToken")]
+        [Route("DownloadAttachment")]
         [Authorize(Roles = "Instances#View, Prototypes#Preview")]
-        public async Task<IHttpActionResult> GetDownloadAttachmentToken(InstanceRequest request)
+        public async Task<IHttpActionResult> DownloadAttachment(InstanceRequest request)
         {
             var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, false);
             _instanceManagerService.CheckViewPermission(Identity, cacheObject);

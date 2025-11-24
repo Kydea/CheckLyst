@@ -18,6 +18,7 @@ using CheckListManager.Common.Logic.Services;
 using CheckListManager.Common.Logic.Queue;
 using CheckListManager.Common.Logic.Trail;
 using System.Linq;
+using static Dapper.SqlMapper;
 
 namespace CheckListManager.Prototypes.Api.Controllers
 {
@@ -167,7 +168,7 @@ namespace CheckListManager.Prototypes.Api.Controllers
         [HttpGet]
         [Route("Download")]
         [AllowAnonymous]
-        public async Task<IHttpActionResult> Download([FromUri]string Token)
+        public async Task<IHttpActionResult> Download([FromUri] string Token)
         {
             var Data = await _redisCache.GetAsync<PrototypeRequest>($"Token:{Token}", "Download");
             await _redisCache.RemoveAsync($"Token:{Token}", "Download");
@@ -222,14 +223,25 @@ namespace CheckListManager.Prototypes.Api.Controllers
             return Ok(await _prototypeService.UploadAttachmentAsync(Identity, request));
         }
 
+        [HttpPost]
+        [Route("DownloadAttachment")]
+        [Authorize(Roles = "Instances#View, Prototypes#Preview")]
+        public async Task<IHttpActionResult> DownloadAttachment(ProcessAttachmentRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Key)) throw new Exception("Key must have a value");
+            await _prototypeService.ValidateAttachmentRequest(Identity, request, false);
+            var token = Identity.Code + ":" + Guid.NewGuid();
+            await _redisCache.SetAsync($"Token:{token}", request, "Download", new TimeSpan(0, 1, 0));
+            return Ok(new { token });
+        }
+
         [HttpGet]
         [Route("DownloadAttachment")]
-        [Authorize(Roles = "Prototypes#View, Instances#View")]
-        public async Task<IHttpActionResult> DownloadAttachment([FromUri]ProcessAttachmentRequest request)
+        [AllowAnonymous]
+        public async Task<IHttpActionResult> DownloadAttachment([FromUri] string token)
         {
-            if (string.IsNullOrEmpty(request.Key))
-                throw new Exception("Key must have a value");
-
+            var request = await _redisCache.GetAsync<ProcessAttachmentRequest>($"Token:{token}", "Download");
+            await _redisCache.RemoveAsync($"Token:{token}", "Download");
             var response = await _prototypeService.DownloadAttachmentAsync(Identity, request);
             return Content(HttpStatusCode.OK, response.Content, new FileFormatter(response.ContentType, request.FormatAsBase64));
         }

@@ -603,11 +603,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         #region Attachment
 
-        private async Task ValidateRequest(
-            DefaultIdentity identity,
-            AttachmentRequestBase request,
-            bool isEdit = true
-        )
+        public async Task ValidateAttachmentRequest(DefaultIdentity identity, AttachmentRequestBase request, bool isEdit)
         {
             var prototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.Id, request.Version);
             var department = prototypeVersion.Prototypes.Department;
@@ -629,7 +625,7 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
         {
-            await ValidateRequest(identity, request);
+            await ValidateAttachmentRequest(identity, request, true);
             var extension = Path.GetExtension(request.Attachment.FileName);
 
             var imageName = request.Code ?? Guid.NewGuid().ToString();
@@ -647,8 +643,6 @@ namespace CheckListManager.Prototypes.Logic.Services
 
         public async Task<StorageFile> DownloadAttachmentAsync(DefaultIdentity identity, ProcessAttachmentRequest request)
         {
-            await ValidateRequest(identity, request, false);
-
             var startIndex = request.Key.IndexOf('/');
             if (startIndex < 0)
                 throw new InvalidOperationException("Key format non valid");
