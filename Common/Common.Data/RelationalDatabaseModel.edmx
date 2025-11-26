@@ -21,6 +21,7 @@
           <Property Name="NotificationEmail" Type="varchar" MaxLength="200" />
           <Property Name="Notified" Type="bool" Nullable="false" />
           <Property Name="NotificationDate" Type="timestamptz" Precision="7" />
+          <Property Name="Task" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -2723,6 +2724,7 @@
           <Property Name="NotificationEmail" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Notified" Type="Boolean" Nullable="false" />
           <Property Name="NotificationDate" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Task" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="InstanceNumerators">
           <Key>
@@ -4536,6 +4538,7 @@
           <EntitySetMapping Name="InstanceExpressionValues">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.InstanceExpressionValues">
               <MappingFragment StoreEntitySet="InstanceExpressionValues">
+                <ScalarProperty Name="Task" ColumnName="Task" />
                 <ScalarProperty Name="NotificationDate" ColumnName="NotificationDate" />
                 <ScalarProperty Name="Notified" ColumnName="Notified" />
                 <ScalarProperty Name="NotificationEmail" ColumnName="NotificationEmail" />

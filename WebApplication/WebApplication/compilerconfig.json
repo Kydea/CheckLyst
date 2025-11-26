@@ -218,5 +218,9 @@
   {
     "outputFile": "Content/Theme/InstanceLifeCycle.css",
     "inputFile": "Content/Theme/InstanceLifeCycle.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Tasks.css",
+    "inputFile": "Content/Theme/Tasks.scss"
   }
 ]

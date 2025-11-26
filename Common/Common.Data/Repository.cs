@@ -63,7 +63,13 @@ namespace CheckListManager.Common.Data
         protected async Task<IEnumerable<T>> Read<T>(string query, dynamic parameters)
         {
             if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
-            return Entities.Database.Connection.Query<T>(query, new DynamicParameters(parameters));
+            return await Entities.Database.Connection.QueryAsync<T>(query, new DynamicParameters(parameters));
+        }
+
+        protected async Task<T> ReadScalar<T>(string query, dynamic parameters)
+        {
+            if (Entities.Database.Connection.State != ConnectionState.Open) await Entities.Database.Connection.OpenAsync();
+            return await Entities.Database.Connection.ExecuteScalarAsync<T>(query, new DynamicParameters(parameters));
         }
 
         protected async Task<T> Call<T>(string name, params Parameter[] parameters)

@@ -4,6 +4,7 @@
         actionBar = document.getElementsByClassName("ActionBar")[0],
         resultContainer = document.getElementById(resultSelector),
         maxCount,
+
         createToggleButton = function (container, label, description) {
             var anchor = document.createElement("a");
             container.appendChild(anchor);

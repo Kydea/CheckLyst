@@ -1,0 +1,31 @@
+﻿@import "FontAwesome/_variables.scss";
+@import "_Library.scss";
+
+body div.Tasks {
+    #Result {
+        color: $Color-Grey-Dark;
+
+        div.Item {
+            border: solid 1px $Color-Grey-Light;
+            line-height: 30px;
+
+            + div.Item {
+                margin-top: 20px;
+            }
+
+            span { padding: 10px;}
+
+            .Code {
+                color: $Color-Grey-Regular;
+            }
+
+            .Value {
+                color: $Color-Green-Regular;
+            }
+
+            .Description {
+                color: $Color-Yellow-Regular;
+            }
+        }
+    }
+}

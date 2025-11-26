@@ -1,6 +1,6 @@
 alter table "Infrastructure"."Companies" add "Online" boolean not null default true;
 alter table "Security"."Users" add "TimeZone" varchar (100) references "Infrastructure"."TimeZones";
-alter table "CheckLists"."InstanceExpressionValues" add "Task" boolean;
+alter table "CheckLists"."InstanceExpressionValues" add "Task" boolean not null default false;
 
 insert into "Configuration"."Settings" values ('LicenseExpiration');
 insert into "Configuration"."Settings" values ('LicenseCompaniesCount');

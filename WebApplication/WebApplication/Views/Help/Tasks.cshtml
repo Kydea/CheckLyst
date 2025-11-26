@@ -1,0 +1,17 @@
+﻿@Html.Partial("SearchPage", new HelpPage
+{
+    Title = "Tasks",
+    RecordsName = "tasks",
+    ReadOnly = true,
+    P1 = "Click on a row to open the instance manager for that record.",
+
+    Filters = new Field[] {
+        new Field("Department / prototype type", "The department and prototype type of the instances prototype."),
+        new Field("Prototype / version", "The prototype and version number of the instances.")
+    }
+})
+
+<h4>Result</h4>
+<p>
+    The result shows the tasks and the corresponding instances.
+</p>

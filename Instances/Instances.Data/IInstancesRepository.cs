@@ -14,6 +14,8 @@ namespace CheckListManager.Instances.Data
         Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(IDefaultIdentity identity, InstanceFilters filters, int currentPage, int itemsPerPage);
         Task<List<OverviewRecord>> OverviewAsync(IDefaultIdentity identity, InstanceFilters filters);
         Task<List<LifeCycleRecord>> LifeCycleAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<List<TasksRecord>> GetTasksAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<long> CountTasksAsync(IDefaultIdentity identity);
         Task<List<InstanceRecord>> ExportAsync(InstanceFilters filters);
         Task<Common.Data.Instances> BeginCreateInstanceAsync(Common.Data.Instances instance);
 	    void EndCreateInstanceAsync(Common.Data.Instances instance);

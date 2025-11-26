@@ -41,6 +41,15 @@
             });
         },
 
+        updateNotifications = function () {
+            $.ajax({
+                url: matematici.urls.api + "/Instances/List/CountTasks",
+                type: "post",
+                contentType: "application/json; charset=utf-8",
+                suppressErrors: true
+            }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
+        },
+
         update = function () {
             if (timeout) {
                 clearTimeout(timeout);
@@ -75,6 +84,8 @@
                         update();
                 }, 60 * 1000);
             });
+
+            updateNotifications();
         },
 
         getTime = function () {
@@ -116,6 +127,8 @@
                 }
         },
 
-        update: update
+        update: update,
+
+        updateNotifications: updateNotifications
     };
 };

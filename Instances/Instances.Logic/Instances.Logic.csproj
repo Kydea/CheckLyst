@@ -159,6 +159,7 @@
     <Compile Include="Messages\InstanceRequest.cs" />
     <Compile Include="Messages\CreateInstanceRequest.cs" />
     <Compile Include="Messages\GetPrototypeResponse.cs" />
+    <Compile Include="Messages\TasksResponse.cs" />
     <Compile Include="Messages\LifeCycleResponse.cs" />
     <Compile Include="Messages\OverviewResponse.cs" />
     <Compile Include="Messages\InstanceResponse.cs" />

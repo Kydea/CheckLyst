@@ -61,6 +61,22 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Tasks")]
+        [Authorize(Roles = "Instances#View")]
+        public async Task<IHttpActionResult> Tasks(Message<InstanceFilters> request)
+        {
+            return Ok(await _listService.GetTasksAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("CountTasks")]
+        [Authorize(Roles = "Instances#View")]
+        public async Task<IHttpActionResult> CountTasks()
+        {
+            return Ok(await _listService.CountTasksAsync(Identity));
+        }
+
+        [HttpPost]
         [Route("Export")]
         [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> Export(Message<InstanceFilters> request)

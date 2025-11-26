@@ -82,7 +82,7 @@
             }
 
             return { progress: 0, completed: 0, confirmed: 0, deleted: 0 };
-        }
+        },
 
         resultHandler = function (result) {
             var

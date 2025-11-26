@@ -25,6 +25,7 @@ namespace CheckListManager.Common.Data
         public string NotificationEmail { get; set; }
         public bool Notified { get; set; }
         public Nullable<System.DateTimeOffset> NotificationDate { get; set; }
+        public bool Task { get; set; }
     
         public virtual Instances Instances { get; set; }
     }

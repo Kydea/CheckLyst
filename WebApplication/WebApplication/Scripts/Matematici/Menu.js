@@ -4,7 +4,9 @@
 		menu = $(selector),
 		rollingOver = false,
 		menuButton = $("#MenuButton"),
+		mobileBadge = menu.prev(), 
 		moved = false,
+		notifications = new Map();
 
 		isMobileMode = function () {
 			return menuButton.is(":visible");
@@ -65,6 +67,11 @@
 					}
 				});
 
+			menu.on("pointerup", "a", function () {
+				if ($(this).parent().attr("data-badge") > 0)
+					matematici.clock.updateNotifications();
+			})
+
 			menuButton.on("click", function (e) {
 				e.preventDefault();
 				menuButton.toggleClass("Selected");
@@ -101,6 +108,28 @@
 
 			item.toggle(visible).toggleClass("Hidden", !visible);
 		});
+	};
+
+	this.setNotificationBadge = function (href, value) {
+		const link = document.querySelector(`a[href="${href}"]`);
+		if (!link) {
+			console.error(`menu item for ${href} not found`);
+			return
+		}
+
+		var li = link.closest("li");
+		li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
+
+		notifications.set(href, value);
+
+		if (li.classList.contains("MenuItem")) return;
+
+		//works only for one notification per submenu, at the moment is enough
+		li = li.closest("li.MenuItem");
+		li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
+
+		const sum = [...notifications.values()].reduce((n, v) => n + v, 0);
+		mobileBadge.attr("data-badge", sum == 0 ? "" : Math.min(99, sum));
 	};
 
 	setup();

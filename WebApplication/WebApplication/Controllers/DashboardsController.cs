@@ -25,5 +25,11 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView();
         }
+
+        [Route("Tasks")]
+        public ActionResult Tasks()
+        {
+            return ConditionalView();
+        }
     }
 }

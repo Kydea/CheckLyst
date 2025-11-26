@@ -10,6 +10,8 @@
             </span>
         </button>
 
+        <div class="Notifications Mobile"></div>
+
         <ul class="Menu Plain">
             <li class="MenuItem Mobile">
                 <div id="UserPanel" class="Padded Container">
@@ -25,9 +27,9 @@
             </li>
 
             <li class="MenuItem">
-                <a class="MenuItem" href="@Url.Action("Dashboard", "Default")"><i class="fal fa-table Extended"></i>Dashboard</a>
+                <span class="MenuItem"><i class="fal fa-table Extended"></i>Dashboard</span>
 
-                <ul class="SubMenu Extended">
+                <ul class="SubMenu">
                     <li>
                         <a href="@Url.Action("Dashboard", "Default")">Dashboard</a>
                     </li>
@@ -36,6 +38,9 @@
                     </li>
                     <li data-role="Instances#View">
                         <a href="@Url.Action("InstanceOverview", "Dashboards")">Instance Overview</a>
+                    </li>
+                    <li data-role="Instances#View">
+                        <a href="@Url.Action("Tasks", "Dashboards")">Tasks</a>
                     </li>
                 </ul>
             </li>

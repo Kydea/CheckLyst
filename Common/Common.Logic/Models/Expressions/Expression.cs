@@ -32,6 +32,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
         public Position ErrorPosition { get; set; }
         public Uniqueness Unique { get; set; }
         public bool Exception { get; set; }
+        public bool Task { get; set; }
         public bool Notification { get; set; }
         public string NotificationEmail { get; set; }
         public string NotificationNote { get; set; }
@@ -47,12 +48,12 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             Error = null;
             this.Code = Code;
 
-            if (string.IsNullOrWhiteSpace(Description) && (Unique != Uniqueness.no || Exception || Notification))
+            if (string.IsNullOrWhiteSpace(Description) && (Unique != Uniqueness.no || Exception || Notification || Task))
             {
                 if (checkList.InstanceCreation)
                     Description = "-";
                 else
-                    throw new Exception($"Unique, exception and notification expressions must have a description");
+                    throw new Exception($"Unique, exception, notification and task expressions must have a description");
             }
             if (SerializedValue?.Length >= MAXIMUM_LENGTH)
                 throw new Exception($"Expressions length must not exceed {MAXIMUM_LENGTH - 1} characters");
@@ -119,8 +120,8 @@ namespace CheckListManager.Common.Logic.Models.Expressions
                 if (Error != null) return false;
 
                 Root.Check(CheckList, this, new List<string>());
-                if ((Exception || Notification) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
-                    throw new Exception($"Exception and notification expressions must be boolean or date or date-time");
+                if ((Exception || Notification || Task) && Root.DataType != DataType.Boolean && Root.DataType != DataType.Date && Root.DataType != DataType.DateTime)
+                    throw new Exception($"Exception, notification and task expressions must be boolean or date or date-time");
 
                 if (Unique != Uniqueness.no && Root.DataType == DataType.Array)
                     throw new Exception($"Unique expressions cannot be arrays");
@@ -159,7 +160,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions
             }
 
             if (
-                Notification
+                (Notification || Task)
                 && !(Value.IsNull && NewValue.IsNull)
                 && (
                     (Value.IsNull ^ NewValue.IsNull)

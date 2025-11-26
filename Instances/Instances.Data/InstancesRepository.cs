@@ -92,6 +92,30 @@ namespace CheckListManager.Instances.Data
             INSTANCES_BASE_QUERY +
             "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
 
+        private const string TASKS_LIST_QUERY =
+            "with i as (" +
+                "select " +
+                    "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                    "i.\"Description\" " +
+                INSTANCES_BASE_QUERY +
+            ") " +
+            "select i.*, t.\"Description\" \"TaskDescription\", t.\"Code\" \"TaskCode\", t.\"Value\" \"TaskValue\" " +
+            "from " +
+                "i " +
+                "inner join \"CheckLists\".\"InstanceExpressionValues\" t on i.\"ID\" = t.\"Instance\" and t.\"Task\" " +
+            "order by i.\"DepartmentName\", i.\"PrototypeTypeName\", i.\"PrototypeName\", i.\"Version\", i.\"Year\", i.\"Number\", t.\"Description\", t.\"Code\"";
+
+        private const string TASKS_COUNT_QUERY =
+            "with i as (" +
+                "select " +
+                    "i.\"ID\" " +
+                INSTANCES_BASE_QUERY +
+            ") " +
+            "select count(*) " +
+            "from " +
+                "i " +
+                "inner join \"CheckLists\".\"InstanceExpressionValues\" t on i.\"ID\" = t.\"Instance\" and t.\"Task\"";
+
         private const string EXPORT_QUERY =
             "select " +
                 "i.\"ID\", " +
@@ -214,6 +238,68 @@ namespace CheckListManager.Instances.Data
 
             var List = await Read<LifeCycleRecord>(LIFE_CYCLE_QUERY, Filters);
             return List.ToList();
+        }
+
+        public async Task<List<TasksRecord>> GetTasksAsync
+        (
+            IDefaultIdentity identity,
+            InstanceFilters filters
+        )
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = filters.ID ?? -1,
+                description = filters.Description?.ToUpper() ?? string.Empty,
+                department = filters.Department ?? -1,
+                prototypetype = filters.PrototypeType ?? -1,
+                prototype = filters.Prototype ?? -1,
+                version = filters.Version ?? -1,
+                year = filters.Year ?? -1,
+                number = filters.Number ?? -1,
+                state = filters.State ?? string.Empty,
+                from = filters.From?.ToString("yyyy-MM-dd") ?? string.Empty,
+                to = filters.To?.AddDays(1).ToString("yyyy-MM-dd") ?? string.Empty,
+                tagCode = filters.TagCode ?? string.Empty,
+                tagValue = filters.TagValue?.ToUpper() ?? string.Empty,
+                exceptionState = filters.ExceptionState ?? string.Empty,
+                exceptionDescription = filters.ExceptionDescription?.ToUpper() ?? string.Empty,
+                lifeCycleFrom = filters.LifeCycleFrom ?? -1,
+                lifeCycleTo = filters.LifeCycleTo ?? -1
+            };
+
+            var List = await Read<TasksRecord>(TASKS_LIST_QUERY, Filters);
+            return List.ToList();
+        }
+
+        public async Task<long> CountTasksAsync (IDefaultIdentity identity)
+        {
+            var Filters = new
+            {
+                company = identity.CompanyId,
+                user = identity.Code,
+                id = -1,
+                description = string.Empty,
+                department = -1,
+                prototypetype = -1,
+                prototype = -1,
+                version = -1,
+                year = -1,
+                number = -1,
+                state = string.Empty,
+                from = string.Empty,
+                to = string.Empty,
+                tagCode = string.Empty,
+                tagValue = string.Empty,
+                exceptionState = string.Empty,
+                exceptionDescription = string.Empty,
+                lifeCycleFrom = -1,
+                lifeCycleTo = -1
+            };
+
+            var count = await ReadScalar<long>(TASKS_COUNT_QUERY, Filters);
+            return count;
         }
 
         public async Task<List<InstanceRecord>> ExportAsync

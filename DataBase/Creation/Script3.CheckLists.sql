@@ -214,11 +214,8 @@ create table "CheckLists"."InstanceExpressionValues"
 	"Code" varchar (50),
 	"Description" varchar (100),
 	"Unique" int not null,
-
 	"Exception" boolean not null,
-
-	"Task" boolean,
-
+	"Task" boolean not null,
 	"Notification" boolean not null, 
 	"NotificationNote" varchar (200), 
 	"NotificationEmail" varchar (200), 

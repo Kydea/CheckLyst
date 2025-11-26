@@ -1,0 +1,22 @@
+﻿body div.Tasks #Result {
+  color: #666;
+}
+body div.Tasks #Result div.Item {
+  border: solid 1px #ccc;
+  line-height: 30px;
+}
+body div.Tasks #Result div.Item + div.Item {
+  margin-top: 20px;
+}
+body div.Tasks #Result div.Item span {
+  padding: 10px;
+}
+body div.Tasks #Result div.Item .Code {
+  color: #999;
+}
+body div.Tasks #Result div.Item .Value {
+  color: #009688;
+}
+body div.Tasks #Result div.Item .Description {
+  color: #ffba00;
+}

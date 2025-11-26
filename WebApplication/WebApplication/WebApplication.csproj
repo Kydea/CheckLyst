@@ -258,6 +258,9 @@
     <Content Include="Content\Theme\Tab.css">
       <DependentUpon>Tab.scss</DependentUpon>
     </Content>
+    <Content Include="Content\Theme\Tasks.css">
+      <DependentUpon>Tasks.scss</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Parameters.xml" />
@@ -316,6 +319,7 @@
     <Content Include="Scripts\Custom\ImageViewer.js" />
     <Content Include="Scripts\Controls\AutoComplete.js" />
     <Content Include="Scripts\Instances\LifeCycle.js" />
+    <Content Include="Scripts\Instances\Tasks.js" />
     <Content Include="Scripts\Instances\Overview.js" />
     <Content Include="Scripts\Instances\InstanceLink.js" />
     <Content Include="Scripts\Libraries\jquery-migrate-3.4.1.js" />
@@ -638,6 +642,9 @@
     <Content Include="Views\Default\Dashboard.cshtml" />
     <Content Include="Views\Default\LicenseManager.cshtml" />
     <Content Include="Views\Users\TimeZone.cshtml" />
+    <Content Include="Views\Dashboards\Tasks.cshtml" />
+    <Content Include="Views\Help\Tasks.cshtml" />
+    <Content Include="Content\Theme\Tasks.scss" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

@@ -155,6 +155,7 @@
                         .append($("<i />").attr("title", "Unique").addClass("Unique fal fa-key"))
                         .append($("<i />").attr("title", "Exception").addClass("Exception fal fa-exclamation"))
                         .append($("<i />").attr("title", "Notification").addClass("Notification fal fa-bell"))
+                        .append($("<i />").attr("title", "Task").addClass("Task fal fa-tasks"))
                     );
 
             noRecord.remove();
@@ -192,6 +193,7 @@
             commands.find(".Unique").toggleClass("Off", row.unique == 0);
             commands.find(".Exception").toggleClass("Off", !row.exception);
             commands.find(".Notification").toggleClass("Off", !row.notification);
+            commands.find(".Task").toggleClass("Off", !row.task);
         },
 
         updatePrototype = function () {
