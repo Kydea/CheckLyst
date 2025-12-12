@@ -16,6 +16,30 @@
             window.open(options.reportUrl + "?" + queryStrings.join("&"));
         },
 
+        enqueue = function () {
+            var data = {
+                id: options.id,
+                enqueue: true,
+                parameters: []
+            };
+            for (var parameterIndex in parameters) {
+                var
+                    parameter = parameters[parameterIndex],
+                    readOnly = parameter.getOption("readOnly"),
+                    code = parameter.getOption("parameterName"),
+                    value = parameter.getValue();
+                if (value != "" && !readOnly)
+                    data.parameters.push({ code: code, value: value });
+            }
+            $.ajax({
+                type: "post",
+                url: matematici.urls.reports.api + "/Viewer/GetReportData",
+                data: data
+            }).done(function () {
+                matematici.dialog.show("report enqueued", "the report has been queued for background execution as requested, you will be notified once it is completed");
+            });
+        },
+
         query = function () {
             var queryParameters = [];
             for (var parameterIndex in parameters) {
@@ -111,6 +135,7 @@
 
     reportViewer.quit = quit;
     reportViewer.run = run;
+    reportViewer.enqueue = enqueue;
     reportViewer.query = query;
 
     setup();

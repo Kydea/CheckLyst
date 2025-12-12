@@ -203,6 +203,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Run\IRunService.cs" />
+    <Compile Include="Run\ListResponse.cs" />
+    <Compile Include="Run\ListRow.cs" />
+    <Compile Include="Run\RunRequest.cs" />
+    <Compile Include="Run\RunService .cs" />
+    <Compile Include="Run\ListRequest.cs" />
     <Compile Include="Viewer\ReportPDF.cs" />
     <Compile Include="Viewer\ReportRequest.cs" />
     <Compile Include="Viewer\ReportResponse.cs" />

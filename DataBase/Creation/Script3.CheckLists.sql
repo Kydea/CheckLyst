@@ -76,7 +76,7 @@ create table "CheckLists"."PrototypeVersions"
 
 	"InstanceConfirmationWorkFlow" bigint references "WorkFlows"."WorkFlows",	
 
-	"Data" text, --replace with no sql table
+	"Data" text,
 
 	"LifeCycle" uint,
 	constraint "PrototypeVersions_LifeCycle" check ("LifeCycle" is null or "LifeCycle" > 0),

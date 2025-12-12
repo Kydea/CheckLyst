@@ -55,5 +55,11 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("GroupsList");
         }
+
+        [Route("Runs")]
+        public ActionResult Runs()
+        {
+            return ConditionalView();
+        }
     }
 }

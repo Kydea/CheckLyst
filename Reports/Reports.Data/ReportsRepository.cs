@@ -8,6 +8,7 @@ using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Core.Exceptions;
 using System.Data;
+using CheckListManager.Reports.Data.Models;
 
 namespace CheckListManager.Reports.Data
 {
@@ -47,13 +48,14 @@ namespace CheckListManager.Reports.Data
 
             int Count = await Query.CountAsync();
 
-            var Data = await Query
+            Query = Query
                 .OrderBy(r => r.ID)
-                .Skip((currentPage - 1) * itemsPerPage)
-                .Take(itemsPerPage)
-                .ToListAsync();
+                .Skip((currentPage - 1) * itemsPerPage);
 
-
+            if (itemsPerPage > 0)
+                Query = Query.Take(itemsPerPage);
+            
+            var Data = await Query.ToListAsync();
             return new PagingResponse<List<Common.Data.Reports>>
             {
                 Data = Data,
@@ -117,6 +119,66 @@ namespace CheckListManager.Reports.Data
         public async Task DeleteReportAsync(IDefaultIdentity identity, long id)
         {
             Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, id, null));
+            await SaveChangesAsync();
+        }
+
+        public async Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string parameters)
+        {
+            Entities.ReportRuns.Add(new ReportRuns
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Report = report,
+                Parameters = parameters,
+                Expiration = DateTimeOffset.UtcNow.AddDays(30),
+                CreatedOn = DateTimeOffset.UtcNow
+            });
+            await SaveChangesAsync();
+        }
+
+        public async Task<long> CountRunsAsync(IDefaultIdentity identity) =>
+            await Entities.ReportRuns.Where(r => r.Company == identity.CompanyId && r.User == identity.Code && r.CompletedOn.HasValue).CountAsync();
+
+        public async Task<PagingResponse<List<RunRecord>>> GetRunsAsync(long companyId, string user, long? report, DateTime? from, DateTime? to, int currentPage, int itemsPerPage)
+        {
+            var query = Entities.ReportRuns.Where(r =>
+                r.Company == companyId
+                && r.User == user
+                && (report == null || r.Report == report)
+                && (from == null || r.CreatedOn >= from)
+                && (to == null || r.CreatedOn <= to)
+            );
+
+            var count = await query.CountAsync();
+
+            var data  = await query
+                .OrderBy(r => r.ID)
+                .Skip((currentPage - 1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .Select(r => new RunRecord
+                {
+                    ID = r.ID,
+                    ReportID = r.Report,
+                    ReportCode = r.Reports.Code,
+                    Expiration = r.Expiration,
+                    CreatedOn = r.CreatedOn,
+                    CompletedOn = r.CompletedOn
+                })
+                .ToListAsync();
+
+            return new PagingResponse<List<RunRecord>>
+            {
+                Data = data,
+                Count = count,
+                ItemsPerPage = itemsPerPage,
+                CurrentPage = currentPage
+            };
+        }
+
+        public async Task DeleteRunAsync(DefaultIdentity identity, long iD)
+        {
+            var run = await Entities.ReportRuns.SingleOrDefaultAsync(r => r.Company == identity.CompanyId && r.User == identity.Code &&  r.ID == iD) ?? throw new DatabaseException($"Report run {iD} not found for user {identity.Code} and company {identity.CompanyId}");
+            Entities.ReportRuns.Remove(run);
             await SaveChangesAsync();
         }
     }

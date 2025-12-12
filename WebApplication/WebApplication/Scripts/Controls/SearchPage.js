@@ -125,9 +125,8 @@
         return advancedSearchMode;
     };
 
-    searchPage.setAdvancedSearchMode = function (value) {
-        setAdvancedSearchMode(value); 
-    };
+    searchPage.setAdvancedSearchMode = setAdvancedSearchMode;
+    searchPage.filterHandler = filterHandler;
 
 	setup();
 }

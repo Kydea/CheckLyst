@@ -322,7 +322,6 @@
     <Content Include="Scripts\Instances\Tasks.js" />
     <Content Include="Scripts\Instances\Overview.js" />
     <Content Include="Scripts\Instances\InstanceLink.js" />
-    <Content Include="Scripts\Libraries\jquery-migrate-3.4.1.js" />
     <Content Include="Scripts\Libraries\jquery-ui-1.14.1.js" />
     <Content Include="Scripts\Libraries\pako.1.0.11.js" />
     <Content Include="Scripts\Includes\zxing-0.18.5.js" />
@@ -645,6 +644,7 @@
     <Content Include="Views\Dashboards\Tasks.cshtml" />
     <Content Include="Views\Help\Tasks.cshtml" />
     <Content Include="Content\Theme\Tasks.scss" />
+    <Content Include="Views\Reports\Runs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

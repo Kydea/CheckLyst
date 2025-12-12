@@ -9,4 +9,5 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '\\10.0.16.10\Data\Prototypes\'),
 	('InstancesStorageBucket', '\\10.0.16.10\Data\Instances\'),
-	('NotificationsEmailAddress', '??@matematici.com');
+	('NotificationsEmailAddress', '??@matematici.com'),
+	('ContextualReportTimeout', '60');

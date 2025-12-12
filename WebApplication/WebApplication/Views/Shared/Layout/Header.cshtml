@@ -120,13 +120,17 @@
                 </ul>
             </li>
             <li data-role="Reports#View" class="MenuItem">
-                <a href="@Url.Action("List", "Reports")" class="MenuItem"><i class="fal fa-file-chart-line Extended"></i>Reports</a>
+                <span class="MenuItem"><i class="fal fa-file-chart-line Extended"></i>Reports</span>
 
                 <ul class="SubMenu">
                     <li>
                         <a href="@Url.Action("List", "Reports")">Reports</a>
                     </li>
+                    <li>
+                        <a href="@Url.Action("Runs", "Reports")">Runs</a>
+                    </li>
                 </ul>
+</ul>
             </li>
 
 

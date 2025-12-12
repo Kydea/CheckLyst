@@ -1,0 +1,102 @@
+﻿<div id="RunsListPage">
+    <h1>Runs List</h1>
+
+    <div class="ActionBar"></div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Reports/Run">
+            <label class="Width200">
+                <span>Report</span>
+                <i class="Icon fal fa-file-chart-line"></i>
+                <select name="report" class="Trigger" data-nullable="(all)"></select>
+            </label>
+            <label class="Controls2">
+                <span>Date range</span>
+                <input type="text" name="from" class="DatePicker" />
+                <input type="text" name="to" class="DatePicker" />
+            </label>
+
+
+        </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Report ID</th>
+                    <th>Repor code</th>
+                    <th>Completed</th>
+                    <th>Expiration</th>
+                    <th>Created on</th>
+                    <th>Completed on</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="id"></td>
+                    <td data-column="reportID"></td>
+                    <td data-column="reportCode"></td>
+                    <td data-column="completed" data-type="Boolean"></td>
+                    <td data-column="expiration" data-type="DateTimeOffset"></td>
+                    <td data-column="createdOn" data-type="DateTimeOffset"></td>
+                    <td data-column="completedOn" data-type="DateTimeOffset"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Runs",
+            readOnly: true,
+            filterFormSelector: "form#Filters",
+            resultGridSelector: "div#Content table.Grid",
+            bindEvent: "Bind",
+            breadCrumbs: [{ content: "runs" }],
+
+            rowClickHandler: function (row) {
+                var
+                    deleteRun = function () {
+                        setTimeout(function () {
+                            matematici.dialog.show("warning", "The run will be deleted.", [
+                                {
+                                    text: "confirm", icon: "check", handler: function () {
+                                        $.ajax({
+                                            type: "post",
+                                            url: matematici.urls.reports.api + "/Run/Delete",
+                                            data: {
+                                                id: row.data("values").id
+                                            }
+                                        }).done(function () {
+                                            searchPage.getForm().trigger("GetData", searchPage.filterHandler);
+                                            matematici.clock.updateNotifications();
+                                        });
+                                    }
+                                },
+                                {
+                                    text: "cancel", icon: "times", cancelButton: true
+                                }
+                            ]);
+                        }, 0);
+                    },
+                    openViewer = function () {
+                        matematici.clock.updateNotifications();
+                    };
+
+                var buttons = [
+                    { text: "cancel", icon: "times", cancelButton: true },
+                    { text: "delete run", icon: "trash-alt", handler: deleteRun },
+                    { text: "report viewer", icon: "file-chart-line", handler: openViewer, disabled: !row.data("values").completed }
+                ];
+                matematici.dialog.popupMenu(buttons);
+            }
+        });
+        callback.call();
+    };
+</script>

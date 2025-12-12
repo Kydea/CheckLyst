@@ -5,15 +5,32 @@ body div.Tasks {
     #Result {
         color: $Color-Grey-Dark;
 
+        h2 {
+            display: block;
+            background: $Color-Grey-Regular;
+            font-size: 18px;
+            padding: 10px;
+            color: white;
+            margin-bottom: 0 !important;
+        }
+
         div.Item {
             border: solid 1px $Color-Grey-Light;
-            line-height: 30px;
+            padding: 10px;
 
             + div.Item {
                 margin-top: 20px;
             }
 
-            span { padding: 10px;}
+            span {
+                display: block;
+                float: left;
+            }
+
+            .Label {
+                clear: both;
+                margin-right: 10px;
+            }
 
             .Code {
                 color: $Color-Grey-Regular;
@@ -21,10 +38,22 @@ body div.Tasks {
 
             .Value {
                 color: $Color-Green-Regular;
+                margin-bottom: 10px;
+
+                &.Date {
+                    color: $Color-Yellow-Regular;
+                    font-weight: bold;
+                }
             }
 
             .Description {
                 color: $Color-Yellow-Regular;
+            }
+
+            a.Button {
+                display: block;
+                float: right;
+                clear: both;
             }
         }
     }

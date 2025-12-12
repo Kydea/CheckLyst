@@ -13,5 +13,6 @@ namespace CheckListManager.Reports.Logic.Viewer
         public bool Online { get; set; }
         public List<string> Columns { get; set; }
         public IEnumerable<ReportRow> Rows { get; set; }
+        public bool Enqueued { get; set; }
     }
 }

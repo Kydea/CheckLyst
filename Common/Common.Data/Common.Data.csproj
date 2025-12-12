@@ -241,6 +241,9 @@
     <Compile Include="ReportColumns.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ReportRuns.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Reports.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

@@ -78,7 +78,29 @@ create table "Reports"."ReportClauses"
 	"ClauseType" varchar(30)
 );
 
-create index "ReportClauses_Reports" on "Reports"."ReportClauses" ("Report");
+create index "ReportClauses_Report" on "Reports"."ReportClauses" ("Report");
+
+create table "Reports"."ReportRuns"
+(
+	"ID" bigserial primary key,
+
+	"Company" bigint not null,
+	"User" varchar (60),
+	constraint "ReportRuns_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Report" bigint not null references "Reports"."Reports" on delete cascade,
+
+	"Expiration" timestamptz not null,
+	"Parameters" text,
+	"Data" text,
+
+	"StartedOn" timestamptz,
+	"CompletedOn" timestamptz,
+
+	"CreatedOn" timestamptz not null default current_timestamp
+);
+
+create index "ReportRuns_User" on "Reports"."ReportRuns" ("Company", "User");
 
 alter table "Infrastructure"."Companies" enable row level security;
 alter table "Infrastructure"."Departments" enable row level security;

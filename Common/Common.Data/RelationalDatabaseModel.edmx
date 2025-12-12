@@ -316,6 +316,21 @@
           <Property Name="Report" Type="int8" Nullable="false" />
           <Property Name="Group" Type="varchar" MaxLength="60" Nullable="false" />
         </EntityType>
+        <EntityType Name="ReportRuns">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int8" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" />
+          <Property Name="Report" Type="int8" Nullable="false" />
+          <Property Name="Expiration" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="Parameters" Type="text" />
+          <Property Name="Data" Type="text" />
+          <Property Name="StartedOn" Type="timestamptz" Precision="7" />
+          <Property Name="CompletedOn" Type="timestamptz" Precision="7" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+        </EntityType>
         <EntityType Name="Reports">
           <Key>
             <PropertyRef Name="ID" />
@@ -1326,6 +1341,36 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ReportRuns_Report_fkey">
+          <End Role="Reports" Type="Self.Reports" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ReportRuns" Type="Self.ReportRuns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ReportRuns">
+              <PropertyRef Name="Report" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReportRuns_User">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ReportRuns" Type="Self.ReportRuns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="ReportRuns">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Reports_ReportSource_fkey">
           <End Role="ReportSources" Type="Self.ReportSources" Multiplicity="0..1" />
           <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
@@ -1807,6 +1852,7 @@
           <EntitySet Name="ReportClauses" EntityType="Self.ReportClauses" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportColumns" EntityType="Self.ReportColumns" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportGroups" EntityType="Self.ReportGroups" Schema="Reports" store:Type="Tables" />
+          <EntitySet Name="ReportRuns" EntityType="Self.ReportRuns" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="Reports" EntityType="Self.Reports" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportSources" EntityType="Self.ReportSources" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
@@ -2034,6 +2080,14 @@
             <End Role="Reports" EntitySet="Reports" />
             <End Role="ReportGroups" EntitySet="ReportGroups" />
           </AssociationSet>
+          <AssociationSet Name="ReportRuns_Report_fkey" Association="Self.ReportRuns_Report_fkey">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="ReportRuns" EntitySet="ReportRuns" />
+          </AssociationSet>
+          <AssociationSet Name="ReportRuns_User" Association="Self.ReportRuns_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="ReportRuns" EntitySet="ReportRuns" />
+          </AssociationSet>
           <AssociationSet Name="Reports_ReportSource_fkey" Association="Self.Reports_ReportSource_fkey">
             <End Role="ReportSources" EntitySet="ReportSources" />
             <End Role="Reports" EntitySet="Reports" />
@@ -2255,6 +2309,7 @@
           <NavigationProperty Name="UserRoles" Relationship="RelationalDatabaseModel.UserRoles_Group" FromRole="Users" ToRole="UserRoles" />
           <Property Name="TimeZone" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Users_TimeZone_fkey" FromRole="Users" ToRole="TimeZones" />
+          <NavigationProperty Name="ReportRuns" Relationship="RelationalDatabaseModel.ReportRuns_User" FromRole="Users" ToRole="ReportRuns" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -2664,6 +2719,15 @@
           <AssociationSet Name="Users_TimeZone_fkey" Association="RelationalDatabaseModel.Users_TimeZone_fkey">
             <End Role="TimeZones" EntitySet="TimeZones" />
             <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <EntitySet Name="ReportRuns" EntityType="RelationalDatabaseModel.ReportRuns" />
+          <AssociationSet Name="ReportRuns_Report_fkey" Association="RelationalDatabaseModel.ReportRuns_Report_fkey">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="ReportRuns" EntitySet="ReportRuns" />
+          </AssociationSet>
+          <AssociationSet Name="ReportRuns_User" Association="RelationalDatabaseModel.ReportRuns_User">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="ReportRuns" EntitySet="ReportRuns" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -4323,6 +4387,7 @@
           <Property Name="Online" Type="Boolean" Nullable="false" />
           <Property Name="Restricted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.ReportGroups" FromRole="Reports" ToRole="Groups" />
+          <NavigationProperty Name="ReportRuns" Relationship="RelationalDatabaseModel.ReportRuns_Report_fkey" FromRole="Reports" ToRole="ReportRuns" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -4461,6 +4526,53 @@
             </Principal>
             <Dependent Role="Users">
               <PropertyRef Name="TimeZone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ReportRuns">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Report" Type="Int64" Nullable="false" />
+          <Property Name="Expiration" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Parameters" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartedOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="CompletedOn" Type="DateTimeOffset" Precision="7" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportRuns_Report_fkey" FromRole="ReportRuns" ToRole="Reports" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.ReportRuns_User" FromRole="ReportRuns" ToRole="Users" />
+        </EntityType>
+        <Association Name="ReportRuns_Report_fkey">
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.ReportRuns" Role="ReportRuns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="ReportRuns">
+              <PropertyRef Name="Report" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReportRuns_User">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.ReportRuns" Role="ReportRuns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="ReportRuns">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5152,6 +5264,22 @@
                 <ScalarProperty Name="Group2" ColumnName="Group2" />
                 <ScalarProperty Name="Group1" ColumnName="Group1" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportRuns">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportRuns">
+              <MappingFragment StoreEntitySet="ReportRuns">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="CompletedOn" ColumnName="CompletedOn" />
+                <ScalarProperty Name="StartedOn" ColumnName="StartedOn" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Parameters" ColumnName="Parameters" />
+                <ScalarProperty Name="Expiration" ColumnName="Expiration" />
+                <ScalarProperty Name="Report" ColumnName="Report" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

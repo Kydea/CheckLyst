@@ -9,5 +9,6 @@ insert into "Configuration"."Configurations" ("Code", "Value") values
 	('InstanceCloseTimeout', '4320'), --3 days, expressed in minutes
 	('PrototypesStorageBucket', '\\10.47.183.36\Data\Prototypes\'),
 	('InstancesStorageBucket', '\\10.47.183.36\Data\Instances\'),
-	('NotificationsEmailAddress', 'checklistcv@abbvie.com');
+	('NotificationsEmailAddress', 'checklistcv@abbvie.com'),
+	('ContextualReportTimeout', '60');
 

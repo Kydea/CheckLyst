@@ -1,22 +1,45 @@
 ﻿body div.Tasks #Result {
   color: #666;
 }
+body div.Tasks #Result h2 {
+  display: block;
+  background: #999;
+  font-size: 18px;
+  padding: 10px;
+  color: white;
+  margin-bottom: 0 !important;
+}
 body div.Tasks #Result div.Item {
   border: solid 1px #ccc;
-  line-height: 30px;
+  padding: 10px;
 }
 body div.Tasks #Result div.Item + div.Item {
   margin-top: 20px;
 }
 body div.Tasks #Result div.Item span {
-  padding: 10px;
+  display: block;
+  float: left;
+}
+body div.Tasks #Result div.Item .Label {
+  clear: both;
+  margin-right: 10px;
 }
 body div.Tasks #Result div.Item .Code {
   color: #999;
 }
 body div.Tasks #Result div.Item .Value {
   color: #009688;
+  margin-bottom: 10px;
+}
+body div.Tasks #Result div.Item .Value.Date {
+  color: #ffba00;
+  font-weight: bold;
 }
 body div.Tasks #Result div.Item .Description {
   color: #ffba00;
+}
+body div.Tasks #Result div.Item a.Button {
+  display: block;
+  float: right;
+  clear: both;
 }

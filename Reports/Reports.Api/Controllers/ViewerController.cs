@@ -20,6 +20,7 @@ using CheckListManager.Common.Data;
 using MigraDoc.DocumentObjectModel;
 using CheckListManager.Common.Core.Web.Security;
 using System.ServiceModel.Security;
+using System.Configuration;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -53,10 +54,27 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("GetReportData")]
         public async Task<IHttpActionResult> GetReportData(ReportRequest request)
         {
-            var cancellationToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            return Ok(await _reportViewerService.GetReportData(Identity, request, cancellationToken));
+            if (request.Enqueue)
+            {
+                await _reportViewerService.EnqueueReportRun(Identity, request);
+                return Ok(new ReportResponse { Enqueued = true });
+            }
+
+            var requestToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
+            var timeout = _configurationService.ContextualReportTimeout;
+            using (var timeoutCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout)))
+            using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(requestToken, timeoutCancellationTokenSource.Token))
+                try
+                {
+                    return Ok(await _reportViewerService.GetReportData(Identity, request, linkedCancellationTokenSource.Token));
+                }
+                catch (OperationCanceledException) when (timeoutCancellationTokenSource.IsCancellationRequested && !requestToken.IsCancellationRequested)
+                {
+                    await _reportViewerService.EnqueueReportRun(Identity, request);
+                    return Ok(new ReportResponse { Enqueued = true });
+                }
         }
-        
+
         [HttpPost]
         [Route("GetReportQuery")]
         [Authorize(Roles = "Reports#Edit")]

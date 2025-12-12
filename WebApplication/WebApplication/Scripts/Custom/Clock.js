@@ -48,6 +48,12 @@
                 contentType: "application/json; charset=utf-8",
                 suppressErrors: true
             }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
+            $.ajax({
+                url: matematici.urls.api + "/Reports/Run/Count",
+                type: "post",
+                contentType: "application/json; charset=utf-8",
+                suppressErrors: true
+            }).done(function (result) { matematici.menu.setNotificationBadge("/Reports/Runs", result); });
         },
 
         update = function () {

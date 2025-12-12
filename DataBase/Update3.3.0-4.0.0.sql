@@ -2,6 +2,8 @@ alter table "Infrastructure"."Companies" add "Online" boolean not null default t
 alter table "Security"."Users" add "TimeZone" varchar (100) references "Infrastructure"."TimeZones";
 alter table "CheckLists"."InstanceExpressionValues" add "Task" boolean not null default false;
 
+insert into "Configuration"."Configurations" values ('ContextualReportTimeout', '60');
+
 insert into "Configuration"."Settings" values ('LicenseExpiration');
 insert into "Configuration"."Settings" values ('LicenseCompaniesCount');
 insert into "Configuration"."Settings" values ('LicensePrototypeTypesCount');
@@ -10,3 +12,28 @@ insert into "Configuration"."Settings" values ('LicenseUsersCount');
 insert into "Configuration"."Settings" values ('LicenseSignature');
 
 create index "Index_InstanceExpressionValues_Tasks" on "CheckLists"."InstanceExpressionValues"("Value", "Instance", "Code") where not "Task" is null;
+
+drop index "Reports"."ReportClauses_Reports";
+create index "ReportClauses_Report" on "Reports"."ReportClauses" ("Report");
+
+create table "Reports"."ReportRuns"
+(
+	"ID" bigserial primary key,
+
+	"Company" bigint not null,
+	"User" varchar (60),
+	constraint "ReportRuns_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Report" bigint not null references "Reports"."Reports" on delete cascade,
+
+	"Expiration" timestamptz not null,
+	"Parameters" text,
+	"Data" text,
+
+	"StartedOn" timestamptz,
+	"CompletedOn" timestamptz,
+
+	"CreatedOn" timestamptz not null default current_timestamp
+);
+
+create index "ReportRuns_User" on "Reports"."ReportRuns" ("Company", "User");

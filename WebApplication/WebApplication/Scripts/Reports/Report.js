@@ -237,6 +237,16 @@
 
         loadHandler = function (result) {
             console.log("Query time: " + (new Date() - startedOn) + "ms");
+            if (result.enqueued) {
+                matematici.dialog.show("report enqueued", "the report processing exceeded the time limit and has been queued for background execution, you will be notified once it is completed", [
+                    {
+                        text: "confirm", icon: "check", cancelButton: true, handler: function () {
+                            return window.close();
+                        }
+                    }
+                ]);
+                return;
+            } 
             model = result;
             var tr, th, td;
             if (initialized)

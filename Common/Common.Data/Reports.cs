@@ -20,6 +20,7 @@ namespace CheckListManager.Common.Data
             this.ReportColumns = new HashSet<ReportColumns>();
             this.ReportClauses = new HashSet<ReportClauses>();
             this.Groups = new HashSet<Groups>();
+            this.ReportRuns = new HashSet<ReportRuns>();
         }
     
         public long ID { get; set; }
@@ -46,5 +47,7 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<ReportClauses> ReportClauses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Groups> Groups { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ReportRuns> ReportRuns { get; set; }
     }
 }

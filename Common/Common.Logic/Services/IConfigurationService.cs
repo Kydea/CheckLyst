@@ -6,7 +6,6 @@ namespace CheckListManager.Common.Logic.Services
 	{
 		string RedisHost { get; }
 		int RedisPort { get; }
-
 		string SqsBaseUrl { get; }
         string SqsPrefix { get; }
         string ApiBaseUrl { get; }
@@ -15,7 +14,7 @@ namespace CheckListManager.Common.Logic.Services
         int InstanceCloseTimeout { get; }
         string PrototypesStorageBucket { get; }
         string InstancesStorageBucket { get; }
-        
+        int ContextualReportTimeout { get; }
         string NotificationsEmailAddress { get; }
     }
 }
