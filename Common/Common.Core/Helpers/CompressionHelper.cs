@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -10,14 +11,16 @@ namespace CheckListManager.Common.Core.Helpers
 {
     public class CompressionHelper
     {
+        private static readonly UTF8Encoding utf8Encoding = new UTF8Encoding(false);
+
         public static byte[] Compress(byte[] data, bool useGZipCompression)
         {
             CompressionLevel compressionLevel = CompressionLevel.Fastest;
             using (MemoryStream compressedStream = new MemoryStream())
-            using (var zipStream = useGZipCompression ? (Stream)new GZipStream(compressedStream, compressionLevel) : new DeflateStream(compressedStream, compressionLevel))
+            using (var zipStream = useGZipCompression ? (Stream)new GZipStream(compressedStream, compressionLevel, leaveOpen: true) : new DeflateStream(compressedStream, compressionLevel, leaveOpen: true))
             {
                 zipStream.Write(data, 0, data.Length);
-                zipStream.Close();
+                zipStream.Flush();
                 return compressedStream.ToArray();
             }
         }
@@ -26,11 +29,38 @@ namespace CheckListManager.Common.Core.Helpers
         {
             CompressionMode compressionMode = CompressionMode.Decompress;
             using (var compressedStream = new MemoryStream(data))
-            using (var zipStream = useGZipCompression ? (Stream)new GZipStream(compressedStream, compressionMode) : new DeflateStream(compressedStream, compressionMode))
+            using (var zipStream = useGZipCompression ? (Stream)new GZipStream(compressedStream, compressionMode, leaveOpen: true) : new DeflateStream(compressedStream, compressionMode, leaveOpen: true))
             using (var resultStream = new MemoryStream())
             {
                 zipStream.CopyTo(resultStream);
                 return resultStream.ToArray();
+            }
+        }
+
+        public static byte[] SerializeToCompressedBytes<T>(T value, bool useGZipCompression)
+        {
+            using (var output = new MemoryStream())
+            using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(output, CompressionLevel.Fastest, leaveOpen: true) : new DeflateStream(output, CompressionLevel.Fastest, leaveOpen: true))
+            using (var writer = new StreamWriter(zipStream, utf8Encoding, bufferSize: 64 * 1024, leaveOpen: true))
+            using (var jsonWriter = new JsonTextWriter(writer) { CloseOutput = false })
+            {
+                var serializer = JsonSerializer.CreateDefault();
+                serializer.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
+                writer.Flush();
+                return output.ToArray();
+            }
+        }
+
+        public static T DeserializeFromCompressedBytes<T>(byte[] compressed, bool useGZipCompression)
+        {
+            using (var input = new MemoryStream(compressed))
+            using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(input, CompressionMode.Decompress, leaveOpen: true) : new DeflateStream(input, CompressionMode.Decompress, leaveOpen: true))
+            using (var reader = new StreamReader(zipStream, utf8Encoding, detectEncodingFromByteOrderMarks: false, bufferSize: 64 * 1024, leaveOpen: true))
+            using (var jsonReader = new JsonTextReader(reader) { CloseInput = false })
+            {
+                var serializer = JsonSerializer.CreateDefault();
+                return serializer.Deserialize<T>(jsonReader);
             }
         }
     }

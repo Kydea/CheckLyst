@@ -9,13 +9,14 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Core.Exceptions;
 using System.Data;
 using CheckListManager.Reports.Data.Models;
+using System.Threading;
 
 namespace CheckListManager.Reports.Data
 {
     public class ReportsRepository : Repository, IReportsRepository
     {
         public ReportsRepository(RelationalDatabaseEntities entities) : base(entities)
-		{
+        {
         }
 
         public async Task<List<ReportSources>> GetReportSourcesAsync() =>
@@ -27,7 +28,7 @@ namespace CheckListManager.Reports.Data
             int? id,
             string code,
             string description,
-            int currentPage, 
+            int currentPage,
             int itemsPerPage)
         {
             if (code == null) code = string.Empty;
@@ -54,7 +55,7 @@ namespace CheckListManager.Reports.Data
 
             if (itemsPerPage > 0)
                 Query = Query.Take(itemsPerPage);
-            
+
             var Data = await Query.ToListAsync();
             return new PagingResponse<List<Common.Data.Reports>>
             {
@@ -106,7 +107,7 @@ namespace CheckListManager.Reports.Data
             existingReport.ModifiedBy = identity.Code;
             Entities.ReportColumns.RemoveRange(existingReport.ReportColumns);
             Entities.ReportClauses.RemoveRange(existingReport.ReportClauses);
-            foreach(var group in existingReport.Groups.ToList())
+            foreach (var group in existingReport.Groups.ToList())
                 existingReport.Groups.Remove(group);
             existingReport.ReportColumns = report.ReportColumns;
             existingReport.ReportClauses = report.ReportClauses;
@@ -151,7 +152,7 @@ namespace CheckListManager.Reports.Data
 
             var count = await query.CountAsync();
 
-            var data  = await query
+            var data = await query
                 .OrderBy(r => r.ID)
                 .Skip((currentPage - 1) * itemsPerPage)
                 .Take(itemsPerPage)
@@ -181,12 +182,31 @@ namespace CheckListManager.Reports.Data
         public Task<ReportRuns> GetRunAsync(long id) =>
             Entities.ReportRuns.SingleOrDefaultAsync(r => r.ID == id) ?? throw new DatabaseException($"Report run {id} not found");
 
-
         public async Task DeleteRunAsync(DefaultIdentity identity, long iD)
         {
-            var run = await Entities.ReportRuns.SingleOrDefaultAsync(r => r.Company == identity.CompanyId && r.User == identity.Code &&  r.ID == iD) ?? throw new DatabaseException($"Report run {iD} not found for user {identity.Code} and company {identity.CompanyId}");
+            var run = await Entities.ReportRuns.SingleOrDefaultAsync(r => r.Company == identity.CompanyId && r.User == identity.Code && r.ID == iD) ?? throw new DatabaseException($"Report run {iD} not found for user {identity.Code} and company {identity.CompanyId}");
             Entities.ReportRuns.Remove(run);
             await SaveChangesAsync();
+        }
+
+        public Task CompleteReportRunAsync(long id, byte[] data, Exception exception, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                var run = await GetRunAsync(id);
+                run.Data = data;
+                run.CompletedOn = DateTimeOffset.UtcNow;
+                run.Error = null;
+
+                while (exception != null)
+                {
+                    run.Error += exception.Message;
+                    exception = exception.InnerException;
+                    if (exception != null) run.Error += " | ";
+                }
+
+                await SaveChangesAsync();
+            }, cancellationToken);
         }
     }
 }

@@ -2,10 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Models.Expressions.Functions;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Terminal.Scheduler;
 using CheckListManager.Reports.Data;
+using CheckListManager.Reports.Logic;
 using CheckListManager.Reports.Logic.Run;
 using CheckListManager.Reports.Logic.Viewer;
 using Newtonsoft.Json;
@@ -36,12 +39,17 @@ namespace CheckListManager.Infrastructure.Terminal
                     try
                     {
                         var reportRequest = JsonConvert.DeserializeObject<ReportRequest>(pendingRun.Parameters);
-                        await reportviewerService.GetReportData(identity, reportRequest, cancellationToken);
+                        var data = await reportviewerService.GetReportData(new ReportIdentity {
+                            CompanyId = pendingRun.Company,
+                            Code = pendingRun.User
+                        }, reportRequest, cancellationToken);
+
+                        await reportsRepository.CompleteReportRunAsync(pendingRun.ID, data, null, cancellationToken);
                     }
                     catch (Exception exception)
                     {
-                        //log error and continue with next run
-                        Logger.Error(exception, $"Error executing report run ID {pendingRun.ID}");
+                        Logger.Error(exception, $"Error executing report run {pendingRun.ID}");
+                        await reportsRepository.CompleteReportRunAsync(pendingRun.ID, null, exception, cancellationToken);
                     }
                 }
             }

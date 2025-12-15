@@ -327,6 +327,7 @@
           <Property Name="Expiration" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="Parameters" Type="text" />
           <Property Name="Data" Type="bytea" />
+          <Property Name="Error" Type="text" />
           <Property Name="StartedOn" Type="timestamptz" Precision="7" />
           <Property Name="CompletedOn" Type="timestamptz" Precision="7" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
@@ -4545,6 +4546,7 @@
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportRuns_Report_fkey" FromRole="ReportRuns" ToRole="Reports" />
           <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.ReportRuns_User" FromRole="ReportRuns" ToRole="Users" />
+          <Property Name="Error" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="ReportRuns_Report_fkey">
           <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
@@ -5270,6 +5272,7 @@
           <EntitySetMapping Name="ReportRuns">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportRuns">
               <MappingFragment StoreEntitySet="ReportRuns">
+                <ScalarProperty Name="Error" ColumnName="Error" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="CompletedOn" ColumnName="CompletedOn" />
                 <ScalarProperty Name="StartedOn" ColumnName="StartedOn" />

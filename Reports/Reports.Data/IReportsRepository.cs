@@ -6,6 +6,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Reports.Data.Models;
+using System.Threading;
 
 namespace CheckListManager.Reports.Data
 {
@@ -24,5 +25,6 @@ namespace CheckListManager.Reports.Data
         Task<List<ReportRuns>> GetPendingRunsAsync();
         Task<ReportRuns> GetRunAsync(long ID);
         Task DeleteRunAsync(DefaultIdentity identity, long iD);
+        Task CompleteReportRunAsync(long id, byte[] data, Exception exception, CancellationToken cancellationToken);
     }
 }

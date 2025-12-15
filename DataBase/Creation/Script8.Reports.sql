@@ -93,6 +93,7 @@ create table "Reports"."ReportRuns"
 	"Expiration" timestamptz not null,
 	"Parameters" text,
 	"Data" bytea,
+	"Error" text,
 
 	"StartedOn" timestamptz,
 	"CompletedOn" timestamptz,

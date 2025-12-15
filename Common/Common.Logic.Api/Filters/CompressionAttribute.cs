@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,27 +19,18 @@ namespace CheckListManager.Common.Logic.Api.Filters
 
         public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionContext, CancellationToken cancellationToken)
         {
-            var isCompressionSupported = IsCompressionSupported();
-            var content = actionContext?.Response?.Content;
+            var response = actionContext?.Response;
+            var content = response?.Content;
+            var mediaType = content.Headers.ContentType?.MediaType;
 
-            if (isCompressionSupported && content != null)
+            var isCompressed = content.Headers.ContentEncoding != null && content.Headers.ContentEncoding.Any();
+            var isJson = string.Equals(mediaType, "application/json", StringComparison.OrdinalIgnoreCase) || (mediaType != null && mediaType.EndsWith("+json", StringComparison.OrdinalIgnoreCase));
+            var isCsv = string.Equals(mediaType, "text/csv", StringComparison.OrdinalIgnoreCase);
+
+            if (IsCompressionSupported() && content != null && !isCompressed && (isJson || isCsv))
             {
-                var acceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];
-                var contentType = actionContext.Response.Content.Headers.ContentType;
-                var contentDisposition = actionContext.Response.Content.Headers.ContentDisposition;
-                var byteArray = await content.ReadAsByteArrayAsync();
-                if (acceptEncoding.Contains("gzip"))
-                {
-                    actionContext.Response.Content = new ByteArrayContent(CompressionHelper.Compress(byteArray, true));
-                    actionContext.Response.Content.Headers.Add("Content-encoding", "gzip");
-                }
-                else
-                {
-                    actionContext.Response.Content = new ByteArrayContent(CompressionHelper.Compress(byteArray, false));
-                    actionContext.Response.Content.Headers.Add("Content-encoding", "deflate");
-                }
-                if (contentType != null) actionContext.Response.Content.Headers.ContentType = contentType;
-                if (contentDisposition != null) actionContext.Response.Content.Headers.ContentDisposition = contentDisposition;
+                var acceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"] ?? "gzip";
+                response.Content = new CompressedContent(content, acceptEncoding.Contains("gzip"));
             }
             
             await base.OnActionExecutedAsync(actionContext, cancellationToken);

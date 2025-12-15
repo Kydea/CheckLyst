@@ -21,6 +21,7 @@ using MigraDoc.DocumentObjectModel;
 using CheckListManager.Common.Core.Web.Security;
 using System.ServiceModel.Security;
 using System.Configuration;
+using CheckListManager.Reports.Logic;
 
 namespace CheckListManager.Reports.Api.Controllers
 {
@@ -118,15 +119,6 @@ namespace CheckListManager.Reports.Api.Controllers
             var decimalSeparator = await _settingService.DecimalSeparatorAsync(data.CompanyId.Value);
             var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, decimalSeparator, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.Format, data.Orientation, identity.Code, data, report, details, cancellationToken);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
-        }
-
-
-        public class ReportIdentity : IDefaultIdentity
-        {
-            public long CompanyId { get; set; }
-            public string Code { get; set; }
-            public string Description { get; set; }
-            public bool HasPermission(string functionGroup, string function = "", long? department = null, long? prototypeType = null, string tag = null) => true;
         }
     }
 }

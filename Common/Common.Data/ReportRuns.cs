@@ -24,6 +24,7 @@ namespace CheckListManager.Common.Data
         public Nullable<System.DateTimeOffset> StartedOn { get; set; }
         public Nullable<System.DateTimeOffset> CompletedOn { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
+        public string Error { get; set; }
     
         public virtual Reports Reports { get; set; }
         public virtual Users Users { get; set; }

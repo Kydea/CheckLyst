@@ -63,7 +63,7 @@ namespace CheckListManager.Common.Logic.Api.Formatters
 
         public override async Task WriteToStreamAsync(Type type, object value, Stream stream, HttpContent content, TransportContext transportContext)
         {
-            var StreamWriter = new StreamWriter(stream);
+            var StreamWriter = new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), bufferSize: 64 * 1024, leaveOpen: true);
             await WriteRowAsync(StreamWriter, Header);
             foreach (var Row in (IEnumerable<T>)value)
                 await WriteRowAsync(StreamWriter, GetValues(Row));
