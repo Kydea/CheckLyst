@@ -28,7 +28,7 @@ create table "Reports"."ReportRuns"
 
 	"Expiration" timestamptz not null,
 	"Parameters" text,
-	"Data" text,
+	"Data" bytea,
 
 	"StartedOn" timestamptz,
 	"CompletedOn" timestamptz,

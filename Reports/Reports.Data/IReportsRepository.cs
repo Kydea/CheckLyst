@@ -21,6 +21,8 @@ namespace CheckListManager.Reports.Data
         Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string parameters);
         Task<long> CountRunsAsync(IDefaultIdentity identity);
         Task<PagingResponse<List<RunRecord>>> GetRunsAsync(long companyId, string user, long? report, DateTime? from, DateTime? to, int currentPage, int itemsPerPage);
+        Task<List<ReportRuns>> GetPendingRunsAsync();
+        Task<ReportRuns> GetRunAsync(long ID);
         Task DeleteRunAsync(DefaultIdentity identity, long iD);
     }
 }

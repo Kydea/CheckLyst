@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Core.Network;
+﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
-    public class ReportViewerService : IViewerEditorService
+    public class ReportViewerService : IReportViewerService
     {
         private readonly IReportsRepository _reportsRepository;
         private readonly IReportViewerRepository _reportViewerRepository;
@@ -118,10 +119,23 @@ namespace CheckListManager.Reports.Logic.Viewer
 
         public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
-            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
-            var parameters = new List<Parameter>(report.ReportClauses.Count);
-            var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
-            var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
+            Common.Data.Reports report;
+            List<Data.Models.ReportRow> rows;
+            if (request.Run.HasValue)
+            {
+                var run = await _reportsRepository.GetRunAsync(request.ID);
+                if (run.Company != identity.CompanyId) throw new UnauthorizedAccessException("company");
+                if (run.User != identity.Code) throw new UnauthorizedAccessException("user");
+                report = await _reportsRepository.GetReportAsync(identity.CompanyId, run.Report, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+                rows = JsonConvert.DeserializeObject<List<Data.Models.ReportRow>>(Encoding.UTF8.GetString(CompressionHelper.Decompress(run.Data, true)));
+            }
+            else
+            {
+                report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+                var parameters = new List<Parameter>(report.ReportClauses.Count);
+                var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
+                rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
+            }
             return new ReportResponse
             {
                 ID = report.ID,

@@ -124,7 +124,7 @@ namespace CheckListManager.Common.Logic.Cache
 		}
 
 		public Task<LockObject> LockAsync(string key, string regionName = null, TimeSpan? expiry = null, TimeSpan? wait = null,
-			TimeSpan? retry = null, CancellationToken cancellationToken = default(CancellationToken))
+			TimeSpan? retry = null, CancellationToken cancellationToken = default)
 		{
 			if (!expiry.HasValue)
 				expiry = TimeSpan.FromSeconds(5); //life time of the lock (it is extended automatically if the program runs)

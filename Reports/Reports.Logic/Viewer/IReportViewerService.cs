@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CheckListManager.Reports.Logic.Viewer
 {
-    public interface IViewerEditorService : IService
+    public interface IReportViewerService : IService
     {
         Task<DetailResponse> LoadParameters(IDefaultIdentity identity, long id);
         Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);

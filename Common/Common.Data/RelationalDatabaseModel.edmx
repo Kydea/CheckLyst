@@ -326,7 +326,7 @@
           <Property Name="Report" Type="int8" Nullable="false" />
           <Property Name="Expiration" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="Parameters" Type="text" />
-          <Property Name="Data" Type="text" />
+          <Property Name="Data" Type="bytea" />
           <Property Name="StartedOn" Type="timestamptz" Precision="7" />
           <Property Name="CompletedOn" Type="timestamptz" Precision="7" />
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
@@ -4539,7 +4539,7 @@
           <Property Name="Report" Type="Int64" Nullable="false" />
           <Property Name="Expiration" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="Parameters" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Data" Type="Binary" MaxLength="2147483647" FixedLength="false" />
           <Property Name="StartedOn" Type="DateTimeOffset" Precision="7" />
           <Property Name="CompletedOn" Type="DateTimeOffset" Precision="7" />
           <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />

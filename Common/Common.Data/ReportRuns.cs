@@ -20,7 +20,7 @@ namespace CheckListManager.Common.Data
         public long Report { get; set; }
         public System.DateTimeOffset Expiration { get; set; }
         public string Parameters { get; set; }
-        public string Data { get; set; }
+        public byte[] Data { get; set; }
         public Nullable<System.DateTimeOffset> StartedOn { get; set; }
         public Nullable<System.DateTimeOffset> CompletedOn { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }

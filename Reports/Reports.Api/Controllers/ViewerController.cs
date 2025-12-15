@@ -28,13 +28,13 @@ namespace CheckListManager.Reports.Api.Controllers
     [RoutePrefix("Viewer")]
     public class ViewerController : BaseApiController
     {
-        private readonly IViewerEditorService _reportViewerService;
+        private readonly IReportViewerService _reportViewerService;
         private readonly IConfigurationService _configurationService;
         private readonly ISettingService _settingService;
         private readonly IRedisCache _redisCache;
         private readonly ICommonRepository _commonRepository;
 
-        public ViewerController(IViewerEditorService reportViewerService, IConfigurationService configurationService, ISettingService settingService, IRedisCache redisCache, ICommonRepository commonRepository)
+        public ViewerController(IReportViewerService reportViewerService, IConfigurationService configurationService, ISettingService settingService, IRedisCache redisCache, ICommonRepository commonRepository)
         {
             _reportViewerService = reportViewerService;
             _configurationService = configurationService;
@@ -61,7 +61,7 @@ namespace CheckListManager.Reports.Api.Controllers
             }
 
             var requestToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            var timeout = _configurationService.ContextualReportTimeout;
+            var timeout = request.Run.HasValue ? double.MaxValue : _configurationService.ContextualReportTimeout;
             using (var timeoutCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout)))
             using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(requestToken, timeoutCancellationTokenSource.Token))
                 try

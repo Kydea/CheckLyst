@@ -220,6 +220,10 @@
       <Project>{351C3388-67B1-46EE-8FD1-5A63277B3C0C}</Project>
       <Name>Common.Logic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Reports.Data\Reports.Data.csproj">
+      <Project>{B1773E1A-FDE3-4D1C-BDE0-3C5A6B2B3514}</Project>
+      <Name>Reports.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Reports.Logic\Reports.Logic.csproj">
       <Project>{5f03eba2-7ff0-4fe0-9945-58fa5f084563}</Project>
       <Name>Reports.Logic</Name>

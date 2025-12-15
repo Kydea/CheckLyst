@@ -175,6 +175,13 @@ namespace CheckListManager.Reports.Data
             };
         }
 
+        public Task<List<ReportRuns>> GetPendingRunsAsync() =>
+            Entities.ReportRuns.Where(r => !r.CompletedOn.HasValue).OrderBy(r => r.CreatedOn).ToListAsync();
+
+        public Task<ReportRuns> GetRunAsync(long id) =>
+            Entities.ReportRuns.SingleOrDefaultAsync(r => r.ID == id) ?? throw new DatabaseException($"Report run {id} not found");
+
+
         public async Task DeleteRunAsync(DefaultIdentity identity, long iD)
         {
             var run = await Entities.ReportRuns.SingleOrDefaultAsync(r => r.Company == identity.CompanyId && r.User == identity.Code &&  r.ID == iD) ?? throw new DatabaseException($"Report run {iD} not found for user {identity.Code} and company {identity.CompanyId}");

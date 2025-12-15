@@ -13,7 +13,7 @@ namespace CheckListManager.Common.Logic.Api.Filters
         private bool IsCompressionSupported()
         {
             var AcceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"];
-            return (!string.IsNullOrEmpty(AcceptEncoding) && (AcceptEncoding.Contains("gzip") || AcceptEncoding.Contains("deflate")));
+            return !string.IsNullOrEmpty(AcceptEncoding) && (AcceptEncoding.Contains("gzip") || AcceptEncoding.Contains("deflate"));
         }
 
         public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionContext, CancellationToken cancellationToken)

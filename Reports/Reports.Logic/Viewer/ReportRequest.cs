@@ -19,6 +19,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public PageFormat Format { get; set; }
         public Orientation Orientation { get; set; }
         public bool Enqueue { get; set; }
+        public long? Run { get; set; }
 
         public class Parameter
         {
