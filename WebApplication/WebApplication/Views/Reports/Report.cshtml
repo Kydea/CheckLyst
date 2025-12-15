@@ -29,7 +29,10 @@
                 { content: "report" }
             ],
             initializers: [
-                new reports.Report("#Report", { id: @Model.ID })
+                new reports.Report("#Report", {
+                    id: @(Model.ID.HasValue ? Model.ID.Value.ToString() : "null"),
+                    run: @(Model.Run.HasValue ? Model.Run.Value.ToString() : "null")
+                })
             ]
         });
 

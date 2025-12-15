@@ -19,7 +19,6 @@
         enqueue = function () {
             var data = {
                 id: options.id,
-                enqueue: true,
                 parameters: []
             };
             for (var parameterIndex in parameters) {
@@ -33,7 +32,7 @@
             }
             $.ajax({
                 type: "post",
-                url: matematici.urls.reports.api + "/Viewer/GetReportData",
+                url: matematici.urls.reports.api + "/Viewer/Enqueue",
                 data: data
             }).done(function () {
                 matematici.dialog.show("report enqueued", "the report has been queued for background execution as requested, you will be notified once it is completed");

@@ -37,14 +37,14 @@ namespace CheckListManager.Common.Core.Helpers
             }
         }
 
-        public static byte[] SerializeToCompressedBytes<T>(T value, bool useGZipCompression)
+        public static byte[] SerializeToCompressedBytes<T>(T value, bool useGZipCompression, params JsonConverter[] converters)
         {
             using (var output = new MemoryStream())
             using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(output, CompressionLevel.Fastest, leaveOpen: true) : new DeflateStream(output, CompressionLevel.Fastest, leaveOpen: true))
             using (var writer = new StreamWriter(zipStream, utf8Encoding, bufferSize: 64 * 1024, leaveOpen: true))
             using (var jsonWriter = new JsonTextWriter(writer) { CloseOutput = false })
             {
-                var serializer = JsonSerializer.CreateDefault();
+                var serializer = CreateSerializer(converters);
                 serializer.Serialize(jsonWriter, value);
                 jsonWriter.Flush();
                 writer.Flush();
@@ -52,16 +52,28 @@ namespace CheckListManager.Common.Core.Helpers
             }
         }
 
-        public static T DeserializeFromCompressedBytes<T>(byte[] compressed, bool useGZipCompression)
+        public static T DeserializeFromCompressedBytes<T>(byte[] compressed, bool useGZipCompression, params JsonConverter[] converters)
         {
             using (var input = new MemoryStream(compressed))
             using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(input, CompressionMode.Decompress, leaveOpen: true) : new DeflateStream(input, CompressionMode.Decompress, leaveOpen: true))
             using (var reader = new StreamReader(zipStream, utf8Encoding, detectEncodingFromByteOrderMarks: false, bufferSize: 64 * 1024, leaveOpen: true))
             using (var jsonReader = new JsonTextReader(reader) { CloseInput = false })
             {
-                var serializer = JsonSerializer.CreateDefault();
+                var serializer = CreateSerializer(converters);
                 return serializer.Deserialize<T>(jsonReader);
             }
+        }
+
+        private static JsonSerializer CreateSerializer(JsonConverter[] converters)
+        {
+            var serializer = JsonSerializer.CreateDefault();
+
+            if (converters != null)
+                foreach (var c in converters)
+                    if (c != null)
+                        serializer.Converters.Add(c);
+
+            return serializer;
         }
     }
 }

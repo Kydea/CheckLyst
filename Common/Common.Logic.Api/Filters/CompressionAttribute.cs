@@ -21,13 +21,13 @@ namespace CheckListManager.Common.Logic.Api.Filters
         {
             var response = actionContext?.Response;
             var content = response?.Content;
-            var mediaType = content.Headers.ContentType?.MediaType;
+            var mediaType = content?.Headers.ContentType?.MediaType;
 
-            var isCompressed = content.Headers.ContentEncoding != null && content.Headers.ContentEncoding.Any();
-            var isJson = string.Equals(mediaType, "application/json", StringComparison.OrdinalIgnoreCase) || (mediaType != null && mediaType.EndsWith("+json", StringComparison.OrdinalIgnoreCase));
-            var isCsv = string.Equals(mediaType, "text/csv", StringComparison.OrdinalIgnoreCase);
+            var isCompressed = content != null && content.Headers.ContentEncoding != null && content.Headers.ContentEncoding.Any();
+            var isJson = content != null && (string.Equals(mediaType, "application/json", StringComparison.OrdinalIgnoreCase) || (mediaType != null && mediaType.EndsWith("+json", StringComparison.OrdinalIgnoreCase)));
+            var isCsv = content != null && string.Equals(mediaType, "text/csv", StringComparison.OrdinalIgnoreCase);
 
-            if (IsCompressionSupported() && content != null && !isCompressed && (isJson || isCsv))
+            if (content != null && IsCompressionSupported() && !isCompressed && (isJson || isCsv))
             {
                 var acceptEncoding = HttpContext.Current.Request.Headers["Accept-Encoding"] ?? "gzip";
                 response.Content = new CompressedContent(content, acceptEncoding.Contains("gzip"));

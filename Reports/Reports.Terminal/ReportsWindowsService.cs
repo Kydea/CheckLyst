@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Models.Expressions.Functions;
 using CheckListManager.Common.Logic.Terminal;
@@ -16,33 +17,36 @@ using NLog;
 
 namespace CheckListManager.Infrastructure.Terminal
 {
-	public class ReportsWindowsService : TimerWindowsService
-	{
+    public class ReportsWindowsService : TimerWindowsService
+    {
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private CancellationTokenSource _serviceCancellatioTokenSource;
 
         public ReportsWindowsService(TerminalConfig config) : base(config)
-		{
-            Add(new IntervalSchedulerStrategy(RunAsync, 10));
-		}
+        {
+            Add(new IntervalSchedulerStrategy(ProcessReportsAsync, 10));
+            Add(new ComputedSchedulerStrategy(DeleteExpiredReportsAsync, new[] { 0 }, new[] { 0 }));
+        }
 
-		protected async Task RunAsync(CancellationToken cancellationToken)
-		{
-			using (var scope = Container.BeginLifetimeScope())
-			{
+        private async Task ProcessReportsAsync(CancellationToken cancellationToken)
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
                 var reportsRepository = scope.Resolve<IReportsRepository>();
                 var reportviewerService = scope.Resolve<IReportViewerService>();
-				var pendingRuns = await reportsRepository.GetPendingRunsAsync();
-				foreach (var pendingRun in pendingRuns) 
-				{
+                var pendingRuns = await reportsRepository.GetPendingRunsAsync();
+                foreach (var pendingRun in pendingRuns)
+                {
                     try
                     {
                         var reportRequest = JsonConvert.DeserializeObject<ReportRequest>(pendingRun.Parameters);
-                        var data = await reportviewerService.GetReportData(new ReportIdentity {
+                        var response = await reportviewerService.GetReportData(new ReportIdentity
+                        {
                             CompanyId = pendingRun.Company,
                             Code = pendingRun.User
                         }, reportRequest, cancellationToken);
+                        var data = CompressionHelper.SerializeToCompressedBytes(response, useGZipCompression: true);
 
                         await reportsRepository.CompleteReportRunAsync(pendingRun.ID, data, null, cancellationToken);
                     }
@@ -54,5 +58,14 @@ namespace CheckListManager.Infrastructure.Terminal
                 }
             }
         }
-	}
+
+        private async Task DeleteExpiredReportsAsync(CancellationToken cancellationToken)
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
+                var reportsRepository = scope.Resolve<IReportsRepository>();
+                await reportsRepository.DeleteExpiredRunsAsync(cancellationToken);
+            }
+        }
+    }
 }

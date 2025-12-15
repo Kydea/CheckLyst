@@ -57,7 +57,7 @@ namespace CheckListManager.Reports.Data
             }
         }
 
-        private ReportRow AddTotalRow(int columnsCount, int rowsCount, string decimalSeparator, List<ReportColumns> columns, List<string> columnTypes, List<bool> numericColumns, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
+        private ReportRow AddTotalRow(int columnsCount, int rowsCount, string decimalSeparator, List<ReportColumns> columns, List<Type> columnTypes, List<bool> numericColumns, List<decimal?> numberTotals, List<string> stringTotals, List<HashSet<string>> distinctValues)
         {
             for (var Index = 0; Index < columnsCount; ++Index)
             {
@@ -102,7 +102,7 @@ namespace CheckListManager.Reports.Data
                     {
                         var firstRow = true;
                         int columnsCount = 0;
-                        var columnTypes = new List<string>();
+                        var columnTypes = new List<Type>();
                         var numericColumns = new List<bool>();
                         var numberRow = new List<decimal?>();
                         var stringRow = new List<string>();
@@ -116,7 +116,7 @@ namespace CheckListManager.Reports.Data
                         int totalRowsCount = 0;
                         bool anyGroupColumn = false;
                         bool needToAddTotal = false;
-                        while (DataReader.Read())
+                        while (await DataReader.ReadAsync(cancellationToken))
                         {
                             ++rowsCount;
                             ++totalRowsCount;
@@ -127,9 +127,9 @@ namespace CheckListManager.Reports.Data
                                 columnsCount = Math.Min(DataReader.FieldCount, columns.Count);
                                 for (var Index = 0; Index < columnsCount; ++Index)
                                 {
-                                    var columnType = DataReader.GetDataTypeName(Index);
+                                    var columnType = DataReader.GetFieldType(Index);
                                     columnTypes.Add(columnType);
-                                    numericColumns.Add(columnType == "int2" || columnType == "int4" || columnType == "int8" || columnType == "decimal" || columnType == "numeric" || columnType == "float8");
+                                    numericColumns.Add(columnType == typeof(short) || columnType == typeof(int) || columnType == typeof(long) || columnType == typeof(decimal) || columnType == typeof(double) || columnType == typeof(float));
                                     if (columns[Index].GroupColumn) anyGroupColumn = true;
 
                                     numberRow.Add(null);
@@ -154,38 +154,41 @@ namespace CheckListManager.Reports.Data
 
                                 if (!await DataReader.IsDBNullAsync(Index, cancellationToken))
                                 {
-                                    switch (columnTypes[Index])
+                                    var columnType = columnTypes[Index];
+
+                                    if (columnType == typeof(DateTimeOffset) || columnType == typeof(DateTime))
                                     {
-                                        case "timestamptz":
-                                            var dateTimeOffsetValue = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
-                                            formattedValue = dateTimeOffsetValue.Format(timeZone, format);
-                                            break;
-                                        case "int2":
-                                        case "int4":
-                                        case "int8":
-                                        case "decimal":
-                                        case "numeric":
-                                            var numberValue = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
-                                            numberRow[Index] = numberValue;
-                                            formattedValue = format == null ? numberValue.ToString() : DecimalHelper.Format(numberValue, format, decimalSeparator);
-                                            break;
-                                        case "float8":
-                                            var floatValue = await DataReader.GetFieldValueAsync<double>(Index, cancellationToken);
-                                            numberRow[Index] = (decimal)floatValue;
-                                            formattedValue = format == null ? floatValue.ToString() : DecimalHelper.Format(floatValue, format, decimalSeparator);
-                                            break;
-                                        case "bool":
-                                            var booleanValue = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
-                                            formattedValue = booleanValue.ToString();
-                                            break;
-                                        case "interval":
-                                            var intervalValue = await DataReader.GetFieldValueAsync<TimeSpan>(Index, cancellationToken);
-                                            formattedValue = intervalValue.ToString(@"dd\.hh\:mm\:ss");
-                                            break;
-                                        default:
-                                            formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
-                                            break;
+                                        var value = await DataReader.GetFieldValueAsync<DateTimeOffset>(Index, cancellationToken);
+                                        formattedValue = value.Format(timeZone, format);
                                     }
+                                    else if (columnType == typeof(short) || columnType == typeof(int) || columnType == typeof(long) || columnType == typeof(decimal))
+                                    {
+                                        var value = await DataReader.GetFieldValueAsync<decimal>(Index, cancellationToken);
+                                        numberRow[Index] = value;
+                                        formattedValue = format == null
+                                            ? value.ToString()
+                                            : DecimalHelper.Format(value, format, decimalSeparator);
+                                    }
+                                    else if (columnType == typeof(double) || columnType == typeof(float))
+                                    {
+                                        var value = await DataReader.GetFieldValueAsync<double>(Index, cancellationToken);
+                                        numberRow[Index] = (decimal)value;
+                                        formattedValue = format == null
+                                            ? value.ToString()
+                                            : DecimalHelper.Format(value, format, decimalSeparator);
+                                    }
+                                    else if (columnType == typeof(bool))
+                                    {
+                                        var value = await DataReader.GetFieldValueAsync<bool>(Index, cancellationToken);
+                                        formattedValue = value.ToString();
+                                    }
+                                    else if (columnType == typeof(TimeSpan))
+                                    {
+                                        var value = await DataReader.GetFieldValueAsync<TimeSpan>(Index, cancellationToken);
+                                        formattedValue = value.ToString(@"dd\.hh\:mm\:ss");
+                                    }
+                                    else
+                                        formattedValue = await DataReader.GetFieldValueAsync<string>(Index, cancellationToken);
                                 }
 
                                 if (column.GroupColumn && formattedValue != stringRow[Index] && !firstRow)

@@ -8,6 +8,6 @@ namespace CheckListManager.WebApplication.Models
     public class Report
     {
         public long? ID { get; set; }
-        public string Code { get; set; }
+        public long? Run { get; set; }
     }
 }

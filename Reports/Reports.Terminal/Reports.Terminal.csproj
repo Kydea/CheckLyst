@@ -204,6 +204,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
+      <Project>{2FAFFF00-D5EB-4BB0-B70B-38290D88C871}</Project>
+      <Name>Common.Core.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj">
       <Project>{31DE9C2F-FB9D-472C-B28A-3C1EDEFF10DC}</Project>
       <Name>Common.Core</Name>

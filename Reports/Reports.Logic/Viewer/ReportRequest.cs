@@ -7,7 +7,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 {
     public class ReportRequest
     {
-        public long ID { get; set; }
+        public long? ID { get; set; }
         public List<Parameter> Parameters { get; set; }
         public List<int> ColumnWidths { get; set; }
         public long? CompanyId { get; set; }
@@ -18,7 +18,6 @@ namespace CheckListManager.Reports.Logic.Viewer
         public int FontSize { get; set; }
         public PageFormat Format { get; set; }
         public Orientation Orientation { get; set; }
-        public bool Enqueue { get; set; }
         public long? Run { get; set; }
 
         public class Parameter

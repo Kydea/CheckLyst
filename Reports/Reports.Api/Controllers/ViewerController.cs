@@ -52,22 +52,26 @@ namespace CheckListManager.Reports.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Enqueue")]
+        public async Task<IHttpActionResult> Enqueue(ReportRequest request)
+        {
+            await _reportViewerService.EnqueueReportRun(Identity, request);
+            return Ok(new ReportResponse { Enqueued = true });
+        }
+
+
+        [HttpPost]
         [Route("GetReportData")]
         public async Task<IHttpActionResult> GetReportData(ReportRequest request)
         {
-            if (request.Enqueue)
-            {
-                await _reportViewerService.EnqueueReportRun(Identity, request);
-                return Ok(new ReportResponse { Enqueued = true });
-            }
-
             var requestToken = HttpContext.Current.GetOwinContext().Request.CallCancelled;
-            var timeout = request.Run.HasValue ? double.MaxValue : _configurationService.ContextualReportTimeout;
+            var timeout = request.Run.HasValue ? 3600 : _configurationService.ContextualReportTimeout;
             using (var timeoutCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout)))
             using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(requestToken, timeoutCancellationTokenSource.Token))
                 try
                 {
-                    return Ok(await _reportViewerService.GetReportData(Identity, request, linkedCancellationTokenSource.Token));
+                    var response = await _reportViewerService.GetReportData(Identity, request, linkedCancellationTokenSource.Token);
+                    return Ok(response);
                 }
                 catch (OperationCanceledException) when (timeoutCancellationTokenSource.IsCancellationRequested && !requestToken.IsCancellationRequested)
                 {

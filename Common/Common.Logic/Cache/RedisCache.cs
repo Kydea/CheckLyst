@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
@@ -36,14 +37,26 @@ namespace CheckListManager.Common.Logic.Cache
 
         public async Task<T> GetWithCompressionAsync<T>(string key, string regionName = null, params JsonConverter[] converters)
         {
-            var base64Value = (await Database.Value.StringGetAsync(ResolveKey(key, regionName))).ToString();
-            var bytes = Convert.FromBase64String(base64Value);
-            var jsonValue = System.Text.Encoding.UTF8.GetString(CompressionHelper.Decompress(bytes, true));
+            var redisKey = ResolveKey(key, regionName);
 
-            return jsonValue.ToObject<T>(converters);
+            var redisValue = await Database.Value.StringGetAsync(redisKey);
+            if (redisValue.IsNullOrEmpty)
+                return default;
+
+            var raw = (byte[])redisValue;
+
+            // nuovo formato: "v1|" + gzip bytes
+            if (RedisCompressedFormat.TryExtractGZipPayload(raw, out var gzipPayload))
+                return CompressionHelper.DeserializeFromCompressedBytes<T>(gzipPayload, useGZipCompression: true, converters);
+
+            // vecchio formato: base64(gzip bytes)
+            var base64 = redisValue.ToString();
+            var oldGzipBytes = Convert.FromBase64String(base64);
+
+            return CompressionHelper.DeserializeFromCompressedBytes<T>(oldGzipBytes, useGZipCompression: true, converters);
         }
 
-		public async Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
+        public async Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
 		{
 			var result = await GetAsync(key, regionName);
 			if (result == null)
@@ -103,20 +116,22 @@ namespace CheckListManager.Common.Logic.Cache
 
         public async Task SetWithCompressionAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters)
         {
-            if (value != null)
-            {
-                var jsonValue = value.ToJson(converters);
-                var bytes = CompressionHelper.Compress(System.Text.Encoding.UTF8.GetBytes(jsonValue), true);
-                var base64Value = Convert.ToBase64String(bytes);
+            if (value == null) return;
 
-                if (_transaction == null)
-                    await Database.Value.StringSetAsync(ResolveKey(key, regionName), base64Value, expiry, flags: CommandFlags.FireAndForget);
-                else
-                    await _transaction.StringSetAsync(ResolveKey(key, regionName), base64Value, expiry, flags: CommandFlags.FireAndForget);
-            }
+            var redisKey = ResolveKey(key, regionName);
+
+            var gzipBytes = CompressionHelper.SerializeToCompressedBytes(value, useGZipCompression: true, converters);
+            var wrapped = RedisCompressedFormat.Wrap(gzipBytes);
+
+            RedisValue redisValue = wrapped;
+
+            if (_transaction == null)
+                await Database.Value.StringSetAsync(redisKey, redisValue, expiry, flags: CommandFlags.FireAndForget);
+            else
+                await _transaction.StringSetAsync(redisKey, redisValue, expiry, flags: CommandFlags.FireAndForget);
         }
 
-		public Task RemoveAsync(string key, string regionName = null)
+        public Task RemoveAsync(string key, string regionName = null)
 		{
 			return _transaction == null
 				? Database.Value.KeyDeleteAsync(ResolveKey(key, regionName), CommandFlags.FireAndForget)

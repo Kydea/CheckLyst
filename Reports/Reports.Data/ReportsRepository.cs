@@ -208,5 +208,12 @@ namespace CheckListManager.Reports.Data
                 await SaveChangesAsync();
             }, cancellationToken);
         }
+
+        public async Task DeleteExpiredRunsAsync(CancellationToken cancellationToken)
+        {
+            var expiredRuns = await Entities.ReportRuns.Where(r => r.Expiration <= DateTimeOffset.UtcNow).ToListAsync(cancellationToken);
+            Entities.ReportRuns.RemoveRange(expiredRuns);
+            await SaveChangesAsync();
+        }
     }
 }

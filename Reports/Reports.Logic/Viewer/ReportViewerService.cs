@@ -26,8 +26,6 @@ namespace CheckListManager.Reports.Logic.Viewer
         private readonly IReportViewerRepository _reportViewerRepository;
         private readonly ISettingService _settingService;
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public ReportViewerService(IReportsRepository reportsRepository, IReportViewerRepository reportViewerRepository, ISettingService settingService)
         {
             _reportsRepository = reportsRepository;
@@ -120,39 +118,40 @@ namespace CheckListManager.Reports.Logic.Viewer
         public async Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
             Common.Data.Reports report;
-            List<Data.Models.ReportRow> rows;
             if (request.Run.HasValue)
             {
-                var run = await _reportsRepository.GetRunAsync(request.ID);
+                var run = await _reportsRepository.GetRunAsync(request.Run.Value);
                 if (run.Company != identity.CompanyId) throw new UnauthorizedAccessException("company");
                 if (run.User != identity.Code) throw new UnauthorizedAccessException("user");
+                if (run.Data == null || !run.CompletedOn.HasValue) throw new InvalidOperationException();
                 report = await _reportsRepository.GetReportAsync(identity.CompanyId, run.Report, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
-                rows = JsonConvert.DeserializeObject<List<Data.Models.ReportRow>>(Encoding.UTF8.GetString(CompressionHelper.Decompress(run.Data, true)));
+                var response = CompressionHelper.DeserializeFromCompressedBytes<ReportResponse>(run.Data, useGZipCompression: true);
+                return response;
             }
             else
             {
-                report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+                report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
                 var parameters = new List<Parameter>(report.ReportClauses.Count);
                 var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
-                rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
+                var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);
+                return new ReportResponse
+                {
+                    ID = report.ID,
+                    Code = report.Code,
+                    Description = report.Description,
+                    Online = report.Online,
+                    Columns = report.ReportColumns.Where(c => c.Visible).OrderBy(c => c.ID).Select(c => c.Label).ToList(),
+                    Rows = rows
+                };
             }
-            return new ReportResponse
-            {
-                ID = report.ID,
-                Code = report.Code,
-                Description = report.Description,
-                Online = report.Online,
-                Columns = report.ReportColumns.Where(c => c.Visible).OrderBy(c => c.ID).Select(c => c.Label).ToList(), 
-                Rows = rows
-            };
         }
 
         public async Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request) =>
-            await _reportsRepository.EnqueueReportRunAsync(identity, request.ID, JsonConvert.SerializeObject(request));
+            await _reportsRepository.EnqueueReportRunAsync(identity, request.Run.Value, JsonConvert.SerializeObject(request));
 
         public async Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
-            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID, null);
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Run.Value, null);
             var parameters = new List<Parameter>(report.ReportClauses.Count);
             var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
             return query;

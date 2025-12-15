@@ -1,4 +1,4 @@
-﻿matematici.Clock = function () {
+matematici.Clock = function () {
     //gestire weak = true con colore rosso e tooltip con errore
     var
         error = null,
@@ -53,7 +53,9 @@
                 type: "post",
                 contentType: "application/json; charset=utf-8",
                 suppressErrors: true
-            }).done(function (result) { matematici.menu.setNotificationBadge("/Reports/Runs", result); });
+            }).done(function (result) { 
+                matematici.menu.setNotificationBadge("/Reports/Runs", result); 
+            });
         },
 
         update = function () {

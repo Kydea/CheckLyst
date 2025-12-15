@@ -149,6 +149,7 @@
                                 type: "post",
                                 data: {
                                     id: options.id,
+                                    run: options.run,
                                     parameters: parameters,
                                     fontSize: fontSizeSelect.val() == "0" ? "12" : fontSizeSelect.val(),
                                     format: formatSelect.val() == -1 ? 0 : formatSelect.val(),
@@ -304,6 +305,7 @@
                 url: matematici.urls.reports.api + "/Viewer/GetReportData",
                 data: {
                     id: options.id,
+                    run: options.run,
                     parameters: parameters
                 }
             }).done(function (result) {

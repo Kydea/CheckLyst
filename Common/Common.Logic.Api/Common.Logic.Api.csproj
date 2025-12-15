@@ -272,6 +272,7 @@
     <Compile Include="Controllers\ReleaseInfoController.cs" />
     <Compile Include="ErrorResult.cs" />
     <Compile Include="Filters\ArgumentNullValidationActionFilterAttribute.cs" />
+    <Compile Include="Filters\CompressedContent.cs" />
     <Compile Include="Filters\CompressionAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
     <Compile Include="Formatters\FileFormatter.cs" />

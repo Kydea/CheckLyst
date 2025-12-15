@@ -26,5 +26,6 @@ namespace CheckListManager.Reports.Data
         Task<ReportRuns> GetRunAsync(long ID);
         Task DeleteRunAsync(DefaultIdentity identity, long iD);
         Task CompleteReportRunAsync(long id, byte[] data, Exception exception, CancellationToken cancellationToken);
+        Task DeleteExpiredRunsAsync(CancellationToken cancellationToken);
     }
 }
