@@ -40,14 +40,17 @@ namespace CheckListManager.Common.Core.Helpers
         public static byte[] SerializeToCompressedBytes<T>(T value, bool useGZipCompression, params JsonConverter[] converters)
         {
             using (var output = new MemoryStream())
-            using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(output, CompressionLevel.Fastest, leaveOpen: true) : new DeflateStream(output, CompressionLevel.Fastest, leaveOpen: true))
-            using (var writer = new StreamWriter(zipStream, utf8Encoding, bufferSize: 64 * 1024, leaveOpen: true))
-            using (var jsonWriter = new JsonTextWriter(writer) { CloseOutput = false })
             {
-                var serializer = CreateSerializer(converters);
-                serializer.Serialize(jsonWriter, value);
-                jsonWriter.Flush();
-                writer.Flush();
+                using (Stream zipStream = useGZipCompression ? (Stream)new GZipStream(output, CompressionLevel.Fastest, leaveOpen: true) : new DeflateStream(output, CompressionLevel.Fastest, leaveOpen: true))
+                using (var writer = new StreamWriter(zipStream, utf8Encoding, bufferSize: 64 * 1024, leaveOpen: true))
+                using (var jsonWriter = new JsonTextWriter(writer) { CloseOutput = false })
+                {
+                    var serializer = CreateSerializer(converters);
+                    serializer.Serialize(jsonWriter, value);
+                    jsonWriter.Flush();
+                    writer.Flush();
+                }
+
                 return output.ToArray();
             }
         }

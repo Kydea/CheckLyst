@@ -208,7 +208,6 @@
     <Compile Include="Authentication\AuthenticateWithPINRequest.cs" />
     <Compile Include="Authentication\AuthenticateRequest.cs" />
     <Compile Include="Authentication\AuthorizeResponse.cs" />
-    <Compile Include="Cache\RedisCompressedFormat.cs" />
     <Compile Include="DataSources\DataRequest.cs" />
     <Compile Include="DataSources\DataSource.cs" />
     <Compile Include="DataSources\ExportRequest.cs" />

@@ -40,20 +40,20 @@ namespace CheckListManager.Common.Logic.Cache
             var redisKey = ResolveKey(key, regionName);
 
             var redisValue = await Database.Value.StringGetAsync(redisKey);
-            if (redisValue.IsNullOrEmpty)
-                return default;
+            if (redisValue.IsNullOrEmpty) return default;
+            return CompressionHelper.DeserializeFromCompressedBytes<T>(redisValue, useGZipCompression: true, converters);
+        }
 
-            var raw = (byte[])redisValue;
+        public async Task<T> GetAsBase64Async<T>(string key, string regionName = null, params JsonConverter[] converters)
+        {
+            //latecy compatibility
+            var redisKey = ResolveKey(key, regionName);
 
-            // nuovo formato: "v1|" + gzip bytes
-            if (RedisCompressedFormat.TryExtractGZipPayload(raw, out var gzipPayload))
-                return CompressionHelper.DeserializeFromCompressedBytes<T>(gzipPayload, useGZipCompression: true, converters);
-
-            // vecchio formato: base64(gzip bytes)
+            var redisValue = await Database.Value.StringGetAsync(redisKey);
+            if (redisValue.IsNullOrEmpty) return default;
             var base64 = redisValue.ToString();
-            var oldGzipBytes = Convert.FromBase64String(base64);
-
-            return CompressionHelper.DeserializeFromCompressedBytes<T>(oldGzipBytes, useGZipCompression: true, converters);
+            var gzipBytes = Convert.FromBase64String(base64);
+            return CompressionHelper.DeserializeFromCompressedBytes<T>(gzipBytes, useGZipCompression: true, converters);
         }
 
         public async Task<object> GetOrAddAsync(string key, Func<string, object> addFunction, string regionName = null, TimeSpan? expiry = null)
@@ -121,9 +121,7 @@ namespace CheckListManager.Common.Logic.Cache
             var redisKey = ResolveKey(key, regionName);
 
             var gzipBytes = CompressionHelper.SerializeToCompressedBytes(value, useGZipCompression: true, converters);
-            var wrapped = RedisCompressedFormat.Wrap(gzipBytes);
-
-            RedisValue redisValue = wrapped;
+            RedisValue redisValue = gzipBytes;
 
             if (_transaction == null)
                 await Database.Value.StringSetAsync(redisKey, redisValue, expiry, flags: CommandFlags.FireAndForget);

@@ -35,8 +35,8 @@ namespace CheckListManager.Instances.Logic.Services
 			if (cacheObject != null && includeData)
 			{
                 cacheObject.Instance =
-                    cacheObject.CheckVersion(2.0m) ?
-                    await _redisCache.GetWithCompressionAsync<Instance>($"Instance:{code}:Data", RegionName, _converters) :
+                    cacheObject.CheckVersion(3.0m) ? await _redisCache.GetWithCompressionAsync<Instance>($"Instance:{code}:Data", RegionName, _converters) :
+                    cacheObject.CheckVersion(2.0m) ? await _redisCache.GetAsBase64Async<Instance>($"Instance:{code}:Data", RegionName, _converters) :
                     await _redisCache.GetAsync<Instance>($"Instance:{code}:Data", RegionName, _converters);
 
                 if (cacheObject.Instance == null) throw new InstanceException("Instance data missing");

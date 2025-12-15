@@ -10,9 +10,10 @@ namespace CheckListManager.Instances.Logic.Models
 
         //history
         /*
-            2.0: zip compression
+            2.0: zip compression + base 64
+            3.0: zip compression
         */
-        private const decimal ModelVersion = 2.0m;
+        private const decimal ModelVersion = 3.0m;
         public decimal CacheObjectVersion { get; set; }
         public bool CheckVersion(decimal? ReferenceModelVersion) => CacheObjectVersion >= (ReferenceModelVersion ?? ModelVersion);
         public void SetModelVersion() { CacheObjectVersion = ModelVersion; }

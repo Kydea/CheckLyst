@@ -11,6 +11,7 @@ namespace CheckListManager.Common.Logic.Cache
 		Task<T> GetAsync<T>(string key, string regionName = null, params JsonConverter[] converters);
 		Task SetAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters);
 
+        Task<T> GetAsBase64Async<T>(string key, string regionName = null, params JsonConverter[] converters); //latecy compatibility
         Task<T> GetWithCompressionAsync<T>(string key, string regionName = null, params JsonConverter[] converters);
         Task SetWithCompressionAsync(string key, object value, string regionName = null, TimeSpan? expiry = null, params JsonConverter[] converters);
 
