@@ -6,7 +6,7 @@ namespace CheckListManager.Common.Logic.Terminal.Scheduler
 {
 	public class ComputedSchedulerStrategy : SchedulerStrategyBase
 	{
-		public ComputedSchedulerStrategy(Func<Task> RunHandler, int[] minutes = null, int[] hours = null, int[] days = null, int[] months = null, DayOfWeek[] daysOfWeek = null) : base(RunHandler)
+		public ComputedSchedulerStrategy(Func<System.Threading.CancellationToken, Task> RunHandler, int[] minutes = null, int[] hours = null, int[] days = null, int[] months = null, DayOfWeek[] daysOfWeek = null) : base(RunHandler)
 		{
 			Minutes = minutes;
 			Hours = hours;

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
@@ -16,30 +17,30 @@ namespace CheckListManager.Instances.Terminal
             Add(new ComputedSchedulerStrategy(SendNotifications, new[] { 1 }));
         }
 
-        private async Task ClearPendingInstances()
+        private async Task ClearPendingInstances(CancellationToken cancellationToken)
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
 				var service = scope.Resolve<IInstanceManagerService>();
-				await service.ClosePendingInstances(CancellationTokenSource.Token);
+				await service.ClosePendingInstances(cancellationToken);
 			}
 		}
 
-		private async Task SendFTPFiles()
+		private async Task SendFTPFiles(CancellationToken cancellationToken)
         {
             using (var scope = Container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IFTPService>();
-                await service.ProcessFTPMessagesAsync(CancellationTokenSource.Token);
+                await service.ProcessFTPMessagesAsync(cancellationToken);
             }
         }
 
-        private async Task SendNotifications()
+        private async Task SendNotifications(CancellationToken cancellationToken)
         {
             using (var scope = Container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IInstanceManagerService>();
-                await service.SendNotificationsAsync(CancellationTokenSource.Token);
+                await service.SendNotificationsAsync(cancellationToken);
             }
         }
     }

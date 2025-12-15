@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Data;
@@ -13,9 +14,9 @@ namespace CheckListManager.Trail.Terminal
 		public AccessControlWindowsService(TerminalConfig config) : base(config)
 		{
             Add(new ComputedSchedulerStrategy(RunAsync, new[] { 0 }, new[] { 0 }) { RunAtStartup = true });
-		}
+        }
 
-		protected async Task RunAsync()
+		protected async Task RunAsync(CancellationToken cancellationToken)
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
@@ -24,8 +25,8 @@ namespace CheckListManager.Trail.Terminal
                 foreach (var company in await commonRepository.GetCompaniesAsync())
                     if (company.ID > 1)
                     {
-                        await userService.CheckInactiveUsers(company.ID, CancellationTokenSource.Token);
-                        await userService.CheckUnchangedPins(company.ID, CancellationTokenSource.Token);
+                        await userService.CheckInactiveUsers(company.ID, cancellationToken);
+                        await userService.CheckUnchangedPins(company.ID, cancellationToken);
                     }
 			}
 		}

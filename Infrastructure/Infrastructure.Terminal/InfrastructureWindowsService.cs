@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
@@ -14,12 +15,12 @@ namespace CheckListManager.Infrastructure.Terminal
             Add(new IntervalSchedulerStrategy(RunAsync, 10));
 		}
 
-		protected async Task RunAsync()
+		protected async Task RunAsync(CancellationToken cancellationToken)
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
 				var emailService = scope.Resolve<IEmailService>();
-				await emailService.ProcessEmailMessagesAsync(CancellationTokenSource.Token);
+				await emailService.ProcessEmailMessagesAsync(cancellationToken);
             }
         }
 	}

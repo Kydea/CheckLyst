@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Autofac;
 using CheckListManager.Common.Logic.Terminal;
 using CheckListManager.Common.Logic.Terminal.Configuration;
@@ -15,21 +16,21 @@ namespace CheckListManager.Prototypes.Terminal
             Add(new IntervalSchedulerStrategy(SendFTPFiles, 60) { RunAtStartup = true });
         }
 
-        private async Task UpdatePrototypeVersionsState()
+        private async Task UpdatePrototypeVersionsState(CancellationToken cancellationToken)
 		{
 			using (var scope = Container.BeginLifetimeScope())
 			{
 				var service = scope.Resolve<IPrototypeService>();
-                await service.UpdatePrototypeVersionsState(CancellationTokenSource.Token);
+                await service.UpdatePrototypeVersionsState(cancellationToken);
 			}
 		}
 
-        private async Task SendFTPFiles()
+        private async Task SendFTPFiles(CancellationToken cancellationToken)
         {
             using (var scope = Container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IFTPService>();
-                await service.ProcessFTPMessagesAsync(CancellationTokenSource.Token);
+                await service.ProcessFTPMessagesAsync(cancellationToken);
             }
         }
 

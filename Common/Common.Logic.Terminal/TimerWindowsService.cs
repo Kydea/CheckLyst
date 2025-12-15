@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Terminal.Scheduler;
@@ -48,32 +49,46 @@ namespace CheckListManager.Common.Logic.Terminal
 		protected override bool OnStop(HostControl hostControl)
 		{
             foreach(var strategy in _strategies)
-			    strategy.Timer.Stop();
+            {
+                strategy.Timer?.Stop();
+                strategy.Timer?.Dispose();
+                strategy.Timer = null;
+            }
 
 			return true;
 		}
 
 		private void Run(ISchedulerStrategy strategy)
 		{
-			if (strategy.StopTimerWhenRunning)
-                strategy.Timer.Enabled = false;
+            if (CancellationTokenSource.IsCancellationRequested)
+                return;
+
+            var timer = strategy.Timer;   // snapshot
+            if (timer == null)
+                return;
+
+            if (strategy.StopTimerWhenRunning)
+                timer.Enabled = false;
 
 			try
 			{
-                strategy.RunHandler().Wait(CancellationTokenSource.Token);
+				var task = strategy.RunHandler(CancellationTokenSource.Token);
+                task.Wait();
 			}
-			catch (Exception exception)
+            catch (OperationCanceledException) { }
+            catch (AggregateException ae) when (ae.InnerExceptions.All(e => e is OperationCanceledException)) { }
+            catch (Exception exception)
 			{
 				Logger.Error(exception);
 			}
 			finally
 			{
-				if (strategy.ComputeNextExecutionTime(DateTime.UtcNow))
-                    strategy.Timer.Interval = strategy.Interval.TotalMilliseconds;
-			}
+				if (!CancellationTokenSource.IsCancellationRequested && timer != null && strategy.ComputeNextExecutionTime(DateTime.UtcNow)) 
+                    timer.Interval = strategy.Interval.TotalMilliseconds;
 
-			if (strategy.StopTimerWhenRunning)
-                strategy.Timer.Enabled = true;
-		}
-	}
+			    if (!CancellationTokenSource.IsCancellationRequested && timer != null && strategy.StopTimerWhenRunning)
+                    timer.Enabled = true;
+            }
+        }
+    }
 }

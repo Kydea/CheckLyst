@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace CheckListManager.Common.Logic.Terminal.Scheduler
 {
@@ -13,8 +12,8 @@ namespace CheckListManager.Common.Logic.Terminal.Scheduler
 
 		bool ComputeNextExecutionTime(DateTime? start = null);
 
-        Func<Task> RunHandler { get; }
+        Func<System.Threading.CancellationToken, Task> RunHandler { get; }
 
-        Timer Timer { get; set; }
+        System.Timers.Timer Timer { get; set; }
     }
 }

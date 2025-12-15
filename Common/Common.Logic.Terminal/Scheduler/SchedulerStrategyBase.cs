@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace CheckListManager.Common.Logic.Terminal.Scheduler
 {
 	public abstract class SchedulerStrategyBase : ISchedulerStrategy
 	{
-        public SchedulerStrategyBase(Func<Task> RunHandler)
+        public SchedulerStrategyBase(Func<System.Threading.CancellationToken, Task> RunHandler)
         {
             this.RunHandler = RunHandler;
         }
@@ -21,8 +20,8 @@ namespace CheckListManager.Common.Logic.Terminal.Scheduler
 			return false;
 		}
 
-        public Func<Task> RunHandler { get; }
+        public Func<System.Threading.CancellationToken, Task> RunHandler { get; }
 
-        public Timer Timer { get; set; }
+        public System.Timers.Timer Timer { get; set; }
     }
 }
