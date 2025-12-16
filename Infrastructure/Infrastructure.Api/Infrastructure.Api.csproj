@@ -241,6 +241,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\FTPServersController.cs" />
     <Compile Include="Controllers\LicenseController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ToolsController.cs" />
     <Compile Include="Controllers\InformationController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />

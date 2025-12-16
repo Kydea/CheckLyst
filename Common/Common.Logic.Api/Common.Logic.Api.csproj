@@ -275,6 +275,7 @@
     <Compile Include="Filters\CompressedContent.cs" />
     <Compile Include="Filters\CompressionAttribute.cs" />
     <Compile Include="Filters\ModelValidationActionFilterAttribute.cs" />
+    <Compile Include="Filters\NoCacheAttribute.cs" />
     <Compile Include="Formatters\FileFormatter.cs" />
     <Compile Include="Formatters\PDFFormatter.cs" />
     <Compile Include="Formatters\CSVFormatter.cs" />

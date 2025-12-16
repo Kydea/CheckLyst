@@ -138,6 +138,11 @@
     <Compile Include="Email\EmailService.cs" />
     <Compile Include="Email\IEmailService.cs" />
     <Compile Include="Infrastruture\ClockResponse.cs" />
+    <Compile Include="Notifications\INotificationService.cs" />
+    <Compile Include="Notifications\MutableState.cs" />
+    <Compile Include="Notifications\NotificationDiagnostics.cs" />
+    <Compile Include="Notifications\NotificationSnapshot.cs" />
+    <Compile Include="Notifications\NotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Companies\ICompaniesService.cs" />
     <Compile Include="Companies\CompaniesService.cs" />
