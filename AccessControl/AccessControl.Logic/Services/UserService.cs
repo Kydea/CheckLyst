@@ -427,8 +427,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 response.Fields["InactivityDays"] = new Field { Value = form.InactivityDays.ToString() };
                 response.Fields["FailedLogins"] = new Field { Value = form.FailedLogins.ToString() };
 
-                IEnumerable<Option> TimeZones = new List<Option> { new Option(null, "(default)") };
-                TimeZones = TimeZones.Union((await _commonRepository.GetTimeZonesAsync()).Select(tz => new Option(tz, tz)));
+                var TimeZones = (await _commonRepository.GetTimeZonesAsync()).Select(tz => new Option(tz, tz));
                 response.Fields["TimeZone"] = new Field
                 {
                     Value = null,
