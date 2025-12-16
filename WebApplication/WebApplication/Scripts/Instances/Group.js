@@ -245,7 +245,7 @@
             element.setAttribute("data-id", model.id);
             if (model.iterator) {
                 actionButtonsBar.classList.toggle("Hidden", !model.addIterationButton);
-                addButton.classList.toggle("Hidden", importButton && directImport);
+                addButton.classList.toggle("Hidden", !!importButton && directImport);
                 element.classList.toggle("HideRemoveButton", !model.removeIterationButton);
                 element.classList.toggle("HideMoveButton", !model.moveIterationButton);
             }
@@ -264,7 +264,7 @@
                     iterationCommands.style.display = readOnly ? "none" : "";
             }
             if (elementInformation) elementInformation.update(model);
-            if (importButton && directImport) importButton.classList.toggle("ReadOnly", readOnly || !isEmpty(model));
+            if (!!importButton && directImport) importButton.classList.toggle("ReadOnly", readOnly || !isEmpty(model));
         };
 
     this.appendElement = function () {
