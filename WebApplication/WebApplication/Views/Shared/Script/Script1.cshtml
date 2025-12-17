@@ -9,10 +9,10 @@
 	$.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
 
     $(document)
-        .ajaxStart(function () {
-            matematici.loader.show();
-        }).ajaxStop(function () {
-            matematici.loader.hide();
+        .ajaxSend(function (event, jqxhr, settings) {
+            if (!settings.suppressLoader) matematici.loader.show();
+        }).ajaxComplete(function (event, jqxhr, settings) {
+            if (!settings.suppressLoader) matematici.loader.hide();
         }).ajaxError(function (event, jqxhr, settings, thrownError) {
             if (!settings.accessToken && matematici.navigator.handleAjaxError(jqxhr)) {
                 //alert("access denied for resource: " + (settings || { url: "(no url available)" }).url + (localStorage.accessToken == null ? " (access token was null)" : ""));
@@ -85,7 +85,6 @@
         if (!matematici.canClose)
             return "Warning: any unsaved change will be lost.";
     }).on("resize", function () {
-        //TODO mettere in initializers e destroyers del tab
         $(".TabContainer").each(function () {
             $(this).data("tab").resize();
         });
@@ -98,6 +97,7 @@
     matematici.help = new matematici.Help();
     matematici.tokenManager = new matematici.TokenManager();
     matematici.hamburger = new matematici.Hamburger("#MenuButton");
+    matematici.notificationPollingClient = new matematici.NotificationPollingClient();
 
     matematici.navigator.handlePageLoad(null, function () { });
 
@@ -107,8 +107,7 @@
     matematici.menu.toggleItems();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken())
-        matematici.clock.resume();
+    if (matematici.tokenManager.getAccessToken()) matematici.clock.resume();
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;

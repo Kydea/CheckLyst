@@ -106,6 +106,10 @@
             savedValues.redirectUrl = localStorage.redirectUrl;
             savedValues.redirectTime = localStorage.redirectTime;
         }
+
+        if (matematici.notificationClient != null) 
+            matematici.notificationClient.dispose();
+
         matematici.tokenManager.notifyLogout();
         localStorage.redirectUrl = savedValues.redirectUrl;
         localStorage.redirectTime = savedValues.redirectTime;
