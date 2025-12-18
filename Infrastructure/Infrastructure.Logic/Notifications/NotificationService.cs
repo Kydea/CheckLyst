@@ -13,9 +13,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private const int MaxWaitersPerUser = 10;
         private const int MaxWaitersGlobal = 10000;
         private static readonly TimeSpan LongPollTimeout = TimeSpan.FromSeconds(30);
+        private static readonly TimeSpan BucketTtl = TimeSpan.FromHours(1);
 
-        private readonly ConcurrentDictionary<string, UserBucket> _users =
-            new ConcurrentDictionary<string, UserBucket>(StringComparer.Ordinal);
+        private readonly ConcurrentDictionary<(long Company, string User), UserBucket> _users = new ConcurrentDictionary<(long, string), UserBucket>();
 
         private int _globalWaiters;
 
@@ -29,151 +29,209 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private long _waitCompletedTotal;
         private long _waitMillisTotal;
 
-        public NotificationSnapshot GetSnapshot(long company, string user)
+        public async Task<NotificationSnapshot> GetSnapshotAsync(long company, string user)
         {
             var b = GetBucket(company, user);
-            lock (b.Gate)
+            EnterBucket(b);
+            try
             {
-                var s = b.ToSnapshot(timedOut: false);
-                s.Overloaded = false;
-                s.ActiveWaiters = b.Waiters.Count;
-                return s;
-            }
-        }
+                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
 
-        public NotificationSnapshot Update(long company, string user, Action<MutableState> mutate)
-        {
-            var b = GetBucket(company, user);
-
-            List<WaiterEntry> toRelease = null;
-            int releasedCount = 0;
-
-            NotificationSnapshot snap;
-            lock (b.Gate)
-            {
-                mutate(b.State);
-
-                if (b.State.TaskCount < 0) b.State.TaskCount = 0;
-                if (b.State.ReportCount < 0) b.State.ReportCount = 0;
-
-                b.Version++;
-                if (b.Version == 0) b.Version = 1;
-
-                snap = b.ToSnapshot(timedOut: false);
-
-                if (b.Waiters.Count > 0)
-                {
-                    releasedCount = b.Waiters.Count;
-                    toRelease = new List<WaiterEntry>(b.Waiters.Values);
-                    b.Waiters.Clear();
-                }
-            }
-
-            if (releasedCount > 0)
-                Interlocked.Add(ref _globalWaiters, -releasedCount);
-
-            if (toRelease != null)
-            {
-                Interlocked.Increment(ref _totalWakeups);
-
-                var nowTicks = DateTime.UtcNow.Ticks;
-
-                foreach (var entry in toRelease)
-                {
-                    // latency metric
-                    var waitedMs = TicksToMs(nowTicks - entry.StartedTicksUtc);
-                    if (waitedMs < 0) waitedMs = 0;
-
-                    Interlocked.Add(ref _waitMillisTotal, waitedMs);
-                    Interlocked.Increment(ref _waitCompletedTotal);
-
-                    entry.Tcs.TrySetResult(snap);
-                }
-            }
-
-            return snap;
-        }
-
-        public Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, CancellationToken requestAborted)
-        {
-            var b = GetBucket(company, user);
-
-            // Fast-path
-            lock (b.Gate)
-            {
-                if (sinceVersion == 0 || b.Version != sinceVersion)
+                lock (b.Gate)
                 {
                     var s = b.ToSnapshot(timedOut: false);
                     s.Overloaded = false;
                     s.ActiveWaiters = b.Waiters.Count;
-                    return Task.FromResult(s);
+                    return s;
                 }
             }
-
-            // Slow-path: waiter registration
-            var waiterId = Guid.NewGuid();
-            var tcs = new TaskCompletionSource<NotificationSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-            lock (b.Gate)
+            finally
             {
-                if (b.Version != sinceVersion)
-                {
-                    var s = b.ToSnapshot(timedOut: false);
-                    s.Overloaded = false;
-                    s.ActiveWaiters = b.Waiters.Count;
-                    return Task.FromResult(s);
-                }
-
-                // back-pressure
-                if (b.Waiters.Count >= MaxWaitersPerUser || Volatile.Read(ref _globalWaiters) >= MaxWaitersGlobal)
-                {
-                    var s = b.ToSnapshot(timedOut: false);
-                    s.Overloaded = true;
-                    s.ActiveWaiters = b.Waiters.Count;
-
-                    Interlocked.Increment(ref _totalOverloadReturns);
-                    return Task.FromResult(s);
-                }
-
-                b.Waiters[waiterId] = new WaiterEntry(tcs);
+                ExitBucket(company, user, b);
             }
+        }
 
-            Interlocked.Increment(ref _globalWaiters);
-
-            // Abort/disconnect
-            var abortReg = requestAborted.Register(() =>
+        public async Task<NotificationSnapshot> UpdateAsync(long company, string user, Action<MutableState> mutate)
+        {
+            var b = GetBucket(company, user);
+            EnterBucket(b);
+            try
             {
-                RemoveWaiter(b, waiterId);
+                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
 
-                if (tcs.TrySetCanceled())
-                    Interlocked.Increment(ref _totalAborts);
-            });
-
-            // Timeout
-            var timeoutCts = new CancellationTokenSource(LongPollTimeout);
-            var timeoutReg = timeoutCts.Token.Register(() =>
-            {
-                RemoveWaiter(b, waiterId);
+                List<WaiterEntry> toRelease = null;
+                int releasedCount = 0;
 
                 NotificationSnapshot snap;
                 lock (b.Gate)
                 {
-                    snap = b.ToSnapshot(timedOut: true);
-                    snap.Overloaded = false;
-                    snap.ActiveWaiters = b.Waiters.Count;
+                    mutate(b.State);
+
+                    if (b.State.TaskCount < 0) b.State.TaskCount = 0;
+                    if (b.State.ReportCount < 0) b.State.ReportCount = 0;
+
+                    b.Version++;
+                    if (b.Version == 0) b.Version = 1;
+
+                    snap = b.ToSnapshot(timedOut: false);
+
+                    if (b.Waiters.Count > 0)
+                    {
+                        releasedCount = b.Waiters.Count;
+                        toRelease = new List<WaiterEntry>(b.Waiters.Values);
+                        b.Waiters.Clear();
+                    }
                 }
 
-                if (tcs.TrySetResult(snap))
+                if (releasedCount > 0)
+                    Interlocked.Add(ref _globalWaiters, -releasedCount);
+
+                if (toRelease != null)
                 {
-                    Interlocked.Increment(ref _totalTimeouts);
+                    Interlocked.Increment(ref _totalWakeups);
 
-                    // timeout = completed wait
-                    Interlocked.Add(ref _waitMillisTotal, (long)LongPollTimeout.TotalMilliseconds);
-                    Interlocked.Increment(ref _waitCompletedTotal);
+                    var nowTicks = DateTime.UtcNow.Ticks;
+
+                    foreach (var entry in toRelease)
+                    {
+                        // latency metric
+                        var waitedMs = TicksToMs(nowTicks - entry.StartedTicksUtc);
+                        if (waitedMs < 0) waitedMs = 0;
+
+                        Interlocked.Add(ref _waitMillisTotal, waitedMs);
+                        Interlocked.Increment(ref _waitCompletedTotal);
+
+                        entry.Tcs.TrySetResult(snap);
+                    }
                 }
-            });
 
-            return AwaitAndCleanupAsync(tcs.Task, abortReg, timeoutReg, timeoutCts);
+                return snap;
+            }
+            finally
+            {
+                ExitBucket(company, user, b);
+            }
+        }
+
+        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, long company, string user)
+        {
+            var nowUtc = DateTime.UtcNow;
+            if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
+                return;
+
+            await b.InitSemaphore.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                nowUtc = DateTime.UtcNow;
+                if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
+                    return;
+                
+                var (taskCount, reportCount) = await Task.FromResult((2, 7)); //mettere chiamata async vera per inzializzare i valori
+                lock (b.Gate)
+                {
+                    b.State.TaskCount = Math.Max(0, taskCount);
+                    b.State.ReportCount = Math.Max(0, reportCount);
+                    b.Version++;
+                    if (b.Version == 0) b.Version = 1;
+                    b.LastLoadedUtc = nowUtc;
+                    b.Initialized = true;
+                }
+            }
+            finally
+            {
+                b.InitSemaphore.Release();
+            }
+        }
+
+        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, CancellationToken requestAborted)
+        {
+            var b = GetBucket(company, user);
+            EnterBucket(b);
+            try
+            {
+                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
+
+                // Fast-path
+                lock (b.Gate)
+                {
+                    if (sinceVersion == 0 || b.Version != sinceVersion)
+                    {
+                        var s = b.ToSnapshot(timedOut: false);
+                        s.Overloaded = false;
+                        s.ActiveWaiters = b.Waiters.Count;
+                        return s;
+                    }
+                }
+
+                // Slow-path: waiter registration
+                var waiterId = Guid.NewGuid();
+                var tcs = new TaskCompletionSource<NotificationSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+                lock (b.Gate)
+                {
+                    if (b.Version != sinceVersion)
+                    {
+                        var s = b.ToSnapshot(timedOut: false);
+                        s.Overloaded = false;
+                        s.ActiveWaiters = b.Waiters.Count;
+                        return s;
+                    }
+
+                    // back-pressure
+                    if (b.Waiters.Count >= MaxWaitersPerUser || Volatile.Read(ref _globalWaiters) >= MaxWaitersGlobal)
+                    {
+                        var s = b.ToSnapshot(timedOut: false);
+                        s.Overloaded = true;
+                        s.ActiveWaiters = b.Waiters.Count;
+
+                        Interlocked.Increment(ref _totalOverloadReturns);
+                        return s;
+                    }
+
+                    b.Waiters[waiterId] = new WaiterEntry(tcs);
+                }
+
+                Interlocked.Increment(ref _globalWaiters);
+
+                // Abort/disconnect
+                var abortReg = requestAborted.Register(() =>
+                {
+                    RemoveWaiter(b, waiterId);
+
+                    if (tcs.TrySetCanceled())
+                        Interlocked.Increment(ref _totalAborts);
+                });
+
+                // Timeout
+                var timeoutCts = new CancellationTokenSource(LongPollTimeout);
+                var timeoutReg = timeoutCts.Token.Register(() =>
+                {
+                    RemoveWaiter(b, waiterId);
+
+                    NotificationSnapshot snap;
+                    lock (b.Gate)
+                    {
+                        snap = b.ToSnapshot(timedOut: true);
+                        snap.Overloaded = false;
+                        snap.ActiveWaiters = b.Waiters.Count;
+                    }
+
+                    if (tcs.TrySetResult(snap))
+                    {
+                        Interlocked.Increment(ref _totalTimeouts);
+
+                        // timeout = completed wait
+                        Interlocked.Add(ref _waitMillisTotal, (long)LongPollTimeout.TotalMilliseconds);
+                        Interlocked.Increment(ref _waitCompletedTotal);
+                    }
+                });
+
+                return await AwaitAndCleanupAsync(tcs.Task, abortReg, timeoutReg, timeoutCts);
+            }
+            finally
+            {
+                ExitBucket(company, user, b);
+            }
         }
 
         private static async Task<NotificationSnapshot> AwaitAndCleanupAsync(
@@ -195,7 +253,22 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         }
 
         private UserBucket GetBucket(long company, string user) =>
-            _users.GetOrAdd(company + "|" + user, _ => new UserBucket());
+            _users.GetOrAdd((company, user), _ => new UserBucket());
+
+
+        private void EnterBucket(UserBucket b) => Interlocked.Increment(ref b.InFlight);
+
+        private void ExitBucket(long company, string user, UserBucket b)
+        {
+            var left = Interlocked.Decrement(ref b.InFlight);
+            if (left == 0)
+            {
+                bool noWaiters;
+                lock (b.Gate) noWaiters = b.Waiters.Count == 0;
+                if (noWaiters && _users.TryGetValue((company, user), out var current) && ReferenceEquals(current, b))
+                    _users.TryRemove((company, user), out _);
+            }
+        }
 
         private void RemoveWaiter(UserBucket b, Guid waiterId)
         {
@@ -238,8 +311,14 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             public object Gate { get; } = new object();
             public MutableState State { get; } = new MutableState();
             public ulong Version { get; set; } = 1;
+            
+            public int InFlight;
 
             public Dictionary<Guid, WaiterEntry> Waiters { get; } = new Dictionary<Guid, WaiterEntry>();
+
+            public SemaphoreSlim InitSemaphore { get; } = new SemaphoreSlim(1, 1);
+            public bool Initialized { get; set; }
+            public DateTime LastLoadedUtc { get; set; } = DateTime.MinValue;
 
             public NotificationSnapshot ToSnapshot(bool timedOut) => new NotificationSnapshot
             {
