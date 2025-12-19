@@ -60,15 +60,11 @@ namespace CheckListManager.Common.Logic.Terminal
 
 		private void Run(ISchedulerStrategy strategy)
 		{
-            if (CancellationTokenSource.IsCancellationRequested)
-                return;
+            if (CancellationTokenSource.IsCancellationRequested) return;
 
-            var timer = strategy.Timer;   // snapshot
-            if (timer == null)
-                return;
-
-            if (strategy.StopTimerWhenRunning)
-                timer.Enabled = false;
+            var timer = strategy.Timer;
+            if (timer == null) return;
+            if (strategy.StopTimerWhenRunning) timer.Enabled = false;
 
 			try
 			{

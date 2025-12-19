@@ -137,9 +137,6 @@ namespace CheckListManager.Reports.Data
             await SaveChangesAsync();
         }
 
-        public async Task<long> CountRunsAsync(IDefaultIdentity identity) =>
-            await Entities.ReportRuns.Where(r => r.Company == identity.CompanyId && r.User == identity.Code && r.CompletedOn.HasValue).CountAsync();
-
         public async Task<PagingResponse<List<RunRecord>>> GetRunsAsync(long companyId, string user, long? report, DateTime? from, DateTime? to, int currentPage, int itemsPerPage)
         {
             var query = Entities.ReportRuns.Where(r =>

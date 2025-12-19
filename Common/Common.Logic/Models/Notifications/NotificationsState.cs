@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckListManager.Infrastructure.Logic.Notifications
+namespace CheckListManager.Common.Logic.Models.Notifications
 {
-    public sealed class MutableState
+    public sealed class NotificationsState
     {
-        public long TaskCount { get; set; }
         public long ReportCount { get; set; }
     }
 }

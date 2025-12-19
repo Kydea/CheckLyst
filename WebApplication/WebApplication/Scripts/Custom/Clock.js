@@ -41,21 +41,13 @@ matematici.Clock = function () {
             });
         },
 
-        updateNotifications = function () {
+        updateLightNotifications = function () {
             $.ajax({
                 url: matematici.urls.api + "/Instances/List/CountTasks",
                 type: "post",
                 contentType: "application/json; charset=utf-8",
                 suppressErrors: true
             }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
-            $.ajax({
-                url: matematici.urls.api + "/Reports/Run/Count",
-                type: "post",
-                contentType: "application/json; charset=utf-8",
-                suppressErrors: true
-            }).done(function (result) { 
-                matematici.menu.setNotificationBadge("/Reports/Runs", result); 
-            });
         },
 
         update = function () {
@@ -93,7 +85,7 @@ matematici.Clock = function () {
                 }, 60 * 1000);
             });
 
-            updateNotifications();
+            updateLightNotifications();
         },
 
         getTime = function () {
@@ -137,6 +129,6 @@ matematici.Clock = function () {
 
         update: update,
 
-        updateNotifications: updateNotifications
+        updateLightNotifications: updateLightNotifications
     };
 };

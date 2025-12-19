@@ -9,6 +9,7 @@ using System.Data.Entity;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Infrastructure.Data.ListItems;
 using CheckListManager.Common.Core.Exceptions;
+using CheckListManager.Common.Logic.Models.Notifications;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -334,10 +335,20 @@ namespace CheckListManager.Infrastructure.Data
             };
         }
 
-        public async Task<List<WorkFlows>> GetWorkFlows(long companyId) =>
+        public async Task<List<WorkFlows>> GetWorkFlows(long company) =>
             await Entities.WorkFlows
-                .Where(wf => wf.Company == companyId)
+                .Where(wf => wf.Company == company)
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
+
+        public async Task<NotificationsState> GetNotificationsAsync(long company, string user)
+        {
+            var state = new NotificationsState
+            {
+                ReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && r.CompletedOn.HasValue).CountAsync()
+            };
+            return state;
+        }
+
     }
 }

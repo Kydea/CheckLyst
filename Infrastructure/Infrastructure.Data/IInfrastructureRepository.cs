@@ -6,6 +6,7 @@ using System;
 using System.Linq.Expressions;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Infrastructure.Data.ListItems;
+using CheckListManager.Common.Logic.Models.Notifications;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -37,5 +38,7 @@ namespace CheckListManager.Infrastructure.Data
         Task<PagingResponse<List<TResult>>> GetDepartmentsAsync<TResult>(IDefaultIdentity identity, Expression<Func<Departments, TResult>> select, string name, int currentPage, int itemsPerPage);
         Task<PagingResponse<List<TResult>>> GetPrototypeTypesAsync<TResult>(IDefaultIdentity identity, Expression<Func<PrototypeTypes, TResult>> select, long? department, string name, int currentPage, int itemsPerPage);
         Task<PagingResponse<List<TResult>>> GetFTPServersAsync<TResult>(IDefaultIdentity identity, Expression<Func<FTPServers, TResult>> select, string name, string host, int currentPage, int itemsPerPage);
+
+        Task<NotificationsState> GetNotificationsAsync(long company, string user);
     }
 }

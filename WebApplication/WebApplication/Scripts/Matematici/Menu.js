@@ -67,7 +67,7 @@
 					}
 				});
 
-			menu.on("pointerup", "a", function () {
+			menu.on("pointerup", "a.LightNotification", function () {
 				if ($(this).parent().attr("data-badge") > 0)
 					matematici.clock.updateNotifications();
 			})
@@ -124,7 +124,7 @@
 
 		if (li.classList.contains("MenuItem")) return;
 
-		//works only for one notification per submenu, at the moment is enough
+		//works only for one notification per submenu, at the moment this is enough
 		li = li.closest("li.MenuItem");
 		li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
 

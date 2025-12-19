@@ -9,6 +9,11 @@ using System.Web;
 using System.Web.Http;
 using CheckListManager.Common.Logic.Api;
 using CheckListManager.Common.Logic.Api.Filters;
+using CheckListManager.Common.Logic.Models.Notifications;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
+using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Infrastructure.Api.Controllers
 {
@@ -19,10 +24,15 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         public class NotificationsController : BaseApiController
         {
             private readonly INotificationService _notificationService;
+            private readonly IRedisCache _redisCache;
 
-            public NotificationsController(INotificationService notificationService)
+            public NotificationsController(
+                INotificationService notificationService,
+                IRedisCache redisCache
+            )
             {
                 _notificationService = notificationService;
+                _redisCache = redisCache;
             }
 
             [HttpGet]
@@ -59,16 +69,13 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
             [AllowAnonymous]
             [HttpGet]
-            [Route("Test/{Task}/{Report}")]
-            public IHttpActionResult Test([FromUri] long Task, [FromUri] long Report)
+            [Route("Invalidate")]
+            public async Task<IHttpActionResult> Invalidate([FromUri] string token)
             {
-                var snap = _notificationService.Update(2, "CheckListManager", state =>
-                {
-                    state.TaskCount += Task;
-                    state.ReportCount += Report;
-                });
-
-                return Ok(snap);
+                var request = await _redisCache.GetAsync<User>($"Token:{token}", "Download");
+                await _redisCache.RemoveAsync($"Token:{token}", "Service");
+                await _notificationService.InvalidateAsync(request.Company, request.Code);
+                return Ok();
             }
         }
     }

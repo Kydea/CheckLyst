@@ -334,9 +334,7 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="PDF\Fonts\ARIALUNI.TTF" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="PDF\Fonts\README.txt" />
   </ItemGroup>

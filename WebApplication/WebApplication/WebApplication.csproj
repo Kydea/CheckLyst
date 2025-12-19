@@ -303,7 +303,7 @@
     <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\ImageUpload.js" />
     <Content Include="Scripts\Custom\LongPollingCoordinator.js" />
-    <Content Include="Scripts\Custom\NotificationPolling.js" />
+    <Content Include="Scripts\Custom\NotificationPollingClient.js" />
     <Content Include="Scripts\Custom\Scanner.js" />
     <Content Include="Scripts\Custom\JSONEditor.js" />
     <Content Include="Scripts\Custom\SQLEditor.js" />

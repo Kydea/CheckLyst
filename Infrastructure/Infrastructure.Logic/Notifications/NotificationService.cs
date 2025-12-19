@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators;
+using CheckListManager.Common.Logic.Models.Notifications;
+using CheckListManager.Infrastructure.Data;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,7 +11,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 {
     public sealed class NotificationService : INotificationService
     {
-        private static long TicksToMs(long ticks) => ticks / TimeSpan.TicksPerMillisecond;
+        private IInfrastructureRepository _infrastructureRepository;
+        public NotificationService(IInfrastructureRepository infrastructureRepository)
+        {
+            _infrastructureRepository = infrastructureRepository;
+        }
 
         private const int MaxWaitersPerUser = 10;
         private const int MaxWaitersGlobal = 10000;
@@ -27,7 +34,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
         // wait time stats (completed by wakeup or timeout; abort excluded by default)
         private long _waitCompletedTotal;
-        private long _waitMillisTotal;
+        private long _waitMillisecondsTotal;
 
         public async Task<NotificationSnapshot> GetSnapshotAsync(long company, string user)
         {
@@ -51,61 +58,62 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        public async Task<NotificationSnapshot> UpdateAsync(long company, string user, Action<MutableState> mutate)
+        public async Task InvalidateAsync(long company, string user)
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
             try
             {
-                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
+                var state = await _infrastructureRepository.GetNotificationsAsync(company, user).ConfigureAwait(false);
 
-                List<WaiterEntry> toRelease = null;
-                int releasedCount = 0;
-
+                List<WaiterEntry> toWake = null;
                 NotificationSnapshot snap;
+
                 lock (b.Gate)
                 {
-                    mutate(b.State);
-
-                    if (b.State.TaskCount < 0) b.State.TaskCount = 0;
-                    if (b.State.ReportCount < 0) b.State.ReportCount = 0;
-
+                    b.State.ReportCount = state.ReportCount;
+                    b.Initialized = true;
+                    b.LastLoadedUtc = DateTime.UtcNow;
                     b.Version++;
                     if (b.Version == 0) b.Version = 1;
 
                     snap = b.ToSnapshot(timedOut: false);
+                    snap.Overloaded = false;
 
                     if (b.Waiters.Count > 0)
                     {
-                        releasedCount = b.Waiters.Count;
-                        toRelease = new List<WaiterEntry>(b.Waiters.Values);
+                        toWake = new List<WaiterEntry>(b.Waiters.Values);
                         b.Waiters.Clear();
                     }
+
+                    snap.ActiveWaiters = 0;
                 }
 
-                if (releasedCount > 0)
-                    Interlocked.Add(ref _globalWaiters, -releasedCount);
-
-                if (toRelease != null)
+                if (toWake != null && toWake.Count > 0)
                 {
-                    Interlocked.Increment(ref _totalWakeups);
-
                     var nowTicks = DateTime.UtcNow.Ticks;
+                    var woken = 0;
 
-                    foreach (var entry in toRelease)
+                    foreach (var w in toWake)
                     {
-                        // latency metric
-                        var waitedMs = TicksToMs(nowTicks - entry.StartedTicksUtc);
-                        if (waitedMs < 0) waitedMs = 0;
+                        if (w.Tcs.TrySetResult(snap))
+                        {
+                            woken++;
 
-                        Interlocked.Add(ref _waitMillisTotal, waitedMs);
-                        Interlocked.Increment(ref _waitCompletedTotal);
+                            var ms = (nowTicks - w.StartedTicksUtc) / TimeSpan.TicksPerMillisecond;
+                            if (ms < 0) ms = 0;
 
-                        entry.Tcs.TrySetResult(snap);
+                            Interlocked.Add(ref _waitMillisecondsTotal, ms);
+                            Interlocked.Increment(ref _waitCompletedTotal);
+                        }
+                    }
+
+                    if (woken > 0)
+                    {
+                        Interlocked.Add(ref _totalWakeups, woken);
+                        Interlocked.Add(ref _globalWaiters, -woken);
                     }
                 }
-
-                return snap;
             }
             finally
             {
@@ -125,12 +133,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 nowUtc = DateTime.UtcNow;
                 if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
                     return;
-                
-                var (taskCount, reportCount) = await Task.FromResult((2, 7)); //mettere chiamata async vera per inzializzare i valori
+
+                var state = await _infrastructureRepository.GetNotificationsAsync(company, user);
                 lock (b.Gate)
                 {
-                    b.State.TaskCount = Math.Max(0, taskCount);
-                    b.State.ReportCount = Math.Max(0, reportCount);
+                    b.State.ReportCount = state.ReportCount;
                     b.Version++;
                     if (b.Version == 0) b.Version = 1;
                     b.LastLoadedUtc = nowUtc;
@@ -221,7 +228,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                         Interlocked.Increment(ref _totalTimeouts);
 
                         // timeout = completed wait
-                        Interlocked.Add(ref _waitMillisTotal, (long)LongPollTimeout.TotalMilliseconds);
+                        Interlocked.Add(ref _waitMillisecondsTotal, (long)LongPollTimeout.TotalMilliseconds);
                         Interlocked.Increment(ref _waitCompletedTotal);
                     }
                 });
@@ -283,7 +290,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         public NotificationDiagnostics GetDiagnostics()
         {
             var completed = Interlocked.Read(ref _waitCompletedTotal);
-            var totalMilliseconds = Interlocked.Read(ref _waitMillisTotal);
+            var totalMilliseconds = Interlocked.Read(ref _waitMillisecondsTotal);
 
             double average = 0;
             if (completed > 0)
@@ -309,7 +316,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private sealed class UserBucket
         {
             public object Gate { get; } = new object();
-            public MutableState State { get; } = new MutableState();
+            public NotificationsState State { get; } = new NotificationsState();
             public ulong Version { get; set; } = 1;
             
             public int InFlight;
@@ -322,7 +329,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
             public NotificationSnapshot ToSnapshot(bool timedOut) => new NotificationSnapshot
             {
-                TaskCount = State.TaskCount,
                 ReportCount = State.ReportCount,
                 Version = Version,
                 TimedOut = timedOut,
