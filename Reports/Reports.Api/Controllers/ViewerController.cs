@@ -56,7 +56,7 @@ namespace CheckListManager.Reports.Api.Controllers
         public async Task<IHttpActionResult> Enqueue(ReportRequest request)
         {
             await _reportViewerService.EnqueueReportRun(Identity, request);
-            return Ok(new ReportResponse { Enqueued = true });
+            return Ok();
         }
 
 
@@ -73,7 +73,7 @@ namespace CheckListManager.Reports.Api.Controllers
                     var response = await _reportViewerService.GetReportData(Identity, request, linkedCancellationTokenSource.Token);
                     return Ok(response);
                 }
-                catch (OperationCanceledException) when (timeoutCancellationTokenSource.IsCancellationRequested && !requestToken.IsCancellationRequested)
+                catch (OperationCanceledException) when (!request.Run.HasValue && timeoutCancellationTokenSource.IsCancellationRequested && !requestToken.IsCancellationRequested)
                 {
                     await _reportViewerService.EnqueueReportRun(Identity, request);
                     return Ok(new ReportResponse { Enqueued = true });

@@ -33,7 +33,7 @@ namespace CheckListManager.Infrastructure.Terminal
 
         public ReportsWindowsService(TerminalConfig config) : base(config)
         {
-            Add(reportProcessStrategy = new IntervalSchedulerStrategy(ProcessReportsAsync, 10));
+            Add(reportProcessStrategy = new IntervalSchedulerStrategy(ProcessReportsAsync, 1));
             Add(new ComputedSchedulerStrategy(DeleteExpiredReportsAsync, new[] { 0 }, new[] { 0 }));
         }
 

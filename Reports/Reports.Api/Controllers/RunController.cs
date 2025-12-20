@@ -43,12 +43,5 @@ namespace CheckListManager.Reports.Api.Controllers
             await _runService.DeleteAsync(Identity, request);
             return Ok();
         }
-
-        [HttpPost]
-        [Route("Count")]
-        public async Task<IHttpActionResult> Count()
-        {
-            return Ok(await _runService.CountAsync(Identity));
-        }
     }
 }

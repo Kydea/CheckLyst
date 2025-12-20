@@ -11,16 +11,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 {
     public sealed class NotificationService : INotificationService
     {
-        private IInfrastructureRepository _infrastructureRepository;
-        public NotificationService(IInfrastructureRepository infrastructureRepository)
-        {
-            _infrastructureRepository = infrastructureRepository;
-        }
-
         private const int MaxWaitersPerUser = 10;
         private const int MaxWaitersGlobal = 10000;
         private static readonly TimeSpan LongPollTimeout = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan BucketTtl = TimeSpan.FromHours(1);
+        private static readonly TimeSpan BucketIdleTtl = TimeSpan.FromMinutes(5);
 
         private readonly ConcurrentDictionary<(long Company, string User), UserBucket> _users = new ConcurrentDictionary<(long, string), UserBucket>();
 
@@ -36,35 +31,13 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private long _waitCompletedTotal;
         private long _waitMillisecondsTotal;
 
-        public async Task<NotificationSnapshot> GetSnapshotAsync(long company, string user)
+        public async Task InvalidateAsync(long company, string user, Func<Task<NotificationsState>> loadStateAsync)
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
             try
             {
-                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
-
-                lock (b.Gate)
-                {
-                    var s = b.ToSnapshot(timedOut: false);
-                    s.Overloaded = false;
-                    s.ActiveWaiters = b.Waiters.Count;
-                    return s;
-                }
-            }
-            finally
-            {
-                ExitBucket(company, user, b);
-            }
-        }
-
-        public async Task InvalidateAsync(long company, string user)
-        {
-            var b = GetBucket(company, user);
-            EnterBucket(b);
-            try
-            {
-                var state = await _infrastructureRepository.GetNotificationsAsync(company, user).ConfigureAwait(false);
+                var state = await loadStateAsync().ConfigureAwait(false);
 
                 List<WaiterEntry> toWake = null;
                 NotificationSnapshot snap;
@@ -121,7 +94,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, long company, string user)
+        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, Func<Task<NotificationsState>> loadStateAsync)
         {
             var nowUtc = DateTime.UtcNow;
             if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
@@ -134,7 +107,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
                     return;
 
-                var state = await _infrastructureRepository.GetNotificationsAsync(company, user);
+                var state = await loadStateAsync().ConfigureAwait(false); ;
                 lock (b.Gate)
                 {
                     b.State.ReportCount = state.ReportCount;
@@ -150,13 +123,13 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, CancellationToken requestAborted)
+        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<Task<NotificationsState>> loadStateAsync, CancellationToken requestAborted)
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
             try
             {
-                await EnsureInitializedOrRefreshAsync(b, company, user).ConfigureAwait(false);
+                await EnsureInitializedOrRefreshAsync(b, loadStateAsync).ConfigureAwait(false);
 
                 // Fast-path
                 lock (b.Gate)
@@ -263,7 +236,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             _users.GetOrAdd((company, user), _ => new UserBucket());
 
 
-        private void EnterBucket(UserBucket b) => Interlocked.Increment(ref b.InFlight);
+        private void EnterBucket(UserBucket b)
+        {
+            Interlocked.Increment(ref b.InFlight);
+            Interlocked.Exchange(ref b.LastAccessTicks, DateTime.UtcNow.Ticks);
+        }
 
         private void ExitBucket(long company, string user, UserBucket b)
         {
@@ -272,7 +249,14 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             {
                 bool noWaiters;
                 lock (b.Gate) noWaiters = b.Waiters.Count == 0;
-                if (noWaiters && _users.TryGetValue((company, user), out var current) && ReferenceEquals(current, b))
+                if (!noWaiters) 
+                    return;
+
+                var lastAccess = new DateTime(Interlocked.Read(ref b.LastAccessTicks), DateTimeKind.Utc);
+                if ((DateTime.UtcNow - lastAccess) < BucketIdleTtl)
+                    return;
+
+                if (_users.TryGetValue((company, user), out var current) && ReferenceEquals(current, b))
                     _users.TryRemove((company, user), out _);
             }
         }
@@ -320,6 +304,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             public ulong Version { get; set; } = 1;
             
             public int InFlight;
+            public long LastAccessTicks;
 
             public Dictionary<Guid, WaiterEntry> Waiters { get; } = new Dictionary<Guid, WaiterEntry>();
 

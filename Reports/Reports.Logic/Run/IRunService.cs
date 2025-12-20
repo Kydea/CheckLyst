@@ -12,7 +12,6 @@ namespace CheckListManager.Reports.Logic.Run
     {
         Task<PagingResponse<List<RunRecord>>> GetDataAsync(IDefaultIdentity identity, PagingRequest<ListRequest> form);
         Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest data);
-        Task<long> CountAsync(DefaultIdentity identity);
         Task DeleteAsync(DefaultIdentity identity, RunRequest request);
     }
 }

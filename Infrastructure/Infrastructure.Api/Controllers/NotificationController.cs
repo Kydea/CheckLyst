@@ -14,6 +14,7 @@ using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Infrastructure.Data;
 
 namespace CheckListManager.Infrastructure.Api.Controllers
 {
@@ -24,14 +25,17 @@ namespace CheckListManager.Infrastructure.Api.Controllers
         public class NotificationsController : BaseApiController
         {
             private readonly INotificationService _notificationService;
+            private readonly IInfrastructureRepository _infrastructureRepository;
             private readonly IRedisCache _redisCache;
 
             public NotificationsController(
                 INotificationService notificationService,
+                IInfrastructureRepository infrastructureRepository,
                 IRedisCache redisCache
             )
             {
                 _notificationService = notificationService;
+                _infrastructureRepository = infrastructureRepository;
                 _redisCache = redisCache;
             }
 
@@ -48,6 +52,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                         Identity.CompanyId,
                         Identity.Code,
                         since,
+                        () => _infrastructureRepository.GetNotificationsAsync(Identity.CompanyId, Identity.Code),
                         requestToken
                     ).ConfigureAwait(false);
 
@@ -72,9 +77,9 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             [Route("Invalidate")]
             public async Task<IHttpActionResult> Invalidate([FromUri] string token)
             {
-                var request = await _redisCache.GetAsync<User>($"Token:{token}", "Download");
+                var request = await _redisCache.GetAsync<User>($"Token:{token}", "Service") ?? throw new InvalidOperationException();
                 await _redisCache.RemoveAsync($"Token:{token}", "Service");
-                await _notificationService.InvalidateAsync(request.Company, request.Code);
+                await _notificationService.InvalidateAsync(request.Company, request.Code, () => _infrastructureRepository.GetNotificationsAsync(request.Company, request.Code));
                 return Ok();
             }
         }

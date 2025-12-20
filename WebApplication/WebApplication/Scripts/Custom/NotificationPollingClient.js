@@ -5,7 +5,8 @@
             channelName: "NotificationPollingChannel",
             leaderStorageKey: "NotificationPolling.Leader",
             epochStorageKey: "NotificationPolling.Epoch",
-            enabledStorageKey: "NotificationPolling.Enabled"
+            enabledStorageKey: "NotificationPolling.Enabled",
+            snapshotStorageKey: "Notifications.LastSnapshot"
         },
 
         enabled = false,
@@ -31,11 +32,13 @@
 
         onNotificationSnapshot = function (snapshot) {
             if (!snapshot || snapshot.Overloaded || snapshot.TimedOut) return;
-            console.log("notification: ", snapshot);
+
+            //console.log("notification", snapshot);
+            matematici.menu.setNotificationBadge("/Reports/Runs", snapshot.reportCount);
         },
 
         onDiagnostics = function (state) {
-            console.log(state);
+            //console.log("diagiostics", state);
         },
 
         startCoordinator = function () {
@@ -75,15 +78,20 @@
             updateDiagnostics();
         },
 
-        readSinceVersion = function () {
-            var raw = localStorage.getItem(configuration.sinceStorageKey);
-            var v = raw ? Number(raw) : 0;
-            if (!isFinite(v) || v < 0) v = 0;
-            return v;
+        readLastSnapshot = function () {
+            try {
+                var s = localStorage.getItem(configuration.snapshotStorageKey);
+                return s ? JSON.parse(s) : null;
+            } catch {
+                return null;
+            }
         },
-
-        writeSinceVersion = function (value) {
-            localStorage.setItem(configuration.sinceStorageKey, String(value));
+    
+        storeLastSnapshot = function (snapshot) {
+            if (snapshot == null)
+                localStorage.removeItem(configuration.snapshotStorageKey);
+            else
+                localStorage.setItem(configuration.snapshotStorageKey, JSON.stringify(snapshot));
         },
 
         executePollingOnce = function (signal) {
@@ -113,6 +121,7 @@
                     if (signal) signal.removeEventListener("abort", abortHandler);
 
                     try {
+                        storeLastSnapshot(snapshot);
                         handleSnapshot(snapshot);
                         markSuccess(snapshot);
                         resolve(snapshot);
@@ -161,10 +170,8 @@
                 var incomingVersion = Number(snapshot.version);
 
                 if (isFinite(incomingVersion) && incomingVersion >= 0) {
-                    if (incomingVersion !== sinceVersion) {
+                    if (incomingVersion !== sinceVersion) 
                         sinceVersion = incomingVersion;
-                        writeSinceVersion(sinceVersion);
-                    }
 
                     if (snapshot.timedOut === false) {
                         if (lastDeliveredVersion === incomingVersion) return;
@@ -214,7 +221,11 @@
         },
 
         initialize = function () {
-            sinceVersion = readSinceVersion();
+            var snap = readLastSnapshot();
+            if (snap) {
+                handleSnapshot(snap);
+                sinceVersion = snap.version;
+            }
             if (localStorage.getItem(configuration.enabledStorageKey) == "1") enable();
         },
 
@@ -223,7 +234,7 @@
             sinceVersion = 0;
             lastDeliveredVersion = null;
             overloadAttempts = 0;
-            writeSinceVersion(0);
+            storeLastSnapshot(null);
             updateDiagnostics();
         };
 

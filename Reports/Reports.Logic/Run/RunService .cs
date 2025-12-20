@@ -78,9 +78,6 @@ namespace CheckListManager.Reports.Logic.Run
             return Response;
         }
 
-        public Task<long> CountAsync(DefaultIdentity identity) =>
-            _reportsRepository.CountRunsAsync(identity);
-
         public Task DeleteAsync(DefaultIdentity identity, RunRequest request) =>
             _reportsRepository.DeleteRunAsync(identity, request.ID);
     }

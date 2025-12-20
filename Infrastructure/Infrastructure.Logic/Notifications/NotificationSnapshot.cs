@@ -13,7 +13,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 {
     public sealed class NotificationSnapshot
     {
-        public long TaskCount { get; set; }
         public long ReportCount { get; set; }
         public ulong Version { get; set; }
         public bool TimedOut { get; set; }

@@ -147,7 +147,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         }
 
         public async Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request) =>
-            await _reportsRepository.EnqueueReportRunAsync(identity, request.Run.Value, JsonConvert.SerializeObject(request));
+            await _reportsRepository.EnqueueReportRunAsync(identity, request.ID.Value, JsonConvert.SerializeObject(request));
 
         public async Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
