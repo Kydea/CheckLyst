@@ -176,7 +176,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
 
         public async Task<PrototypeTypesResponse> Add(IDefaultIdentity identity, PrototypeTypesRequest record)
         {
-            var licensedCount = (await _settingService.LicenseAsync()).Payload.PrototypeTypesCount;
+            var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.PrototypeTypesCount;
             if (licensedCount.HasValue)
             {
                 var currentCount = await _infrastructureRepository.CountPrototypeTypesAsync();

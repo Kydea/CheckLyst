@@ -50,9 +50,12 @@ namespace CheckListManager.Common.Logic.License
             return signatureBase64;
         }
 
-        public static void VerifyLicense(LicensePayload payload, string signature)
+        public static void VerifyLicense(LicensePayload payload, long company, string signature)
         {
             byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)), signatureBytes;
+
+            if (payload.Company != company)
+                throw new LicenseException("License company mismatch");
 
             if (payload.Expiration.HasValue && payload.Expiration.Value < DateTimeOffset.UtcNow)
                 throw new LicenseException("License expired");

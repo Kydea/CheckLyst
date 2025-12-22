@@ -42,12 +42,13 @@ matematici.Clock = function () {
         },
 
         updateLightNotifications = function () {
-            $.ajax({
-                url: matematici.urls.api + "/Instances/List/CountTasks",
-                type: "post",
-                contentType: "application/json; charset=utf-8",
-                suppressErrors: true
-            }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
+            if (matematici.tokenManager.checkRole("Instances#View#"))
+                $.ajax({
+                    url: matematici.urls.api + "/Instances/List/CountTasks",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    suppressErrors: true
+                }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
         },
 
         update = function () {

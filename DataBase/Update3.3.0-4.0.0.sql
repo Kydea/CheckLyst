@@ -5,7 +5,6 @@ alter table "CheckLists"."InstanceExpressionValues" add "Task" boolean not null 
 insert into "Configuration"."Configurations" values ('ContextualReportTimeout', '60');
 
 insert into "Configuration"."Settings" values ('LicenseExpiration');
-insert into "Configuration"."Settings" values ('LicenseCompaniesCount');
 insert into "Configuration"."Settings" values ('LicensePrototypeTypesCount');
 insert into "Configuration"."Settings" values ('LicensePrototypesCount');
 insert into "Configuration"."Settings" values ('LicenseUsersCount');

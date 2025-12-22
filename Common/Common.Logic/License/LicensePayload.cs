@@ -8,8 +8,8 @@ namespace CheckListManager.Common.Logic.License
 {
     public class LicensePayload
     {
+        public long Company { get; set; }
         public DateTime? Expiration { get; set; }
-        public long? CompaniesCount { get; set; }
         public long? PrototypeTypesCount { get; set; }
         public long? PrototypesCount{ get; set; }
         public long? UsersCount { get; set; }

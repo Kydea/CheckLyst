@@ -34,6 +34,6 @@ namespace CheckListManager.Common.Logic.Services
         Task<int> MaximumUserInactivityDaysAsync(long companyId);
         Task<int> PrototypesAttachmentMaxSizeBytesAsync(long companyId);
         Task<int> InstancesAttachmentMaxSizeBytesAsync(long companyId);
-        Task<LicenseModel> LicenseAsync(long companyId = 1);
+        Task<LicenseModel> LicenseAsync(long companyId);
     }
 }

@@ -438,7 +438,6 @@ namespace CheckListManager.AccessControl.Logic.Services
             return response;
         }
 
-
         public async Task<UserResponse> LoadUserAsync(DefaultIdentity identity, UserRequest record)
         {
             bool LDAP = !string.IsNullOrEmpty(await _settingService.LDAPHostAsync(identity.CompanyId));
@@ -659,7 +658,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<UserResponse> AddUserAsync(DefaultIdentity identity, UserRequest request)
         {
-            var licensedCount = (await _settingService.LicenseAsync()).Payload.UsersCount;
+            var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.UsersCount;
             if (licensedCount.HasValue)
             {
                 var currentCount = await _userRepository.CountUsersAsync(true);

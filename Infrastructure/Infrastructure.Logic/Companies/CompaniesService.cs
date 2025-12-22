@@ -206,16 +206,6 @@ namespace CheckListManager.Infrastructure.Logic.Companies
 
         public async Task<CompaniesResponse> AddAsync(IDefaultIdentity identity, CompaniesRequest request)
         {
-            if (identity.CompanyId != 1) throw new UnauthorizedAccessException();
-
-            var licensedCount = (await _settingService.LicenseAsync()).Payload.CompaniesCount;
-            if (licensedCount.HasValue)
-            {
-                var currentCount = await _infrastructureRepository.CountCompaniesAsync(true) - 1;//administration company excluded
-                if (licensedCount.Value <= currentCount)
-                    throw new LicenseException("The maximum number of online companies allowed by the license has been reached");
-            }
-
             var response = await ValidateAsync(identity, request);
             if (response.Valid)
                 try
@@ -288,8 +278,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                     });
                     _settingService.Clear(request.ID.Value);
 
-                    if (request.ID.Value == 1)
-                        await CheckLicenseAsync(identity, request.ID.Value);
+                    await CheckLicenseAsync(identity, request.ID.Value);
                 }
                 catch (Exception Exception)
                 {
@@ -318,7 +307,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
 
         public async Task CheckLicenseAsync(IDefaultIdentity identity, long id)
         {
-            await _settingService.LicenseAsync();
+            await _settingService.LicenseAsync(id);
         }
 
         public async Task<CompaniesResponse> LoadAsync(IDefaultIdentity identity, CompaniesRequest record)

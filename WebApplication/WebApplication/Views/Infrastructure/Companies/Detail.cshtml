@@ -379,12 +379,6 @@
                 mask: "date",
                 group: "License"
             },
-            LicenseCompaniesCount: {
-                label: "Companies count",
-                note: "Maximum number of companies (excluding the administration company)",
-                mask: "pint",
-                group: "License"
-            },
             LicensePrototypeTypesCount: {
                 label: "Prototype types count",
                 note: "Maximum number of prototype types",
@@ -530,7 +524,7 @@
         };
 
     $("label.Configurator", formElement).toggle(isNew);
-    $("a#LicenseTab").toggle(id == 1);
+    $("a#LicenseTab").toggle(id != 1);
 
     formElement.on("click", "tr.Handler", showSetting);
 

@@ -38,8 +38,8 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             {
                 PublicKey = LicenseService.ExtractPublicKey(request.Data.PrivateKey),
                 Signature = LicenseService.Sign(new LicensePayload {
+                    Company = request.Data.Company,
                     Expiration = request.Data.Expiration,
-                    CompaniesCount = request.Data.CompaniesCount,
                     PrototypeTypesCount = request.Data.PrototypeTypesCount,
                     PrototypesCount = request.Data.PrototypesCount,
                     UsersCount = request.Data.UsersCount

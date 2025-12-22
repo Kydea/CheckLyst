@@ -210,7 +210,7 @@ namespace CheckListManager.Common.Logic.Services
                     Payload = new LicensePayload
                     {
                         Expiration = await Load<DateTime?>(companyId, "LicenseExpiration"),
-                        CompaniesCount = await Load<long?>(companyId, "LicenseCompaniesCount"),
+                        Company = await Load<long>(companyId, "LicenseCompany"),
                         PrototypeTypesCount = await Load<long?>(companyId, "LicensePrototypeTypesCount"),
                         PrototypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
                         UsersCount = await Load<long?>(companyId, "LicenseUsersCount")
@@ -218,7 +218,7 @@ namespace CheckListManager.Common.Logic.Services
                 };
                 var signature = await Load<string>(companyId, "LicenseSignature");
 
-                LicenseService.VerifyLicense(model.Payload, signature);
+                LicenseService.VerifyLicense(model.Payload, companyId, signature);
 
                 return model;
             }, RegionName, TimeSpan.FromMinutes(1));

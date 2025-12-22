@@ -224,7 +224,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            var licensedCount = (await _settingService.LicenseAsync()).Payload.PrototypesCount;
+            var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.PrototypesCount;
             if (licensedCount.HasValue)
             {
                 var currentCount = await _prototypeRepository.CountPrototypesAsync();

@@ -50,7 +50,6 @@ insert into "Configuration"."Settings" ("Code") values
 	('WarningUserInactivityDays'),
 	('MaximumUserInactivityDays'),
 	('LicenseExpiration'),
-	('LicenseCompaniesCount'),
 	('LicensePrototypeTypesCount'),
 	('LicensePrototypesCount'),
 	('LicenseUsersCount'),
