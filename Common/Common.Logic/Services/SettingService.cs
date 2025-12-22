@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web.Configuration;
+using System.Web.Security;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Data.Configuration;
@@ -210,15 +212,15 @@ namespace CheckListManager.Common.Logic.Services
                     Payload = new LicensePayload
                     {
                         Expiration = await Load<DateTime?>(companyId, "LicenseExpiration"),
-                        Company = await Load<long>(companyId, "LicenseCompany"),
+                        Company = companyId,
                         PrototypeTypesCount = await Load<long?>(companyId, "LicensePrototypeTypesCount"),
                         PrototypesCount = await Load<long?>(companyId, "LicensePrototypesCount"),
                         UsersCount = await Load<long?>(companyId, "LicenseUsersCount")
                     }
                 };
                 var signature = await Load<string>(companyId, "LicenseSignature");
-
-                LicenseService.VerifyLicense(model.Payload, companyId, signature);
+                var machineKey = ((MachineKeySection)WebConfigurationManager.OpenWebConfiguration("~").GetSection("system.web/machineKey")).ValidationKey;
+                LicenseService.VerifyLicense(model.Payload, machineKey, signature);
 
                 return model;
             }, RegionName, TimeSpan.FromMinutes(1));

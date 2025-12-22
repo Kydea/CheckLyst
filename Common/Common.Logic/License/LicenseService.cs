@@ -33,9 +33,9 @@ namespace CheckListManager.Common.Logic.License
             }
         }
 
-        public static string Sign(LicensePayload payload, string privateKey)
+        public static string Sign(LicensePayload payload, string machineKey, string privateKey)
         {
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)), signatureBytes;
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload) + machineKey), signatureBytes;
             using (var rsa = new RSACryptoServiceProvider())
             {
                 rsa.PersistKeyInCsp = false;
@@ -50,12 +50,9 @@ namespace CheckListManager.Common.Logic.License
             return signatureBase64;
         }
 
-        public static void VerifyLicense(LicensePayload payload, long company, string signature)
+        public static void VerifyLicense(LicensePayload payload, string machineKey, string signature)
         {
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)), signatureBytes;
-
-            if (payload.Company != company)
-                throw new LicenseException("License company mismatch");
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload) + machineKey), signatureBytes;
 
             if (payload.Expiration.HasValue && payload.Expiration.Value < DateTimeOffset.UtcNow)
                 throw new LicenseException("License expired");

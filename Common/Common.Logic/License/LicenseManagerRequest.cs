@@ -11,5 +11,6 @@ namespace CheckListManager.Common.Logic.License
     {
         [Required]
         public string PrivateKey { get; set; }
+        public string MachineKey { get; set; }
     }
 }

@@ -43,7 +43,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                     PrototypeTypesCount = request.Data.PrototypeTypesCount,
                     PrototypesCount = request.Data.PrototypesCount,
                     UsersCount = request.Data.UsersCount
-                }, request.Data.PrivateKey)
+                }, request.Data.MachineKey, request.Data.PrivateKey)
             };
 
             return Json(response);
