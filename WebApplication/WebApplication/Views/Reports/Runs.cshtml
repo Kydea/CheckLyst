@@ -16,8 +16,6 @@
                 <input type="text" name="from" class="DatePicker" />
                 <input type="text" name="to" class="DatePicker" />
             </label>
-
-
         </form>
 
         <table class="Grid">
@@ -26,6 +24,7 @@
                     <th>ID</th>
                     <th>Report ID</th>
                     <th>Repor code</th>
+                    @*<th>Format</th>*@
                     <th>Completed</th>
                     <th>Expiration</th>
                     <th>Created on</th>
@@ -37,6 +36,7 @@
                     <td data-column="id"></td>
                     <td data-column="reportID"></td>
                     <td data-column="reportCode"></td>
+                    @*<td data-column="format"></td>*@
                     <td data-column="completed" data-type="Boolean"></td>
                     <td data-column="expiration" data-type="DateTimeOffset"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>

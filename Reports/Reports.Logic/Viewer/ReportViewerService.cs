@@ -3,6 +3,7 @@ using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataEngine;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.Services;
@@ -14,6 +15,7 @@ using SAP.Middleware.Connector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,12 +27,22 @@ namespace CheckListManager.Reports.Logic.Viewer
         private readonly IReportsRepository _reportsRepository;
         private readonly IReportViewerRepository _reportViewerRepository;
         private readonly ISettingService _settingService;
+        private readonly IServiceClient _client;
+        private readonly IRedisCache _redisCache;
 
-        public ReportViewerService(IReportsRepository reportsRepository, IReportViewerRepository reportViewerRepository, ISettingService settingService)
+        public ReportViewerService(
+            IReportsRepository reportsRepository, 
+            IReportViewerRepository reportViewerRepository, 
+            ISettingService settingService,
+            IServiceClient client,
+            IRedisCache redisCache
+        )
         {
             _reportsRepository = reportsRepository;
             _reportViewerRepository = reportViewerRepository;
             _settingService = settingService;
+            _client = client;
+            _redisCache = redisCache;
         }
 
         public async Task<DetailResponse> LoadParameters(IDefaultIdentity identity, long id)
@@ -146,8 +158,21 @@ namespace CheckListManager.Reports.Logic.Viewer
             }
         }
 
-        public async Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request) =>
-            await _reportsRepository.EnqueueReportRunAsync(identity, request.ID.Value, JsonConvert.SerializeObject(request));
+        public async Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request)
+        {
+            request.CompanyId = identity.CompanyId;
+            request.UserCode = identity.Code;
+            request.UserDescription = identity.Description;
+            await _reportsRepository.EnqueueReportRunAsync(identity, request.ID.Value, request.Format, JsonConvert.SerializeObject(request));
+            var token = identity.Code + ":" + Guid.NewGuid();
+            var user = new User
+            {
+                Company = identity.CompanyId,
+                Code = identity.Code
+            };
+            await _redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
+            await _client.GetAsync("Infrastructure/Notifications/Invalidate?token=" + token);
+        }
 
         public async Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {

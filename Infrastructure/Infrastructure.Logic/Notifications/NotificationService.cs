@@ -44,7 +44,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 lock (b.Gate)
                 {
-                    b.State.ReportCount = state.ReportCount;
+                    b.State.CompletedReportCount = state.CompletedReportCount;
+                    b.State.EnqueuedReportCount = state.EnqueuedReportCount;
                     b.Initialized = true;
                     b.LastLoadedUtc = DateTime.UtcNow;
                     b.Version++;
@@ -110,7 +111,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 var state = await loadStateAsync().ConfigureAwait(false); ;
                 lock (b.Gate)
                 {
-                    b.State.ReportCount = state.ReportCount;
+                    b.State.CompletedReportCount = state.CompletedReportCount;
+                    b.State.EnqueuedReportCount = state.EnqueuedReportCount;
                     b.Version++;
                     if (b.Version == 0) b.Version = 1;
                     b.LastLoadedUtc = nowUtc;
@@ -134,7 +136,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 // Fast-path
                 lock (b.Gate)
                 {
-                    if (sinceVersion == 0 || b.Version != sinceVersion)
+                    if (sinceVersion == 0 || b.Version != sinceVersion || b.State.Idle)
                     {
                         var s = b.ToSnapshot(timedOut: false);
                         s.Overloaded = false;
@@ -314,7 +316,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
             public NotificationSnapshot ToSnapshot(bool timedOut) => new NotificationSnapshot
             {
-                ReportCount = State.ReportCount,
+                CompletedReportCount = State.CompletedReportCount,
+                EnqueuedReportCount = State.EnqueuedReportCount,
+                Idle = State.Idle,
                 Version = Version,
                 TimedOut = timedOut,
                 ServerTimeUtc = DateTime.UtcNow

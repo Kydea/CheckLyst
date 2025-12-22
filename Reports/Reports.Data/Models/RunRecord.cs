@@ -11,6 +11,7 @@ namespace CheckListManager.Reports.Data.Models
         public long ID { get; set; }
         public long ReportID { get; set; }
         public string ReportCode { get; set; }
+        public string Format { get; set; }
         public DateTimeOffset Expiration { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public DateTimeOffset? CompletedOn { get; set; }

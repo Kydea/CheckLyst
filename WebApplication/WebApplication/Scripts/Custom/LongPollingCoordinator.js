@@ -1,8 +1,6 @@
-﻿matematici.LongPollingCoordinator = function(options) {
+﻿matematici.LongPollingCoordinator = function (configuration, executeLongPollingOnce, onMessageFromLeader) {
     var
-        configuration,
-        executeLongPollingOnce,
-        onMessageFromLeader,
+        dataEnabled,
 
         tabIdentifier,
         leaderIdentifier,
@@ -12,23 +10,14 @@
         heartbeatIntervalId,
         watchdogIntervalId,
 
+        electionTimeoutId,
+        retryTimeoutId,
+
         abortController,
         retryAttempt,
 
-        leaderStorageKey,
-        epochStorageKey,
-        channelName,
-
-        heartbeatMilliseconds,
-        leaderTimeToLiveMilliseconds,
-        watchdogMilliseconds,
-        electionJitterMilliseconds,
-
-        backoffBaseMilliseconds,
-        backoffMaximumMilliseconds,
-
         postTakeoverCheckTimeoutId,
-        postTakeoverCheckMilliseconds,
+
 
         readJson = function (value) {
             try { return JSON.parse(value); } catch (e) { return null; }
@@ -43,21 +32,21 @@
         },
 
         readLeaderRecord = function () {
-            var raw = localStorage.getItem(leaderStorageKey);
+            var raw = localStorage.getItem(configuration.leaderStorageKey);
             if (!raw) return null;
             return readJson(raw);
         },
 
         writeLeaderRecord = function (record) {
-            localStorage.setItem(leaderStorageKey, writeJson(record));
+            localStorage.setItem(configuration.leaderStorageKey, writeJson(record));
         },
 
         readEpochNumber = function () {
-            return Number(localStorage.getItem(epochStorageKey) || "0");
+            return Number(localStorage.getItem(configuration.epochStorageKey) || "0");
         },
 
         writeEpochNumber = function (epoch) {
-            localStorage.setItem(epochStorageKey, String(epoch));
+            localStorage.setItem(configuration.epochStorageKey, String(epoch));
         },
 
         increaseEpochNumber = function () {
@@ -67,7 +56,7 @@
         },
 
         isLeaderRecordExpired = function (record) {
-            return (nowMilliseconds() - record.ts) > leaderTimeToLiveMilliseconds;
+            return (nowMilliseconds() - record.ts) > configuration.leaderTimeToLiveMilliseconds;
         },
 
         isCurrentTabLeader = function () {
@@ -84,7 +73,10 @@
             leaderIdentifier = newLeaderIdentifier;
             leaderEpoch = newLeaderEpoch;
 
-            if (!isCurrentTabLeader()) {
+            if (isCurrentTabLeader()) {
+                startHeartbeat();
+                if (dataEnabled) startLongPollingLoop();
+            } else {
                 stopLongPolling();
                 stopHeartbeat();
             }
@@ -93,9 +85,10 @@
         scheduleElectionAttempt = function (delayMilliseconds) {
             var delay = (typeof delayMilliseconds === "number")
                 ? delayMilliseconds
-                : Math.floor(Math.random() * electionJitterMilliseconds);
+                : Math.floor(Math.random() * configuration.electionJitterMilliseconds);
 
-            window.setTimeout(attemptElection, delay);
+            if (electionTimeoutId) window.clearTimeout(electionTimeoutId)
+            electionTimeoutId = window.setTimeout(attemptElection, delay);
         },
 
         attemptElection = function () {
@@ -110,15 +103,14 @@
 
             writeLeaderRecord(record);
 
-            if (broadcastChannel) {
+            if (broadcastChannel)
                 broadcastChannel.postMessage({ type: "LeaderTakenOver", leaderId: tabIdentifier, epoch: nextEpoch, ts: record.ts });
-            }
 
             leaderIdentifier = tabIdentifier;
             leaderEpoch = nextEpoch;
 
             startHeartbeat();
-            startLongPollingLoop();
+            if (dataEnabled) startLongPollingLoop();
             schedulePostTakeoverCheck();
         },
 
@@ -131,10 +123,9 @@
                 var record = { leaderId: tabIdentifier, epoch: leaderEpoch, ts: nowMilliseconds() };
                 writeLeaderRecord(record);
 
-                if (broadcastChannel) {
+                if (broadcastChannel)
                     broadcastChannel.postMessage({ type: "LeaderHeartbeat", leaderId: record.leaderId, epoch: record.epoch, ts: record.ts });
-                }
-            }, heartbeatMilliseconds);
+            }, configuration.heartbeatMilliseconds);
         },
 
         stopHeartbeat = function () {
@@ -149,7 +140,7 @@
             watchdogIntervalId = window.setInterval(function () {
                 var currentLeader = readLeaderRecord();
                 if (!currentLeader || isLeaderRecordExpired(currentLeader)) scheduleElectionAttempt();
-            }, watchdogMilliseconds);
+            }, configuration.watchdogMilliseconds);
         },
 
         stopWatchdog = function () {
@@ -159,18 +150,19 @@
         },
 
         stopLongPolling = function () {
-            if (abortController) {
-                try { abortController.abort(); } catch (e) { }
-            }
+            if (abortController) try { abortController.abort(); } catch (e) { }
             abortController = null;
             retryAttempt = 0;
+
+            if (retryTimeoutId) window.clearTimeout(retryTimeoutId);
+            retryTimeoutId = null;
         },
 
         startLongPollingLoop = function () {
             var execute;
 
             execute = function () {
-                if (!isCurrentTabLeader()) return;
+                if (!dataEnabled || !isCurrentTabLeader()) return;
 
                 abortController = new AbortController();
 
@@ -192,11 +184,12 @@
                         if (!isCurrentTabLeader()) return;
                         if (error && error.name === "AbortError") return;
 
-                        var base = Math.min(backoffMaximumMilliseconds, backoffBaseMilliseconds * Math.pow(2, retryAttempt++));
+                        var base = Math.min(configuration.backoffMaximumMilliseconds, configuration.backoffBaseMilliseconds * Math.pow(2, retryAttempt++));
                         var jitter = base * (0.2 + Math.random() * 0.2);
                         var wait = Math.floor(base + jitter);
 
-                        window.setTimeout(execute, wait);
+                        if (retryTimeoutId) window.clearTimeout(retryTimeoutId);
+                        retryTimeoutId = window.setTimeout(execute, wait);
                     });
             };
 
@@ -204,7 +197,7 @@
         },
 
         onStorageEvent = function (event) {
-            if (!event || event.key !== leaderStorageKey) return;
+            if (!event || event.key !== configuration.leaderStorageKey) return;
 
             var record = readLeaderRecord();
             if (!record) return;
@@ -215,6 +208,11 @@
         onBroadcastMessage = function (event) {
             var message = event && event.data;
             if (!message || !message.type) return;
+
+            if (message.type === "NotificationPollingEnabledChanged" && message.sourceTabId !== tabIdentifier) {
+                setDataEnabled(message.enabled, true);
+                return;
+            }
 
             if (message.type === "LeaderHeartbeat" || message.type === "LeaderTakenOver") {
                 adoptLeaderIfBetter(message.leaderId, message.epoch);
@@ -246,39 +244,31 @@
                 if (record.leaderId !== tabIdentifier || Number(record.epoch) !== Number(leaderEpoch)) {
                     adoptLeaderIfBetter(record.leaderId, record.epoch);
                 }
-            }, postTakeoverCheckMilliseconds);
+            }, configuration.postTakeoverCheckMilliseconds);
+        },
+
+        setDataEnabled = function (value, silent) {
+            value = !!value;
+            if (dataEnabled === value) return;
+            dataEnabled = value;
+
+            if (!dataEnabled)
+                stopLongPolling();
+            else if (isCurrentTabLeader())
+                startLongPollingLoop();
+
+            if (!silent && broadcastChannel)
+                broadcastChannel.postMessage({ type: "NotificationPollingEnabledChanged", enabled: dataEnabled, sourceTabId: tabIdentifier });
         },
 
         initialize = function () {
-            configuration = options || {};
-
-            executeLongPollingOnce = configuration.executeLongPollingOnce;
-            onMessageFromLeader = configuration.onMessageFromLeader || function () { };
-
-            if (typeof executeLongPollingOnce !== "function") throw new Error("LongPollingCoordinator richiede options.executeLongPollingOnce");
-
-            channelName = configuration.channelName || "LongPollingChannel";
-            leaderStorageKey = configuration.leaderStorageKey || "LongPolling.Leader";
-            epochStorageKey = configuration.epochStorageKey || "LongPolling.Epoch";
-
-            heartbeatMilliseconds = configuration.heartbeatMilliseconds || 1000;
-            leaderTimeToLiveMilliseconds = configuration.leaderTimeToLiveMilliseconds || 3500;
-            watchdogMilliseconds = configuration.watchdogMilliseconds || 800;
-            electionJitterMilliseconds = configuration.electionJitterMilliseconds || 250;
-
-            backoffBaseMilliseconds = configuration.backoffBaseMilliseconds || 500;
-            backoffMaximumMilliseconds = configuration.backoffMaximumMilliseconds || 30000;
-
-            postTakeoverCheckMilliseconds = configuration.postTakeoverCheckMilliseconds || 1200
-
             tabIdentifier = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()).slice(2);
             leaderIdentifier = null;
             leaderEpoch = 0;
-
             retryAttempt = 0;
 
             if (typeof BroadcastChannel !== "undefined") {
-                broadcastChannel = new BroadcastChannel(channelName);
+                broadcastChannel = new BroadcastChannel(configuration.channelName);
                 broadcastChannel.onmessage = onBroadcastMessage;
             } else {
                 broadcastChannel = null;
@@ -290,6 +280,9 @@
             startWatchdog();
             scheduleElectionAttempt(0);
         };
+
+
+    this.setDataEnabled = setDataEnabled;
 
     this.stop = function () {
         stopLongPolling();
@@ -306,6 +299,8 @@
 
         if (postTakeoverCheckTimeoutId) window.clearTimeout(postTakeoverCheckTimeoutId);
         postTakeoverCheckTimeoutId = null;
+        if (electionTimeoutId) window.clearTimeout(electionTimeoutId);
+        electionTimeoutId = null;
     };
 
     this.isLeader = function () {

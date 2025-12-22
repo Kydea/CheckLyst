@@ -29,7 +29,7 @@ namespace CheckListManager.Infrastructure.Terminal
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private IntervalSchedulerStrategy reportProcessStrategy;
+        private readonly IntervalSchedulerStrategy reportProcessStrategy;
 
         public ReportsWindowsService(TerminalConfig config) : base(config)
         {

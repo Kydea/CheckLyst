@@ -123,7 +123,7 @@ namespace CheckListManager.Reports.Data
             await SaveChangesAsync();
         }
 
-        public async Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string parameters)
+        public async Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string format, string parameters)
         {
             Entities.ReportRuns.Add(new ReportRuns
             {
@@ -131,6 +131,7 @@ namespace CheckListManager.Reports.Data
                 User = identity.Code,
                 Report = report,
                 Parameters = parameters,
+                Format = format,
                 Expiration = DateTimeOffset.UtcNow.AddDays(30),
                 CreatedOn = DateTimeOffset.UtcNow
             });
@@ -158,6 +159,7 @@ namespace CheckListManager.Reports.Data
                     ID = r.ID,
                     ReportID = r.Report,
                     ReportCode = r.Reports.Code,
+                    Format = r.Format,
                     Expiration = r.Expiration,
                     CreatedOn = r.CreatedOn,
                     CompletedOn = r.CompletedOn

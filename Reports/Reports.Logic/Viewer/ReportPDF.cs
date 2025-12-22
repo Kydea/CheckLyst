@@ -49,7 +49,7 @@ namespace CheckListManager.Reports.Logic.Viewer
         public ReportResponse Report { get; }
         public DetailResponse Details { get; }
         private MigraDoc.DocumentObjectModel.Tables.Table ReportTable;
-        private float PageWidth;
+        private double PageWidth;
 
 
         public IConfigurationService ConfigurationService { get; }
@@ -120,8 +120,8 @@ namespace CheckListManager.Reports.Logic.Viewer
             table.Rows.LeftIndent = 0;
 
             PageWidth = Orientation == Orientation.Portrait ?
-                Container.PageSetup.PageWidth - Container.PageSetup.LeftMargin - Container.PageSetup.RightMargin :
-                Container.PageSetup.PageHeight - Container.PageSetup.TopMargin - Container.PageSetup.BottomMargin;
+                Container.PageSetup.PageWidth.Point - Container.PageSetup.LeftMargin.Point - Container.PageSetup.RightMargin.Point :
+                Container.PageSetup.PageHeight.Point - Container.PageSetup.TopMargin.Point - Container.PageSetup.BottomMargin.Point;
             var column = table.AddColumn();
             column.Width = PageWidth * .3;
 

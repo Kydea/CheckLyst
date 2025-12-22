@@ -87,7 +87,8 @@
                 }).done(function (result) {
                     localStorage.companyName = companyList.next().val();
                     matematici.tokenManager.login(result);
-					matematici.clock.resume();
+                    matematici.clock.resume();
+                    matematici.notificationPollingClient.enable();
 
                     getSettings(function () {
                         var redirectUrl = localStorage.redirectUrl && localStorage.redirectUrl != "undefined" && localStorage.redirectUrl != "/undefined" && localStorage.redirectUrl.indexOf("/Security/Login") < 0 ? localStorage.redirectUrl : null;

@@ -153,6 +153,10 @@
         return localStorage.refreshToken;
     };
 
+    tokenManager.isLoggedIn = function () {
+        return localStorage.accessToken != null;
+    };
+
     tokenManager.notifyLogout = function () {
         if (localStorage.accessToken != null)
             $.ajax(matematici.urls.accessControl.logout, {

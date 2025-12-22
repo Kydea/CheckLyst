@@ -2,13 +2,13 @@
     var
         reportViewer = this,
         form = $("form", element),
-        parameters = [],
+        inputs = [],
 
         run = function () {
             var queryStrings = [];
-            for (var parameterIndex in parameters) {
+            for (var parameterIndex in inputs) {
                 var
-                    parameter = parameters[parameterIndex],
+                    parameter = inputs[parameterIndex],
                     value = parameter.getValue();
                 if (value != "" && !parameter.getOption("readOnly"))
                     queryStrings.push(encodeURIComponent(parameter.getOption("parameterName")) + "=" + encodeURIComponent(value));
@@ -16,34 +16,44 @@
             window.open(options.reportUrl + "?" + queryStrings.join("&"));
         },
 
-        enqueue = function () {
-            var data = {
-                id: options.id,
-                parameters: []
-            };
-            for (var parameterIndex in parameters) {
+        prepareParameters = function () {
+            var parameters = [];
+            for (var parameterIndex in inputs) {
                 var
-                    parameter = parameters[parameterIndex],
+                    parameter = inputs[parameterIndex],
                     readOnly = parameter.getOption("readOnly"),
                     code = parameter.getOption("parameterName"),
                     value = parameter.getValue();
                 if (value != "" && !readOnly)
-                    data.parameters.push({ code: code, value: value });
+                    parameters.push({ code: code, value: value });
             }
+            return parameters;
+        },
+
+        enqueue = function () {
+            var data = {
+                id: options.id,
+                parameters: prepareParameters()
+            };
             $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/Enqueue",
                 data: data
             }).done(function () {
                 matematici.dialog.show("report enqueued", "the report has been queued for background execution as requested, you will be notified once it is completed");
+                matematici.notificationPollingClient.enable();
             });
+        },
+
+        download = function () {
+            new reports.PDFDialog(options, null, prepareParameters()).show();
         },
 
         query = function () {
             var queryParameters = [];
-            for (var parameterIndex in parameters) {
+            for (var parameterIndex in inputs) {
                 var
-                    parameter = parameters[parameterIndex],
+                    parameter = inputs[parameterIndex],
                     value = parameter.getValue();
                 if (value != "" && !parameter.getOption("readOnly"))
                     queryParameters.push({ code: parameter.getOption("parameterName"), value: value });
@@ -112,7 +122,7 @@
                         });
 
                     input.setValue(clause.clause.value);
-                    parameters.push(input);
+                    inputs.push(input);
                 }
             else
                 label = $("<div />").addClass("NoParameter").appendTo(form).text("(this report has no parameter)");
@@ -134,6 +144,7 @@
 
     reportViewer.quit = quit;
     reportViewer.run = run;
+    reportViewer.download = download;
     reportViewer.enqueue = enqueue;
     reportViewer.query = query;
 

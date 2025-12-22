@@ -345,7 +345,8 @@ namespace CheckListManager.Infrastructure.Data
         {
             var state = new NotificationsState
             {
-                ReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && r.CompletedOn.HasValue).CountAsync()
+                CompletedReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && r.CompletedOn.HasValue).CountAsync(),
+                EnqueuedReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && !r.CompletedOn.HasValue).CountAsync()
             };
             return state;
         }

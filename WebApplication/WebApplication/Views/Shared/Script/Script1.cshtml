@@ -107,7 +107,10 @@
     matematici.menu.toggleItems();
 
     matematici.userPanel.update();
-    if (matematici.tokenManager.getAccessToken()) matematici.clock.resume();
+    if (matematici.tokenManager.isLoggedIn()) {
+        matematici.clock.resume();
+        matematici.notificationPollingClient.enable();
+    }
 
     matematici.elements.body.on("keydown", function (e) {
         var key = e.which;

@@ -28,6 +28,7 @@ create table "Reports"."ReportRuns"
 
 	"Expiration" timestamptz not null,
 	"Parameters" text,
+	"Format" varchar (50),
 	"Data" bytea,
 	"Error" text,
 

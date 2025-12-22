@@ -1,8 +1,11 @@
 ﻿using CheckListManager.Common.Core.Helpers;
+using CheckListManager.Common.Core.Network;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Logic.DataEngine;
+using CheckListManager.Common.Logic.Models;
 using CheckListManager.Reports.Data;
 using CheckListManager.Reports.Data.Models;
 using System;
@@ -16,11 +19,18 @@ namespace CheckListManager.Reports.Logic.Run
     public class RunService : IRunService
     {
         private readonly IReportsRepository _reportsRepository;
+        private readonly IServiceClient _client;
+        private readonly IRedisCache _redisCache;
 
-        public RunService(IReportsRepository reportsRepository)
+        public RunService(
+            IReportsRepository reportsRepository,
+            IServiceClient client,
+            IRedisCache redisCache
+        )
         {
             _reportsRepository = reportsRepository;
-            _reportsRepository = reportsRepository;
+            _client = client;
+            _redisCache = redisCache;
         }
 
         public async Task<ListResponse> BindAsync(DefaultIdentity identity, ListRequest request)
@@ -78,7 +88,17 @@ namespace CheckListManager.Reports.Logic.Run
             return Response;
         }
 
-        public Task DeleteAsync(DefaultIdentity identity, RunRequest request) =>
-            _reportsRepository.DeleteRunAsync(identity, request.ID);
+        public async Task DeleteAsync(DefaultIdentity identity, RunRequest request)
+        {
+            await _reportsRepository.DeleteRunAsync(identity, request.ID);
+            var token = identity.Code + ":" + Guid.NewGuid();
+            var user = new User
+            {
+                Company = identity.CompanyId,
+                Code = identity.Code
+            };
+            await _redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
+            await _client.GetAsync("Infrastructure/Notifications/Invalidate?token=" + token);
+        }
     }
 }

@@ -509,6 +509,7 @@
     <Content Include="Scripts\Reports\GroupsList.js" />
     <Content Include="Scripts\Reports\ColumnsList.js" />
     <Content Include="Scripts\Reports\ColumnEditor.js" />
+    <Content Include="Scripts\Reports\PDFDialog.js" />
     <Content Include="Scripts\Reports\Report.js" />
     <Content Include="Scripts\Reports\ReportViewer.js" />
     <Content Include="Scripts\Reports\ReportEditor.js" />

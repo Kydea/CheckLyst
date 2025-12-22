@@ -19,7 +19,7 @@ namespace CheckListManager.Reports.Data
         Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups);
         Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups);
         Task DeleteReportAsync(IDefaultIdentity identity, long id);
-        Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string parameters);
+        Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string format, string parameters);
         Task<PagingResponse<List<RunRecord>>> GetRunsAsync(long companyId, string user, long? report, DateTime? from, DateTime? to, int currentPage, int itemsPerPage);
         Task<List<ReportRuns>> GetPendingRunsAsync();
         Task<ReportRuns> GetRunAsync(long ID);

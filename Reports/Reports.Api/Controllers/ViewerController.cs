@@ -94,10 +94,7 @@ namespace CheckListManager.Reports.Api.Controllers
         public async Task<IHttpActionResult> Download(ReportRequest request)
         {
             var Token = Identity.Code + ":" + Guid.NewGuid();
-            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
             request.CompanyId = Identity.CompanyId;
-            request.CompanyName = Company.Name;
-            request.TimeZone = Company.TimeZone;
             request.UserCode = Identity.Code;
             request.UserDescription = Identity.Description;
             await _redisCache.SetAsync($"Token:{Token}", request, "Download", new TimeSpan(0, 1, 0));
@@ -121,7 +118,9 @@ namespace CheckListManager.Reports.Api.Controllers
             var report = await _reportViewerService.GetReportData(identity, data, cancellationToken);
             var details = await _reportViewerService.LoadParameters(identity, report.ID);
             var decimalSeparator = await _settingService.DecimalSeparatorAsync(data.CompanyId.Value);
-            var pdf = new ReportPDF(data.CompanyId.Value, data.CompanyName, data.TimeZone, decimalSeparator, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.Format, data.Orientation, identity.Code, data, report, details, cancellationToken);
+            var company = await _commonRepository.GetCompanyAsync(data.CompanyId.Value);
+
+            var pdf = new ReportPDF(data.CompanyId.Value, company.Name, company.TimeZone, decimalSeparator, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.PageFormat, data.Orientation, identity.Code, data, report, details, cancellationToken);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
     }

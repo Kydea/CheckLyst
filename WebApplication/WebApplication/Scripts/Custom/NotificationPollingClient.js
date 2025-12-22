@@ -1,12 +1,17 @@
-﻿matematici.NotificationPollingClient = function (options) {
+﻿matematici.NotificationPollingClient = function () {
     var
         configuration = {
-            sinceStorageKey: "NotificationPolling.Since",
             channelName: "NotificationPollingChannel",
-            leaderStorageKey: "NotificationPolling.Leader",
             epochStorageKey: "NotificationPolling.Epoch",
-            enabledStorageKey: "NotificationPolling.Enabled",
-            snapshotStorageKey: "Notifications.LastSnapshot"
+            leaderStorageKey: "NotificationPolling.Leader",
+            snapshotStorageKey: "Notifications.LastSnapshot",
+            heartbeatMilliseconds: 1000,
+            leaderTimeToLiveMilliseconds: 3500,
+            watchdogMilliseconds: 800,
+            electionJitterMilliseconds: 250,
+            backoffBaseMilliseconds: 500,
+            backoffMaximumMilliseconds: 30000,
+            postTakeoverCheckMilliseconds: 1200
         },
 
         enabled = false,
@@ -34,7 +39,7 @@
             if (!snapshot || snapshot.Overloaded || snapshot.TimedOut) return;
 
             //console.log("notification", snapshot);
-            matematici.menu.setNotificationBadge("/Reports/Runs", snapshot.reportCount);
+            matematici.menu.setNotificationBadge("/Reports/Runs", snapshot.completedReportCount);
         },
 
         onDiagnostics = function (state) {
@@ -44,29 +49,18 @@
         startCoordinator = function () {
             if (coordinator) return;
 
-            coordinator = new matematici.LongPollingCoordinator({
-                channelName: configuration.channelName,
-                leaderStorageKey: configuration.leaderStorageKey,
-                epochStorageKey: configuration.epochStorageKey,
+            coordinator = new matematici.LongPollingCoordinator(configuration,
 
-                heartbeatMilliseconds: configuration.heartbeatMilliseconds || 1000,
-                leaderTimeToLiveMilliseconds: configuration.leaderTimeToLiveMilliseconds || 3500,
-                watchdogMilliseconds: configuration.watchdogMilliseconds || 800,
-                electionJitterMilliseconds: configuration.electionJitterMilliseconds || 250,
-
-                backoffBaseMilliseconds: configuration.backoffBaseMilliseconds || 500,
-                backoffMaximumMilliseconds: configuration.backoffMaximumMilliseconds || 30000,
-
-                executeLongPollingOnce: function (signal) {
+                function (signal) {
                     return executePollingOnce(signal);
                 },
 
-                onMessageFromLeader: function (snapshot) {
+                function (snapshot) {
                     if (coordinator.isLeader()) return;
                     handleSnapshot(snapshot);
                     markSuccess(snapshot);
                 }
-            });
+            );
 
             updateDiagnostics();
         },
@@ -95,6 +89,9 @@
         },
 
         executePollingOnce = function (signal) {
+            if (!enabled) 
+                return Promise.reject(new DOMException("Aborted", "AbortError"));
+
             return new Promise(function (resolve, reject) {
                 var url = matematici.urls.api + "/Infrastructure/Notifications/Polling?since=" + sinceVersion;
 
@@ -167,6 +164,8 @@
             overloadAttempts = 0;
 
             if (snapshot && typeof snapshot.version !== "undefined") {
+                if (snapshot.idle) disable();
+
                 var incomingVersion = Number(snapshot.version);
 
                 if (isFinite(incomingVersion) && incomingVersion >= 0) {
@@ -187,6 +186,7 @@
         updateDiagnostics = function () {
             diagnostics.isLeader = coordinator && coordinator.isLeader();
             diagnostics.sinceVersion = sinceVersion;
+            diagnostics.enabled = enabled;
             onDiagnostics(diagnostics);
         },
 
@@ -209,15 +209,15 @@
         enable = function () {
             if (enabled) return;
             enabled = true;
-            localStorage.setItem(configuration.enabledStorageKey, "1");
-            startCoordinator();
+            coordinator.setDataEnabled(true);
+            updateDiagnostics();
         },
 
         disable = function () {
             if (!enabled) return;
             enabled = false;
-            localStorage.removeItem(configuration.enabledStorageKey);
-            stopCoordinator();
+            coordinator.setDataEnabled(false);
+            updateDiagnostics();
         },
 
         initialize = function () {
@@ -226,11 +226,12 @@
                 handleSnapshot(snap);
                 sinceVersion = snap.version;
             }
-            if (localStorage.getItem(configuration.enabledStorageKey) == "1") enable();
+            startCoordinator();
         },
 
         dispose = function () {
             disable();
+            stopCoordinator();
             sinceVersion = 0;
             lastDeliveredVersion = null;
             overloadAttempts = 0;
