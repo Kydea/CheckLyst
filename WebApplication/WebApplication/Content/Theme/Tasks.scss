@@ -12,6 +12,10 @@ body div.Tasks {
             padding: 10px;
             color: white;
             margin-bottom: 0 !important;
+
+            &:first-child {
+                margin-top: 0 !important;
+            }
         }
 
         div.Item {
@@ -54,6 +58,14 @@ body div.Tasks {
                 display: block;
                 float: right;
                 clear: both;
+            }
+
+            &.NoRecord {
+                text-align: center;
+                font-style: italic;
+                color: $Color-Grey-Regular;
+                border:none;
+                padding: 0;
             }
         }
     }

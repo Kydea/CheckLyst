@@ -69,7 +69,7 @@
 
 			menu.on("pointerup", "a.LightNotification", function () {
 				if ($(this).parent().attr("data-badge") > 0)
-					matematici.clock.updateNotifications();
+					matematici.clock.updateLightNotifications();
 			})
 
 			menuButton.on("click", function (e) {

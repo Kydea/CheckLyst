@@ -8,97 +8,105 @@
             resultContainer.classList.remove("Hidden");
             var div, span, h2, i;
 
-            for (var index in result.records) {
-                var record = result.records[index];
-
-                h2 = document.createElement("h2");
-                resultContainer.appendChild(h2);
-                h2.innerText = record.taskCode;
-
+            if (result.records == null || result.records.length == 0) {
                 div = document.createElement("div");
                 resultContainer.appendChild(div);
-                div.classList.add("Item", "Container");
+                div.classList.add("Item", "Container", "NoRecord");
+                div.innerText = "(no task found)";
+            } else
+                for (var index in result.records) {
+                    var record = result.records[index];
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value", "Date");
-                span.innerText = record.taskValue == "True" ? "(no date)" : record.taskValue;
+                    h2 = document.createElement("h2");
+                    resultContainer.appendChild(h2);
+                    h2.innerText = record.taskCode;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Instance:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.instanceCode;
+                    div = document.createElement("div");
+                    resultContainer.appendChild(div);
+                    div.classList.add("Item", "Container");
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Department:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.departmentName;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value", "Date");
+                    span.innerText = record.taskValue == "True" ? "(no date)" : record.taskValue;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Prototype type:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.prototypeTypeName;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Instance:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.instanceCode;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Prototype:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.prototypeName + "." + record.version;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Department:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.departmentName;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Prototype:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.prototypeName + "." + record.version;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Prototype type:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.prototypeTypeName;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Instance description:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.description;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Prototype:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.prototypeName + "." + record.version;
 
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Label");
-                span.innerText = "Task description:";
-                span = document.createElement("span");
-                div.appendChild(span);
-                span.classList.add("Value");
-                span.innerText = record.taskDescription;
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Prototype:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.prototypeName + "." + record.version;
 
-                var anchor = document.createElement("a");
-                div.appendChild(anchor);
-                anchor.classList.add("Button", "GreyYellowButton");
-                anchor.setAttribute("href", matematici.urls.instances.detail + "/" + record.code);
-                anchor.innerText = "open the instance";
-                anchor.setAttribute("target", "_blank");
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Instance description:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.description;
 
-                i = document.createElement("i");
-                anchor.appendChild(i);
-                i.classList.add("Icon", "fa", "fa-link");
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Task description:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.taskDescription;
 
-            }
+                    var anchor = document.createElement("a");
+                    div.appendChild(anchor);
+                    anchor.classList.add("Button", "GreyYellowButton");
+                    anchor.setAttribute("href", matematici.urls.instances.detail + "/" + record.code);
+                    anchor.innerText = "open the instance";
+                    anchor.setAttribute("target", "_blank");
+
+                    i = document.createElement("i");
+                    anchor.appendChild(i);
+                    i.classList.add("Icon", "fa", "fa-link");
+
+                }
+
+            matematici.clock.updateLightNotifications();
         },
 
         initialize = function () {

@@ -9,6 +9,9 @@ body div.Tasks #Result h2 {
   color: white;
   margin-bottom: 0 !important;
 }
+body div.Tasks #Result h2:first-child {
+  margin-top: 0 !important;
+}
 body div.Tasks #Result div.Item {
   border: solid 1px #ccc;
   padding: 10px;
@@ -42,4 +45,11 @@ body div.Tasks #Result div.Item a.Button {
   display: block;
   float: right;
   clear: both;
+}
+body div.Tasks #Result div.Item.NoRecord {
+  text-align: center;
+  font-style: italic;
+  color: #999;
+  border: none;
+  padding: 0;
 }
