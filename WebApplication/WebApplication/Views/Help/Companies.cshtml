@@ -17,13 +17,13 @@
         new Field("Company ID", Field.ID),
         new Field("Company name", "The name of the company"),
         new Field("Time Zone", "The time zone of the company.")
-    },    
+    },
 
     DetailTabs = new Tab[]
     {
-        new Tab("Details") 
+        new Tab("Details")
         {
-            Fields = new Field[] 
+            Fields = new Field[]
             {
                 new Field("ID", Field.ID, Field.READ_ONLY),
                 new Field("Name", "The name of the company.", Field.MANDATORY),
@@ -33,11 +33,11 @@
                 new Field("Administrator password","This is the administrator password.","Available only during the creation the company."  ),
                 new Field("Password confirm","This is the confirm the password of administrator."),
             },
-           
+
             IncludeLogFields = true
         },
         new Tab("Enviroment Settings")
-        { 
+        {
             Description = @"A list of <strong>settings</strong> of the company.<br />." ,
 
             Fields = new Field[] {
@@ -51,42 +51,55 @@
         {
             Description = @"A list of <strong>settings</strong> of the company.<br />." ,
 
-            Fields = new Field[] 
+            Fields = new Field[]
             {
                 new Field("Inactivity timeout","Defines the number of seconds of inactivity after which the user is logged out."),
-                new Field("LDAP host","The host of the LDAP server."),       
+                new Field("LDAP host","The host of the LDAP server."),
                 new Field("Maximum password failures","The number of password failures after which a user is blocked (works only for users that are not authenticated with a LDAP server). The value 0 disable the feature."),
                 new Field("Maximum PIN failures","The number of PIN failures after which the PIN is canceled and need to be set again. The value 0 disable the feature."),
                 new Field("Maximum user inactivity","The number of days without a login after which a user is automatically blocked. The value 0 disable the feature."),
-                new Field("PIN life","The number of days after which a PIN must be set again. The value 0 disable the feature."), 
-                new Field("Warning user inactivity","The number of days without a login after which a user receives a warning message that alerts him of the possible block. The value 0 disable the feature."),  
-            },  
+                new Field("PIN life","The number of days after which a PIN must be set again. The value 0 disable the feature."),
+                new Field("Warning user inactivity","The number of days without a login after which a user receives a warning message that alerts him of the possible block. The value 0 disable the feature."),
+            },
         },
          new Tab("Email Configuration")
         {
             Description = @" A list of <strong>settings</strong> of the company.<br />." ,
-            
-            Fields = new Field[] 
+
+            Fields = new Field[]
             {
                 new Field("Email sender","The email address the system uses as sender of the emails."),
-                new Field("SMTP host","The host of the SMTP server."),       
+                new Field("SMTP host","The host of the SMTP server."),
                 new Field("SMTP password","The password the system will use to authenticate to the SMTP server."),
                 new Field("SMTP port","The port of the SMTP server."),
-                new Field("SMTP username","The username the system will use to authenticate to the SMTP server."),  
+                new Field("SMTP username","The username the system will use to authenticate to the SMTP server."),
             },
         },
         new Tab("Messages")
         {
             Description = @"A list of <strong>settings</strong> of the company.<br />." ,
 
-            Fields = new Field[] 
+            Fields = new Field[]
             {
-                new Field("Instance signature message","This message is sent when a signature marked to send emails is issued in an instances."), 
-                new Field("Instance notification message","This message is sent when a notification expression becomes true or reaches the schedule date and time."),  
+                new Field("Instance signature message","This message is sent when a signature marked to send emails is issued in an instances."),
+                new Field("Instance notification message","This message is sent when a notification expression becomes true or reaches the schedule date and time."),
                 new Field("Workflow signature message","This message is sent when a user must sign a workflow."),
                 new Field("User block message","This message is sent when a user is blocked by the system for inactivity."),
                 new Field("User warning message","This message is sent when a user is warned about a possible block by the system for inactivity."),
-            },  
+            },
         },
+        new Tab("License")
+        {
+            Description = @"The parameters of the software license.<br />." ,
+
+            Fields = new Field[]
+            {
+                new Field("Expiration","The expiration of the license."),
+                new Field("Prototypes count","The maximum number of prototypes (empty if not unlimited)."),
+                new Field("Prototype types count","The maximum number of prototype types (empty if not unlimited)."),
+                new Field("Signature","The signature of the license."),
+                new Field("Users count","The maximum number of users (empty if not unlimited)."),
+            },
+        }
     },
 })

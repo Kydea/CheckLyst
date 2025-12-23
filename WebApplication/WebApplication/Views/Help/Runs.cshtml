@@ -1,0 +1,25 @@
+@Html.Partial("SearchPage", new HelpPage {
+    Title = "Report runs",
+    RecordsName = "Report runs",
+    ReadOnly = true,
+    IncludeLogColumns = true,
+
+    Buttons = new Field[]
+    {
+    },
+    Filters = new Field[]
+    {
+        new Field("Report", "The report processed"),
+        new Field("Date range", "The interval of the processes listes.")
+    },
+    Columns = new Field[]
+    {
+        new Field("ID", Field.ID),
+        new Field("Report ID", "The ID of the report."),
+        new Field("Report code", "The Code of the report."),
+        new Field("Completed", "Indicates if the process is completed."),
+        new Field("Expiration", "When a runs expires it is automatically deleted."),
+        new Field("Created on", "Date/time of the request creation."),
+        new Field("Created on", "Date/time of the process completion.")
+    },
+})
