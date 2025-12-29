@@ -9,5 +9,6 @@ namespace CheckListManager.WebApplication.Models
     {
         public long? ID { get; set; }
         public long? Run { get; set; }
+        public bool NewVersion { get; set; }
     }
 }

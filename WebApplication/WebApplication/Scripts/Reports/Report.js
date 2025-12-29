@@ -306,3 +306,10 @@
 
     setup();
 };
+
+reports.Report.states = {
+    draft: "Draft",
+    completed: "Completed",
+    confirmed: "Confirmed",
+    obsolete: "Obsolete"
+}

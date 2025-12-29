@@ -389,6 +389,10 @@
     this.getElement = function () {
         return element;
     };
+
+    this.isReadOnly = function () {
+        return options.readOnly;
+    };
 };
 
 /*

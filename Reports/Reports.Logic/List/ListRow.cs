@@ -9,6 +9,7 @@ namespace CheckListManager.Reports.Logic.List
         public string Description { get; set; }
         public string ReportSource { get; set; }
         public string ReportState { get; set; }
+        public string ProposedState { get; set; }
         public bool Restricted { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }

@@ -13,73 +13,93 @@
         <form id="Detail" action="@BaseUrl/Reports/List">
             <input type="hidden" name="reason" />
             <input type="hidden" name="id" />
-            <label>
-                <span>Code</span>
-                <i class="Icon fal fa-key"></i>
-                <input type="text" name="code" autocomplete="off" maxlength="50" />
-            </label>
+            <div class="TabContainer">
+                <div class="TabLabels">
+                    <a href="#">Details</a>
+                    <a href="#">Note</a>
+                </div>
+                <div class="Tab">
+                    <label>
+                        <span>Code</span>
+                        <i class="Icon fal fa-key"></i>
+                        <input type="text" name="code" autocomplete="off" maxlength="50" />
+                    </label>
 
-            <label>
-                <span>Source</span>
-                <i class="Icon fal fa-chart-network"></i>
-                <select name="reportSource" data-nullable="(custom)"></select>
-            </label>
+                    <label>
+                        <span>Source</span>
+                        <i class="Icon fal fa-chart-network"></i>
+                        <select name="reportSource" data-nullable="(custom)"></select>
+                    </label>
 
-            <label>
-                <span>State</span>
-                <input type="text" name="reportState" />
-            </label>
+                    <label>
+                        <span>State</span>
+                        <input type="text" name="reportState" />
+                    </label>
 
-            <label class="Clearing FullWidth">
-                <span>Description</span>
-                <i class="Icon fal fa-align-left"></i>
-                <input type="text" name="description" autocomplete="off" maxlength="100" />
-            </label>
+                    <label>
+                        <span>Workflow</span>
+                        <select name="workFlow"></select>
+                    </label>
 
-            @*
-                <label class="Clearing">
-                    <span>Instances range restricted</span>
-                    <input type="checkbox" name="instancesRangeRestricted" />
-                </label>
+                    <label class="Clearing FullWidth">
+                        <span>Description</span>
+                        <i class="Icon fal fa-align-left"></i>
+                        <input type="text" name="description" autocomplete="off" maxlength="100" />
+                    </label>
 
-                <label>
-                    <span>Instances ID alias</span>
-                    <i class="Icon fal fa-layer-group"></i>
-                    <input type="text" name="instancesIDAlias" />
-                </label>
+                    @*
+                        <label class="Clearing">
+                            <span>Instances range restricted</span>
+                            <input type="checkbox" name="instancesRangeRestricted" />
+                        </label>
 
-                <label class="Clearing">
-                    <span>Prototypes range restricted</span>
-                    <input type="checkbox" name="prototypesRangeRestricted" />
-                </label>
+                        <label>
+                            <span>Instances ID alias</span>
+                            <i class="Icon fal fa-layer-group"></i>
+                            <input type="text" name="instancesIDAlias" />
+                        </label>
 
-                <label>
-                    <span>Prototypes ID alias</span>
-                    <i class="Icon fal fa-file-invoice"></i>
-                    <input type="text" name="prototypesIDAlias" />
-                </label>
-            *@
+                        <label class="Clearing">
+                            <span>Prototypes range restricted</span>
+                            <input type="checkbox" name="prototypesRangeRestricted" />
+                        </label>
 
-            <label class="FullWidth">
-                <span>Query</span>
-                <pre id="AceEditor" style="height: 350px"></pre>
-            </label>
+                        <label>
+                            <span>Prototypes ID alias</span>
+                            <i class="Icon fal fa-file-invoice"></i>
+                            <input type="text" name="prototypesIDAlias" />
+                        </label>
+                    *@
 
-            <label class="Clearing Controls2">
-                <span>Creation</span>
-                <i class="Icon fal fa-user"></i>
-                <input type="text" name="createdBy" readonly="readonly" />
-                <i class="Icon fal fa-calendar-alt"></i>
-                <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+                    <label class="FullWidth">
+                        <span>Query</span>
+                        <pre id="AceEditor" style="height: 350px"></pre>
+                    </label>
 
-            <label class="Controls2">
-                <span>Last edit</span>
-                <i class="Icon fal fa-user"></i>
-                <input type="text" name="modifiedBy" readonly="readonly" />
-                <i class="Icon fal fa-calendar-alt"></i>
-                <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
-            </label>
+                    <label class="Clearing Controls2">
+                        <span>Creation</span>
+                        <i class="Icon fal fa-user"></i>
+                        <input type="text" name="createdBy" readonly="readonly" />
+                        <i class="Icon fal fa-calendar-alt"></i>
+                        <input type="text" name="createdOn" readonly="readonly" data-type="DateTimeOffset" />
+                    </label>
+
+                    <label class="Controls2">
+                        <span>Last edit</span>
+                        <i class="Icon fal fa-user"></i>
+                        <input type="text" name="modifiedBy" readonly="readonly" />
+                        <i class="Icon fal fa-calendar-alt"></i>
+                        <input type="text" name="modifiedOn" readonly="readonly" data-type="DateTimeOffset" />
+                    </label>
+                </div>
+                <div class="Tab Note">
+                    <div class="Clearing"></div>
+
+                    <label class="FullWidth">
+                        <textarea name="note"></textarea>
+                    </label>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -87,12 +107,17 @@
 <script type="text/javascript">
     matematici.events.onPageLoad = function (callback) {
         var
-            element = $("#ReportsDetailPage"),
+            selector = "#ReportsDetailPage",
+            element = $(selector),
+
+            actionButtonsGroup = new matematici.ButtonGroup("span.ButtonGroup"),
+
             reportEditor = new reports.ReportEditor(element, {
                 id: @(Model.ID ?? -1),
                 listUrl: "@Url.Action("List")",
                 detailUrl: "@Url.Action("Editor")",
-                viewerUrl: "@Url.Action("Viewer")"
+                viewerUrl: "@Url.Action("Viewer")",
+                actionButtonsGroup: actionButtonsGroup
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")
@@ -104,29 +129,32 @@
                 }, "Icon ClausesButton")
                 .add("<i class='Icon fa fa-line-columns'></i>", function () {
                     reportEditor.showColumns();
-                }, "Icon ColumnsButton"),
+                }, "Icon ColumnsButton");
 
-            buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
-                .add("Quit", function () {
-                    reportEditor.quit();
-                }, "Quit")
-                .add("Delete", function () {
-                    reportEditor.deleteRecord();
-                }, "Delete")
-                .add("Save", function () {
-                    reportEditor.save();
-                }, "Save")
-                @if (Model.ID.HasValue)
-                {
-                    <text>
-                        .add("View", function () {
-                            reportEditor.view();
-                        }, "View")
-                    </text>
-                }
-                .add("Verify", function () {
-                    reportEditor.verify(false);
-                }, "Verify");
+        actionButtonsGroup
+            .add("Quit", function () {
+                reportEditor.quit();
+            }, "Quit")
+            .add("Delete", function () {
+                reportEditor.deleteRecord();
+            }, "Delete")
+            .add("Save", function () {
+                reportEditor.save();
+            }, "Save")
+            .add("View", function () {
+                reportEditor.view();
+            }, "View")
+            .add("Submit for obsol.", function () {
+            }, "SubmitForObsolescence")
+            .add("Obsolete", function () {
+            }, "Obsolete")
+            .add("Submit for confirm.", function () {
+            }, "SubmitForConfirmation")
+            .add("Confirm", function () {
+            }, "Confirm")
+            .add("Verify", function () {
+                reportEditor.verify(false);
+            }, "Verify");
 
         new matematici.Page({
             name: "ReportEditor",
@@ -136,15 +164,19 @@
             ]
         });
 
+        new matematici.Tab(selector + " div.TabContainer", {
+            fixedHeight: true
+        });
+
         matematici.save = reportEditor.save;
 
         matematici.events.onPageUnload = function (callback) {
-                        reports.reportEditor = null;
-                        matematici.canClose = true;
-                        matematici.save = undefined;
-                        callback();
-                    };
+            reports.reportEditor = null;
+            matematici.canClose = true;
+            matematici.save = undefined;
+            callback();
+        };
 
-                    callback.call();
+        callback.call();
     }
 </script>

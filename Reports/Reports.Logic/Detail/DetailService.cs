@@ -11,6 +11,8 @@ using CheckListManager.Common.Logic.Trail;
 using Newtonsoft.Json;
 using System.Data;
 using CheckListManager.Common.Data;
+using System.Security.Principal;
+using CheckListManager.Common.Data.ListItems;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -173,13 +175,20 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
+                var WorkFlows = (await _reportsRepository.GetWorkFlows(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
+
+                response.State = report.ReportState;
+                response.ProposedState = report.ProposedState;
+                response.Editable = report.ReportState == "Draft";
                 response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
                 response.Fields["code"] = new Field { Value = report.Code, Editable = false };
-                response.Fields["description"] = new Field { Value = report.Description };
-                response.Fields["reportSource"] = new Field { Value = report.ReportSource };
-                response.Fields["query"] = new Field { Value = report.Query };
+                response.Fields["description"] = new Field { Value = report.Description, Editable = response.Editable };
+                response.Fields["note"] = new Field { Value = report.Note, Editable = response.Editable };
+                response.Fields["reportSource"] = new Field { Value = report.ReportSource, Editable = response.Editable };
+                response.Fields["workFlow"] = new Field { Value = report.WorkFlow?.ToString(), Options = WorkFlows, Editable = response.Editable };
+                response.Fields["query"] = new Field { Value = report.Query, Editable = response.Editable };
                 response.Fields["reportState"] = new Field { Value = report.ReportState, Editable = false };
-                response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false" };
+                response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false", Editable = response.Editable };
                 response.CreatedBy = report.CreatedBy;
                 response.CreatedOn = report.CreatedOn;
                 response.ModifiedBy = report.ModifiedBy;
@@ -275,6 +284,8 @@ namespace CheckListManager.Reports.Logic.Detail
                     {
                         report.ID = request.ID.Value;
                         report = await _reportsRepository.EditReportAsync(identity, report, request.Groups);
+                        if (report.ReportState != ReportState.Draft)
+                            throw new Exception("The report is not in state draft");
                         response.ModifiedOn = report.ModifiedOn;
                         response.ModifiedBy = report.ModifiedBy;
                         await AuditAsync(identity, TrailAction.ReportUpdated, request);

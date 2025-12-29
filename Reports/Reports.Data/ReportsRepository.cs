@@ -121,7 +121,10 @@ namespace CheckListManager.Reports.Data
 
         public async Task DeleteReportAsync(IDefaultIdentity identity, long id)
         {
-            Entities.Reports.Remove(await GetReportAsync(identity.CompanyId, id, null));
+            var report = await GetReportAsync(identity.CompanyId, id, null);
+            if (report.ReportState != ReportState.Draft)
+                throw new DatabaseException($"Only reports in draft state can be deleted");
+            Entities.Reports.Remove(report);
             await SaveChangesAsync();
         }
 
@@ -216,5 +219,11 @@ namespace CheckListManager.Reports.Data
             Entities.ReportRuns.RemoveRange(expiredRuns);
             await SaveChangesAsync();
         }
+
+        public async Task<List<WorkFlows>> GetWorkFlows(long company) =>
+            await Entities.WorkFlows
+                .Where(wf => wf.Company == company)
+                .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
+                .ToListAsync();
     }
 }

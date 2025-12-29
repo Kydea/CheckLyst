@@ -117,7 +117,7 @@
             var
                 reportSourceCode = reportSourceSelect.val(),
                 reportSource = reportSourceCode && reportSources[reportSourceCode];
-            editor.setReadOnly(reportSource != null);
+            editor.setReadOnly(reportSource != null && !model.readOnly);
             editor.setValue(reportSource && reportSource.query || "", -1);
         },
 
@@ -181,7 +181,7 @@
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
 
                 detailPage = new matematici.DetailPage({
-                    readOnly: false,
+                    readOnly: !model.editable,
                     wholePage: true,
                     takeOpenOnSave: true,
                     formSelector: "form#Detail",
@@ -212,6 +212,16 @@
                 editor.setChangeHandler(function () {
                     matematici.canClose = false;
                 });
+                editor.setReadOnly(!model.readOnly);
+
+                options.actionButtonsGroup.toggleByClass("View", model.id != null);
+                options.actionButtonsGroup.toggleByClass("Save", model.editable);
+                options.actionButtonsGroup.toggleByClass("Delete", model.editable);
+                options.actionButtonsGroup.toggleByClass("Verify", model.editable);
+                options.actionButtonsGroup.toggleByClass("SubmitForObsolescence", model.state == reports.Report.states.confirmed && model.proposedState == reports.Report.states.obsolete);
+                options.actionButtonsGroup.toggleByClass("Obsolete", model.state == reports.Report.states.confirmed);
+                options.actionButtonsGroup.toggleByClass("SubmitForConfirmation", model.state == reports.Report.states.completed && model.proposedState == reports.Report.states.confirmed);
+                options.actionButtonsGroup.toggleByClass("Confirm", model.state == reports.Report.states.completed);
             }
         },
 
@@ -246,6 +256,8 @@
                 });
             else
                 model = {
+                    state: "Draft",
+                    editable: true,
                     fields: {
                         query: { value: null },
                         reportSource: { value: null },
@@ -258,6 +270,10 @@
     reportEditor.getModel = function () {
         return model;
     };
+
+    reportEditor.getDetailPage = function () {
+        return detailPage;
+    }
 
     reportEditor.showColumns = showColumns;
     reportEditor.showClauses = showClauses;

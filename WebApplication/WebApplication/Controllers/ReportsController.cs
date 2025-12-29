@@ -16,10 +16,17 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Authorize(Roles = "Reports#Edit")]
-        [Route("Editor/{ID?}/{Code?}")]
+        [Route("Editor/{ID?}")]
         public ActionResult Editor(long? ID)
         {
             return PartialView(new Report { ID = ID });
+        }
+
+        [Authorize(Roles = "Reports#Edit")]
+        [Route("Editor/{ID?}")]
+        public ActionResult NewVersion(long? ID)
+        {
+            return PartialView("Editor", new Report { ID = ID, NewVersion = true });
         }
 
         [Route("Viewer/{ID?}")]

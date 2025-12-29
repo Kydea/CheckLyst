@@ -32,9 +32,11 @@
                 <tr>
                     <th>ID</th>
                     <th>Code</th>
+                    <th>Version</th>
                     <th>Description</th>
                     <th>Report source</th>
                     <th>State</th>
+                    <th>Proposed state</th>
                     <th>Restricted</th>
                     <th>Created by</th>
                     <th>Created on</th>
@@ -46,9 +48,11 @@
                 <tr class="Handler">
                     <td data-column="id"></td>
                     <td data-column="code"></td>
+                    <td data-column="version"></td>
                     <td data-column="description"></td>
                     <td data-column="reportSource"></td>
                     <td data-column="reportState"></td>
+                    <td data-column="proposedState"></td>
                     <td data-column="restricted" data-type="Boolean"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
@@ -78,16 +82,21 @@
             rowClickHandler: function (row) {
                 var
                     openEditor = function () {
-                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id) + "/" + encodeURIComponent(row.data("values").code));
+                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id));
+                    },
+                    newVersion = function () {
+                        matematici.navigator.open("@Url.Action("NewVersion")/" + encodeURIComponent(row.data("values").id));
                     },
                     openViewer = function () {
                         matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").id));
                     };
 
                 if (editor) {
+                    var state = row.data("values").reportState;
                     var buttons = [
                         { text: "cancel", icon: "times", cancelButton: true },
-                        { text: "report editor", icon: "pencil", handler: openEditor},
+                        { text: "report editor", icon: "pencil", handler: openEditor },
+                        { text: "new version", icon: "pencil", handler: newVersion, hidden: state != reports.Report.states.confirmed && state != reports.Report.states.obsolete },
                         { text: "report viewer", icon: "file-chart-line", handler: openViewer }
                     ];
                     matematici.dialog.popupMenu(buttons);

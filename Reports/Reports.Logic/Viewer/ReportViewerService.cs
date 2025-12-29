@@ -176,7 +176,7 @@ namespace CheckListManager.Reports.Logic.Viewer
 
         public async Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)
         {
-            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.Run.Value, null);
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
             var parameters = new List<Parameter>(report.ReportClauses.Count);
             var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
             return query;

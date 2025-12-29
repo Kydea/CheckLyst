@@ -3,6 +3,29 @@
 body.ReportEditor {
     div.Report {
         form#Detail {
+            border: none !important;
+            padding-bottom: 0 !important;
+            margin: -20px !important;
+            background: none;
+
+            div.TabContainer {
+                margin-left: 0 !important;
+            }
+
+            div.Note {
+                height: 590px;
+
+                label {
+                    padding-top: 0;
+                    height: 100%;
+
+                    textarea {
+                        margin-top: 0 !important;
+                        height: 100%;
+                    }
+                }
+            }
+
             > div.Errors {
                 display: none !important;
             }

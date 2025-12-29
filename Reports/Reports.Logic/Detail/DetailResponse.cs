@@ -15,6 +15,9 @@ namespace CheckListManager.Reports.Logic.Detail
         public long ID { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
+        public bool Editable { get; set; }
+        public string State { get; set; }
+        public string ProposedState { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset? CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
