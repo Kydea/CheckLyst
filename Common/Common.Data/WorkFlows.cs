@@ -22,6 +22,7 @@ namespace CheckListManager.Common.Data
             this.PrototypeTypes1 = new HashSet<PrototypeTypes>();
             this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
             this.WorkFlowSteps = new HashSet<WorkFlowSteps>();
+            this.Reports = new HashSet<Reports>();
         }
     
         public long ID { get; set; }
@@ -43,5 +44,7 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkFlowSteps> WorkFlowSteps { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reports> Reports { get; set; }
     }
 }

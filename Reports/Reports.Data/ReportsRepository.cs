@@ -44,7 +44,7 @@ namespace CheckListManager.Reports.Data
             if (!string.IsNullOrEmpty(user))
             {
                 var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
-                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.Online);
+                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.ReportState == ReportState.Confirmed);
             }
 
             int Count = await Query.CountAsync();
@@ -72,7 +72,7 @@ namespace CheckListManager.Reports.Data
             if (!string.IsNullOrEmpty(user))
             {
                 var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
-                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.Online);
+                Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.ReportState == ReportState.Confirmed);
             }
 
             var Report = await Query.SingleOrDefaultAsync(d => d.Company == company && d.ID == id) ?? throw new DatabaseException($"Report {id} not found");
@@ -82,6 +82,7 @@ namespace CheckListManager.Reports.Data
         public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
         {
             report.Company = identity.CompanyId;
+            report.ReportState = ReportState.Draft;
             if (groups != null && groups.Any())
                 report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
             report.CreatedOn = DateTimeOffset.UtcNow;
@@ -101,7 +102,8 @@ namespace CheckListManager.Reports.Data
             existingReport.InstancesIDAlias = report.InstancesIDAlias;
             existingReport.PrototypesRangeRestricted = report.PrototypesRangeRestricted;
             existingReport.PrototypesIDAlias = report.PrototypesIDAlias;
-            existingReport.Online = report.Online;
+            existingReport.Note = report.Note;
+            existingReport.WorkFlow = report.WorkFlow;
             existingReport.Restricted = report.Restricted;
             existingReport.ModifiedOn = DateTimeOffset.UtcNow;
             existingReport.ModifiedBy = identity.Code;

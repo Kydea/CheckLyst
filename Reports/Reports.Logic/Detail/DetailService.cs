@@ -178,7 +178,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["description"] = new Field { Value = report.Description };
                 response.Fields["reportSource"] = new Field { Value = report.ReportSource };
                 response.Fields["query"] = new Field { Value = report.Query };
-                response.Fields["online"] = new Field { Value = report.Online ? "true" : "false" };
+                response.Fields["reportState"] = new Field { Value = report.ReportState, Editable = false };
                 response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false" };
                 response.CreatedBy = report.CreatedBy;
                 response.CreatedOn = report.CreatedOn;
@@ -246,7 +246,8 @@ namespace CheckListManager.Reports.Logic.Detail
                         InstancesIDAlias = request.InstancesIDAlias,
                         PrototypesRangeRestricted = request.PrototypesRangeRestricted,
                         PrototypesIDAlias = request.PrototypesIDAlias,
-                        Online = request.Online,
+                        Note = request.Note,
+                        WorkFlow = request.WorkFlow,
                         Restricted = request.Restricted,
                         ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
                         {
@@ -348,7 +349,8 @@ namespace CheckListManager.Reports.Logic.Detail
                 //record.InstancesIDAlias,
                 //record.PrototypesRangeRestricted,
                 //record.PrototypesIDAlias,
-                record.Online,
+                record.Note,
+                record.WorkFlow,
                 record.Restricted,
                 ReportGroups = record.Groups,
                 ReportColumns = record.Columns,

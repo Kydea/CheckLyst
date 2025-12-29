@@ -38,3 +38,43 @@ create table "Reports"."ReportRuns"
 );
 
 create index "ReportRuns_User" on "Reports"."ReportRuns" ("Company", "User");
+
+create table "Reports"."ReportStates"
+(
+	"Code" varchar (20) primary key
+);
+
+insert into "Reports"."ReportStates" 
+values 
+	('Draft'),
+	('Completed'),
+	('Confirmed'),
+	('Obsolete');
+
+alter table "Reports"."Reports" add "Version" int not null default 1;
+alter table "Reports"."Reports" add "ReportState" varchar (20) not null references "Reports"."ReportStates" default 'Draft';
+alter table "Reports"."Reports" add "ValidFrom" timestamptz;
+alter table "Reports"."Reports" add "ValidUntil" timestamptz;
+alter table "Reports"."Reports" add "ProposedState" varchar (20) references "Reports"."ReportStates";
+alter table "Reports"."Reports" add "ProposedDate" timestamptz;
+alter table "Reports"."Reports" add "WorkFlow" bigint references "WorkFlows"."WorkFlows";
+alter table "Reports"."Reports" add "Note" text;
+
+update "Reports"."Reports" set "ReportState" = 'Confirmed' where "Online";
+alter table "Reports"."Reports" drop column "Online";
+
+drop index "Reports"."Reports_Code";
+create unique index "Reports_Code_Version" on "Reports"."Reports" ("Company", upper("Code"), "Version");
+create index "Reports_Code_Version_2" on "Reports"."Reports" ("Company", "Code", "Version");
+
+alter table "WorkFlows"."WorkFlowApplications" add "Report" bigint;
+alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Reports" foreign key ("Report") references "Reports"."Reports" on delete cascade;
+alter table "WorkFlows"."WorkFlowApplications" drop constraint "WorkFlowApplications_check";
+alter table "WorkFlows"."WorkFlowApplications" add constraint "Check_WorkFlowApplications_Target" check
+(
+	not "Prototype" is null and "Instance" is null and "Report" is null
+	or "Prototype" is null and not "Instance" is null and "Report" is null
+	or "Prototype" is null and "Instance" is null and not "Report" is null
+);
+insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Confirmed');
+insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Obsolete');

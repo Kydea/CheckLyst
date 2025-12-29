@@ -585,7 +585,7 @@
     <Content Include="Views\Reports\GroupsList.cshtml" />
     <Content Include="Views\Reports\Viewer.cshtml" />
     <Content Include="Views\Reports\Report.cshtml" />
-    <Content Include="Views\Help\Reports.cshtml" />
+    <Content Include="Views\Help\Runs.cshtml" />
     <Content Include="Views\Help\ReportEditor.cshtml" />
     <Content Include="Views\Help\ReportViewer.cshtml" />
     <Content Include="Views\Help\StandardFormats.cshtml" />
@@ -648,6 +648,7 @@
     <Content Include="Views\Help\Tasks.cshtml" />
     <Content Include="Content\Theme\Tasks.scss" />
     <Content Include="Views\Reports\Runs.cshtml" />
+    <Content Include="Views\Help\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

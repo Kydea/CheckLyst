@@ -133,7 +133,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 new Tuple<string, string> ("Report ID", Report.ID.ToString()),
                 new Tuple<string, string> ("Report code", Report.Code),
                 new Tuple<string, string> ("Report description", Report.Description),
-                new Tuple<string, string> ("Report state", Report.Online ? "online" : "offline"),
+                new Tuple<string, string> ("Report state", Report.ReportState),
                 new Tuple<string, string> ("Report extracted by", User),
             };
 

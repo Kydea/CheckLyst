@@ -21,6 +21,7 @@ namespace CheckListManager.Common.Data
             this.ReportClauses = new HashSet<ReportClauses>();
             this.Groups = new HashSet<Groups>();
             this.ReportRuns = new HashSet<ReportRuns>();
+            this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
         }
     
         public long ID { get; set; }
@@ -37,8 +38,15 @@ namespace CheckListManager.Common.Data
         public System.DateTimeOffset CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
-        public bool Online { get; set; }
         public bool Restricted { get; set; }
+        public int Version { get; set; }
+        public string ReportState { get; set; }
+        public Nullable<System.DateTimeOffset> ValidFrom { get; set; }
+        public Nullable<System.DateTimeOffset> ValidUntil { get; set; }
+        public string ProposedState { get; set; }
+        public Nullable<System.DateTimeOffset> ProposedDate { get; set; }
+        public Nullable<long> WorkFlow { get; set; }
+        public string Note { get; set; }
     
         public virtual ReportSources ReportSources { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -49,5 +57,10 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<Groups> Groups { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ReportRuns> ReportRuns { get; set; }
+        public virtual ReportStates ReportStates { get; set; }
+        public virtual ReportStates ReportStates1 { get; set; }
+        public virtual WorkFlows WorkFlows { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
     }
 }

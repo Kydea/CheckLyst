@@ -47,6 +47,8 @@ create table "WorkFlows"."WorkFlowActions"
 insert into "WorkFlows"."WorkFlowActions" values ('Prototype – state to Approved/Active');
 insert into "WorkFlows"."WorkFlowActions" values ('Prototype – state to Obsolete');
 insert into "WorkFlows"."WorkFlowActions" values ('Instance – state to Confirmed');
+insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Confirmed');
+insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Obsolete');
 
 create table "WorkFlows"."WorkFlowApplications"
 (
@@ -62,10 +64,15 @@ create table "WorkFlows"."WorkFlowApplications"
 	--the followin constraint is added in the script Script3.CheckLists.sql
 	--constraint "WorkFlowApplications_Instance" foreign key ("Instance") references "CheckLists"."Instances" on delete cascade,
 
-	constraint Check_WorkFlowApplications_Target check
+	"Report" bigint, 
+	--the followin constraint is added in the script Script8.Reports.sql
+	--constraint "WorkFlowApplications_Report" foreign key ("Report") references "Reports"."Reports" on delete cascade,
+
+	constraint "Check_WorkFlowApplications_Target" check
 	(
-		not "Prototype" is null and "Instance" is null
-		or "Prototype" is null and not "Instance" is null
+		not "Prototype" is null and "Instance" is null and "Report" is null
+		or "Prototype" is null and not "Instance" is null and "Report" is null
+		or "Prototype" is null and "Instance" is null and not "Report" is null
 	),
 
 	"WorkFlowAction" varchar (50) references "WorkFlows"."WorkFlowActions",

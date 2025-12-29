@@ -351,8 +351,15 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
-          <Property Name="Online" Type="bool" Nullable="false" />
           <Property Name="Restricted" Type="bool" Nullable="false" />
+          <Property Name="Version" Type="int4" Nullable="false" />
+          <Property Name="ReportState" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ValidFrom" Type="timestamptz" Precision="7" />
+          <Property Name="ValidUntil" Type="timestamptz" Precision="7" />
+          <Property Name="ProposedState" Type="varchar" MaxLength="20" />
+          <Property Name="ProposedDate" Type="timestamptz" Precision="7" />
+          <Property Name="WorkFlow" Type="int8" />
+          <Property Name="Note" Type="text" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -360,6 +367,12 @@
           </Key>
           <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Query" Type="text" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ReportStates">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="FunctionGroups">
           <Key>
@@ -616,6 +629,7 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="FinalState" Type="varchar" MaxLength="20" />
+          <Property Name="Report" Type="int8" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationSteps">
           <Key>
@@ -1373,6 +1387,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="Reports_ProposedState_fkey">
+          <End Role="ReportStates" Type="Self.ReportStates" Multiplicity="0..1" />
+          <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ReportStates">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="ProposedState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="Reports_ReportSource_fkey">
           <End Role="ReportSources" Type="Self.ReportSources" Multiplicity="0..1" />
           <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
@@ -1382,6 +1408,30 @@
             </Principal>
             <Dependent Role="Reports">
               <PropertyRef Name="ReportSource" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Reports_ReportState_fkey">
+          <End Role="ReportStates" Type="Self.ReportStates" Multiplicity="1" />
+          <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ReportStates">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="ReportState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Reports_WorkFlow_fkey">
+          <End Role="WorkFlows" Type="Self.WorkFlows" Multiplicity="0..1" />
+          <End Role="Reports" Type="Self.Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="WorkFlow" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1723,6 +1773,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="WorkFlowApplications_Reports">
+          <End Role="Reports" Type="Self.Reports" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="Report" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="WorkFlowApplications_WorkFlow_fkey">
           <End Role="WorkFlows" Type="Self.WorkFlows" Multiplicity="0..1" />
           <End Role="WorkFlowApplications" Type="Self.WorkFlowApplications" Multiplicity="*" />
@@ -1857,6 +1921,7 @@
           <EntitySet Name="ReportRuns" EntityType="Self.ReportRuns" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="Reports" EntityType="Self.Reports" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="ReportSources" EntityType="Self.ReportSources" Schema="Reports" store:Type="Tables" />
+          <EntitySet Name="ReportStates" EntityType="Self.ReportStates" Schema="Reports" store:Type="Tables" />
           <EntitySet Name="FunctionGroups" EntityType="Self.FunctionGroups" Schema="Security" store:Type="Tables" />
           <EntitySet Name="Functions" EntityType="Self.Functions" Schema="Security" store:Type="Tables" />
           <EntitySet Name="GroupConflicts" EntityType="Self.GroupConflicts" Schema="Security" store:Type="Tables" />
@@ -2090,8 +2155,20 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="ReportRuns" EntitySet="ReportRuns" />
           </AssociationSet>
+          <AssociationSet Name="Reports_ProposedState_fkey" Association="Self.Reports_ProposedState_fkey">
+            <End Role="ReportStates" EntitySet="ReportStates" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
           <AssociationSet Name="Reports_ReportSource_fkey" Association="Self.Reports_ReportSource_fkey">
             <End Role="ReportSources" EntitySet="ReportSources" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <AssociationSet Name="Reports_ReportState_fkey" Association="Self.Reports_ReportState_fkey">
+            <End Role="ReportStates" EntitySet="ReportStates" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <AssociationSet Name="Reports_WorkFlow_fkey" Association="Self.Reports_WorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
             <End Role="Reports" EntitySet="Reports" />
           </AssociationSet>
           <AssociationSet Name="RoleFunctions_Function" Association="Self.RoleFunctions_Function">
@@ -2192,6 +2269,10 @@
           </AssociationSet>
           <AssociationSet Name="WorkFlowApplications_PrototypeVersion" Association="Self.WorkFlowApplications_PrototypeVersion">
             <End Role="PrototypeVersions" EntitySet="PrototypeVersions" />
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowApplications_Reports" Association="Self.WorkFlowApplications_Reports">
+            <End Role="Reports" EntitySet="Reports" />
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
           </AssociationSet>
           <AssociationSet Name="WorkFlowApplications_WorkFlow_fkey" Association="Self.WorkFlowApplications_WorkFlow_fkey">
@@ -2731,6 +2812,23 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="ReportRuns" EntitySet="ReportRuns" />
           </AssociationSet>
+          <EntitySet Name="ReportStates" EntityType="RelationalDatabaseModel.ReportStates" />
+          <AssociationSet Name="Reports_ProposedState_fkey" Association="RelationalDatabaseModel.Reports_ProposedState_fkey">
+            <End Role="ReportStates" EntitySet="ReportStates" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <AssociationSet Name="Reports_ReportState_fkey" Association="RelationalDatabaseModel.Reports_ReportState_fkey">
+            <End Role="ReportStates" EntitySet="ReportStates" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <AssociationSet Name="Reports_WorkFlow_fkey" Association="RelationalDatabaseModel.Reports_WorkFlow_fkey">
+            <End Role="WorkFlows" EntitySet="WorkFlows" />
+            <End Role="Reports" EntitySet="Reports" />
+          </AssociationSet>
+          <AssociationSet Name="WorkFlowApplications_Reports" Association="RelationalDatabaseModel.WorkFlowApplications_Reports">
+            <End Role="Reports" EntitySet="Reports" />
+            <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
           <Key>
@@ -2924,6 +3022,7 @@
           <NavigationProperty Name="PrototypeTypes1" Relationship="RelationalDatabaseModel.PrototypeTypes_ObsolescenceWorkFlow_fkey" FromRole="WorkFlows" ToRole="PrototypeTypes" />
           <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowApplications" />
           <NavigationProperty Name="WorkFlowSteps" Relationship="RelationalDatabaseModel.WorkFlowSteps_WorkFlow_fkey" FromRole="WorkFlows" ToRole="WorkFlowSteps" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.Reports_WorkFlow_fkey" FromRole="WorkFlows" ToRole="Reports" />
         </EntityType>
         <EntityType Name="WorkFlowStepTags">
           <Key>
@@ -3255,6 +3354,8 @@
           <Property Name="FinalState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="InstancesHistory" />
           <NavigationProperty Name="PrototypeVersionsHistory" Relationship="RelationalDatabaseModel.PrototypeVersionsHistory_WorkFlowApplication_fkey" FromRole="WorkFlowApplications" ToRole="PrototypeVersionsHistory" />
+          <Property Name="Report" Type="Int64" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.WorkFlowApplications_Reports" FromRole="WorkFlowApplications" ToRole="Reports" />
         </EntityType>
         <EntityType Name="WorkFlowApplicationStepTags">
           <Key>
@@ -4386,10 +4487,21 @@
           <NavigationProperty Name="ReportSources" Relationship="RelationalDatabaseModel.Reports_ReportSource_fkey" FromRole="Reports" ToRole="ReportSources" />
           <NavigationProperty Name="ReportColumns" Relationship="RelationalDatabaseModel.ReportColumns_Report_fkey" FromRole="Reports" ToRole="ReportColumns" />
           <NavigationProperty Name="ReportClauses" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="Reports" ToRole="ReportClauses" />
-          <Property Name="Online" Type="Boolean" Nullable="false" />
           <Property Name="Restricted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Groups" Relationship="RelationalDatabaseModel.ReportGroups" FromRole="Reports" ToRole="Groups" />
           <NavigationProperty Name="ReportRuns" Relationship="RelationalDatabaseModel.ReportRuns_Report_fkey" FromRole="Reports" ToRole="ReportRuns" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="ReportState" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ValidFrom" Type="DateTimeOffset" Precision="7" />
+          <Property Name="ValidUntil" Type="DateTimeOffset" Precision="7" />
+          <Property Name="ProposedState" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ProposedDate" Type="DateTimeOffset" Precision="7" />
+          <Property Name="WorkFlow" Type="Int64" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ReportStates" Relationship="RelationalDatabaseModel.Reports_ProposedState_fkey" FromRole="Reports" ToRole="ReportStates" />
+          <NavigationProperty Name="ReportStates1" Relationship="RelationalDatabaseModel.Reports_ReportState_fkey" FromRole="Reports" ToRole="ReportStates" />
+          <NavigationProperty Name="WorkFlows" Relationship="RelationalDatabaseModel.Reports_WorkFlow_fkey" FromRole="Reports" ToRole="WorkFlows" />
+          <NavigationProperty Name="WorkFlowApplications" Relationship="RelationalDatabaseModel.WorkFlowApplications_Reports" FromRole="Reports" ToRole="WorkFlowApplications" />
         </EntityType>
         <EntityType Name="ReportSources">
           <Key>
@@ -4577,6 +4689,64 @@
             <Dependent Role="ReportRuns">
               <PropertyRef Name="Company" />
               <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ReportStates">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.Reports_ProposedState_fkey" FromRole="ReportStates" ToRole="Reports" />
+          <NavigationProperty Name="Reports1" Relationship="RelationalDatabaseModel.Reports_ReportState_fkey" FromRole="ReportStates" ToRole="Reports" />
+        </EntityType>
+        <Association Name="Reports_ProposedState_fkey">
+          <End Type="RelationalDatabaseModel.ReportStates" Role="ReportStates" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ReportStates">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="ProposedState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Reports_ReportState_fkey">
+          <End Type="RelationalDatabaseModel.ReportStates" Role="ReportStates" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ReportStates">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="ReportState" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Reports_WorkFlow_fkey">
+          <End Type="RelationalDatabaseModel.WorkFlows" Role="WorkFlows" Multiplicity="0..1" />
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkFlows">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Reports">
+              <PropertyRef Name="WorkFlow" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WorkFlowApplications_Reports">
+          <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.WorkFlowApplications" Role="WorkFlowApplications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Reports">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="WorkFlowApplications">
+              <PropertyRef Name="Report" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4855,6 +5025,7 @@
           <EntitySetMapping Name="WorkFlowApplications">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.WorkFlowApplications">
               <MappingFragment StoreEntitySet="WorkFlowApplications">
+                <ScalarProperty Name="Report" ColumnName="Report" />
                 <ScalarProperty Name="FinalState" ColumnName="FinalState" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
@@ -5194,8 +5365,15 @@
           <EntitySetMapping Name="Reports">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Reports">
               <MappingFragment StoreEntitySet="Reports">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="WorkFlow" ColumnName="WorkFlow" />
+                <ScalarProperty Name="ProposedDate" ColumnName="ProposedDate" />
+                <ScalarProperty Name="ProposedState" ColumnName="ProposedState" />
+                <ScalarProperty Name="ValidUntil" ColumnName="ValidUntil" />
+                <ScalarProperty Name="ValidFrom" ColumnName="ValidFrom" />
+                <ScalarProperty Name="ReportState" ColumnName="ReportState" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="Restricted" ColumnName="Restricted" />
-                <ScalarProperty Name="Online" ColumnName="Online" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
@@ -5286,6 +5464,13 @@
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReportStates">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportStates">
+              <MappingFragment StoreEntitySet="ReportStates">
+                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

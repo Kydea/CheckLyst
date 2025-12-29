@@ -34,7 +34,7 @@
                     <th>Code</th>
                     <th>Description</th>
                     <th>Report source</th>
-                    <th>Online</th>
+                    <th>State</th>
                     <th>Restricted</th>
                     <th>Created by</th>
                     <th>Created on</th>
@@ -48,7 +48,7 @@
                     <td data-column="code"></td>
                     <td data-column="description"></td>
                     <td data-column="reportSource"></td>
-                    <td data-column="online" data-type="Boolean"></td>
+                    <td data-column="reportState"></td>
                     <td data-column="restricted" data-type="Boolean"></td>
                     <td data-column="createdBy"></td>
                     <td data-column="createdOn" data-type="DateTimeOffset"></td>
@@ -78,7 +78,7 @@
             rowClickHandler: function (row) {
                 var
                     openEditor = function () {
-                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id));
+                        matematici.navigator.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id) + "/" + encodeURIComponent(row.data("values").code));
                     },
                     openViewer = function () {
                         matematici.navigator.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").id));

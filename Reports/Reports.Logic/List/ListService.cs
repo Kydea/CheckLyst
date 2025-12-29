@@ -42,7 +42,7 @@ namespace CheckListManager.Reports.Logic.List
                     Code = r.Code,
                     Description = r.Description,
                     ReportSource = r.ReportSource,
-                    Online = r.Online,
+                    ReportState = r.ReportState,
                     Restricted = r.Restricted,
                     CreatedBy = r.CreatedBy,
                     CreatedOn = r.CreatedOn,

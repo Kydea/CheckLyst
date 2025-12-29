@@ -8,7 +8,7 @@
     </div>
 
     <div class="ShadowPanel">
-        <h2 class="Green">@(Model.Code ?? "(New report)")</h2>
+        <h2 class="Green">(New report)</h2>
 
         <form id="Detail" action="@BaseUrl/Reports/List">
             <input type="hidden" name="reason" />
@@ -26,8 +26,8 @@
             </label>
 
             <label>
-                <span>Online</span>
-                <input type="checkbox" name="online" />
+                <span>State</span>
+                <input type="text" name="reportState" />
             </label>
 
             <label class="Clearing FullWidth">

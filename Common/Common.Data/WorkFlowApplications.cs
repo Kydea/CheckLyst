@@ -35,6 +35,7 @@ namespace CheckListManager.Common.Data
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTimeOffset> ModifiedOn { get; set; }
         public string FinalState { get; set; }
+        public Nullable<long> Report { get; set; }
     
         public virtual WorkFlowActions WorkFlowActions { get; set; }
         public virtual WorkFlows WorkFlows { get; set; }
@@ -46,5 +47,6 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<InstancesHistory> InstancesHistory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrototypeVersionsHistory> PrototypeVersionsHistory { get; set; }
+        public virtual Reports Reports { get; set; }
     }
 }

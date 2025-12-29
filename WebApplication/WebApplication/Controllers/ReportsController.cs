@@ -8,7 +8,7 @@ namespace CheckListManager.WebApplication.Controllers
     [RoutePrefix("Reports")]
     [DefaultAuthorize(Roles = "FunctionGroup#Reports")]
     public class ReportsController : BaseController
-	{
+    {
         [Route("List")]
         public ActionResult List()
         {
@@ -16,7 +16,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Authorize(Roles = "Reports#Edit")]
-        [Route("Editor/{ID?}")]
+        [Route("Editor/{ID?}/{Code?}")]
         public ActionResult Editor(long? ID)
         {
             return PartialView(new Report { ID = ID });
@@ -26,7 +26,7 @@ namespace CheckListManager.WebApplication.Controllers
         public ActionResult Viewer(long? ID)
         {
             if (!ID.HasValue) throw new ArgumentException(); //we need to have it not mandatory for the base route in the views
-            return PartialView(new Report { ID = ID});
+            return PartialView(new Report { ID = ID });
         }
 
         [Route("Report/{ID}")]

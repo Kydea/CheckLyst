@@ -1,5 +1,17 @@
 create schema "Reports";
 
+create table "Reports"."ReportStates"
+(
+	"Code" varchar (20) primary key
+);
+
+insert into "Reports"."ReportStates" 
+values 
+	('Draft'),
+	('Completed'),
+	('Confirmed'),
+	('Obsolete');
+
 create table "Reports"."ReportSources"
 (
 	"Code" varchar (50) primary key,
@@ -12,7 +24,10 @@ create table "Reports"."Reports"
 
 	"Company" bigint not null,
 	"Code" varchar (50) not null,
+	"Version" int not null default 1,
+
 	"Description" varchar (100),
+	"Note" text,
 	
 	"ReportSource" varchar(50) references "Reports"."ReportSources",
 	"Query" text,
@@ -26,13 +41,23 @@ create table "Reports"."Reports"
 	"Online" boolean not null default false,
 	"Restricted" boolean not null default false,
 
+	"ReportState" varchar (20) not null references "Reports"."ReportStates" default 'Draft',
+	"ValidFrom" timestamptz,
+	"ValidUntil" timestamptz,
+
+	"ProposedState" varchar (20) references "Reports"."ReportStates",
+	"ProposedDate" timestamptz,
+
+	"WorkFlow" bigint references "WorkFlows"."WorkFlows",	
+
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),
 	"ModifiedOn" timestamptz
 );
 
-create unique index "Reports_Code" on "Reports"."Reports" ("Company", upper("Code"));
+create unique index "Reports_Code_Version" on "Reports"."Reports" ("Company", upper("Code"), "Version");
+create index "Reports_Code_Version_2" on "Reports"."Reports" ("Company", "Code", "Version");
 
 create table "Reports"."ReportGroups"
 (
@@ -103,6 +128,8 @@ create table "Reports"."ReportRuns"
 );
 
 create index "ReportRuns_User" on "Reports"."ReportRuns" ("Company", "User");
+
+alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Reports" foreign key ("Report") references "CheckLists"."Reports" on delete cascade;
 
 alter table "Infrastructure"."Companies" enable row level security;
 alter table "Infrastructure"."Departments" enable row level security;
