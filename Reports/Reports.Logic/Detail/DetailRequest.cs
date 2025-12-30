@@ -23,5 +23,7 @@ namespace CheckListManager.Reports.Logic.Detail
         public List<ReportClause> Clauses { get; set; }
 
         public string Reason { get; set; }
+        
+        public string State { get; set; }
     }
 }

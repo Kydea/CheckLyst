@@ -540,11 +540,10 @@
             workFlowSignature = new matematici.WorkFlowSignature({
                 title: getPrototypeCode() + " " + action,
                 reason: row.reason,
-                url: element.data("signature"),
                 prototype: prototypeKey.id,
                 version: prototypeKey.version,
                 applicationStep: row.id,
-                model: model,
+                prototype: model,
                 rows: rows,
                 concurrencyInformation: concurrencyInformation,
 
@@ -564,7 +563,7 @@
                     update();
                     setupActionBar();
                     if (!result.completed)
-                        prototype.loadSignatureBook(action);
+                        prototype.loadSignatureBook();
                     if (result.approved)
                         matematici.blip.ok();
                     else
@@ -850,30 +849,8 @@
         ]);
     };
 
-    prototype.loadSignatureBook = function (action) {
-        return $.ajax({
-            url: element.data("api") + "/WorkFlows/Applications/GetSteps",
-            type: "POST",
-            data: {
-                prototype: prototypeKey.id,
-                version: prototypeKey.version,
-            }
-        }).done(function (result) {
-            var columns = [
-                { name: "step", label: "Step", align: "center" },
-                { name: "tags", label: "Level" },
-                { name: "reason", label: "Reason" },
-                { name: "date", label: "Date", type: "DateTimeOffset" },
-                { name: "user", label: "User" },
-                { name: "approved", label: "Approved", align: "center" },
-            ];
-            new matematici.CheckListGrid("Prototype " + getPrototypeCode(), result.steps,
-                function (grid, row) {
-                    return sign(result.action, grid, result.steps, row);
-                },
-                null,
-                columns);
-        });
+    prototype.loadSignatureBook = function () {
+        new matematici.WorkFlowSignatureBook().showForPrototype(getPrototypeCode(), prototypeKey.id, prototypeKey.version, sign);
     };
 
     prototype.preview = function () {

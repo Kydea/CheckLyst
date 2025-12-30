@@ -14,6 +14,7 @@ namespace CheckListManager.Common.Logic.WorkFlows
         public long? Prototype { get; set; }
         public int? Version { get; set; }
         public long? Instance { get; set; }
+        public long? Report { get; set; }
         public string Action { get; set; }
     }
 }

@@ -97,13 +97,13 @@
                     prototype.setState(prototypes.Prototype.states.approved, true);
                 }, "SubmitForApproval")
                 .add("Approve", function () {
-                    prototype.loadSignatureBook(matematici.signatureActions.toApprove);
+                    prototype.loadSignatureBook();
                 }, "Approve")
                 .add("Submit for obsol.", function () {
                     prototype.setState(prototypes.Prototype.states.obsolete, true);
                 }, "SubmitForObsolescence")
                 .add("Obsolete", function () {
-                    prototype.loadSignatureBook(matematici.signatureActions.toObsolete);
+                    prototype.loadSignatureBook();
                 }, "Obsolete")
                 .add("Save", function () {
                     prototype.save();

@@ -23,7 +23,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("GetSteps")]
-        [Authorize(Roles = "Prototypes#View, Instances#View")]
+        [Authorize(Roles = "Prototypes#View, Instances#View, Reports#Edit")]
         public async Task<IHttpActionResult> GetSteps(GetStepsRequest request)
         {
             return Ok(await _applicationService.GetStepsAsync(Identity, request));
@@ -39,7 +39,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Sign")]
-        [Authorize(Roles = "Prototypes#Approve, Instances#Confirm")]
+        [Authorize(Roles = "Prototypes#Approve, Instances#Confirm, Reports#Edit")]
         public async Task<IHttpActionResult> Sign(SignRequest request)
         {
             var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);

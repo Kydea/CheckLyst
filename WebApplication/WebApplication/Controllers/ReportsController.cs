@@ -23,7 +23,7 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Authorize(Roles = "Reports#Edit")]
-        [Route("Editor/{ID?}")]
+        [Route("NewVersion/{ID?}")]
         public ActionResult NewVersion(long? ID)
         {
             return PartialView("Editor", new Report { ID = ID, NewVersion = true });

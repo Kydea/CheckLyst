@@ -320,7 +320,7 @@
             });
         },
 
-        sign = function (grid, rows, row) {
+        sign = function (action, grid, rows, row) {
             if (row.approved) {
                 matematici.dialog.error("error", "This signature has already been issued");
                 return true;
@@ -377,7 +377,6 @@
             workFlowSignature = new matematici.WorkFlowSignature({
                 title: "Instance " + getInstanceCode(),
                 reason: row.reason,
-                url: element.data("signature"),
                 instance: id,
                 applicationStep: row.id,
                 rows: rows,
@@ -606,28 +605,7 @@
     };
 
     instance.confirm = function () {
-        return $.ajax({
-            url: element.data("api") + "/WorkFlows/Applications/GetSteps",
-            type: "POST",
-            data: {
-                instance: id
-            }
-        }).done(function (result) {
-            var columns = [
-                { name: "step", label: "Step", align: "center" },
-                { name: "tags", label: "Level" },
-                { name: "reason", label: "Reason" },
-                { name: "date", label: "Date", type: "DateTimeOffset" },
-                { name: "user", label: "User" },
-                { name: "approved", label: "Approved", align: "center" },
-            ];
-            new matematici.CheckListGrid("Instance " + getInstanceCode(), result.steps,
-                function (grid, row) {
-                    return sign(grid, result.steps, row);
-                },
-                null,
-                columns);
-        });
+        new matematici.WorkFlowSignatureBook().showForInstance(getInstanceCode(), id, sign);
     };
 
     instance.setOnUpdateHandler = function (handler) {

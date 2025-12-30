@@ -320,6 +320,7 @@
     <Content Include="Scripts\Custom\GridFiltersBar.js" />
     <Content Include="Scripts\Custom\ImageViewer.js" />
     <Content Include="Scripts\Controls\AutoComplete.js" />
+    <Content Include="Scripts\Custom\WorkFlowSignatureBook.js" />
     <Content Include="Scripts\Instances\LifeCycle.js" />
     <Content Include="Scripts\Instances\Tasks.js" />
     <Content Include="Scripts\Instances\Overview.js" />

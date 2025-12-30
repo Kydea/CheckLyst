@@ -11,6 +11,6 @@ namespace CheckListManager.Common.Data
         public const string Draft = "Draft";
         public const string Completed = "Completed";
         public const string Confirmed = "Confirmed";
-        public const string Deleted = "Obsolete";
+        public const string Obsolete = "Obsolete";
     }
 }

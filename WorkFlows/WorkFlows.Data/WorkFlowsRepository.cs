@@ -80,10 +80,10 @@ namespace CheckListManager.WorkFlows.Data
             await SaveChangesAsync();
         }
 
-        public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance)
+        public async Task<WorkFlowApplications> GetWorkFlowApplicationAsync(IDefaultIdentity identity, long? prototype, int? version, long? instance, long? report)
         {
-            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (prototype != null && x.Prototype == prototype && x.Version == version || instance != null && x.Instance == instance) && x.Approved == null)
-                ?? throw new ArgumentException($"Workflow application for {(instance == null ? $"prototype version {prototype}.{version}" : $"instance {instance}")} not found");
+            var Application = await Entities.WorkFlowApplications.SingleOrDefaultAsync(x => x.WorkFlows.Company == identity.CompanyId && (prototype != null && x.Prototype == prototype && x.Version == version || instance != null && x.Instance == instance || report != null && x.Report == report) && x.Approved == null)
+                ?? throw new ArgumentException($"Workflow application for {(prototype != null ? $"prototype version {prototype}.{version}" : instance != null ? $"instance {instance}" : $"report {report}")} not found");
             return Application;
         }
 
@@ -93,7 +93,7 @@ namespace CheckListManager.WorkFlows.Data
             return Step;
         }
 
-        public async Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, string action)
+        public async Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, long? report, string action)
         {
             var PrototypeVersion = instance == null ? Entities.PrototypeVersions.Single(pv => pv.Prototype == prototype.Value && pv.Version == version.Value) : null;
             var Instance = instance == null ? null : Entities.Instances.Single(i => i.ID == instance.Value);
@@ -105,6 +105,8 @@ namespace CheckListManager.WorkFlows.Data
                 || PrototypeVersion != null 
                     && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
                     && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department)
+                || report.HasValue
+                    && !defaultIdentity.HasPermission("Report", "Edit")
             )
                 throw new Exception("Access denied");
 
@@ -116,6 +118,8 @@ namespace CheckListManager.WorkFlows.Data
                 WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Instance == Instance.ID && a.Approved == null);
             else if (PrototypeVersion != null)
                 WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Prototype == PrototypeVersion.Prototype && a.Version == PrototypeVersion.Version && a.Approved == null);
+            else if (report.HasValue)
+                WorkFlowApplication = await Entities.WorkFlowApplications.SingleOrDefaultAsync(a => a.Report == report.Value && a.Approved == null);
 
             if (WorkFlowApplication != null)
             {
@@ -133,6 +137,8 @@ namespace CheckListManager.WorkFlows.Data
                 Version = version,
 
                 Instance = instance,
+
+                Report = report,
 
                 WorkFlowAction = action,
                 Approved = null, //true means approved, false means rejected

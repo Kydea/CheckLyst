@@ -64,6 +64,14 @@ namespace CheckListManager.Reports.Api.Controllers
             return Ok(await _detailService.VerifyReportAsync(Identity, request.Data));
         }
 
+        [HttpPost]
+        [Route("SetState")]
+        [Authorize(Roles = "Reports#Edit")]
+        public async Task<IHttpActionResult> SetState(DetailRequest request)
+        {
+            return Ok(await _detailService.SetStateAsync(Identity, request));
+        }
+
         [Authorize(Roles = "Reports#Edit")]
         [HttpPost]
         [Route("GetReportSources")]

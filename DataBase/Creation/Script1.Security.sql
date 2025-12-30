@@ -25,6 +25,8 @@ create table "Security"."Users"
 	"LastLoginFailedOn" timestamptz,
 	"TimeZone" varchar (100) references "Infrastructure"."TimeZones",
 
+	"PrototypeWorkFlowLevel" varchar (50),
+
 	"CreatedBy" varchar (60),
 	"CreatedOn" timestamptz not null default current_timestamp,
 	"ModifiedBy" varchar (60),

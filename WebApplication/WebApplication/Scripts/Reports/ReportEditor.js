@@ -64,18 +64,18 @@
         },
 
         save = function (callback) {
-            if (!callback) 
+            if (!callback)
                 callback = options.id >= 0 ?
                     function (result) {
+                        $("input[name=modifiedBy]", element).val(result.modifiedBy);
                         var format = matematici.dateFormatter.format(moment(result.modifiedOn));
                         $("input[name=modifiedOn]", element).val(format.date + " " + format.time).attr("title", format.offset);
-                        $("input[name=modifiedBy]", element).val(result.modifiedBy);
                     } :
                     function (result) {
                         //reloads the page with the correct url
                         matematici.navigator.open(options.detailUrl + "/" + result.id);
                     };
-            
+
             detailPage.clickHandler(null, "Save", callback);
         },
 
@@ -202,6 +202,8 @@
                 form.setValue("createdOn", model.createdOn);
                 form.setValue("modifiedBy", model.modifiedBy);
                 form.setValue("modifiedOn", model.modifiedOn);
+                form.setValue("proposedState", model.proposedState);
+                form.setValue("proposedDate", model.proposedDate);
 
                 setupReportSources(reportSources);
                 var autoComplete = matematici.AutoComplete.get(reportSourceSelect[0]);
@@ -220,12 +222,113 @@
                 options.actionButtonsGroup.toggleByClass("Verify", model.editable);
                 options.actionButtonsGroup.toggleByClass("SubmitForObsolescence", model.state == reports.Report.states.confirmed && model.proposedState == reports.Report.states.obsolete);
                 options.actionButtonsGroup.toggleByClass("Obsolete", model.state == reports.Report.states.confirmed);
-                options.actionButtonsGroup.toggleByClass("SubmitForConfirmation", model.state == reports.Report.states.completed && model.proposedState == reports.Report.states.confirmed);
+                options.actionButtonsGroup.toggleByClass("Complete", model.state == reports.Report.states.draft);
                 options.actionButtonsGroup.toggleByClass("Confirm", model.state == reports.Report.states.completed);
             }
         },
 
-        setup = function () {
+        setState = function (state) {
+            var handler = function () {
+                model.State = state;
+                $.ajax({
+                    url: detailPage.getForm().getElement().attr("action") + "/" + "SetState",
+                    type: "post",
+                    data: {
+                        id: model.id,
+                        state: state
+                    }
+                }).done(function (result) {
+                    model = result;
+                    completeHandler(reportSources);
+                    matematici.blip.ok();
+                    matematici.canClose = true;
+                });
+            };
+
+            matematici.dialog.show("warning", "Please confirm the change of state.", [
+                {
+                    text: "confirm", icon: "check", handler: function () {
+                        if (matematici.canClose)
+                            handler();
+                        else
+                            save(handler);
+                    }
+                },
+                { text: "cancel", icon: "times", cancelButton: true }
+            ]);
+        },
+
+        sign = function (action, grid, rows, row) {
+            if (row.approved) {
+                matematici.dialog.error("error", "This signature has already been issued");
+                return true;
+            }
+
+            var allowed = false;
+
+            for (var rowIndex in rows) {
+                if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {
+                    allowed = false;
+                    break;
+                }
+
+                if (rows[rowIndex].id == row.id)
+                    break;
+            }
+            if (!allowed) {
+                matematici.dialog.error("error", "The previous step is not completed");
+                return true;
+            }
+
+            for (var rowIndex in rows) {
+                if (rows[rowIndex].step == row.step && rows[rowIndex].user == matematici.tokenManager.getUserCode()) {
+                    allowed = false;
+                    break;
+                }
+            }
+            if (!allowed) {
+                matematici.dialog.error("error", "You have already signed for this step");
+                return true;
+            }
+
+            workFlowSignature = new matematici.WorkFlowSignature({
+                title: model.code + " " + action,
+                reason: row.reason,
+                report: model.code,
+                applicationStep: row.id,
+                rows: rows,
+                concurrencyInformation: {
+                    modifiedBy: model.modifiedBy,
+                    modifiedOn: model.modifiedOn
+                },
+
+                done: function (result) {
+                    grid.close();
+                    matematici.popup.close();
+                    model.state = result.state;
+                    model.validFrom = result.validFrom;
+                    model.validUntil = result.validUntil;
+                    if (result.completed)
+                        model.proposedState = model.proposedDate = null;
+                    model.modifiedBy = result.modifiedBy,
+                    model.modifiedOn = result.modifiedOn
+                    completeHandler(reportSources);
+                    if (!result.completed)
+                        loadSignatureBook();
+                    if (result.approved)
+                        matematici.blip.ok();
+                    else
+                        matematici.blip.ko();
+                }
+            });
+            return true;
+        },
+
+        loadSignatureBook = function () {
+            new matematici.WorkFlowSignatureBook().showForReport(model.code, model.id, sign);
+        },
+
+        initialize = function () {
             var
                 reportSources = null;
 
@@ -283,6 +386,8 @@
     reportEditor.verify = verify;
     reportEditor.view = view;
     reportEditor.deleteRecord = deleteRecord;
+    reportEditor.loadSignatureBook = loadSignatureBook;
+    reportEditor.setState = setState;
 
-    setup();
+    initialize();
 };

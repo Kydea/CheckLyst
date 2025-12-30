@@ -13,6 +13,7 @@ using System.Data;
 using CheckListManager.Common.Data;
 using System.Security.Principal;
 using CheckListManager.Common.Data.ListItems;
+using CheckListManager.Common.Logic.WorkFlows;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -20,6 +21,7 @@ namespace CheckListManager.Reports.Logic.Detail
     {
         private readonly IReportsRepository _reportsRepository;
         private readonly IReportViewerRepository _reportViewerRepository;
+        private readonly IWorkFlowsService _workFlowsService;
         private readonly ISettingService _settingService;
         private readonly IQueueService _queueService;
         private readonly ICommonRepository _commonRepository;
@@ -27,6 +29,7 @@ namespace CheckListManager.Reports.Logic.Detail
         public DetailService(
             IReportsRepository reportsRepository,
             IReportViewerRepository reportViewerRepository,
+            IWorkFlowsService workFlowsService,
             ISettingService settingService,
             IQueueService queueService,
             ICommonRepository commonRepository
@@ -34,6 +37,7 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             _reportsRepository = reportsRepository;
             _reportViewerRepository = reportViewerRepository;
+            _workFlowsService = workFlowsService;
             _settingService = settingService;
             _queueService = queueService;
             _commonRepository = commonRepository;
@@ -177,8 +181,10 @@ namespace CheckListManager.Reports.Logic.Detail
                 var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
                 var WorkFlows = (await _reportsRepository.GetWorkFlows(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
 
+                response.ID = report.ID;
                 response.State = report.ReportState;
                 response.ProposedState = report.ProposedState;
+                response.ProposedDate = report.ProposedDate;
                 response.Editable = report.ReportState == "Draft";
                 response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
                 response.Fields["code"] = new Field { Value = report.Code, Editable = false };
@@ -333,6 +339,48 @@ namespace CheckListManager.Reports.Logic.Detail
 
         public async Task<DetailResponse> VerifyReportAsync(IDefaultIdentity identity, DetailRequest request) =>
             await ValidateAsync(identity, request);
+
+        public async Task<DetailResponse> SetStateAsync(IDefaultIdentity identity, DetailRequest request)
+        {
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
+            if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed)
+            {
+                report.ProposedState = ReportState.Obsolete;
+                report.ProposedDate = DateTimeOffset.UtcNow;
+
+                await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
+                {
+                    WorkFlow = report.WorkFlow.Value,
+                    Report = report.ID,
+                    Action = "Report – state to Obsolete"
+                });
+
+            }
+            else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft)
+            {
+                report.ReportState = ReportState.Completed;
+                report.ProposedState = ReportState.Confirmed;
+                report.ProposedDate = DateTimeOffset.UtcNow;
+
+                await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
+                {
+                    WorkFlow = report.WorkFlow.Value,
+                    Report = report.ID,
+                    Action = "Report – state to Confirmed"
+                });
+
+            }
+            else 
+                throw new InvalidOperationException($"State change from {report.ReportState} to {request.State} not allowed");
+
+
+            report.ModifiedBy = identity.Code;
+            report.ModifiedOn = DateTimeOffset.UtcNow;
+
+            await _reportsRepository.SaveChangesAsync();
+            await AuditAsync(identity, TrailAction.ReportUpdated, request);
+            return await LoadReportAsync(identity.CompanyId, request);
+        }
 
         public async Task<List<ReportSource>> GetReportSourcesAsync() =>
             (await _reportsRepository.GetReportSourcesAsync()).Select(rs => new ReportSource

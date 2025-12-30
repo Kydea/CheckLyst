@@ -44,18 +44,19 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 identity,
                 request.Prototype,
                 request.Version,
-                request.Instance
+                request.Instance,
+                request.Report
             );
 
             if (
                 Application.Instances != null
-                && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department,
-                    Application.Instances.Prototypes.PrototypeType)
+                && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department, Application.Instances.Prototypes.PrototypeType)
                 && !identity.HasPermission("Instances", "View", Application.Instances.Prototypes.Department)
                 || Application.PrototypeVersions != null
-                && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department,
-                    Application.PrototypeVersions.Prototypes.PrototypeType)
+                && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department, Application.PrototypeVersions.Prototypes.PrototypeType)
                 && !identity.HasPermission("Prototypes", "View", Application.PrototypeVersions.Prototypes.Department)
+                || request.Report.HasValue
+                && !identity.HasPermission("Reports", "Edit")
             )
                 throw new Exception("Access denied");
 
@@ -77,7 +78,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private async Task SetPrototypeVersionState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
+        private async Task SetState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
@@ -121,7 +122,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null)
                 {
-                    await SetPrototypeVersionState(identity, OldVersion, VersionState.Obsolete, UtcNow);
+                    await SetState(identity, OldVersion, VersionState.Obsolete, UtcNow);
                     OldVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                     {
                         Date = DateTimeOffset.UtcNow,
@@ -132,7 +133,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             }
 
             if (State == VersionState.Active || State == VersionState.Obsolete) Export = true;
-            await SetPrototypeVersionState(identity, PrototypeVersion, State, UtcNow);
+            await SetState(identity, PrototypeVersion, State, UtcNow);
             return Export;
         }
 
@@ -153,13 +154,13 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             if (PrototypeVersion.VersionState == VersionState.InApproval)
                 _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
-            await SetPrototypeVersionState(identity, PrototypeVersion,
+            await SetState(identity, PrototypeVersion,
                 PrototypeVersion.VersionState == VersionState.InApproval
                     ? VersionState.Draft
                     : PrototypeVersion.VersionState, DateTimeOffset.UtcNow);
         }
 
-        private async Task SetInstanceState(DefaultIdentity identity, Instances Instance, string State)
+        private async Task SetState(DefaultIdentity identity, Instances Instance, string State)
         {
             Instance.InstanceState = State;
 
@@ -178,7 +179,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         private async Task<bool> Approve(DefaultIdentity identity, Instances Instance)
         {
             var Export = false;
-            await SetInstanceState(identity, Instance, InstanceState.Confirmed);
+            await SetState(identity, Instance, InstanceState.Confirmed);
 
             if (!string.IsNullOrWhiteSpace(Instance.FileName)) Export = true;
             return Export;
@@ -197,14 +198,35 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         private async Task Reject(DefaultIdentity identity, Instances Instance)
         {
-            await SetInstanceState(identity, Instance, InstanceState.Deleted);
+            await SetState(identity, Instance, InstanceState.Deleted);
         }
+
+        private async Task SetState(DefaultIdentity identity, Reports Report, string State)
+        {
+            Report.ReportState = State;
+
+            await _commonRepository.AddTrailRecordAsync(new Records
+            {
+                Company = identity.CompanyId,
+                User = identity.Code,
+                Action = TrailAction.ReportUpdated,
+                Date = DateTimeOffset.UtcNow,
+                Information = JsonConvert.SerializeObject(new { State })
+            });
+        }
+
+        private Task Approve(DefaultIdentity identity, Reports Report) =>
+            SetState(identity, Report, ReportState.Confirmed);
+
+        private Task Reject(DefaultIdentity identity, Reports Report) =>
+            SetState(identity, Report, ReportState.Draft);
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone)
         {
             PrototypeVersions PrototypeVersion = null;
             Instances Instance = null;
-            
+            Reports Report = null;
+
             var SignResponse = new SignResponse();
             try
             {
@@ -214,19 +236,25 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                 PrototypeVersion = Step.WorkFlowApplications.PrototypeVersions;
                 Instance = Step.WorkFlowApplications.Instances;
-                
+                Report = Step.WorkFlowApplications.Reports;
+
                 if (Step.User != null)
                     throw new Exception("Signature already issued");
                 if (Steps.Any(r => r.User == null && r.Step < Step.Step))
                     throw new Exception("The previous step is not completed");
                 if (Steps.Any(r => r.User == identity.Code && r.Step == Step.Step))
                     throw new Exception("You have already signed for this step");
-                if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
-                    request.ValidFrom < DateTime.UtcNow && request.Approved)
+                if (
+                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved 
+                    && request.ValidFrom < DateTime.UtcNow 
+                    && request.Approved
+                )
                     throw new Exception("The prototype has a past validity start date");
-                if (Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved &&
-                    (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) &&
-                    request.Approved)
+                if (
+                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved 
+                    && (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) 
+                    && request.Approved
+                )
                     throw new Exception("The prototype has a past validity end date");
                 if (!request.Approved && string.IsNullOrWhiteSpace(request.Comment))
                     throw new Exception("The comment is mandatory for the rejections");
@@ -279,6 +307,18 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                     if (!Granted) throw new Exception("Permission denied");
                 }
+                else if (Report != null)
+                {
+                    var Granted = false;
+                    foreach (var Tag in Step.WorkFlowApplicationStepTags)
+                        if (identity.HasPermission("ReportWorkFlowLevel", null, null, null, Tag.Tag))
+                        {
+                            Granted = true;
+                            break;
+                        }
+
+                    if (!Granted) throw new Exception("Permission denied");
+                }
                 else
                     throw new InvalidOperationException();
 
@@ -312,6 +352,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                             Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                         }
                     }
+                    else if (Report != null)
+                    {
+                        if (AllApproved)
+                        {
+                            await Approve(identity, Report);
+                            Step.WorkFlowApplications.FinalState = Report.ReportState;
+                        }
+                    }
 
                     if (AllApproved)
                         Step.WorkFlowApplications.Approved = true;
@@ -331,6 +379,11 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         await Reject(identity, Instance);
                         Step.WorkFlowApplications.FinalState = Instance.InstanceState;
+                    }
+                    else if (Report != null)
+                    {
+                        await Reject(identity, Report);
+                        Step.WorkFlowApplications.FinalState = Report.ReportState;
                     }
                 }
 
@@ -354,10 +407,13 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 }
                 else if (Instance != null)
                     SignResponse.State = Instance.InstanceState;
+                else if (Report != null)
+                    SignResponse.State = Report.ReportState;
 
-                var checklistLabel = Instance == null
-                    ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
-                    : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                var checklistCode = 
+                        PrototypeVersion != null ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
+                        Instance != null ? $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" :
+                        null;
                 var information = new Dictionary<string, object>
                 {
                     { "Action", request.Approved ? "Approve" : "Reject" },
@@ -376,7 +432,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
-                    CheckListCode = checklistLabel,
+                    CheckListCode = checklistCode,
                     CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
@@ -385,9 +441,10 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             }
             catch (Exception e)
             {
-                var checklistLabel = Instance == null
-                    ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
-                    : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                var checklistCode =
+                    PrototypeVersion != null ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
+                    Instance != null ? $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" :
+                    null;
                 var information = new Dictionary<string, object>
                 {
                     { "Action", request.Approved ? "Approve" : "Reject" },
@@ -407,8 +464,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     User = identity.Code,
                     Action = TrailAction.WorkflowSignatureFailed,
                     Date = DateTimeOffset.UtcNow,
-                    CheckListCode = checklistLabel,
-                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
+                    CheckListCode = checklistCode,
+                    CheckListID = Instance?.ID ?? PrototypeVersion?.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
                 
@@ -418,7 +475,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         public async Task<CreateResponse> CreateAsync(DefaultIdentity identity, CreateRequest request)
         {
-            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow, request.Date, request.Prototype, request.Version, request.Instance, request.Action);
+            var workFlowApplication = await _workFlowsRepository.CreateWorkFlowApplication(identity, request.WorkFlow, request.Date, request.Prototype, request.Version, request.Instance, request.Report, request.Action);
             await SendEmailsAsync(identity, workFlowApplication);
 
             return new CreateResponse
@@ -429,8 +486,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
         private async Task SendEmailsAsync(IDefaultIdentity identity, WorkFlowApplications workFlowApplication)
         {
-            var CurrentStep = workFlowApplication.WorkFlowApplicationSteps.Where(s => s.Approved == null)
-                .Min(s => s.Step);
+            var CurrentStep = workFlowApplication.WorkFlowApplicationSteps.Where(s => s.Approved == null).Min(s => s.Step);
             foreach (var step in workFlowApplication.WorkFlowApplicationSteps.Where(s => s.Step == CurrentStep))
                 await SendEmailsAsync(identity, step);
         }
