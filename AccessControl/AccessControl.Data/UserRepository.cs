@@ -33,7 +33,7 @@ namespace CheckListManager.AccessControl.Data
 
         private const string EXPORT_QUERY =
             "select " +
-                "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\",  u.\"NumberOfPasswordAttempts\", " +
+                "u.\"Code\", u.\"Description\", u.\"Email\", u.\"CorporateID\", u.\"Enabled\", u.\"LastLoginOn\",  u.\"NumberOfPasswordAttempts\", u.\"ReportWorkFlowLevel\", " +
                 "g.\"Group\", g.\"Department\", d.\"Name\" \"DepartmentName\", g.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", " +
                 "g.\"Role\", g.\"FunctionGroup\", g.\"Function\", (" +
                     "select \"SignatureLevel\" " +
@@ -85,7 +85,7 @@ namespace CheckListManager.AccessControl.Data
                 "and ( " +
                     ":inactivityDays is null " +
                     "or (u.\"LastLoginOn\" is null and date_part('day', now() - u.\"CreatedOn\") >= :inactivityDays) " +
-                    "or (u.\"LastLoginOn\" is not null and date_part('day', now() - u.\"LastLoginOn\") >= :inactivityDays " +
+                    "or (u.\"LastLoginOn\" is not null and date_part('day', now() - u.\"LastLoginOn\") >= :inactivityDays) " +
                 ") " +
                 "and (:enabled = 'All' or :enabled = 'Enabled' and u.\"Enabled\" or :enabled = 'Disabled' and not u.\"Enabled\") " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
@@ -276,6 +276,7 @@ namespace CheckListManager.AccessControl.Data
             existingUser.Enabled = user.Enabled;
             if (user.Enabled) existingUser.NumberOfPasswordAttempts = 0;
             existingUser.AuthenticationCode = user.AuthenticationCode;
+            existingUser.ReportWorkFlowLevel = user.ReportWorkFlowLevel;
             existingUser.TimeZone = user.TimeZone;
             existingUser.ModifiedOn = DateTimeOffset.UtcNow;
             existingUser.ModifiedBy = identity.Code;

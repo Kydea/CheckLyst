@@ -304,6 +304,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 CorporateID = u.CorporateID,
                 Enabled = u.Enabled,
                 AuthenticationCode = u.AuthenticationCode,
+                ReportWorkFlowLevel = u.ReportWorkFlowLevel,
                 NumberOfPasswordAttempts = u.NumberOfPasswordAttempts,
                 LastLoginOn = u.LastLoginOn,
                 TimeZone = u.TimeZone,
@@ -629,6 +630,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                 user.Email,
                 user.CorporateID,
                 NameAndSurname = user.Description,
+                user.ReportWorkFlowLevel,
                 user.Enabled,
                 user.Groups,
                 Functions = functions.Select(uf => new
@@ -678,6 +680,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         CorporateID = request.CorporateID,
                         Password = _hashService.HashStringToBytes(request.Password),
                         AuthenticationCode = request.AuthenticationCode,
+                        ReportWorkFlowLevel = request.ReportWorkFlowLevel,
                         TimeZone = request.TimeZone,
                         Enabled = request.Enabled
                     };
@@ -723,6 +726,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Password = _hashService.HashStringToBytes(record.Password),
                         Enabled = record.Enabled,
                         AuthenticationCode = record.AuthenticationCode,
+                        ReportWorkFlowLevel = record.ReportWorkFlowLevel,
                         TimeZone = record.TimeZone
                     };
 

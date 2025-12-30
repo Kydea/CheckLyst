@@ -48,6 +48,7 @@ namespace CheckListManager.Common.Data
         public int NumberOfPINAttempts { get; set; }
         public string CorporateID { get; set; }
         public string TimeZone { get; set; }
+        public string ReportWorkFlowLevel { get; set; }
     
         public virtual Companies Companies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

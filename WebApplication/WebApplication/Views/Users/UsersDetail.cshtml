@@ -65,6 +65,11 @@
                     <input type="text" name="authenticationCode" />
                 </label>
 
+                <label class="Clearing">
+                    <span>Report workflow level</span>
+                    <select name="reportWorkFlowLevel" data-nullable="(not set)"></select>
+                </label>
+
                 <label class="Clearing Controls2">
                     <span>Creation</span>
                     <i class="Icon fal fa-user"></i>
@@ -113,5 +118,8 @@
 </div>
 
 <script type="text/javascript">
+    var select = $("select[name=reportWorkFlowLevel]");
+    for (var index in matematici.profiles)
+        select.append($("<option />").text(matematici.profiles[index]).attr("value", matematici.profiles[index]));
     new matematici.GrantsDetailPage("form#Detail", "Users");
 </script>

@@ -575,6 +575,7 @@
           <Property Name="NumberOfPINAttempts" Type="int4" Nullable="false" />
           <Property Name="CorporateID" Type="varchar" MaxLength="50" />
           <Property Name="TimeZone" Type="varchar" MaxLength="100" />
+          <Property Name="ReportWorkFlowLevel" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserSessions">
           <Key>
@@ -2393,6 +2394,7 @@
           <Property Name="TimeZone" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TimeZones" Relationship="RelationalDatabaseModel.Users_TimeZone_fkey" FromRole="Users" ToRole="TimeZones" />
           <NavigationProperty Name="ReportRuns" Relationship="RelationalDatabaseModel.ReportRuns_User" FromRole="Users" ToRole="ReportRuns" />
+          <Property Name="ReportWorkFlowLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -4786,6 +4788,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ReportWorkFlowLevel" ColumnName="ReportWorkFlowLevel" />
                 <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
                 <ScalarProperty Name="CorporateID" ColumnName="CorporateID" />
                 <ScalarProperty Name="NumberOfPINAttempts" ColumnName="NumberOfPINAttempts" />

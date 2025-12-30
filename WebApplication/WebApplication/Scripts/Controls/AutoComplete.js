@@ -96,8 +96,8 @@
                 showList();
                 setTimeout(function () {
                     if (!initialized) deferredInitialization();
-                    input.trigger("focus");
-                    input.trigger("select");
+                    input.focus();
+                    input.select();
                 }, 0);
             });
             labelNode.addEventListener("click", function (e) {
@@ -108,7 +108,7 @@
                 if (open)
                     hideList();
                 else
-                    labelNode.trigger("focus");
+                    labelNode.focus();
                 e.preventDefault();
                 e.stopPropagation();
             });

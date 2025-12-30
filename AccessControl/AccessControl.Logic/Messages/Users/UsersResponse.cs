@@ -12,6 +12,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public int NumberOfPasswordAttempts { get; set; }
         public bool Enabled { get; set; }
         public string AuthenticationCode { get; set; }
+        public string ReportWorkFlowLevel { get; set; }
         public string TimeZone { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }

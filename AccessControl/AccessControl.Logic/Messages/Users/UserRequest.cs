@@ -15,6 +15,7 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
 		public string CorporateID { get; set; }
         public string AuthenticationCode { get; set; }
         public string TimeZone { get; set; }
+        public string ReportWorkFlowLevel { get; set; }
         public Grant[] GeneralFunctions { get; set; }
         public Grant[] PrototypeFunctions { get; set; }
         public Grant[] InstanceFunctions { get; set; }
