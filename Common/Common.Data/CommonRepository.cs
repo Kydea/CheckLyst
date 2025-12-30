@@ -127,6 +127,7 @@ namespace CheckListManager.Common.Data
         public async Task<List<Users>> GetAppointedUsersAsync(long companyID, string functionGroup, string function, long department, long prototypeType, string levelName, IEnumerable<string> levels)
         {
             string query =
+
                 "select u.* " +
                 "from " +
                     "\"Security\".\"GetGrantedUsers\"(:company, :department, :prototypetype, :functiongroup, :function) u " +
@@ -149,6 +150,25 @@ namespace CheckListManager.Common.Data
                 "order by u.\"Code\"";
 
             var users = await Read<Users>(query, new { company = companyID, department, prototypeType, functionGroup, function });
+            return users.ToList();
+        }
+
+        public async Task<List<Users>> GetAppointedUsersAsync(long companyID, IEnumerable<string> levels)
+        {
+            string query =
+                "select u.* " +
+                "from \"Security\".\"Users\" u " +
+                "where " +
+                    "u.\"Company\" = :company " +
+                    "and exists (select 1 from \"Security\".\"UserFunctions\" uf where uf.\"Company\" = u.\"Company\" and uf.\"User\" = u.\"Code\" and uf.\"FunctionGroup\" = 'Reports' and uf.\"Function\" = 'Edit') " +
+                    (
+                        levels.Any() ?
+                            $"and u.\"ReportWorkFlowLevel\" in ({string.Join(", ", levels.Select(l => "'" + l.Replace("'", "''") + "'"))}) " :
+                            string.Empty
+                    ) +
+                "order by u.\"Code\"";
+
+            var users = await Read<Users>(query, new { company = companyID });
             return users.ToList();
         }
 

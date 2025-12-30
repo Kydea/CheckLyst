@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Autofac;
@@ -46,8 +47,6 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
             foreach (var level in user.UserLevels) //user levels
                 yield return new UserFunction { Level = true, Department = level.Department, PrototypeType = level.PrototypeType, SignatureLevel = level.SignatureLevel, PrototypeWorkFlowLevel = level.PrototypeWorkFlowLevel, InstanceWorkFlowLevel = level.InstanceWorkFlowLevel };
         }
-
-
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             try
@@ -58,11 +57,10 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                     long? companyId = null;
                     if (long.TryParse(form["companyId"], out var i))
                         companyId = i;
-
                     var userService = scope.Resolve<IUserService>();
                     var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
                     var grants = PrepareUserFunctions(user).SelectMany(f => f.GetClaims()).Distinct().ToList();
-
+                    if (user.ReportWorkFlowLevel != null) grants.Add($"ReportWorkFlowLevel####{user.ReportWorkFlowLevel}");
                     var identity = CreateIdentity(context.Options.AuthenticationType, user, grants);
 
                     var properties = new AuthenticationProperties(CreateProperties(user, grants))
@@ -134,6 +132,7 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                 { "roles", string.Join(",", claims.Select(c => c + '#')) }
             };
         }
+
         private class UserFunction
         {
             public string FunctionGroup { get; set; }

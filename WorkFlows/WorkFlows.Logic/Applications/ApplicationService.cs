@@ -245,14 +245,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 if (Steps.Any(r => r.User == identity.Code && r.Step == Step.Step))
                     throw new Exception("You have already signed for this step");
                 if (
-                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved 
-                    && request.ValidFrom < DateTime.UtcNow 
+                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved
+                    && request.ValidFrom < DateTime.UtcNow
                     && request.Approved
                 )
                     throw new Exception("The prototype has a past validity start date");
                 if (
-                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved 
-                    && (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow) 
+                    Step.WorkFlowApplications.WorkFlowAction == WorkFlowAction.PrototypeToApproved
+                    && (request.ValidFrom >= request.ValidUntil || request.ValidUntil < DateTimeOffset.UtcNow)
                     && request.Approved
                 )
                     throw new Exception("The prototype has a past validity end date");
@@ -410,7 +410,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 else if (Report != null)
                     SignResponse.State = Report.ReportState;
 
-                var checklistCode = 
+                var checklistCode =
                         PrototypeVersion != null ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
                         Instance != null ? $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" :
                         null;
@@ -436,7 +436,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
-                
+
                 return SignResponse;
             }
             catch (Exception e)
@@ -451,7 +451,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     { "Comment", request.Comment },
                     { "ErrorMessage", e.Message }
                 };
-                
+
                 if (PrototypeVersion != null)
                 {
                     information.Add("ValidFrom", SignResponse.ValidFrom?.ToLocalTime(timeZone) ?? (object)"(now)");
@@ -468,7 +468,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     CheckListID = Instance?.ID ?? PrototypeVersion?.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
-                
+
                 throw;
             }
         }
@@ -495,37 +495,48 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         {
             var Instance = workFlowApplicationStep.WorkFlowApplications.Instances;
             var PrototypeVersion = workFlowApplicationStep.WorkFlowApplications.PrototypeVersions;
+            var Report = workFlowApplicationStep.WorkFlowApplications.Reports;
             var Users =
-                Instance == null
-                    ? await _commonRepository.GetAppointedUsersAsync(PrototypeVersion.Prototypes.Company, "Prototypes", "Approve", 
-                        PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
-                        workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag))
-                    : await _commonRepository.GetAppointedUsersAsync(Instance.Company, "Instances", "Confirm",
-                        Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
-                        workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag));
+                PrototypeVersion != null ? await _commonRepository.GetAppointedUsersAsync
+                (
+                    PrototypeVersion.Prototypes.Company, "Prototypes", "Approve",
+                    PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
+                    workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+                ) :
+                Instance != null ? await _commonRepository.GetAppointedUsersAsync
+                (
+                    Instance.Company, "Instances", "Confirm",
+                    Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
+                    workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+                ) :
+                await _commonRepository.GetAppointedUsersAsync
+                (
+                    identity.CompanyId, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+                );
             var webApplicationUrl = _configurationService.WebApplicationUrl;
 
             foreach (var user in Users)
                 if (!string.IsNullOrEmpty(user.Email))
                 {
                     var message = await _settingService.SignatureMessageAsync(user.Company);
-                    var checkListURL = Instance == null
-                        ? $"{webApplicationUrl}/Prototypes/Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}"
-                        : $"{webApplicationUrl}/Instances/Detail/{Instance.Code}";
-                    var checklistLabel = Instance == null
-                        ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}"
-                        : $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}";
+                    var url =
+                        PrototypeVersion != null ? $"{webApplicationUrl}/Prototypes/Detail/{PrototypeVersion.Prototypes.ID}/{PrototypeVersion.Version}" :
+                        Instance != null ? $"{webApplicationUrl}/Instances/Detail/{Instance.Code}" :
+                        $"{webApplicationUrl}/Reports/Editor/{Report.ID}";
+                    var label =
+                        PrototypeVersion != null ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :
+                        Instance != null ? $"{Instance.PrototypeName}.{Instance.Version}.{Instance.Year}.{Instance.Number}" :
+                        Report.Code;
                     await _queueService.SendObjectAsync(QueueName.Email,
-                        new EmailMessage(user.Company, "Signature needed", message,
-                            user.Email, new List<Tuple<string, string>>
+                        new EmailMessage(user.Company, "Signature needed", message, user.Email, new List<Tuple<string, string>>
                             {
                                 new Tuple<string, string>("User", user.Description),
-                                new Tuple<string, string>("CheckListType", Instance == null ? "prototype" : "instance"),
-                                new Tuple<string, string>("CheckListCode",
-                                    $"<a href='{checkListURL}' target='_blank'>{checklistLabel}</a>"),
-                            })
+                                new Tuple<string, string>("CheckListType", PrototypeVersion != null ? "prototype" : Instance != null ? "instance" : "report"),
+                                new Tuple<string, string>("CheckListCode", $"<a href='{url}' target='_blank'>{label}</a>"),
+                            }
+                        )
                         {
-                            TrailMessage = new EmailTrailMessage(identity.Code, checklistLabel, Instance?.ID ?? PrototypeVersion.Prototype, null)
+                            TrailMessage = new EmailTrailMessage(identity.Code, label, Instance?.ID ?? PrototypeVersion?.Prototype, null)
                         });
                 }
         }
