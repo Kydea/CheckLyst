@@ -9,13 +9,14 @@
         title,
 
         submit = function (event, callback, takeOpen) {
-            var settings = matematici.tokenManager.getCompanySettings(),
+            var
+                settings = matematici.tokenManager.getCompanySettings(),
                 input,
                 trigger = function () {
                     form.trigger(event, function (result) {
                         form.handleResult(result);
 
-                        if (settings && settings.requireUserReason) {
+                        if (settings && settings.requireUserReason && !options.ignoreUserReason) {
                             lastReason = !result.valid ? input.val() : "";
                             matematici.dialog.close();
                         }
@@ -34,7 +35,7 @@
                     }, options.parametersPrepareHandler && options.parametersPrepareHandler());
                 };
 
-            if (settings && settings.requireUserReason) {
+            if (settings && settings.requireUserReason && !options.ignoreUserReason) {
                 matematici.dialog.show({
                     title: "Reason",
                     content: $("<div />")

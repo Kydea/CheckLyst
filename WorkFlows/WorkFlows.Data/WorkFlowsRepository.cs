@@ -95,8 +95,8 @@ namespace CheckListManager.WorkFlows.Data
 
         public async Task<WorkFlowApplications> CreateWorkFlowApplication(IDefaultIdentity defaultIdentity, long workFlow, DateTimeOffset? date, long? prototype, int? version, long? instance, long? report, string action)
         {
-            var PrototypeVersion = instance == null ? Entities.PrototypeVersions.Single(pv => pv.Prototype == prototype.Value && pv.Version == version.Value) : null;
-            var Instance = instance == null ? null : Entities.Instances.Single(i => i.ID == instance.Value);
+            var PrototypeVersion = prototype.HasValue ? Entities.PrototypeVersions.Single(pv => pv.Prototype == prototype.Value && pv.Version == version.Value) : null;
+            var Instance = instance.HasValue ? Entities.Instances.Single(i => i.ID == instance.Value) : null;
 
             if (
                 Instance != null 
@@ -106,7 +106,7 @@ namespace CheckListManager.WorkFlows.Data
                     && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType)
                     && !defaultIdentity.HasPermission("Prototypes", "Preview", PrototypeVersion.Prototypes.Department)
                 || report.HasValue
-                    && !defaultIdentity.HasPermission("Report", "Edit")
+                    && !defaultIdentity.HasPermission("Reports", "Edit")
             )
                 throw new Exception("Access denied");
 
@@ -158,6 +158,7 @@ namespace CheckListManager.WorkFlows.Data
             await SaveChangesAsync();
             Entities.Entry(WorkFlowApplication).Reference(c => c.PrototypeVersions).Load();
             Entities.Entry(WorkFlowApplication).Reference(c => c.Instances).Load();
+            Entities.Entry(WorkFlowApplication).Reference(c => c.Reports).Load();
             return WorkFlowApplication;
         }
 

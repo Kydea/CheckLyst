@@ -71,7 +71,7 @@
                         var format = matematici.dateFormatter.format(moment(result.modifiedOn));
                         $("input[name=modifiedOn]", element).val(format.date + " " + format.time).attr("title", format.offset);
                     } :
-                    function (result) {
+                    function () {
                         //reloads the page with the correct url
                         matematici.navigator.open(options.detailUrl + "/" + result.id);
                     };
@@ -187,7 +187,8 @@
                     formSelector: "form#Detail",
                     parametersPrepareHandler: parametersPrepare,
                     editEvent: "Save",
-                    resultHandler: resultHandler
+                    resultHandler: resultHandler,
+                    ignoreUserReason: true
                 });
 
                 matematici.save = function (callback) {
@@ -198,6 +199,7 @@
 
                 var form = detailPage.getForm();
                 form.handleResult(model);
+                form.setValue("reportState", model.state);
                 form.setValue("createdBy", model.createdBy);
                 form.setValue("createdOn", model.createdOn);
                 form.setValue("modifiedBy", model.modifiedBy);
@@ -228,6 +230,11 @@
         },
 
         setState = function (state) {
+            if (!matematici.canClose) {
+                matematici.dialog.error("error", "The report state cannot be changed because unsaved changes are present.");
+                return;
+            }
+
             var handler = function () {
                 model.State = state;
                 $.ajax({
@@ -246,14 +253,7 @@
             };
 
             matematici.dialog.show("warning", "Please confirm the change of state.", [
-                {
-                    text: "confirm", icon: "check", handler: function () {
-                        if (matematici.canClose)
-                            handler();
-                        else
-                            save(handler);
-                    }
-                },
+                { text: "confirm", icon: "check", handler: handler },
                 { text: "cancel", icon: "times", cancelButton: true }
             ]);
         },
@@ -264,7 +264,7 @@
                 return true;
             }
 
-            var allowed = false;
+            var allowed = true;
 
             for (var rowIndex in rows) {
                 if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {
@@ -303,22 +303,24 @@
                 },
 
                 done: function (result) {
+                    if (result.state == reports.Report.states.draft) {
+                        location.reload(); //reload with correct editability
+                        return;
+                    }
                     grid.close();
                     matematici.popup.close();
                     model.state = result.state;
-                    model.validFrom = result.validFrom;
-                    model.validUntil = result.validUntil;
-                    if (result.completed)
-                        model.proposedState = model.proposedDate = null;
+                    model.proposedState = model.proposedDate = null;
                     model.modifiedBy = result.modifiedBy,
-                    model.modifiedOn = result.modifiedOn
+                    model.modifiedOn = result.modifiedOn;
                     completeHandler(reportSources);
+                    matematici.canClose = true;
                     if (!result.completed)
                         loadSignatureBook();
                     if (result.approved)
                         matematici.blip.ok();
-                    else
-                        matematici.blip.ko();
+                    else 
+                        matematici.blip.ko(); 
                 }
             });
             return true;

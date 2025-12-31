@@ -204,6 +204,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         private async Task SetState(DefaultIdentity identity, Reports Report, string State)
         {
             Report.ReportState = State;
+            Report.ProposedState = null;
+            Report.ProposedDate = null;
 
             await _commonRepository.AddTrailRecordAsync(new Records
             {
@@ -216,10 +218,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         }
 
         private Task Approve(DefaultIdentity identity, Reports Report) =>
-            SetState(identity, Report, ReportState.Confirmed);
+            SetState(identity, Report, Report.ReportState == ReportState.Confirmed ? ReportState.Obsolete : ReportState.Confirmed);
 
-        private Task Reject(DefaultIdentity identity, Reports Report) =>
-            SetState(identity, Report, ReportState.Draft);
+        private async Task Reject(DefaultIdentity identity, Reports Report) 
+        {
+            await SetState(identity, Report, Report.ReportState == ReportState.Confirmed ? ReportState.Confirmed : ReportState.Draft);
+        }
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone)
         {
@@ -433,7 +437,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Action = TrailAction.WorkflowSignatureIssued,
                     Date = DateTimeOffset.UtcNow,
                     CheckListCode = checklistCode,
-                    CheckListID = Instance?.ID ?? PrototypeVersion.Prototype,
+                    CheckListID = Instance?.ID ?? PrototypeVersion?.Prototype,
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
 

@@ -77,8 +77,6 @@ namespace CheckListManager.Reports.Logic.Detail
 
         private async Task<DetailResponse> ValidateAsync(IDefaultIdentity identity, DetailRequest record)
         {
-            var requireUserReason = await _settingService.RequireUserReasonAsync(identity.CompanyId);
-
             var response = new DetailResponse();
             if (string.IsNullOrWhiteSpace(record.Code))
                 response.Fields["Code"] = new Field
@@ -90,22 +88,6 @@ namespace CheckListManager.Reports.Logic.Detail
                         }
                     }
                 };
-
-            if (requireUserReason && string.IsNullOrEmpty(record.Reason))
-            {
-                response.Fields["Reason"] = new Field
-                {
-                    ValidationMessages = new List<ValidationMessage>
-                    {
-                        new ValidationMessage
-                        {
-                            Level = ValidationMessage.LevelError,
-                            Message = "Reason is a required field." +
-                            ""
-                        }
-                    }
-                };
-            }
 
             if (record.Columns == null || !record.Columns.Any())
                 response.ValidationMessages.Add(new ValidationMessage
@@ -182,6 +164,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 var WorkFlows = (await _reportsRepository.GetWorkFlows(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
 
                 response.ID = report.ID;
+                response.Code = report.Code;
                 response.State = report.ReportState;
                 response.ProposedState = report.ProposedState;
                 response.ProposedDate = report.ProposedDate;
