@@ -97,7 +97,7 @@
                         { text: "cancel", icon: "times", cancelButton: true },
                         { text: "report editor", icon: "pencil", handler: openEditor },
                         { text: "new version", icon: "pencil", handler: newVersion, hidden: state != reports.Report.states.confirmed && state != reports.Report.states.obsolete },
-                        { text: "report viewer", icon: "file-chart-line", handler: openViewer }
+                        { text: "report viewer", icon: "file-chart-line", handler: openViewer, hidden: state == reports.Report.states.obsolete }
                     ];
                     matematici.dialog.popupMenu(buttons);
                 } else

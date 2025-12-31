@@ -18,7 +18,7 @@
                 suppressErrors: true
             }).done(function (result) {
                 handler(result);
-            }).error(function () {
+            }).fail(function () {
                 handler([])
             });
         },
@@ -117,7 +117,7 @@
             var
                 reportSourceCode = reportSourceSelect.val(),
                 reportSource = reportSourceCode && reportSources[reportSourceCode];
-            editor.setReadOnly(reportSource != null && !model.readOnly);
+            editor.setReadOnly(reportSource != null || !model.editable);
             editor.setValue(reportSource && reportSource.query || "", -1);
         },
 
@@ -214,14 +214,14 @@
                 editor.setChangeHandler(function () {
                     matematici.canClose = false;
                 });
-                editor.setReadOnly(!model.readOnly);
+                editor.setReadOnly(!model.editable);
 
                 options.actionButtonsGroup.toggleByClass("View", model.id != null);
                 options.actionButtonsGroup.toggleByClass("Save", model.editable);
                 options.actionButtonsGroup.toggleByClass("Delete", model.editable);
                 options.actionButtonsGroup.toggleByClass("Verify", model.editable);
-                options.actionButtonsGroup.toggleByClass("SubmitForObsolescence", model.state == reports.Report.states.confirmed && model.proposedState == reports.Report.states.obsolete);
-                options.actionButtonsGroup.toggleByClass("Obsolete", model.state == reports.Report.states.confirmed);
+                options.actionButtonsGroup.toggleByClass("SubmitForObsolescence", model.state == reports.Report.states.confirmed && model.proposedState == null);
+                options.actionButtonsGroup.toggleByClass("Obsolete", model.state == reports.Report.states.confirmed && model.proposedState == reports.Report.states.obsolete);
                 options.actionButtonsGroup.toggleByClass("Complete", model.state == reports.Report.states.draft);
                 options.actionButtonsGroup.toggleByClass("Confirm", model.state == reports.Report.states.completed);
             }
@@ -376,7 +376,11 @@
 
     reportEditor.getDetailPage = function () {
         return detailPage;
-    }
+    };
+
+    reportEditor.isEditable = function () {
+        return model.editable;
+    };
 
     reportEditor.showColumns = showColumns;
     reportEditor.showClauses = showClauses;

@@ -365,7 +365,10 @@
                     .append($("<a />").addClass("Button DefaultButton").text("close").prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                         updateReport();
                         close();
-                    }))
+                    }));
+
+            if (reports.reportEditor.isEditable())
+                buttons
                     .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
                         open(currentIndex);
                     }))

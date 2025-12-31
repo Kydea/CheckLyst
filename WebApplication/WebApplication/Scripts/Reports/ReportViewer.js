@@ -86,7 +86,7 @@
 
             var
                 openEditor = function () {
-                    matematici.navigator.open(options.editorUrl + "/" + options.id);
+                    matematici.navigator.open(options.editorUrl);
                 },
                 openList = function () {
                     matematici.navigator.open(options.listUrl);

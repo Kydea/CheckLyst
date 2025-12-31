@@ -343,7 +343,9 @@ namespace CheckListManager.Reports.Logic.Detail
         public async Task<DetailResponse> SetStateAsync(IDefaultIdentity identity, DetailRequest request)
         {
             var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
-            if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed)
+            if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow == null)
+                report.ReportState = ReportState.Obsolete;
+            else if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow != null)
             {
                 report.ProposedState = ReportState.Obsolete;
                 report.ProposedDate = DateTimeOffset.UtcNow;
@@ -356,7 +358,9 @@ namespace CheckListManager.Reports.Logic.Detail
                 });
 
             }
-            else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft)
+            else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow == null)
+                report.ReportState = ReportState.Confirmed;
+            else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow != null)
             {
                 report.ReportState = ReportState.Completed;
                 report.ProposedState = ReportState.Confirmed;

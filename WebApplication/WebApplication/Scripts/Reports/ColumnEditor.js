@@ -123,9 +123,12 @@
             editor.addCompleterItems(queryColumns.map(function (column) {
                 return { value: column, score: 1000, meta: "query column" };
             }));
+            editor.setReadOnly(!reports.reportEditor.isEditable());
 
             $("input, select", form).each(function () {
                 matematici.controls.setValidationMessages($(this), []);
+                if (!reports.reportEditor.isEditable())
+                    matematici.controls.setEditable($(this), false);
             });
 
             if (column) setError();
@@ -135,9 +138,11 @@
             var buttons = [];
 
             buttons.push({ cancelButton: true, hidden: true, handler: cancel });
-            buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
-            buttons.push({ text: "confirm", icon: "save", handler: confirm });
-            buttons.push({ text: "verify", icon: "question", handler: verify });
+            if (reports.reportEditor.isEditable()) {
+                buttons.push({ text: "delete", icon: "trash-alt", handler: remove });
+                buttons.push({ text: "confirm", icon: "save", handler: confirm });
+                buttons.push({ text: "verify", icon: "question", handler: verify });
+            }
 
             matematici.popup.show({
                 url: matematici.urls.reports.columnEditor,

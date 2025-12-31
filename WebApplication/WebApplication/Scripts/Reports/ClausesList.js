@@ -9,7 +9,6 @@
         noRecord,
         currentIndex,
         list = [],
-        openButton,
         orderBar,
         filtersBar,
         fixedHeader,
@@ -310,9 +309,8 @@
                         updateReport();
                         close();
                     }))
-                    .append(openButton = $("<a />").addClass("Button").text("open").hide().prepend($("<i />").addClass("Icon fa fa-edit")).on("click", function () {
-                        open(currentIndex);
-                    }))
+            if (reports.reportEditor.isEditable())
+                buttons
                     .append($("<a />").addClass("Button").text("add").prepend($("<i />").addClass("Icon fa fa-plus")).on("click", function () {
                         open();
                     }));

@@ -10,7 +10,7 @@
 
         toggleGroups = function () {
             var locked = !restrictedInput.prop("checked");
-            groupsAutoComplete.lock(locked);
+            groupsAutoComplete.lock(locked || !reports.reportEditor.isEditable());
             if (locked) groupsAutoComplete.setValue(null);
         },
 
@@ -26,6 +26,8 @@
         fill = function (f) {
             form = f;
             restrictedInput = $("input[name=restricted]").prop("checked", model.fields && model.fields.restricted && model.fields.restricted.value == "true");
+
+            matematici.controls.setEditable(restrictedInput, reports.reportEditor.isEditable());
             form
                 .on("toggle", "select", function () {
                     modified = true;
@@ -53,7 +55,8 @@
             var buttons = [];
 
             buttons.push({ cancelButton: true, hidden: true });
-            buttons.push({ text: "confirm", icon: "save", handler: confirm });
+            if (reports.reportEditor.isEditable())
+                buttons.push({ text: "confirm", icon: "save", handler: confirm });
 
             matematici.popup.show({
                 url: matematici.urls.reports.groupsList,
