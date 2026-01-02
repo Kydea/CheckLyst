@@ -260,6 +260,7 @@
                 if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (visible && !flags[3]) visible = expression.error == null;
                 if (visible && !flags[4]) visible = expression.error != null;
+                if (visible && flags[5]) visible = expression.exception;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -286,6 +287,7 @@
             filtersBar.addFlag("expression", true);
             filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
             filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
+            filtersBar.addFlag($("<i />").addClass("fal fa-exclamation"), false, true);
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")

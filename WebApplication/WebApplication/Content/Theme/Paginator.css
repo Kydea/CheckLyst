@@ -39,3 +39,26 @@
   height: 1em;
   left: -8px;
 }
+.Paginator input {
+  margin-left: 20px;
+  width: 40px;
+  text-align: center;
+  border: 1px solid #009688;
+  border-radius: 3px;
+  height: 20px;
+  line-height: 20px;
+}
+.Paginator input:focus, .Paginator input:not(:placeholder-shown) {
+  width: 100px;
+  border: 1px solid #009688;
+  outline: none;
+}
+.Paginator input:focus + i, .Paginator input:not(:placeholder-shown) + i {
+  display: inline-block;
+  margin-left: 8px;
+}
+.Paginator i {
+  color: #00877a;
+  display: none;
+  cursor: pointer;
+}
