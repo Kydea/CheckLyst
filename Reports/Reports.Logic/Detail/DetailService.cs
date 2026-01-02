@@ -14,6 +14,7 @@ using CheckListManager.Common.Data;
 using System.Security.Principal;
 using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.WorkFlows;
+using static SAP.Middleware.Connector.RfcAbapClassException;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -161,10 +162,12 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
-                var WorkFlows = (await _reportsRepository.GetWorkFlows(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
+                var workFlows = (await _reportsRepository.GetWorkFlowsAsync(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
+                var lastVersion = await _reportsRepository.GetLastVersionAsync(company, report.Code);
 
                 response.ID = report.ID;
                 response.Code = report.Code;
+                response.Version = report.Version;
                 response.State = report.ReportState;
                 response.ProposedState = report.ProposedState;
                 response.ProposedDate = report.ProposedDate;
@@ -174,10 +177,11 @@ namespace CheckListManager.Reports.Logic.Detail
                 response.Fields["description"] = new Field { Value = report.Description, Editable = response.Editable };
                 response.Fields["note"] = new Field { Value = report.Note, Editable = response.Editable };
                 response.Fields["reportSource"] = new Field { Value = report.ReportSource, Editable = response.Editable };
-                response.Fields["workFlow"] = new Field { Value = report.WorkFlow?.ToString(), Options = WorkFlows, Editable = response.Editable };
+                response.Fields["workFlow"] = new Field { Value = report.WorkFlow?.ToString(), Options = workFlows, Editable = response.Editable && (lastVersion == null || !lastVersion.WorkFlow.HasValue) };
                 response.Fields["query"] = new Field { Value = report.Query, Editable = response.Editable };
                 response.Fields["reportState"] = new Field { Value = report.ReportState, Editable = false };
                 response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false", Editable = response.Editable };
+                response.Fields["version"] = new Field { Value = report.Version.ToString(), Editable = false };
                 response.CreatedBy = report.CreatedBy;
                 response.CreatedOn = report.CreatedOn;
                 response.ModifiedBy = report.ModifiedBy;
@@ -247,7 +251,7 @@ namespace CheckListManager.Reports.Logic.Detail
                         Note = request.Note,
                         WorkFlow = request.WorkFlow,
                         Restricted = request.Restricted,
-                        ReportColumns = request.Columns?.Select(c => new Common.Data.ReportColumns
+                        ReportColumns = request.Columns?.Select(c => new ReportColumns
                         {
                             Label = c.Label,
                             Column = c.Column,
@@ -258,7 +262,7 @@ namespace CheckListManager.Reports.Logic.Detail
                             ValueAggregation = c.ValueAggregation,
                             GroupAggregation = c.GroupAggregation
                         }).ToList(),
-                        ReportClauses = request.Clauses?.Select(c => new Common.Data.ReportClauses
+                        ReportClauses = request.Clauses?.Select(c => new ReportClauses
                         {
                             Label = c.Label,
                             Clause = JsonConvert.SerializeObject(c.Clause),
@@ -269,6 +273,17 @@ namespace CheckListManager.Reports.Logic.Detail
                             ClauseType = c.ClauseType,
                         }).ToList()
                     };
+
+                    var lastVersion = await _reportsRepository.GetLastVersionAsync(identity.CompanyId, request.Code);
+                    if (request.NewVersion)
+                    {
+                        if (request.Version != lastVersion.Version + 1) throw new Exception("The report version is not the last one.");
+                        request.ID = null;
+                    }
+
+                    if (lastVersion.WorkFlow.HasValue)
+                        request.WorkFlow = lastVersion.WorkFlow;
+
                     if (request.ID.HasValue)
                     {
                         report.ID = request.ID.Value;
@@ -281,8 +296,10 @@ namespace CheckListManager.Reports.Logic.Detail
                     }
                     else
                     {
-                        await _reportsRepository.AddReportAsync(identity, report, request.Groups);
+                        await _reportsRepository.AddReportAsync(identity, report, request.Groups, lastVersion == null ? 1 : lastVersion.Version + 1);
                         request.ID = response.ID = report.ID;
+                        if (request.NewVersion) lastVersion.ReportState = ReportState.Obsolete;
+                        await _reportsRepository.SaveChangesAsync();
                         await AuditAsync(identity, TrailAction.ReportCreated, request);
                     }
                 }

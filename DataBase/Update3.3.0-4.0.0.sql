@@ -66,6 +66,8 @@ alter table "Reports"."Reports" drop column "Online";
 
 drop index "Reports"."Reports_Code";
 create unique index "Reports_Code_Version" on "Reports"."Reports" ("Company", upper("Code"), "Version");
+create unique index "Reports_ActiveVersion" on "Reports"."Reports" ("Company", upper("Code"), "ReportState") where "ReportState" in ('Confirmed');
+create unique index "Reports_IdEditVersion" on "Reports"."Reports" ("Company", upper("Code"), "ReportState") where "ReportState" in ('Draft', 'Completed');
 create index "Reports_Code_Version_2" on "Reports"."Reports" ("Company", "Code", "Version");
 
 alter table "WorkFlows"."WorkFlowApplications" add "Report" bigint;

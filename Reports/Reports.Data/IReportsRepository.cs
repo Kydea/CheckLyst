@@ -16,7 +16,7 @@ namespace CheckListManager.Reports.Data
 
         Task<Common.Data.Reports> GetReportAsync(long company, long id, string user);
         Task<PagingResponse<List<Common.Data.Reports>>> GetReportsAsync(long company, string user, int? id, string code, string description, int currentPage, int itemsPerPage);
-        Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups);
+        Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups, int? version);
         Task<Common.Data.Reports> EditReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups);
         Task DeleteReportAsync(IDefaultIdentity identity, long id);
         Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string format, string parameters);
@@ -26,6 +26,7 @@ namespace CheckListManager.Reports.Data
         Task DeleteRunAsync(DefaultIdentity identity, long iD);
         Task CompleteReportRunAsync(long id, byte[] data, Exception exception, CancellationToken cancellationToken);
         Task DeleteExpiredRunsAsync(CancellationToken cancellationToken);
-        Task<List<WorkFlows>> GetWorkFlows(long company);
+        Task<List<WorkFlows>> GetWorkFlowsAsync(long company);
+        Task<Common.Data.Reports> GetLastVersionAsync(long company, string code);
     }
 }

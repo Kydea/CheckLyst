@@ -19,10 +19,13 @@
                     <a href="#">Note</a>
                 </div>
                 <div class="Tab">
-                    <label>
+                    <input type="hidden" name="newVersion" />
+                    <label class="Controls2">
                         <span>Code</span>
                         <i class="Icon fal fa-key"></i>
                         <input type="text" name="code" autocomplete="off" maxlength="50" />
+                        <i class="Icon fa fa-sort-numeric-down"></i>
+                        <input type="text" name="version" autocomplete="off" maxlength="50" />
                     </label>
 
                     <label>
@@ -40,7 +43,7 @@
                     <label>
                         <span>Workflow</span>
                         <i class="Icon fal fa-file-certificate"></i>
-                        <select name="workFlow" data-nullable=""></select>
+                        <select name="workFlow" data-nullable="" class="ReadOnly"></select>
                     </label>
 
                     <label class="Clearing FullWidth">
@@ -50,27 +53,27 @@
                     </label>
 
                     @*
-        <label class="Clearing">
-            <span>Instances range restricted</span>
-            <input type="checkbox" name="instancesRangeRestricted" />
-        </label>
+                        <label class="Clearing">
+                            <span>Instances range restricted</span>
+                            <input type="checkbox" name="instancesRangeRestricted" />
+                        </label>
 
-        <label>
-            <span>Instances ID alias</span>
-            <i class="Icon fal fa-layer-group"></i>
-            <input type="text" name="instancesIDAlias" />
-        </label>
+                        <label>
+                            <span>Instances ID alias</span>
+                            <i class="Icon fal fa-layer-group"></i>
+                            <input type="text" name="instancesIDAlias" />
+                        </label>
 
-        <label class="Clearing">
-            <span>Prototypes range restricted</span>
-            <input type="checkbox" name="prototypesRangeRestricted" />
-        </label>
+                        <label class="Clearing">
+                            <span>Prototypes range restricted</span>
+                            <input type="checkbox" name="prototypesRangeRestricted" />
+                        </label>
 
-        <label>
-            <span>Prototypes ID alias</span>
-            <i class="Icon fal fa-file-invoice"></i>
-            <input type="text" name="prototypesIDAlias" />
-        </label>
+                        <label>
+                            <span>Prototypes ID alias</span>
+                            <i class="Icon fal fa-file-invoice"></i>
+                            <input type="text" name="prototypesIDAlias" />
+                        </label>
                     *@
 
                     <label class="FullWidth">
@@ -127,7 +130,8 @@
                 listUrl: "@Url.Action("List")",
                 detailUrl: "@Url.Action("Editor")",
                 viewerUrl: "@Url.Action("Viewer")",
-                actionButtonsGroup: actionButtonsGroup
+                actionButtonsGroup: actionButtonsGroup,
+                newVersion: @(Model.NewVersion ? "true" : "false")
             }),
 
             actionBar = new matematici.ActionBar("div.ActionBar")

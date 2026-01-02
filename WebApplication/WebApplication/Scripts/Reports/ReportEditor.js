@@ -65,7 +65,7 @@
 
         save = function (callback) {
             if (!callback)
-                callback = options.id >= 0 ?
+                callback = options.id >= 0 && !options.newVersion ?
                     function (result) {
                         $("input[name=modifiedBy]", element).val(result.modifiedBy);
                         var format = matematici.dateFormatter.format(moment(result.modifiedOn));
@@ -73,7 +73,7 @@
                     } :
                     function () {
                         //reloads the page with the correct url
-                        matematici.navigator.open(options.detailUrl + "/" + result.id);
+                        matematici.navigator.open(options.detailUrl);
                     };
 
             detailPage.clickHandler(null, "Save", callback);
@@ -97,10 +97,13 @@
         },
 
         deleteRecord = function () {
-            detailPage.deleteRecord(function () {
-                matematici.canClose = true;
+            if (!model.code || options.newVersion)
                 quit();
-            });
+            else
+                detailPage.deleteRecord(function () {
+                    matematici.canClose = true;
+                    quit();
+                });
         },
 
         setupReportSources = function (list) {
@@ -135,12 +138,12 @@
 
                 if (error && error != "") errors.push(error);
 
-                if (data.columnErrors) {
+                if (data.columnErrors && data.columnErrors.length) {
                     errors.push("Some columns have errors");
                     $("div.ActionBar a.ColumnsButton").toggleClass("Invalid", true);
                 }
 
-                if (data.clauseErrors) {
+                if (data.clauseErrors && data.clauseErrors.length) {
                     errors.push("Some clauses have errors");
                     $("div.ActionBar a.ClausesButton").toggleClass("Invalid", true);
                 }
@@ -168,17 +171,19 @@
 
         completeHandler = function (reportSources) {
             if (reportSources != null && model != null) {
-                var code = model.fields && model.fields.code && model.fields.code.value;
-                if (code) {
-                    $("h2", element).text(code);
+                if (model.code) {
+                    $("h2", element).text(model.code + (options.newVersion ? " (new version)" : ""));
 
                     matematici.breadcrumbs.set([
                         { content: "report editor", label: "page" },
-                        { content: code, label: "code" }
+                        { content: model.code, label: "code" }
                     ]);
                 }
 
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
+
+                if (options.newVersion) 
+                    model.fields.description.editable = true;
 
                 detailPage = new matematici.DetailPage({
                     readOnly: !model.editable,
@@ -200,6 +205,8 @@
                 var form = detailPage.getForm();
                 form.handleResult(model);
                 form.setValue("reportState", model.state);
+                form.setValue("version", model.version);
+                form.setValue("newVersion", !!model.newVersion);
                 form.setValue("createdBy", model.createdBy);
                 form.setValue("createdOn", model.createdOn);
                 form.setValue("modifiedBy", model.modifiedBy);
@@ -220,7 +227,7 @@
 
                 options.actionButtonsGroup.toggleByClass("View", model.id != null);
                 options.actionButtonsGroup.toggleByClass("Save", model.editable);
-                options.actionButtonsGroup.toggleByClass("Delete", model.editable);
+                options.actionButtonsGroup.toggleByClass("Delete", model.state == reports.Report.states.draft);
                 options.actionButtonsGroup.toggleByClass("Verify", model.editable);
                 options.actionButtonsGroup.toggleByClass("SubmitForObsolescence", model.state == reports.Report.states.confirmed && model.proposedState == null);
                 options.actionButtonsGroup.toggleByClass("Obsolete", model.state == reports.Report.states.confirmed && model.proposedState == reports.Report.states.obsolete);
@@ -336,6 +343,7 @@
 
             reports.reportEditor = reportEditor;
             reportSourceSelect = $("select[name=reportSource]", element).on("change", reportSourceChanged);
+            workFlowSelect = $("select[name=workFlow]", element);
             editor = new matematici.SQLEditor("AceEditor");
 
             $.ajax({
@@ -357,6 +365,12 @@
                     }
                 }).done(function (result) {
                     model = result;
+                    if (options.newVersion) {
+                        model.newVersion = true;
+                        ++model.version;
+                        model.state = reports.Report.states.draft;
+                        model.editable = true;
+                    }
                     completeHandler(reportSources);
                 });
             else

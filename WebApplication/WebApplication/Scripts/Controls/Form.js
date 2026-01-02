@@ -303,7 +303,8 @@
                         autoComplete.refreshValues();
                         var control = $(autoComplete.getControl());
                         control.toggle(!fieldData.visibile);
-                        matematici.controls.setEditable(control, fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
+                        matematici.controls.setEditable(field, fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
+                        autoComplete.checkReadOnly();
                     } else {
                         if (fieldData.value != null) setFieldValue(field, fieldData.value);
                         field.toggle(!fieldData.visibile);

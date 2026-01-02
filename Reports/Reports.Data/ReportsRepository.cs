@@ -50,7 +50,7 @@ namespace CheckListManager.Reports.Data
             int Count = await Query.CountAsync();
 
             Query = Query
-                .OrderBy(r => r.ID)
+                .OrderBy(r => r.Code).ThenByDescending(r => r.Version)
                 .Skip((currentPage - 1) * itemsPerPage);
 
             if (itemsPerPage > 0)
@@ -79,9 +79,10 @@ namespace CheckListManager.Reports.Data
             return Report;
         }
 
-        public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups)
+        public async Task AddReportAsync(IDefaultIdentity identity, Common.Data.Reports report, List<string> groups, int? version)
         {
             report.Company = identity.CompanyId;
+            report.Version = version ?? 1;
             report.ReportState = ReportState.Draft;
             if (groups != null && groups.Any())
                 report.Groups = Entities.Groups.Where(g => g.Company == identity.CompanyId && groups.Contains(g.Code)).ToList();
@@ -220,10 +221,13 @@ namespace CheckListManager.Reports.Data
             await SaveChangesAsync();
         }
 
-        public async Task<List<WorkFlows>> GetWorkFlows(long company) =>
-            await Entities.WorkFlows
+        public Task<List<WorkFlows>> GetWorkFlowsAsync(long company) =>
+            Entities.WorkFlows
                 .Where(wf => wf.Company == company)
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
+
+        public Task<Common.Data.Reports> GetLastVersionAsync(long company, string code) =>
+            Entities.Reports.Where(r => r.Company == company && r.Code == code && r.ReportState != ReportState.Draft).OrderByDescending(r => r.Version).FirstOrDefaultAsync();
     }
 }

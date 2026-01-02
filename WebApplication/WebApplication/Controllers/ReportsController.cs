@@ -15,6 +15,12 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
+        [Route("Editor/NewVersion/{ID}")]
+        public ActionResult NewVersion(long ID)
+        {
+            return PartialView("Editor", new Report { ID = ID, NewVersion = true });
+        }
+
         [Authorize(Roles = "Reports#Edit")]
         [Route("Editor/{ID?}")]
         public ActionResult Editor(long? ID)
@@ -23,12 +29,6 @@ namespace CheckListManager.WebApplication.Controllers
         }
 
         [Authorize(Roles = "Reports#Edit")]
-        [Route("NewVersion/{ID?}")]
-        public ActionResult NewVersion(long? ID)
-        {
-            return PartialView("Editor", new Report { ID = ID, NewVersion = true });
-        }
-
         [Route("Viewer/{ID?}")]
         public ActionResult Viewer(long? ID)
         {

@@ -7,6 +7,7 @@ namespace CheckListManager.Reports.Logic.Detail
     {
         public long? ID { get; set; }
         public string Code { get; set; }
+        public int? Version { get; set; }
         public string Description { get; set; }
         public string Note { get; set; }
         public string ReportSource { get; set; }
@@ -17,13 +18,11 @@ namespace CheckListManager.Reports.Logic.Detail
         public string PrototypesIDAlias { get; set; }
         public bool Restricted { get; set; }
         public long? WorkFlow { get; set; }
-
+        public string Reason { get; set; }
+        public string State { get; set; }
+        public bool NewVersion { get; set; }
         public List<string> Groups { get; set; }
         public List<ReportColumn> Columns { get; set; }
         public List<ReportClause> Clauses { get; set; }
-
-        public string Reason { get; set; }
-        
-        public string State { get; set; }
     }
 }

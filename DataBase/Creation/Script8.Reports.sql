@@ -57,6 +57,8 @@ create table "Reports"."Reports"
 );
 
 create unique index "Reports_Code_Version" on "Reports"."Reports" ("Company", upper("Code"), "Version");
+create unique index "Reports_ActiveVersion" on "Reports"."Reports" ("Company", upper("Code"), "ReportState") where "ReportState" in ('Confirmed');
+create unique index "Reports_IdEditVersion" on "Reports"."Reports" ("Company", upper("Code"), "ReportState") where "ReportState" in ('Draft', 'Completed');
 create index "Reports_Code_Version_2" on "Reports"."Reports" ("Company", "Code", "Version");
 
 create table "Reports"."ReportGroups"
