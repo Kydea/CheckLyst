@@ -138,14 +138,16 @@
         <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group1" />
         <AssociationConnector Association="RelationalDatabaseModel.GroupConflicts_Group2" />
         <AssociationConnector Association="RelationalDatabaseModel.Users_TimeZone_fkey" />
-        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportRuns" Width="1.5" PointX="29.875" PointY="5.25" />
-        <AssociationConnector Association="RelationalDatabaseModel.ReportRuns_Report_fkey" />
-        <AssociationConnector Association="RelationalDatabaseModel.ReportRuns_User" />
         <EntityTypeShape EntityType="RelationalDatabaseModel.ReportStates" Width="1.5" PointX="0.75" PointY="14.875" />
         <AssociationConnector Association="RelationalDatabaseModel.Reports_ProposedState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Reports_ReportState_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.Reports_WorkFlow_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.WorkFlowApplications_Reports" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportRuns" Width="1.5" PointX="29.875" PointY="5.25" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.UserReports" Width="1.5" PointX="7.5" PointY="32.875" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportRuns_Report_fkey" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportRuns_User" />
+        <AssociationConnector Association="RelationalDatabaseModel.UserReports_User" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -112,7 +112,7 @@ create table "Reports"."ReportRuns"
 	"ID" bigserial primary key,
 
 	"Company" bigint not null,
-	"User" varchar (60),
+	"User" varchar (60) not null,
 	constraint "ReportRuns_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
 
 	"Report" bigint not null references "Reports"."Reports" on delete cascade,
@@ -130,6 +130,17 @@ create table "Reports"."ReportRuns"
 );
 
 create index "ReportRuns_User" on "Reports"."ReportRuns" ("Company", "User");
+
+create table "Reports"."UserReports"
+(
+	"Company" bigint,
+	"User" varchar (60),
+	constraint "UserReports_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"ReportCode" varchar(50),
+
+	constraint "UserReports_PK" primary key ("Company", "User", "ReportCode")
+);
 
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Reports" foreign key ("Report") references "CheckLists"."Reports" on delete cascade;
 

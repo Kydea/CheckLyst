@@ -26,6 +26,7 @@ namespace CheckListManager.Common.Data
             this.UserLevels = new HashSet<UserLevels>();
             this.UserRoles = new HashSet<UserRoles>();
             this.ReportRuns = new HashSet<ReportRuns>();
+            this.UserReports = new HashSet<UserReports>();
         }
     
         public long Company { get; set; }
@@ -70,5 +71,7 @@ namespace CheckListManager.Common.Data
         public virtual TimeZones TimeZones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ReportRuns> ReportRuns { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserReports> UserReports { get; set; }
     }
 }

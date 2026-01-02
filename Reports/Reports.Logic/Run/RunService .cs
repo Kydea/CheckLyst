@@ -42,9 +42,12 @@ namespace CheckListManager.Reports.Logic.Run
                 //initial load
                 var reports = await _reportsRepository.GetReportsAsync(
                     identity.CompanyId,
-                    identity.HasPermission("Reports", "Edit") ? string.Empty : identity.Code,
+                    identity.Code,
+                    !identity.HasPermission("Reports", "Edit"),
                     null,
                     null,
+                    null,
+                    false, 
                     null,
                     1,
                     0

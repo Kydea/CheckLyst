@@ -24,5 +24,7 @@ namespace CheckListManager.Reports.Logic.Detail
         public DateTimeOffset? CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+
+        public bool Favourite { get; set; }
     }
 }

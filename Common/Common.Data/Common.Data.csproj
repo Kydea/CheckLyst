@@ -279,6 +279,9 @@
     <Compile Include="UserLevels.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserReports.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserRoles.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>

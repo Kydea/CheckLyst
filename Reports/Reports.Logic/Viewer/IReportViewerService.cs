@@ -15,5 +15,6 @@ namespace CheckListManager.Reports.Logic.Viewer
         Task<ReportResponse> GetReportData(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);
         Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken);
         Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request);
+        Task ToggleFavourite(IDefaultIdentity identity, ToggleFavouriteRequest request);
     }
 }

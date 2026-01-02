@@ -25,6 +25,26 @@
                 <i class="Icon fal fa-align-left"></i>
                 <input type="text" name="description" />
             </label>
+
+            <label>
+                <span>Favourites</span>
+                <input type="checkbox" name="favourites" />
+            </label>
+
+            @if (User.IsInRole("Reports#Edit"))
+            {
+                <label class="Width200 Clearing">
+                    <span>State</span>
+                    <i class="Icon fal fa-tasks"></i>
+                    <select name="state" data-nullable="(all)">
+                        <option value="Draft">Draft</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="SubmittedForObsolescence">Submitted for obsolescence</option>
+                        <option value="Obsolete">Obsolete</option>
+                    </select>
+                </label>
+            }
         </form>
 
         <table class="Grid">

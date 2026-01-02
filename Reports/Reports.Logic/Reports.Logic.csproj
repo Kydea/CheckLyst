@@ -203,6 +203,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Viewer\ToggleFavouriteRequest.cs" />
     <Compile Include="ReportIdentity.cs" />
     <Compile Include="Run\IRunService.cs" />
     <Compile Include="Run\ListResponse.cs" />

@@ -2,6 +2,7 @@
     var
         reportViewer = this,
         form = $("form", element),
+        code,
         inputs = [],
 
         run = function () {
@@ -104,6 +105,13 @@
         },
 
         completeHandler = function (result) {
+            code = result.code;
+
+            if (result.favourite)
+                options.removeFromFavouritesButton.removeClass("Hidden");
+            else
+                options.addToFavouritesButton.removeClass("Hidden");
+
             matematici.breadcrumbs.set([
                 { content: "report viewer", label: "page" },
                 { content: result.code, label: "code" }
@@ -128,8 +136,38 @@
                 label = $("<div />").addClass("NoParameter").appendTo(form).text("(this report has no parameter)");
         },
 
+        addToFavourites = function () {
+            $.ajax({
+                type: "post",
+                url: matematici.urls.reports.api + "/Viewer/ToggleFavourite",
+                data: {
+                    reportCode: code,
+                    value: true
+                },
+            }).done(function () {
+                options.addToFavouritesButton.addClass("Hidden");
+                options.removeFromFavouritesButton.removeClass("Hidden");
+            });
+        },
+
+        removeFromFavourites = function () {
+            $.ajax({
+                type: "post",
+                url: matematici.urls.reports.api + "/Viewer/ToggleFavourite",
+                data: {
+                    reportCode: code,
+                    value: false
+                },
+            }).done(function () {
+                options.addToFavouritesButton.removeClass("Hidden");
+                options.removeFromFavouritesButton.addClass("Hidden");
+            });
+        },
+
         setup = function () {
             reports.reportViewer = reportViewer;
+            options.addToFavouritesButton.on("click", addToFavourites);
+            options.removeFromFavouritesButton.on("click", removeFromFavourites);
 
             $.ajax({
                 type: "post",

@@ -123,5 +123,15 @@ namespace CheckListManager.Reports.Api.Controllers
             var pdf = new ReportPDF(data.CompanyId.Value, company.Name, company.TimeZone, decimalSeparator, _configurationService.PublicRepositoryUrl, _configurationService, data.FontSize, data.PageFormat, data.Orientation, identity.Code, data, report, details, cancellationToken);
             return Content(HttpStatusCode.OK, pdf, new PDFFormatter("Report"));
         }
+
+        [Authorize(Roles = "Reports#View")]
+        [HttpPost]
+        [Route("ToggleFavourite")]
+        public async Task<IHttpActionResult> ToggleFavourite(ToggleFavouriteRequest request)
+        {
+            await _reportViewerService.ToggleFavourite(Identity, request);
+            return Ok();
+        }
+
     }
 }

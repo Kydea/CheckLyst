@@ -20,12 +20,12 @@ namespace CheckListManager.Common.Data
         public long Report { get; set; }
         public System.DateTimeOffset Expiration { get; set; }
         public string Parameters { get; set; }
+        public string Format { get; set; }
         public byte[] Data { get; set; }
+        public string Error { get; set; }
         public Nullable<System.DateTimeOffset> StartedOn { get; set; }
         public Nullable<System.DateTimeOffset> CompletedOn { get; set; }
         public System.DateTimeOffset CreatedOn { get; set; }
-        public string Error { get; set; }
-        public string Format { get; set; }
     
         public virtual Reports Reports { get; set; }
         public virtual Users Users { get; set; }

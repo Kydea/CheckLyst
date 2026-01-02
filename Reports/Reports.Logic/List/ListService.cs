@@ -23,10 +23,13 @@ namespace CheckListManager.Reports.Logic.List
         {
             var Result = await _reportsRepository.GetReportsAsync(
                 Identity.CompanyId,
-                Identity.HasPermission("Reports", "Edit") ? string.Empty : Identity.Code,
+                Identity.Code,
+                !Identity.HasPermission("Reports", "Edit"),
                 Form.Data.ID,
                 Form.Data.Code,
                 Form.Data.Description,
+                Form.Data.Favourites,
+                Form.Data.State,
                 Form.CurrentPage,
                 Form.ItemsPerPage
             );

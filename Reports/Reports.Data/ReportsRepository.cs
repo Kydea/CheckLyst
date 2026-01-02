@@ -25,23 +25,29 @@ namespace CheckListManager.Reports.Data
         public async Task<PagingResponse<List<Common.Data.Reports>>> GetReportsAsync(
             long company,
             string user,
+            bool restrict,
             int? id,
             string code,
             string description,
+            bool favourites,
+            string state,
             int currentPage,
             int itemsPerPage)
         {
             if (code == null) code = string.Empty;
             if (description == null) description = string.Empty;
+            if (state == null) state = string.Empty;
             var Query = Entities.Reports
                 .Where(r =>
                     r.Company == company
                     && (id == null || r.ID == id)
                     && (code == string.Empty || r.Code.ToUpper().Contains(code.ToUpper()))
+                    && (!favourites || Entities.UserReports.Any(ur => ur.Company == company && ur.User == user && ur.ReportCode == r.Code))
+                    && (state == string.Empty || state == "SubmittedForObsolescence" && r.ReportState == "Confirmed" && r.ProposedState == ReportState.Obsolete || r.ReportState == state)
                     && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description.ToUpper()))
                 );
 
-            if (!string.IsNullOrEmpty(user))
+            if (restrict)
             {
                 var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
                 Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.ReportState == ReportState.Confirmed);
@@ -229,5 +235,24 @@ namespace CheckListManager.Reports.Data
 
         public Task<Common.Data.Reports> GetLastVersionAsync(long company, string code) =>
             Entities.Reports.Where(r => r.Company == company && r.Code == code && r.ReportState != ReportState.Draft).OrderByDescending(r => r.Version).FirstOrDefaultAsync();
+
+        public async Task ToggleFavourite(long company, string user, string code, bool value)
+        {
+            var existing = await Entities.UserReports.SingleOrDefaultAsync(ur => ur.Company == company && ur.User == user && ur.ReportCode == code);
+            if (value && existing == null)
+                Entities.UserReports.Add(new UserReports
+                {
+                    Company = company,
+                    User = user,
+                    ReportCode = code
+                });
+            else if (!value && existing != null)
+                Entities.UserReports.Remove(existing);
+
+            await SaveChangesAsync();
+        }
+
+        public Task<bool> IsFavouriteAsync(long company, string user, string code) =>
+            Entities.UserReports.AnyAsync(ur => ur.Company == company && ur.User == user && ur.ReportCode == code);
     }
 }

@@ -4,6 +4,8 @@
     <h1>Report viewer</h1>
 
     <div class="ActionBar">
+        <a id="RemoveFromFavouritesButton" href="#" class="Button Icon Hidden" title="Remove from favourites"><i class="Icon fa fa-star"></i></a>
+        <a id="AddToFavouritesButton" href="#" class="Button Icon Hidden" title="Add to favourites"><i class="Icon fal fa-star"></i></a>
         <span class="ButtonGroup" data-text="Actions"></span>
     </div>
 
@@ -21,14 +23,17 @@
     matematici.events.onPageLoad = function (callback) {
         var
             element = $("#ReportViewerPage"),
+
+            actionBar = new matematici.ActionBar("div.ActionBar"),
+
             reportViewer = new reports.ReportViewer(element, {
                 id: @(Model.ID.Value),
                 reportUrl: "@Url.Action("Report")",
                 editorUrl: "@Url.Action("Editor")",
                 listUrl: "@Url.Action("List")",
+                addToFavouritesButton: $("#AddToFavouritesButton"),
+                removeFromFavouritesButton: $("#RemoveFromFavouritesButton")
             }),
-
-            actionBar = new matematici.ActionBar("div.ActionBar"),
 
             buttonGroup = new matematici.ButtonGroup("span.ButtonGroup")
                 .add("Quit", function () {

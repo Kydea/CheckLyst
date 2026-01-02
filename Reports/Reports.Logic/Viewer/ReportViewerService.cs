@@ -60,7 +60,8 @@ namespace CheckListManager.Reports.Logic.Viewer
                     ParameterType = c.ParameterType,
                     ClauseType = c.ClauseType,
                     Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(c.Clause),
-                }).ToList()
+                }).ToList(),
+                Favourite = await _reportsRepository.IsFavouriteAsync(identity.CompanyId, identity.Code, record.Code)
             };
             return result;
         }
@@ -181,5 +182,8 @@ namespace CheckListManager.Reports.Logic.Viewer
             var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
             return query;
         }
+
+        public Task ToggleFavourite(IDefaultIdentity identity, ToggleFavouriteRequest request) =>
+            _reportsRepository.ToggleFavourite(identity.CompanyId, identity.Code, request.ReportCode, request.Value.Value);
     }
 }
