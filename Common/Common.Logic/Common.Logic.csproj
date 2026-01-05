@@ -343,6 +343,7 @@
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="License\LicenseModel.cs" />
     <Compile Include="License\LicensePayload.cs" />
+    <Compile Include="Models\Notifications\NotificationInvalidateMask.cs" />
     <Compile Include="Models\Notifications\NotificationsState.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\StorageFile.cs" />

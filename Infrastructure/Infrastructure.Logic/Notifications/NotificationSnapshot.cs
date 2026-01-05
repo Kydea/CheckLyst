@@ -15,6 +15,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
     {
         public long CompletedReportCount { get; set; }
         public long EnqueuedReportCount { get; set; }
+        public long ReportsToSignCount { get; set; }
+        public long InstancesToSignCount { get; set; }
+        public long PrototypeVersionsToSignCount { get; set; }
         public bool Idle { get; set; }
         public ulong Version { get; set; }
         public bool TimedOut { get; set; }

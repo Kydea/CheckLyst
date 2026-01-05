@@ -31,13 +31,32 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private long _waitCompletedTotal;
         private long _waitMillisecondsTotal;
 
-        public async Task InvalidateAsync(long company, string user, Func<Task<NotificationsState>> loadStateAsync)
+        public async Task InvalidateAsync(long company, string user, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, NotificationInvalidateMask mask)
         {
-            var b = GetBucket(company, user);
+            if (!_users.TryGetValue((company, user), out var b))
+                return;
+
             EnterBucket(b);
             try
             {
-                var state = await loadStateAsync().ConfigureAwait(false);
+                NotificationsState currentState;
+                lock (b.Gate)
+                {
+                    if (mask.HasFlag(NotificationInvalidateMask.CompletedReportCount)) b.State.CompletedReportCount = null;
+                    if (mask.HasFlag(NotificationInvalidateMask.EnqueuedReportCount)) b.State.EnqueuedReportCount = null;
+                    if (mask.HasFlag(NotificationInvalidateMask.ReportsToSignCount)) b.State.ReportsToSignCount = null;
+                    if (mask.HasFlag(NotificationInvalidateMask.InstancesToSignCount)) b.State.InstancesToSignCount = null;
+                    if (mask.HasFlag(NotificationInvalidateMask.PrototypeVersionsToSignCount)) b.State.PrototypeVersionsToSignCount = null;
+
+                    b.LastLoadedUtc = DateTime.MinValue;
+                    b.IncrementVersion();
+
+                    if (b.Waiters.Count == 0) return;
+
+                    currentState = b.State.Clone();
+                }
+
+                var state = await loadStateAsync(currentState).ConfigureAwait(false);
 
                 List<WaiterEntry> toWake = null;
                 NotificationSnapshot snap;
@@ -46,10 +65,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 {
                     b.State.CompletedReportCount = state.CompletedReportCount;
                     b.State.EnqueuedReportCount = state.EnqueuedReportCount;
-                    b.Initialized = true;
+                    b.State.ReportsToSignCount = state.ReportsToSignCount;
+                    b.State.InstancesToSignCount = state.InstancesToSignCount;
+                    b.State.PrototypeVersionsToSignCount = state.PrototypeVersionsToSignCount;
                     b.LastLoadedUtc = DateTime.UtcNow;
-                    b.Version++;
-                    if (b.Version == 0) b.Version = 1;
+                    b.IncrementVersion();
 
                     snap = b.ToSnapshot(timedOut: false);
                     snap.Overloaded = false;
@@ -95,28 +115,35 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, Func<Task<NotificationsState>> loadStateAsync)
+        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, Func<NotificationsState, Task<NotificationsState>> loadStateAsync)
         {
             var nowUtc = DateTime.UtcNow;
-            if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
+            if (b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl)
                 return;
 
             await b.InitSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 nowUtc = DateTime.UtcNow;
-                if (b.Initialized && (nowUtc - b.LastLoadedUtc) < BucketTtl)
-                    return;
+                NotificationsState currentState;
+                lock (b.Gate)
+                {
+                    if (b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl)
+                        return;
 
-                var state = await loadStateAsync().ConfigureAwait(false); ;
+                    currentState = b.State.Clone();
+                }
+
+                var state = await loadStateAsync(currentState).ConfigureAwait(false);
                 lock (b.Gate)
                 {
                     b.State.CompletedReportCount = state.CompletedReportCount;
                     b.State.EnqueuedReportCount = state.EnqueuedReportCount;
-                    b.Version++;
-                    if (b.Version == 0) b.Version = 1;
+                    b.State.ReportsToSignCount = state.ReportsToSignCount;
+                    b.State.InstancesToSignCount = state.InstancesToSignCount;
+                    b.State.PrototypeVersionsToSignCount = state.PrototypeVersionsToSignCount;
+                    b.IncrementVersion();
                     b.LastLoadedUtc = nowUtc;
-                    b.Initialized = true;
                 }
             }
             finally
@@ -125,7 +152,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<Task<NotificationsState>> loadStateAsync, CancellationToken requestAborted)
+        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, CancellationToken requestAborted)
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
@@ -303,7 +330,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         {
             public object Gate { get; } = new object();
             public NotificationsState State { get; } = new NotificationsState();
-            public ulong Version { get; set; } = 1;
+            public ulong Version { get; private set; } = 1;
             
             public int InFlight;
             public long LastAccessTicks;
@@ -311,13 +338,21 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             public Dictionary<Guid, WaiterEntry> Waiters { get; } = new Dictionary<Guid, WaiterEntry>();
 
             public SemaphoreSlim InitSemaphore { get; } = new SemaphoreSlim(1, 1);
-            public bool Initialized { get; set; }
             public DateTime LastLoadedUtc { get; set; } = DateTime.MinValue;
+
+            public void IncrementVersion()
+            {
+                Version++;
+                if (Version == 0) Version = 1;
+            }
 
             public NotificationSnapshot ToSnapshot(bool timedOut) => new NotificationSnapshot
             {
-                CompletedReportCount = State.CompletedReportCount,
-                EnqueuedReportCount = State.EnqueuedReportCount,
+                CompletedReportCount = State.CompletedReportCount.Value,
+                EnqueuedReportCount = State.EnqueuedReportCount.Value,
+                ReportsToSignCount = State.ReportsToSignCount.Value,
+                InstancesToSignCount = State.InstancesToSignCount.Value,
+                PrototypeVersionsToSignCount = State.PrototypeVersionsToSignCount.Value,
                 Idle = State.Idle,
                 Version = Version,
                 TimedOut = timedOut,

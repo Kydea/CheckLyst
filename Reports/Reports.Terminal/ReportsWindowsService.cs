@@ -71,7 +71,7 @@ namespace CheckListManager.Infrastructure.Terminal
                                 Code = pendingRun.User
                             };
                             await redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
-                            await client.GetAsync("Infrastructure/Notifications/Invalidate?token=" + token);
+                            await client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)Common.Logic.Models.Notifications.NotificationInvalidateMask.CompletedReportCount}");
                         }
                         catch (Exception exception)
                         {

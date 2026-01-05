@@ -10,6 +10,7 @@ using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Infrastructure.Data.ListItems;
 using CheckListManager.Common.Core.Exceptions;
 using CheckListManager.Common.Logic.Models.Notifications;
+using CheckListManager.Common.Logic.Models;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -341,12 +342,170 @@ namespace CheckListManager.Infrastructure.Data
                 .OrderBy(wf => wf.Description).ThenBy(wf => wf.ID)
                 .ToListAsync();
 
-        public async Task<NotificationsState> GetNotificationsAsync(long company, string user)
+        private async Task<long> CountReportsToSign(long company, string user)
         {
+            var userRecord = await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user);
+            var result = Entities.WorkFlowApplications
+                .Join(
+                    Entities.Reports,
+                    application => application.Instance,
+                    report => report.ID,
+                    (application, report) => new { application, report }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationSteps,
+                    x => x.application.ID,
+                    step => step.WorkFlowApplication,
+                    (x, step) => new { x.report, x.application, step }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationStepTags,
+                    x => x.step.ID,
+                    tag => tag.WorkFlowApplicationStep,
+                    (x, tag) => new { x.report, x.application, x.step, tag }
+                )
+                .Where(x =>
+                    !x.application.Approved.HasValue
+
+                    && x.step.User == null
+
+                    && !Entities.WorkFlowApplicationSteps.Any(ps =>
+                        ps.WorkFlowApplication == x.step.WorkFlowApplication
+                        && ps.User == null
+                        && x.step.Step > ps.Step
+                    )
+
+                    && !Entities.WorkFlowApplicationSteps.Any(cs =>
+                        cs.WorkFlowApplication == x.step.WorkFlowApplication
+                        && cs.User == user
+                        && x.step.Step == cs.Step
+                    )
+
+                    && (
+                        x.tag.Tag == null ||
+                        userRecord.ReportWorkFlowLevel == x.tag.Tag
+                    )
+                );
+            return await result.LongCountAsync();
+        }
+
+        private Task<long> CountInstancesToSign(long company, string user)
+        {
+            var result = Entities.WorkFlowApplications
+                .Join(
+                    Entities.Instances,
+                    application => application.Instance,
+                    intance => intance.ID,
+                    (application, instance) => new { application, instance }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationSteps,
+                    x => x.application.ID,
+                    step => step.WorkFlowApplication,
+                    (x, step) => new { x.instance, x.application, step }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationStepTags,
+                    x => x.step.ID,
+                    tag => tag.WorkFlowApplicationStep,
+                    (x, tag) => new { x.instance, x.application, x.step, tag }
+                )
+                .Where(x =>
+                    !x.application.Approved.HasValue
+
+                    && x.step.User == null
+
+                    && !Entities.WorkFlowApplicationSteps.Any(ps =>
+                        ps.WorkFlowApplication == x.step.WorkFlowApplication
+                        && ps.User == null
+                        && x.step.Step > ps.Step
+                    )
+
+                    && !Entities.WorkFlowApplicationSteps.Any(cs =>
+                        cs.WorkFlowApplication == x.step.WorkFlowApplication
+                        && cs.User == user
+                        && x.step.Step == cs.Step
+                    )
+
+                    && (
+                        x.tag.Tag == null ||
+                        Entities.UserLevels.Any(ul =>
+                            ul.Company == company
+                            && ul.User == user
+                            && ul.Department == x.instance.Prototypes.Department
+                            && (ul.PrototypeType == null || ul.PrototypeType == x.instance.Prototypes.PrototypeType)
+                            && ul.PrototypeWorkFlowLevel == x.tag.Tag
+                        )
+                    )
+                );
+            return result.LongCountAsync();
+        }
+
+        private Task<long> CountPrototypeVersionsToSign(long company, string user)
+        {
+            var result = Entities.WorkFlowApplications
+                .Join(
+                    Entities.Prototypes,
+                    application => application.Prototype,
+                    prototype => prototype.ID,
+                    (application, prototype) => new { application, prototype }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationSteps,
+                    x => x.application.ID,
+                    step => step.WorkFlowApplication,
+                    (x, step) => new { x.prototype, x.application, step }
+                )
+                .Join(
+                    Entities.WorkFlowApplicationStepTags,
+                    x => x.step.ID,
+                    tag => tag.WorkFlowApplicationStep,
+                    (x, tag) => new { x.prototype, x.application, x.step, tag }
+                )
+                .Where(x =>
+                    !x.application.Approved.HasValue
+                    
+                    && x.step.User == null
+
+                    && !Entities.WorkFlowApplicationSteps.Any(ps =>
+                        ps.WorkFlowApplication == x.step.WorkFlowApplication
+                        && ps.User == null
+                        && x.step.Step > ps.Step
+                    )
+
+                    && !Entities.WorkFlowApplicationSteps.Any(cs =>
+                        cs.WorkFlowApplication == x.step.WorkFlowApplication
+                        && cs.User == user
+                        && x.step.Step == cs.Step
+                    )
+
+                    && (
+                        x.tag.Tag == null ||
+                        Entities.UserLevels.Any(ul =>
+                            ul.Company == company
+                            && ul.User == user
+                            && ul.Department == x.prototype.Department
+                            && (ul.PrototypeType == null || ul.PrototypeType == x.prototype.PrototypeType)
+                            && ul.PrototypeWorkFlowLevel == x.tag.Tag
+                        )
+                    )
+                );
+            return result.LongCountAsync();
+        }
+
+        public async Task<NotificationsState> GetNotificationsAsync(long company, string user, NotificationsState currentState, Func<string, string, long?, long?, string, bool> hasPermission /*make the procedure faster if the authentication token is available*/)
+        {
+            var reportViewPermission = hasPermission == null || hasPermission("Reports", "View", null, null, null);
+            var reportEditPermission = hasPermission == null || hasPermission("Reports", "Edit", null, null, null);
+            var instancePermission = hasPermission == null || hasPermission("Instances", "Confirm", null, null, null);
+            var prototypePermission = hasPermission == null || hasPermission("Prototypes", "Approve", null, null, null);
             var state = new NotificationsState
             {
-                CompletedReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && r.CompletedOn.HasValue).CountAsync(),
-                EnqueuedReportCount = await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && !r.CompletedOn.HasValue).CountAsync()
+                CompletedReportCount = reportViewPermission ? (currentState.CompletedReportCount ?? await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && r.CompletedOn.HasValue).CountAsync()) : 0,
+                EnqueuedReportCount = reportViewPermission ? (currentState.EnqueuedReportCount ?? await Entities.ReportRuns.Where(r => r.Company == company && r.User == user && !r.CompletedOn.HasValue).CountAsync()) : 0,
+                ReportsToSignCount = reportEditPermission ? (currentState.ReportsToSignCount ?? await CountReportsToSign(company, user)) : 0,
+                InstancesToSignCount = instancePermission ? (currentState.InstancesToSignCount ?? await CountInstancesToSign(company, user)) : 0,
+                PrototypeVersionsToSignCount = prototypePermission ? (currentState.PrototypeVersionsToSignCount ?? await CountPrototypeVersionsToSign(company, user)) : 0
             };
             return state;
         }

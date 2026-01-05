@@ -101,7 +101,7 @@ namespace CheckListManager.Reports.Logic.Run
                 Code = identity.Code
             };
             await _redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
-            await _client.GetAsync("Infrastructure/Notifications/Invalidate?token=" + token);
+            await _client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)(Common.Logic.Models.Notifications.NotificationInvalidateMask.EnqueuedReportCount | Common.Logic.Models.Notifications.NotificationInvalidateMask.CompletedReportCount)}");
         }
     }
 }

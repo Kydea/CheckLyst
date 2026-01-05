@@ -40,6 +40,9 @@
 
             //console.log("notification", snapshot);
             matematici.menu.setNotificationBadge("/Reports/Runs", snapshot.completedReportCount);
+            matematici.menu.setNotificationBadge("/Reports/List", snapshot.reportsToSignCount);
+            matematici.menu.setNotificationBadge("/Instances/List", snapshot.instancesToSignCount);
+            matematici.menu.setNotificationBadge("/Prototypes/List", snapshot.prototypeVersionsToSignCount);
         },
 
         onDiagnostics = function (state) {

@@ -14,6 +14,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using CheckListManager.Common.Core.Helpers;
 using Newtonsoft.Json;
+using CheckListManager.Common.Logic.Cache;
+using CheckListManager.Common.Logic.Models;
+using CheckListManager.Common.Core.Network;
+using CheckListManager.Common.Data.ListItems;
+using System.Security.Principal;
+using CheckListManager.Common.Logic.Models.Expressions.Parsing;
+using CheckListManager.Common.Logic.Models.Notifications;
 
 namespace CheckListManager.WorkFlows.Logic.Applications
 {
@@ -23,19 +30,29 @@ namespace CheckListManager.WorkFlows.Logic.Applications
         private readonly IAuthenticationService _authenticationService;
         private readonly IQueueService _queueService;
         private readonly ISettingService _settingService;
+        private readonly IServiceClient _serviceClient;
         private readonly IConfigurationService _configurationService;
         private readonly ICommonRepository _commonRepository;
+        private readonly IRedisCache _redisCache;
 
-        public ApplicationService(IWorkFlowsRepository workFlowsRepository,
-            IAuthenticationService authenticationService, IQueueService queueService, ISettingService settingService,
-            IConfigurationService configurationService, ICommonRepository commonRepository)
+        public ApplicationService(
+            IWorkFlowsRepository workFlowsRepository,
+            IAuthenticationService authenticationService, 
+            IQueueService queueService, 
+            ISettingService settingService,
+            IServiceClient serviceClient,
+            IConfigurationService configurationService, 
+            ICommonRepository commonRepository,
+            IRedisCache redisCache)
         {
             _workFlowsRepository = workFlowsRepository;
             _authenticationService = authenticationService;
             _queueService = queueService;
             _settingService = settingService;
+            _serviceClient = serviceClient;
             _configurationService = configurationService;
             _commonRepository = commonRepository;
+            _redisCache = redisCache;
         }
 
         public async Task<GetStepsResponse> GetStepsAsync(DefaultIdentity identity, GetStepsRequest request)
@@ -441,6 +458,20 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     Information = information.ToJson(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None })
                 });
 
+                var mask =
+                    PrototypeVersion != null ? NotificationInvalidateMask.PrototypeVersionsToSignCount :
+                    Instance != null ? NotificationInvalidateMask.InstancesToSignCount :
+                    NotificationInvalidateMask.ReportsToSignCount;
+                foreach (var user in await GetAppointedUsers(identity.CompanyId, Step, PrototypeVersion, Instance, Report))
+                {
+                    var token = user.Code + ":" + Guid.NewGuid();
+                    await _redisCache.SetAsync($"Token:{token}", new User
+                    {
+                        Company = user.Company,
+                        Code = user.Code
+                    }, "Service", new TimeSpan(0, 1, 0));
+                    await _serviceClient.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)mask}");
+                }
                 return SignResponse;
             }
             catch (Exception e)
@@ -495,29 +526,36 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 await SendEmailsAsync(identity, step);
         }
 
+        private Task<List<Users>> GetAppointedUsers(long company, WorkFlowApplicationSteps workFlowApplicationStep, PrototypeVersions prototypeVersion, Instances instance, Reports report) =>
+            prototypeVersion != null ? _commonRepository.GetAppointedUsersAsync
+            (
+                prototypeVersion.Prototypes.Company, "Prototypes", "Approve",
+                prototypeVersion.Prototypes.Department, prototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
+                workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+            ) :
+            instance != null ? _commonRepository.GetAppointedUsersAsync
+            (
+                instance.Company, "Instances", "Confirm",
+                instance.Prototypes.Department, instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
+                workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+            ) :
+            _commonRepository.GetAppointedUsersAsync
+            (
+                company, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
+            );
+
         private async Task SendEmailsAsync(IDefaultIdentity identity, WorkFlowApplicationSteps workFlowApplicationStep)
         {
             var Instance = workFlowApplicationStep.WorkFlowApplications.Instances;
             var PrototypeVersion = workFlowApplicationStep.WorkFlowApplications.PrototypeVersions;
             var Report = workFlowApplicationStep.WorkFlowApplications.Reports;
-            var Users =
-                PrototypeVersion != null ? await _commonRepository.GetAppointedUsersAsync
-                (
-                    PrototypeVersion.Prototypes.Company, "Prototypes", "Approve",
-                    PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel",
-                    workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
-                ) :
-                Instance != null ? await _commonRepository.GetAppointedUsersAsync
-                (
-                    Instance.Company, "Instances", "Confirm",
-                    Instance.Prototypes.Department, Instance.Prototypes.PrototypeType, "InstanceWorkFlowLevel",
-                    workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
-                ) :
-                await _commonRepository.GetAppointedUsersAsync
-                (
-                    identity.CompanyId, workFlowApplicationStep.WorkFlowApplicationStepTags.Select(t => t.Tag)
-                );
+            var Users = await GetAppointedUsers(identity.CompanyId, workFlowApplicationStep, PrototypeVersion, Instance, Report);
             var webApplicationUrl = _configurationService.WebApplicationUrl;
+
+            var mask =
+                PrototypeVersion != null ? NotificationInvalidateMask.PrototypeVersionsToSignCount :
+                Instance != null ? NotificationInvalidateMask.InstancesToSignCount :
+                NotificationInvalidateMask.ReportsToSignCount;
 
             foreach (var user in Users)
                 if (!string.IsNullOrEmpty(user.Email))
@@ -542,6 +580,14 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                         {
                             TrailMessage = new EmailTrailMessage(identity.Code, label, Instance?.ID ?? PrototypeVersion?.Prototype, null)
                         });
+                    var token = user.Code + ":" + Guid.NewGuid();
+                    await _redisCache.SetAsync($"Token:{token}", new User
+                    {
+                        Company = user.Company,
+                        Code = user.Code
+                    }, "Service", new TimeSpan(0, 1, 0));
+
+                    await _serviceClient.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)mask}");
                 }
         }
     }

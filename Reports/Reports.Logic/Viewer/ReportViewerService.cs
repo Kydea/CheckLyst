@@ -172,7 +172,7 @@ namespace CheckListManager.Reports.Logic.Viewer
                 Code = identity.Code
             };
             await _redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
-            await _client.GetAsync("Infrastructure/Notifications/Invalidate?token=" + token);
+            await _client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)Common.Logic.Models.Notifications.NotificationInvalidateMask.EnqueuedReportCount}");
         }
 
         public async Task<string> GetReportQuery(IDefaultIdentity identity, ReportRequest request, CancellationToken cancellationToken)

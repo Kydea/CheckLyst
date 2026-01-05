@@ -52,7 +52,7 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                         Identity.CompanyId,
                         Identity.Code,
                         since,
-                        () => _infrastructureRepository.GetNotificationsAsync(Identity.CompanyId, Identity.Code),
+                        currentState => _infrastructureRepository.GetNotificationsAsync(Identity.CompanyId, Identity.Code, currentState, Identity.HasPermission),
                         requestToken
                     ).ConfigureAwait(false);
 
@@ -75,11 +75,16 @@ namespace CheckListManager.Infrastructure.Api.Controllers
             [AllowAnonymous]
             [HttpGet]
             [Route("Invalidate")]
-            public async Task<IHttpActionResult> Invalidate([FromUri] string token)
+            public async Task<IHttpActionResult> Invalidate([FromUri] string token, [FromUri] int mask)
             {
+                if (mask == 0) return BadRequest("empty mask");
+
+                var castedMask = (NotificationInvalidateMask)mask;
+                if ((castedMask & ~NotificationInvalidateMask.All) != 0) return BadRequest("invalid mask");
+
                 var request = await _redisCache.GetAsync<User>($"Token:{token}", "Service") ?? throw new InvalidOperationException();
                 await _redisCache.RemoveAsync($"Token:{token}", "Service");
-                await _notificationService.InvalidateAsync(request.Company, request.Code, () => _infrastructureRepository.GetNotificationsAsync(request.Company, request.Code));
+                await _notificationService.InvalidateAsync(request.Company, request.Code, currentState => _infrastructureRepository.GetNotificationsAsync(request.Company, request.Code, currentState, null), castedMask);
                 return Ok();
             }
         }

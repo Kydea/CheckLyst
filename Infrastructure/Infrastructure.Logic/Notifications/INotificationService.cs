@@ -11,8 +11,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 {
     public interface INotificationService : ISingletonService
     {
-        Task InvalidateAsync(long company, string user, Func<Task<NotificationsState>> loadStateAsync);
-        Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<Task<NotificationsState>> loadStateAsync, CancellationToken cancellationToken);
+        Task InvalidateAsync(long company, string user, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, NotificationInvalidateMask mask);
+        Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, CancellationToken cancellationToken);
         NotificationDiagnostics GetDiagnostics();
     }
 }

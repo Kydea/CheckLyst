@@ -6,7 +6,6 @@
 		menuButton = $("#MenuButton"),
 		mobileBadge = menu.prev(), 
 		moved = false,
-		notifications = new Map();
 
 		isMobileMode = function () {
 			return menuButton.is(":visible");
@@ -111,25 +110,40 @@
 	};
 
 	this.setNotificationBadge = function (href, value) {
-		const link = document.querySelector(`a[href="${href}"]`);
-		if (!link) {
-			console.error(`menu item for ${href} not found`);
+		const items = document.querySelectorAll(`a[href="${href}"]`);
+		if (items.length === 0) {
+			alert(`menu item for ${href} not found`);
 			return
 		}
 
-		var li = link.closest("li");
-		li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
+		value = Number(value) || 0;
+		const badge = value === 0 ? "" : Math.min(99, value);
 
-		notifications.set(href, value);
+		for (const a of items) {
+			var li = a.closest("ul.SubMenu > li");
+			if (!li) continue;
 
-		if (li.classList.contains("MenuItem")) return;
+			//submenu item
+			li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
 
-		//works only for one notification per submenu, at the moment this is enough
-		li = li.closest("li.MenuItem");
-		li.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
+			const menuItem = li.closest("li.MenuItem");
+			const lis = menuItem.querySelectorAll("ul.SubMenu > li");
 
-		const sum = [...notifications.values()].reduce((n, v) => n + v, 0);
-		mobileBadge.attr("data-badge", sum == 0 ? "" : Math.min(99, sum));
+			let sum = 0;
+			for (li of lis) {
+				const n = parseInt(li.getAttribute("data-badge") || "0", 10);
+				sum += Number.isFinite(n) ? n : 0;
+			}
+
+			menuItem.setAttribute("data-badge", sum === 0 ? "" : Math.min(99, sum));
+		}
+
+		let total = 0;
+		document.querySelectorAll("ul.SubMenu > li").forEach(li => {
+			const n = parseInt(li.getAttribute("data-badge") || "0", 10);
+			total += Number.isFinite(n) ? n : 0;
+		});
+		mobileBadge.attr("data-badge", total === 0 ? "" : Math.min(99, total));
 	};
 
 	setup();
