@@ -75,9 +75,11 @@ namespace CheckListManager.Instances.Logic.List
                 response.Fields["TagValue"] = new Field { Value = form.TagValue };
 
                 var states = await _commonRepository.GetInstanceStatesAsync();
+                var options = new List<Option> { new Option("Own", "Waiting for my confirmation") };
+                options.AddRange(states.Where(x => x != InstanceState.Draft).Select(x => new Option(x)));
                 response.Fields["State"] = new Field
                 {
-                    Options = states.Where(x => x != InstanceState.Draft).Select(x => new Option(x)),
+                    Options = options,
                     Value = form.State
                 };
 

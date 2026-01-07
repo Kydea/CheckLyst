@@ -28,7 +28,7 @@
             <label class="Width200 Clearing">
                 <span>Changing state</span>
                 <i class="Icon fal fa-tasks"></i>
-                <select name="pending">
+                <select name="pending" data-notification-badge="/Prototypes/List">
                     <option value="Include">Include prototypes changing state</option>
                     <option value="Exclude">Exclude prototypes changing state</option>
                     <option value="Filter">Only prototypes changing state</option>
@@ -158,6 +158,16 @@
         if (!editor)
             addButton.remove();
 
+        matematici.notificationPollingClient.addNotificationListener("/Prototypes/List", function (code, value) {
+            var autoComplete = matematici.AutoComplete.get(document.querySelector("select[name=\"pending\"]"));
+            autoComplete.setNotificationBadge("Own", value);
+        });
+
+        callback.call();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.notificationPollingClient.removeNotificationListener("/Prototypes/List");
         callback.call();
     };
 </script>

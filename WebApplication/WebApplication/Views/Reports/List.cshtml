@@ -36,7 +36,8 @@
                 <label class="Width200 Clearing">
                     <span>State</span>
                     <i class="Icon fal fa-tasks"></i>
-                    <select name="state" data-nullable="(all)">
+                    <select name="state" data-nullable="(all)" value="">
+                        <option value="Own">Waiting for my confirmation</option>
                         <option value="Draft">Draft</option>
                         <option value="Completed">Completed</option>
                         <option value="Confirmed">Confirmed</option>
@@ -133,6 +134,19 @@
             });
         else
             $("#AddButton").remove();
+
+        if (editor)
+            matematici.notificationPollingClient.addNotificationListener("/Prototypes/List", function (code, value) {
+                var autoComplete = matematici.AutoComplete.get(document.querySelector("select[name=\"state\"]"));
+                autoComplete.setNotificationBadge("Own", value);
+            });
+
+        callback.call();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        if (editor)
+            matematici.notificationPollingClient.removeNotificationListener("/Reports/List");
         callback.call();
     };
 </script>

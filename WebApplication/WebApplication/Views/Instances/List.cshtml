@@ -34,12 +34,12 @@
                 <i class="Icon fal fa-layer-group"></i>
                 <input type="text" name="description" />
             </label>
-            <label>
+            <label class="Width200 ">
                 <span>State</span>
                 <i class="Icon fal fa-file-invoice"></i>
                 <select name="state" data-nullable="(all)"></select>
             </label>
-            <label class="Controls2">
+            <label class="Controls2 Clearing">
                 <span>Tag / value</span>
                 <i class="Icon fal fa-tag"></i>
                 <select name="tagCode" data-nullable="(all)"></select>
@@ -205,6 +205,16 @@
 
         $("input[name=id]").keyfilter(/[\d]/);
 
+        matematici.notificationPollingClient.addNotificationListener("/Instances/List", function (code, value) {
+            var autoComplete = matematici.AutoComplete.get(document.querySelector("select[name=\"state\"]"));
+            autoComplete.setNotificationBadge("Own", value);
+        });
+
+        callback.call();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        matematici.notificationPollingClient.removeNotificationListener("/Instances/List");
         callback.call();
     };
 </script>

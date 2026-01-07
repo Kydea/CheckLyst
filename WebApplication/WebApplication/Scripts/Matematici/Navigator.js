@@ -90,9 +90,9 @@
 
         initializeEventHandlers: function () {
             matematici.events.onPageLoad =
-                matematici.events.onPageUnload =
-                matematici.events.onPageResize =
-                matematici.events.onPageDestroy =
+            matematici.events.onPageUnload =
+            matematici.events.onPageResize =
+            matematici.events.onPageDestroy =
                 matematici.navigator.defaultHandler;
         },
 

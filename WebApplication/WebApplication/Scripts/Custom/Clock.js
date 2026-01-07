@@ -48,7 +48,9 @@ matematici.Clock = function () {
                     type: "post",
                     contentType: "application/json; charset=utf-8",
                     suppressErrors: true
-                }).done(function (result) { matematici.menu.setNotificationBadge("/Dashboards/Tasks", result); });
+                }).done(function (result) {
+                    matematici.menu.setNotificationBadge("/Dashboards/Tasks", result);
+                });
         },
 
         update = function () {

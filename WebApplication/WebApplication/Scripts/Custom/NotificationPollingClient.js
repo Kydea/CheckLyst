@@ -33,16 +33,35 @@
             lastSnapshotVersion: null
         },
 
+        notifications = new Map(),
+        notificationListeners = new Map(),
+
         coordinator = null,
 
+        addNotificationListener = function (code, listener) {
+            notificationListeners.set(code, listener);
+            listener(code, notifications.has(code) ? notifications.get(code) : "");
+        },
+
+        removeNotificationListener = function (code) {
+            notificationListeners.delete(code);
+        },
+
+        setNotificationBadges = function (code, value) {
+            notifications.set(code, value);
+            matematici.menu.setNotificationBadge(code, value);
+            if (notificationListeners.has(code)) notificationListeners.get(code)(code, value);
+        },
+
         onNotificationSnapshot = function (snapshot) {
+            //console.log("notification", snapshot);
+
             if (!snapshot || snapshot.Overloaded || snapshot.TimedOut) return;
 
-            //console.log("notification", snapshot);
-            matematici.menu.setNotificationBadge("/Reports/Runs", snapshot.completedReportCount);
-            matematici.menu.setNotificationBadge("/Reports/List", snapshot.reportsToSignCount);
-            matematici.menu.setNotificationBadge("/Instances/List", snapshot.instancesToSignCount);
-            matematici.menu.setNotificationBadge("/Prototypes/List", snapshot.prototypeVersionsToSignCount);
+            setNotificationBadges("/Reports/Runs", snapshot.completedReportCount);
+            setNotificationBadges("/Reports/List", snapshot.reportsToSignCount);
+            setNotificationBadges("/Instances/List", snapshot.instancesToSignCount);
+            setNotificationBadges("/Prototypes/List", snapshot.prototypeVersionsToSignCount);
         },
 
         onDiagnostics = function (state) {
@@ -255,6 +274,8 @@
         return sinceVersion;
     };
 
+    this.addNotificationListener = addNotificationListener;
+    this.removeNotificationListener = removeNotificationListener;
     this.enable = enable;
     this.disable = disable;
     this.dispose = dispose;
