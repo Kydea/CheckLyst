@@ -89,10 +89,9 @@
 </div>
 
 <script type="text/javascript">
-    matematici.events.onPageLoad = function (callback) {
-        var
-            editor = matematici.tokenManager.checkRole("Reports#Edit#");
+    var editor = matematici.tokenManager.checkRole("Reports#Edit#");
 
+    matematici.events.onPageLoad = function (callback) {
         new matematici.SearchPage({
             pageName: "Reports",
             readOnly: true,
@@ -136,7 +135,7 @@
             $("#AddButton").remove();
 
         if (editor)
-            matematici.notificationPollingClient.addNotificationListener("/Prototypes/List", function (code, value) {
+            matematici.notificationPollingClient.addNotificationListener("/Reports/List", function (code, value) {
                 var autoComplete = matematici.AutoComplete.get(document.querySelector("select[name=\"state\"]"));
                 autoComplete.setNotificationBadge("Own", value);
             });

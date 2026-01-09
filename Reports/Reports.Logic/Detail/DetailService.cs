@@ -281,7 +281,7 @@ namespace CheckListManager.Reports.Logic.Detail
                         request.ID = null;
                     }
 
-                    if (lastVersion.WorkFlow.HasValue)
+                    if (lastVersion != null && lastVersion.WorkFlow.HasValue)
                         request.WorkFlow = lastVersion.WorkFlow;
 
                     if (request.ID.HasValue)

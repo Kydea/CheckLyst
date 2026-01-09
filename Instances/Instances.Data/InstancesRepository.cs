@@ -36,7 +36,6 @@ namespace CheckListManager.Instances.Data
                 "and (:version = -1 or pv.\"Version\" = :version) " +
                 "and (:year = -1 or i.\"Year\" = :year) " +
                 "and (:number = -1 or i.\"Number\" = :number) " +
-                "and (:state = '' or i.\"InstanceState\" = :state) " +
                 "and (:from = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') >= :from) " +
                 "and (:to = '' or to_char(i.\"ModifiedOn\", 'yyyy-mm-dd') <= :to) " +
                 "and (:tagValue = '' or exists(select 1 from \"CheckLists\".\"InstanceTags\" it where it.\"Instance\" = i.\"ID\" and (:tagCode = '' or it.\"Tag\" = :tagCode) and upper(it.\"Value\") like '%' || :tagValue || '%')) " +
@@ -61,7 +60,30 @@ namespace CheckListManager.Instances.Data
                         "select 1 from \"Security\".\"GetUserGrants\"(:company, :user, 'Instances', 'View') g " +
                         "where g.\"Department\" = p.\"Department\" and (g.\"PrototypeType\" is null or g.\"PrototypeType\" = p.\"PrototypeType\")" +
                     ")" +
-                ") ";
+                ") " +
+                "and (" +
+                    ":state = '' " +
+                    "or :state <> 'Own' and i.\"InstanceState\" = :state " +
+                    "or " +
+                        ":state = 'Own' " +
+                        "and exists (select 1 from \"Security\".\"GetGrantedUsers\" (p.\"Company\", p.\"Department\", p.\"PrototypeType\", 'Instances', 'Confirm') u where u.\"Code\" = :user) " +
+                        "and exists (" +
+                            "select 1 " +
+                            "from " +
+                                "\"WorkFlows\".\"WorkFlowApplications\" wfa " +
+                                "inner join \"WorkFlows\".\"WorkFlowApplicationSteps\" wfas on wfa.\"ID\" = wfas.\"WorkFlowApplication\" " +
+                                "inner join \"WorkFlows\".\"WorkFlowApplicationStepTags\" wfast on wfas.\"ID\" = wfast.\"WorkFlowApplicationStep\" " +
+                            "where " +
+                                "wfa.\"Instance\" = i.\"ID\" " +
+                                "and wfas.\"User\" is null " +
+                                "and not exists (select 1 from \"WorkFlows\".\"WorkFlowApplicationSteps\" ps where wfas.\"WorkFlowApplication\" = ps.\"WorkFlowApplication\" and ps.\"User\" is null and wfas.\"Step\" > ps.\"Step\") " +
+                                "and not exists (select 1 from \"WorkFlows\".\"WorkFlowApplicationSteps\" ps where wfas.\"WorkFlowApplication\" = ps.\"WorkFlowApplication\" and ps.\"User\" = :user and wfas.\"Step\" = ps.\"Step\") " +
+                                "and (" +
+                                    "wfast.\"Tag\" is null " +
+                                    "or exists (select 1 from \"Security\".\"UserLevels\" ul where ul.\"Company\" = p.\"Company\" and ul.\"User\" = :user and ul.\"Department\" = p.\"Department\" and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = p.\"PrototypeType\") and ul.\"PrototypeWorkFlowLevel\" = wfast.\"Tag\") " +
+                                ") " +
+                    ")" +
+                ")";
 
         private const string INSTANCES_LIST_QUERY =
             "select " +

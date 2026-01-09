@@ -128,7 +128,7 @@
             reportEditor = new reports.ReportEditor(element, {
                 id: @(Model.ID ?? -1),
                 listUrl: "@Url.Action("List")",
-                detailUrl: "@Url.Action("Editor")",
+                detailUrl: "/Reports/Editor/",
                 viewerUrl: "@Url.Action("Viewer")",
                 actionButtonsGroup: actionButtonsGroup,
                 newVersion: @(Model.NewVersion ? "true" : "false")

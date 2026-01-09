@@ -348,7 +348,7 @@ namespace CheckListManager.Infrastructure.Data
             var result = Entities.WorkFlowApplications
                 .Join(
                     Entities.Reports,
-                    application => application.Instance,
+                    application => application.Report,
                     report => report.ID,
                     (application, report) => new { application, report }
                 )

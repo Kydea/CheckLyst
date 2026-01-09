@@ -71,9 +71,9 @@
                         var format = matematici.dateFormatter.format(moment(result.modifiedOn));
                         $("input[name=modifiedOn]", element).val(format.date + " " + format.time).attr("title", format.offset);
                     } :
-                    function () {
+                    function (result) {
                         //reloads the page with the correct url
-                        matematici.navigator.open(options.detailUrl);
+                        matematici.navigator.open(options.detailUrl + "/" + result.id);
                     };
 
             detailPage.clickHandler(null, "Save", callback);
@@ -182,8 +182,10 @@
 
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
 
-                if (options.newVersion) 
+                if (options.newVersion) {
                     model.fields.description.editable = true;
+                    model.fields.workFlow.editable = model.fields.workFlow.value == null;
+                }
 
                 detailPage = new matematici.DetailPage({
                     readOnly: !model.editable,

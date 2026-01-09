@@ -16,8 +16,10 @@
         abortController,
         retryAttempt,
 
-        postTakeoverCheckTimeoutId,
+        pollingLoopRunning = false,
+        pollingRequestInFlight = false,
 
+        postTakeoverCheckTimeoutId,
 
         readJson = function (value) {
             try { return JSON.parse(value); } catch (e) { return null; }
@@ -150,6 +152,9 @@
         },
 
         stopLongPolling = function () {
+            pollingLoopRunning = false;
+            pollingRequestInFlight = false;
+
             if (abortController) try { abortController.abort(); } catch (e) { }
             abortController = null;
             retryAttempt = 0;
@@ -159,29 +164,42 @@
         },
 
         startLongPollingLoop = function () {
-            var execute;
+            if (pollingLoopRunning || pollingRequestInFlight) return;
 
-            execute = function () {
-                if (!dataEnabled || !isCurrentTabLeader()) return;
+            pollingLoopRunning = true;
+
+            var execute = function () {
+                if (!pollingLoopRunning || pollingRequestInFlight || !dataEnabled || !isCurrentTabLeader()) return;
 
                 abortController = new AbortController();
+                pollingRequestInFlight = true;
 
                 Promise.resolve()
                     .then(function () { return executeLongPollingOnce(abortController.signal); })
                     .then(function (payload) {
-                        if (!isCurrentTabLeader()) return;
+                        pollingRequestInFlight = false;
+
+                        if (!pollingLoopRunning) return;
+                        if (!isCurrentTabLeader()) {
+                            pollingLoopRunning = false; 
+                            return;
+                        }
 
                         onMessageFromLeader(payload);
 
-                        if (broadcastChannel) {
+                        if (broadcastChannel)
                             broadcastChannel.postMessage({ type: "LeaderMessage", epoch: leaderEpoch, payload: payload });
-                        }
 
                         retryAttempt = 0;
                         execute();
                     })
                     .catch(function (error) {
-                        if (!isCurrentTabLeader()) return;
+                        pollingRequestInFlight = false;
+                        if (!pollingLoopRunning) return;
+                        if (!isCurrentTabLeader()) {
+                            pollingLoopRunning = false;
+                            return;
+                        }
                         if (error && error.name === "AbortError") return;
 
                         var base = Math.min(configuration.backoffMaximumMilliseconds, configuration.backoffBaseMilliseconds * Math.pow(2, retryAttempt++));

@@ -43,7 +43,7 @@ namespace CheckListManager.Reports.Data
                     && (id == null || r.ID == id)
                     && (code == string.Empty || r.Code.ToUpper().Contains(code.ToUpper()))
                     && (!favourites || Entities.UserReports.Any(ur => ur.Company == company && ur.User == user && ur.ReportCode == r.Code))
-                    && (state == string.Empty || state == "SubmittedForObsolescence" && r.ReportState == "Confirmed" && r.ProposedState == ReportState.Obsolete || r.ReportState == state)
+                    && (state == string.Empty || state == "Own" || state == "SubmittedForObsolescence" && r.ReportState == "Confirmed" && r.ProposedState == ReportState.Obsolete || r.ReportState == state)
                     && (description == string.Empty || r.Description != null && r.Description.ToUpper().Contains(description.ToUpper()))
                 );
 
@@ -51,6 +51,52 @@ namespace CheckListManager.Reports.Data
             {
                 var userGroups = (await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user)).UserGroups.Select(ug => ug.Group);
                 Query = Query.Where(r => (!r.Restricted || r.Groups.Any(g => userGroups.Contains(g.Code))) && r.ReportState == ReportState.Confirmed);
+            }
+
+            if (state == "Own")
+            {
+                var userRecord = await Entities.Users.SingleAsync(u => u.Company == company && u.Code == user);
+                Query = Query
+                    .Join(
+                        Entities.WorkFlowApplications,
+                        report => report.ID,
+                        application => application.Report,
+                        (report, application) => new { report, application }
+                    )
+                    .Join(
+                        Entities.WorkFlowApplicationSteps,
+                        x => x.application.ID,
+                        step => step.WorkFlowApplication,
+                        (x, step) => new { x.report, x.application, step }
+                    )
+                    .Join(
+                        Entities.WorkFlowApplicationStepTags,
+                        x => x.step.ID,
+                        tag => tag.WorkFlowApplicationStep,
+                        (x, tag) => new { x.report, x.application, x.step, tag }
+                    )
+                    .Where(x =>
+                        !x.application.Approved.HasValue
+
+                        && x.step.User == null
+
+                        && !Entities.WorkFlowApplicationSteps.Any(ps =>
+                            ps.WorkFlowApplication == x.step.WorkFlowApplication
+                            && ps.User == null
+                            && x.step.Step > ps.Step
+                        )
+
+                        && !Entities.WorkFlowApplicationSteps.Any(cs =>
+                            cs.WorkFlowApplication == x.step.WorkFlowApplication
+                            && cs.User == user
+                            && x.step.Step == cs.Step
+                        )
+
+                        && (
+                            x.tag.Tag == null ||
+                            userRecord.ReportWorkFlowLevel == x.tag.Tag
+                        )
+                    ).Select(x => x.report);
             }
 
             int Count = await Query.CountAsync();
