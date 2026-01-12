@@ -51,7 +51,7 @@ namespace Matematici.Controllers
             var PrototypeFile = Engine.Instance.Companies[Identity.Company].GetPrototype(Name);
             if (PrototypeFile == null)
                 return RedirectToAction("Error");
-            return new PDFResult(PrototypeFile, Identity.Code, false);
+            return new PDFResult(PrototypeFile, Identity.Company, Identity.Code, false);
         }
 
         [AllowAnonymous]

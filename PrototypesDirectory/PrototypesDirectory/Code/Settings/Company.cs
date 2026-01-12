@@ -10,9 +10,11 @@ namespace Matematici.Settings
         public int Index { get; set; }
         public string Name { get; set; }
         public string PrototypesFolder { get; set; }
+        public string TimeZone { get; set; }
         public string LDAPServer { get; set; }
         public string LDAPQuery { get; set; }
-        public string LDAPDefaultDomain { get; set; }
+        public int LDAPPort { get; set; }
+        public bool LDAPCertificateVerification { get; set; }
 
         public void Check()
         {

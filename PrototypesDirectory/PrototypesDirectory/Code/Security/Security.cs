@@ -27,8 +27,6 @@ namespace Matematici.Security
             }
         }
 
-        private static readonly HashSet<string> AllTimeZoneIds = new HashSet<string>(TimeZoneInfo.GetSystemTimeZones().Select(tz => tz.Id));
-
         public static void Login(ViewModels.Membership.Login Model)
         {
             VerifyPassword(Model.Company, Model.Code, Model.Password);
@@ -54,14 +52,13 @@ namespace Matematici.Security
             try
             {
                 var CompanySettings = Settings.Provider.Values.Companies[Company.Value];
-                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(CompanySettings.LDAPServer, 636, true, false); //ldap: 389, ldaps: 636
+                var LdapDirectoryIdentifier = new LdapDirectoryIdentifier(CompanySettings.LDAPServer, CompanySettings.LDAPPort, true, false);
                 var NetworkCredential = new NetworkCredential(Code, Password);
                 var LdapConnection = new LdapConnection(LdapDirectoryIdentifier, NetworkCredential, AuthType.Basic);
 
                 LdapConnection.SessionOptions.SecureSocketLayer = true;
                 LdapConnection.SessionOptions.ProtocolVersion = 3;
-                if (Settings.Provider.Values.DevelopmentMode)
-                    LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true); //not necessary on janssen server, use only for test for security reasons
+                if (!CompanySettings.LDAPCertificateVerification) LdapConnection.SessionOptions.VerifyServerCertificate = new VerifyServerCertificateCallback((Connection, Certificate) => true);
                 LdapConnection.Bind();
 
                 var CodeParts = Code.Split('\\');

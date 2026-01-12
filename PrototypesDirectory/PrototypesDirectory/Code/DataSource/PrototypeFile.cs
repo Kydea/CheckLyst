@@ -3,6 +3,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -57,19 +58,18 @@ namespace Matematici.DataSource
             }
         }
 
-        public void GeneratePDF(string User, Stream Stream)
+        public void GeneratePDF(int Company, string User, Stream Stream)
         {
             XFont Font = new XFont("Sans Serif", 12);
+            var CompanySettings = Settings.Provider.Values.Companies[Company];
             PdfDocument Document = PdfReader.Open(FileName);
-            var Watermark = $"Printed on {DateTime.Now.ToUniversalTime():yyyy-MM-dd HH:mm UTC} by {User}";
+            var Watermark = $"Printed on {DateTime.Now.ToLocalTime(CompanySettings.TimeZone):yyyy-MM-dd HH:mm:ss UTC zzz} by {User}";
 
             for (int Index = 0; Index < Document.Pages.Count; Index++)
             {
                 PdfPage Page = Document.Pages[Index];
                 var Graphics = XGraphics.FromPdfPage(Page, XGraphicsPdfPageOptions.Prepend);
-                var Size = Graphics.MeasureString(Watermark, Font);
-                var Brush = new XSolidBrush(XColor.FromArgb(128, 255, 0, 0));
-                Graphics.DrawString(Watermark, Font, XBrushes.Black, new XPoint(40, Page.Height - 35));
+                Graphics.DrawString(Watermark, Font, XBrushes.Black, new XPoint(40, Page.Height.Point - 35));
             }
 
             using (MemoryStream MemoryStream = new MemoryStream())

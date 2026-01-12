@@ -13,8 +13,7 @@ namespace Matematici
     {
         private DefaultIdentity _identity;
 
-        protected DefaultIdentity Identity
-            => _identity ?? (_identity = new DefaultIdentity(User?.Identity as ClaimsIdentity));
+        protected DefaultIdentity Identity => _identity ?? (_identity = new DefaultIdentity(User?.Identity as ClaimsIdentity));
 
         public string BaseUrl => $"{Request.Url.Scheme}://{Request.Url.Authority}";
     }
@@ -23,8 +22,7 @@ namespace Matematici
     {
         private DefaultIdentity _identity;
 
-        protected DefaultIdentity Identity
-            => _identity ?? (_identity = new DefaultIdentity(User?.Identity as ClaimsIdentity));
+        protected DefaultIdentity Identity => _identity ?? (_identity = new DefaultIdentity(User?.Identity as ClaimsIdentity));
 
         public string BaseUrl => $"{Request.Url.Scheme}://{Request.Url.Authority}";
     }

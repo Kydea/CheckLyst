@@ -4,15 +4,21 @@
   "Companies": [
     {
       "Name": "Jassen Latina",
-      "PrototypesFolder": "C:\\Matematici\\Prototypes",
+      "PrototypesFolder": "C:\\Matematici\\Prototypes1",
       "LDAPServer": "eu.jnj.com",
-      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com"
+      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com",
+      "LDAPPort": 636,
+      "LDAPCertificateVerification": true,
+      "TimeZone": "Central Standard Time"
     },
     {
       "Name": "Test",
       "PrototypesFolder": "C:\\Matematici\\Prototypes2",
       "LDAPServer": "eu.jnj.com",
-      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com"
+      "LDAPQuery": "CN=JACITLA – CM PROTOTYPE DIRECTORY,OU=Groups,OU=JACITLA,DC=##DOMAIN##,DC=jnj,DC=com",
+      "LDAPPort": 636,
+      "LDAPCertificateVerification": true,
+      "TimeZone": "Central Standard Time"
     }
   ]
 }
