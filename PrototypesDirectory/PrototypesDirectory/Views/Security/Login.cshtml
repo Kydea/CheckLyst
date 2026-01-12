@@ -65,7 +65,7 @@
                 type: "post"
             }).done(function (result) {
                 if (result.ok) {
-                    $(".Company", matematici.elements.footer).text(companyList.data("autoComplete").getControl().val());
+                    $(".Company", matematici.elements.footer).text(companyList.val());
                     $(".User", matematici.elements.footer).text(userCode.val());
                     matematici.navigator.open("/");
                 } else
@@ -83,7 +83,7 @@
 
         matematici.loader.checkInitialCurtain();
         setTimeout(function () {
-            companyList.data("autoComplete").refresh();
+            matematici.AutoComplete.get(companyList[0]).refresh();
         }, 0);
     };
 

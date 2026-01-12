@@ -502,8 +502,7 @@
     <Content Include="Scripts\Libraries\jquery.keyfilter.js" />
     <Content Include="Scripts\Libraries\jquery.validate.js" />
     <Content Include="Scripts\Libraries\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\Libraries\moment-with-locales.2.30.1.js" />
-    <Content Include="Scripts\Libraries\moment-timezone-with-data.0.6.0.js" />
+    <Content Include="Scripts\Libraries\moment-2.24.0.js" />
     <Content Include="Scripts\Libraries\pako.1.0.11.js" />
     <Content Include="Scripts\Matematici\Blip.js" />
     <Content Include="Scripts\Matematici\Breadcrumbs.js" />

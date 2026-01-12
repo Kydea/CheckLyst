@@ -21,6 +21,7 @@
         readOnly,
         locked = false,
         error = false,
+        notification,
 
         deferredInitialization = function () {
             //all the initialization needed only after first show list
@@ -96,8 +97,8 @@
                 showList();
                 setTimeout(function () {
                     if (!initialized) deferredInitialization();
-                    input.trigger("focus");
-                    input.trigger("select");
+                    input.focus();
+                    input.select();
                 }, 0);
             });
             labelNode.addEventListener("click", function (e) {
@@ -108,7 +109,7 @@
                 if (open)
                     hideList();
                 else
-                    labelNode.trigger("focus");
+                    labelNode.focus();
                 e.preventDefault();
                 e.stopPropagation();
             });
@@ -304,6 +305,7 @@
             resizeList();
             list.show();
             setValue();
+            setMainNotificationBadge("");
             setTimeout(function () {
                 $(document).on("click.autocomplete", hideList)
                 $(document).on("keydown.autocomplete", function (e) {
@@ -337,7 +339,17 @@
             input.insertAfter(label);
             list.insertAfter(label);
             matematici.AutoComplete.current = null;
+            setMainNotificationBadge(notification ? notification.value : "");
             node.dispatchEvent(new Event('hideList', { 'bubbles': true }))
+        },
+
+        setMainNotificationBadge = function (value) {
+            labelNode.closest("label").setAttribute("data-badge", value);
+        },
+
+        setNotificationBadge = function (item, value) {
+            notification = value == 0 ? null : { item: item, value: value };
+            setMainNotificationBadge(value);
         },
 
         setError = function (value) {
@@ -363,15 +375,21 @@
                     var
                         option = $(this),
                         filter = input.val().toUpperCase();
-                    if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0)
-                        list.append(
-                            $("<a />")
+                    if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0) {
+                        const
+                            value = option.attr("value"),
+                            a = $("<a />")
                                 .attr("href", "#")
-                                .data("value", option.attr("value"))
+                                .data("value", value)
                                 .text(option.text())
                                 .attr("title", option.text())
-                                .toggleClass("Selected", option.prop("selected"))
-                        );
+                                .toggleClass("Selected", option.prop("selected"));
+
+                        if (value == notification?.item)
+                            a.attr("data-badge", notification.value);
+
+                        list.append(a);
+                    }
                 });
 
             items = $("a", list);
@@ -408,7 +426,7 @@
 
     autoComplete.getValue = function () {
         return element && element.val() || node.value;
-    }
+    };
 
     autoComplete.setValue = function (values) {
         if (Array.isArray(values)) {
@@ -422,6 +440,7 @@
         setValue();
     };
 
+    autoComplete.setNotificationBadge = setNotificationBadge;
     autoComplete.isNullable = isNullable;
     autoComplete.hideList = hideList;
     autoComplete.initialize = initialize;
