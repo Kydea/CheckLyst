@@ -60,16 +60,16 @@ namespace Matematici.DataSource
 
         public void GeneratePDF(int Company, string User, Stream Stream)
         {
-            XFont Font = new XFont("Sans Serif", 12);
+            XFont Font = new XFont("Arial", 12);
             var CompanySettings = Settings.Provider.Values.Companies[Company];
             PdfDocument Document = PdfReader.Open(FileName);
-            var Watermark = $"Printed on {DateTime.Now.ToLocalTime(CompanySettings.TimeZone):yyyy-MM-dd HH:mm:ss UTC zzz} by {User}";
+            var Watermark = $"Printed on {DateTime.UtcNow.ToLocalTime(CompanySettings.TimeZone):yyyy-MM-dd HH:mm:ss UTC zzz} by {User}";
 
             for (int Index = 0; Index < Document.Pages.Count; Index++)
             {
                 PdfPage Page = Document.Pages[Index];
-                var Graphics = XGraphics.FromPdfPage(Page, XGraphicsPdfPageOptions.Prepend);
-                Graphics.DrawString(Watermark, Font, XBrushes.Black, new XPoint(40, Page.Height.Point - 35));
+                using (var Graphics = XGraphics.FromPdfPage(Page, XGraphicsPdfPageOptions.Append))
+                    Graphics.DrawString(Watermark, Font, XBrushes.Black, new XRect(40, Page.Height.Point - 35, Page.Width.Point - 80, 20), XStringFormats.TopLeft);
             }
 
             using (MemoryStream MemoryStream = new MemoryStream())

@@ -1,0 +1,23 @@
+﻿body.ReportEditor div.Report form#Detail {
+  border: none !important;
+  padding-bottom: 0 !important;
+  margin: -20px !important;
+  background: none;
+}
+body.ReportEditor div.Report form#Detail div.TabContainer {
+  margin-left: 0 !important;
+}
+body.ReportEditor div.Report form#Detail div.Note {
+  height: 590px;
+}
+body.ReportEditor div.Report form#Detail div.Note label {
+  padding-top: 0;
+  height: 100%;
+}
+body.ReportEditor div.Report form#Detail div.Note label textarea {
+  margin-top: 0 !important;
+  height: 100%;
+}
+body.ReportEditor div.Report form#Detail > div.Errors {
+  display: none !important;
+}

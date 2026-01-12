@@ -13,7 +13,7 @@
 				$(".ValidationMessagesIcon", control.parent().removeClass("Error")).remove();
 				control.off(".ValidationMessages");
 			} else {
-				var errors = $("<div />").addClass("Errors").show();
+				var errors = $("<div />").addClass("Errors");
 				for (var index in values)
 					errors.append(
 						$("<div />").addClass("Error").text(" " + values[index].message).prepend(
@@ -28,6 +28,7 @@
                 control.parent().addClass("Error").prepend($("<i />").addClass("ValidationMessagesIcon fas fa-exclamation-triangle").on("click", function (e) {
 					e.preventDefault();
 					matematici.dialog.error("Error", errors);
+					errors.show()
 				}));
 
 				control

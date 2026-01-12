@@ -1,67 +1,81 @@
 ﻿div.TabContainer {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 35px;
+  z-index: 30;
+  background: white;
+  transition: height 0.3s;
+  display: none;
+  min-height: 40px;
+}
+div.TabContainer .TabLabels {
+  display: flex;
   position: relative;
-  transition: height .3s;
-  display: none; }
-  div.TabContainer .TabLabels {
-    display: flex; }
-    div.TabContainer .TabLabels::after {
-      content: "";
-      position: absolute;
-      height: 1px;
-      width: 100%;
-      top: 38px;
-      background-color: #999;
-      clear: both;
-      left: 0;
-      z-index: 0; }
-    div.TabContainer .TabLabels > a {
-      height: 40px;
-      line-height: 40px;
-      color: #999;
-      text-decoration: none;
-      z-index: 1;
-      position: relative;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
-      div.TabContainer .TabLabels > a i.fi.flaticon-lock-o {
-        margin-left: 5px;
-        font-size: 14px; }
-      div.TabContainer .TabLabels > a.Selected {
-        cursor: default;
-        border-top: none;
-        border-bottom: none;
-        color: #666;
-        border-bottom: solid 3px #ffba00;
-        font-weight: bold; }
-      div.TabContainer .TabLabels > a:hover {
-        text-decoration: none !important; }
-        div.TabContainer .TabLabels > a:hover:not(.Selected) {
-          color: #ffba00; }
-          div.TabContainer .TabLabels > a:hover:not(.Selected) i.fi:not(.flaticon-lock-o) {
-            color: white !important; }
-  div.TabContainer .Tab {
-    position: absolute;
-    width: 100%;
-    top: 40px;
-    opacity: 0;
-    transition: opacity .5s;
-    z-index: 50;
-    padding-right: 20px; }
-    div.TabContainer .Tab.Selected {
-      opacity: 1;
-      z-index: 51; }
-  @media only screen and (min-width: 760px) {
-    div.TabContainer .TabLabels > a {
-      padding: 0 40px; } }
-  @media only screen and (max-width: 759px) {
-    div.TabContainer .TabLabels > a {
-      padding: 0 10px; } }
-
+  flex-wrap: wrap;
+}
+div.TabContainer .TabLabels::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  bottom: 1px;
+  background-color: #999;
+  clear: both;
+  left: 0;
+  z-index: 0;
+}
+div.TabContainer .TabLabels > a {
+  height: 40px;
+  line-height: 40px;
+  color: #999;
+  text-decoration: none;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 20px;
+  max-width: 100%;
+}
+div.TabContainer .TabLabels > a i.fal.fa-lock {
+  margin-left: 5px;
+  font-size: 14px;
+}
+div.TabContainer .TabLabels > a.Selected {
+  cursor: default;
+  border-top: none;
+  border-bottom: none;
+  color: #666;
+  border-bottom: solid 3px #ffba00;
+  font-weight: bold;
+}
+div.TabContainer .TabLabels > a:hover {
+  text-decoration: none !important;
+}
+div.TabContainer .TabLabels > a:hover:not(.Selected) {
+  color: #ffba00;
+}
+div.TabContainer .TabLabels > a:hover:not(.Selected) i.fal:not(.fa-lock) {
+  color: white !important;
+}
+div.TabContainer .Tab {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 30;
+  padding-right: 20px;
+}
+div.TabContainer .Tab.Selected {
+  opacity: 1;
+  z-index: 31;
+}
 div.ShadowPanel div.TabContainer {
   margin-bottom: 20px;
   margin-right: -20px;
-  margin-left: -20px; }
+  margin-left: -20px;
+}
 
 div.Popup div.TabContainer {
-  margin-right: -20px; }
+  margin-right: -20px;
+}

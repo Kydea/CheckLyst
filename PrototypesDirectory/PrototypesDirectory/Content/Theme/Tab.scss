@@ -3,19 +3,26 @@
 $label-height: 40px;
 
 div.TabContainer {
-    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 35px;
+    z-index: $Depth-Tab;
+    background: white;
     transition: height .3s;
     display: none;
+    min-height: $label-height;
 
     .TabLabels {
         display: flex;
+        position: relative;
+        flex-wrap: wrap;
 
         &::after {
             content: "";
             position: absolute;
             height: 1px;
             width: 100%;
-            top: $label-height - 2;
+            bottom: 1px;
             background-color: $Color-Grey-Regular;
             clear: both;
             left: 0;
@@ -32,8 +39,10 @@ div.TabContainer {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            padding: 0 20px;
+            max-width: 100%;
 
-            i.fi.flaticon-lock-o {
+            i.fal.fa-lock {
                 margin-left: 5px;
                 font-size: 14px;
             }
@@ -53,7 +62,7 @@ div.TabContainer {
                 &:not(.Selected) {
                     color: $Color-Yellow-Regular;
 
-                    i.fi:not(.flaticon-lock-o) {
+                    i.fal:not(.fa-lock) {
                         color: white !important;
                     }
                 }
@@ -64,7 +73,7 @@ div.TabContainer {
     .Tab {
         position: absolute;
         width: 100%;
-        top: $label-height;
+        //top: $label-height;
         opacity: 0;
         transition: opacity .5s;
         z-index: $Depth-Tab;
@@ -76,20 +85,7 @@ div.TabContainer {
         }
     }
 
-    @media #{$Media-Extended} {
-        .TabLabels {
-            > a {
-                padding: 0 40px;
-            }
-        }
-    }
-
-    @media #{$Media-Mobile} {
-        .TabLabels {
-            > a {
-                padding: 0 10px;
-            }
-        }
+    &.MultiLine {
     }
 }
 

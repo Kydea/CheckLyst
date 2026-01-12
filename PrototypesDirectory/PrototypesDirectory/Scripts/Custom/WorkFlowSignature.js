@@ -16,24 +16,24 @@
 			var value = validityStartType.filter(":checked").val();
 			validityStartMessage.toggle(value != "2");
 			validityStart.toggle(value == "2").prev().toggle(value == "2");
-			validityStart.change();
+			validityStart.trigger("change");
 		},
 
 		validityEndChanged = function () {
 			var value = validityEndType.filter(":checked").val();
 			$("span", validityEndMessage.toggle(value != "2")).hide().filter("[data-value='" + value + "']").show();
 			validityEnd.toggle(value == "2").prev().toggle(value == "2");
-			validityEnd.change();
+			validityEnd.trigger("change");
 		},
 
 		getModel = function (approved) {
 			return {
 				approved: approved,
 				applicationStep: options.applicationStep,
-				validFromNow: options.model ? validityStartType.filter(":checked").val() == "1" : false,
-				validFrom: options.model && validityStartType.filter(":checked").val() == "2" ? validityStart.val() : null,
-				validUntilNow: options.model ? validityEndType.filter(":checked").val() == "1" : false,
-				validUntil: options.model && validityEndType.filter(":checked").val() == "2" ? validityEnd.val() : null,
+				validFromNow: options.prototype ? validityStartType.filter(":checked").val() == "1" : false,
+				validFrom: options.prototype && validityStartType.filter(":checked").val() == "2" ? validityStart.val() : null,
+				validUntilNow: options.prototype ? validityEndType.filter(":checked").val() == "1" : false,
+				validUntil: options.prototype && validityEndType.filter(":checked").val() == "2" ? validityEnd.val() : null,
 				comment: $("textarea#Comment", element).val(),
 				password: $("input#Password", element).val(),
 				modifiedBy: options.concurrencyInformation.modifiedBy,
@@ -50,7 +50,7 @@
 				matematici.controls.setValidationMessages($(this), []);
 			});
 
-			if (options.model) {
+			if (options.prototype) {
 				if (!model.validFromNow && !validityStart.val()) {
 					matematici.controls.setValidationMessages(validityStart, [{ message: "Specify a date" }])
 					error = true;
@@ -105,14 +105,14 @@
 						validityEnd = $("input#ValidityEnd", element);
 						validityEndMessage = $("div#ValidityEndMessage", element);
 
-						if (options.model) {
+						if (options.prototype) {
 							validityStartType = $("input.ValidityStartType", element);
 							new matematici.DatePicker(validityStart[0]);
 
-							validityStartType.eq(options.model.validFrom ? 1 : 0).prop("checked", true);
-                            if (options.model.validFrom)
-                                matematici.DatePicker.map.get(validityStart[0]).setValue(options.model.validFrom);
-							if (options.model.state != prototypes.Prototype.states.approval) {
+							validityStartType.eq(options.prototype.validFrom ? 1 : 0).prop("checked", true);
+							if (options.prototype.validFrom)
+								matematici.DatePicker.map.get(validityStart[0]).setValue(options.prototype.validFrom);
+							if (options.prototype.state != prototypes.Prototype.states.approval) {
 								matematici.controls.setEditable(validityStart, false);
 								validityStartType.prop("disabled", true);
 							}
@@ -120,10 +120,10 @@
 							validityEndType = $("input.ValidityEndType", element);
 							new matematici.DatePicker(validityEnd[0]);
 
-							validityEndType.eq(options.model.state != prototypes.Prototype.states.approval ? 1 : options.model.validUntil ? 2 : 0).prop("checked", true);
-                            if (options.model.validUntil)
-                                matematici.DatePicker.map.get(validityEnd[0]).setValue(options.model.validUntil);
-							if (options.model.state == prototypes.Prototype.states.approval)
+							validityEndType.eq(options.prototype.state != prototypes.Prototype.states.approval ? 1 : options.prototype.validUntil ? 2 : 0).prop("checked", true);
+							if (options.prototype.validUntil)
+								matematici.DatePicker.map.get(validityEnd[0]).setValue(options.prototype.validUntil);
+							if (options.prototype.state == prototypes.Prototype.states.approval)
 								validityEndType.eq(1).parent().hide();
 
 							if (firstSignature)

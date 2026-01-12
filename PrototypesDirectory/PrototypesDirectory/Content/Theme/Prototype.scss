@@ -22,18 +22,19 @@ div.Prototype {
         border-radius: 3px;
 
         a.MiniIcon {
-            $IconSize: 30px;
+            $IconSize: 20px;
             margin-top: 0;
             line-height: $IconSize !important;
             height: $IconSize !important;
             width: $IconSize !important;
             border-radius: 3px 0 0 3px !important;
 
-            i.fi {
-                font-size: 14px !important;
+            i.fa, i.fal {
+                font-size: 12px !important;
                 line-height: $IconSize !important;
                 height: $IconSize !important;
                 width: $IconSize !important;
+                color: $Color-Green-Dark !important;
             }
 
             + a.MiniIcon {
@@ -44,7 +45,7 @@ div.Prototype {
             &:hover {
                 background: $Color-Silver-Dark;
 
-                i.fi {
+                i.fa, i.fal {
                     color: $Color-Green-Dark !important;
                 }
             }
@@ -53,6 +54,7 @@ div.Prototype {
 
     div.HeaderContainer {
         > div.Commands {
+            //prototype commands
             a.Up, a.Down, a.Add, a.Remove {
                 display: none;
             }
@@ -63,6 +65,7 @@ div.Prototype {
         margin-top: $Metric-Control-Space;
 
         div.Commands {
+            //page commands
             margin: 0;
 
             a.Add {
@@ -83,6 +86,13 @@ div.Prototype {
                 + div.Commands {
                     a.Up {
                         display: none;
+                    }
+
+                    &:nth-last-child(2) {
+                        //disable remove command for last page
+                        a.Remove {
+                            display: none;
+                        }
                     }
                 }
             }
@@ -126,26 +136,36 @@ div.Prototype {
             cursor: pointer;
         }
 
-        &.Field {
+        input {
+            cursor: pointer;
+            outline: none;
         }
 
-        &.Signature {
-            input {
-                cursor: pointer;
-            }
+        a.Placeholder {
+            cursor: pointer;
+        }
 
-            a.Button:not(.MiniIcon):hover {
-                background-color: $Color-Green-Regular;
-                cursor: pointer;
-
-                i {
-                    color: $Color-Green-Regular;
-                }
+        &.Field {
+            div.Input {
+                width: 100% !important;
             }
         }
 
         &.Text {
             p {
+                position: relative;
+
+                &.Ellipsis::after {
+                    content: "...";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                }
+            }
+        }
+
+        &.Link {
+            a {
                 position: relative;
             }
         }
@@ -167,6 +187,10 @@ div.Prototype {
 
             a.Add {
                 display: none;
+            }
+
+            a.Paste {
+                display: none !important;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿body.Popup {
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 div.Popup {
   display: none;
@@ -9,71 +10,91 @@ div.Popup {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 105;
-  background-color: rgba(102, 102, 102, 0.7); }
+  z-index: 104;
+  background-color: rgba(102, 102, 102, 0.7);
+  padding: 20px;
+}
+div.Popup div.Container {
+  padding: 20px;
+  background-color: white;
+  position: relative;
+}
+div.Popup div.Container p {
+  line-height: 1.6;
+}
+div.Popup div.Container h2 {
+  margin: -20px -20px 20px;
+  background: #ffba00;
+  padding: 20px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+div.Popup div.Container div.Buttons {
+  margin-top: 20px;
+}
+div.Popup div.Container div.Buttons a {
+  min-width: 100px;
+  float: right;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+div.Popup div.Container div.Buttons textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+div.Popup div.Container div.Buttons::after {
+  content: "";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
+}
+div.Popup div.Container a.CloseButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: white;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+}
+div.Popup div.Container a.CloseButton i {
+  font-size: 30px;
+}
+div.Popup div.Container a.CloseButton:hover {
+  color: #666;
+}
+div.Popup div.Container form {
+  border: none;
+  padding-bottom: 0;
+  margin: -20px;
+  background: none;
+}
+@media only screen and (min-width: 760px) {
   div.Popup div.Container {
+    box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
+    max-width: calc(100vw - 60px);
+    margin: 0 auto;
+    border-radius: 15px;
+  }
+  div.Popup div.Container h2 {
+    border-radius: 15px 15px 0 0;
+  }
+}
+@media only screen and (max-width: 759px) {
+  div.Popup div.Container {
+    width: 100% !important;
+    min-height: 1vh;
+  }
+  div.Popup div.Container h2 {
+    background: #ffba00;
     padding: 20px;
-    background-color: white;
-    position: relative; }
-    div.Popup div.Container p {
-      line-height: 1.6; }
-    div.Popup div.Container h2 {
-      margin: -20px -20px 20px;
-      background: #ffba00;
-      padding: 20px;
-      color: white;
-      text-transform: uppercase;
-      font-weight: normal; }
-    div.Popup div.Container div.Buttons {
-      margin-top: 40px; }
-      div.Popup div.Container div.Buttons a {
-        min-width: 100px;
-        float: right;
-        margin-left: 20px;
-        margin-top: 20px; }
-      div.Popup div.Container div.Buttons textarea {
-        min-height: 60px;
-        resize: vertical; }
-      div.Popup div.Container div.Buttons::after {
-        content: "";
-        visibility: hidden;
-        display: block;
-        height: 0;
-        clear: both; }
-    div.Popup div.Container a.CloseButton {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      color: white;
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center; }
-      div.Popup div.Container a.CloseButton i {
-        font-size: 30px; }
-      div.Popup div.Container a.CloseButton:hover {
-        color: #666; }
-    div.Popup div.Container form {
-      border: none;
-      padding-bottom: 0;
-      margin: -20px;
-      background: none; }
-  @media only screen and (min-width: 760px) {
-    div.Popup div.Container {
-      box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
-      max-width: calc(100vw - 60px);
-      margin: 0 auto;
-      border-radius: 15px; }
-      div.Popup div.Container h2 {
-        border-radius: 15px 15px 0 0; } }
-  @media only screen and (max-width: 759px) {
-    div.Popup div.Container {
-      width: 100% !important;
-      min-height: 1vh; }
-      div.Popup div.Container h2 {
-        background: #ffba00;
-        padding: 20px;
-        color: white;
-        text-transform: uppercase;
-        font-weight: normal; } }
-
+    color: white;
+    text-transform: uppercase;
+    font-weight: normal;
+  }
+}

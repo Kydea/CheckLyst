@@ -83,7 +83,7 @@
             var tr = $(this);
 
             if (multiSelection)
-                $("input", tr).click();
+                $("input", tr).trigger("click");
             else
                 selectRow(tr);
         },
@@ -157,7 +157,7 @@
                     if (directImport) $("div.Container.ExternalSources").removeClass("Hidden");
                     autoCenter.center();
                 } else
-                    searchButton.click();
+                    searchButton.trigger("click");
             });
         },
 
@@ -178,7 +178,7 @@
 
         toggleNoRecord = function (value) {
             if (!noRecord)
-                noRecord = $("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", header.children().size()).text("(no record)"));
+                noRecord = $("<tr />").addClass("NoRecord").append($("<td />").attr("colspan", header.children().length).text("(no record)"));
             if (value)
                 tableBody.append(noRecord);
             else
@@ -187,7 +187,7 @@
 
         toggleNext = function (value) {
             if (!next)
-                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", header.children().size()).append($("<i />").addClass("Icon fa fa-angle-double-down")));
+                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", header.children().length).append($("<i />").addClass("Icon fa fa-angle-double-down")));
 
             if (value)
                 next.appendTo(tableBody);

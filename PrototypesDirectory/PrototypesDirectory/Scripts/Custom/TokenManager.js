@@ -113,12 +113,13 @@
             localStorage.accessToken = result.access_token;
             localStorage.accessTokenExpiration = new Date().getTime() + parseInt(result.expires_in) * 1000;
             localStorage.timeZone = result.timeZone;
+            localStorage.companyTimeZone = result.companyTimeZone;
             localStorage.roles = result.roles;
             localStorage.userCode = result.code;
             localStorage.userName = result.name;
             localStorage.decimalSeparator = result.decimalSeparator;
 
-            matematici.menu.toggleItemsByRole();
+            matematici.menu.toggleItems();
             matematici.userPanel.update();
         },
 
@@ -150,6 +151,10 @@
 
     tokenManager.getRefreshToken = function () {
         return localStorage.refreshToken;
+    };
+
+    tokenManager.isLoggedIn = function () {
+        return localStorage.accessToken != null;
     };
 
     tokenManager.notifyLogout = function () {

@@ -14,22 +14,22 @@
 
             <label class="FullWidth">
                 <span>Company</span>
-                <i class="Icon fi flaticon-buildings-o"></i>
+                <i class="Icon fal fa-industry"></i>
                 @Html.DropDownListFor(m => m.Company, Matematici.Settings.Provider.Values.Companies.Select(c => new SelectListItem { Value = c.Index.ToString(), Text = c.Name }), new { data_nullable = "(select a company)" })
             </label>
 
             <label class="FullWidth Controls2">
                 <span>User code / Password</span>
-                <i class="Icon fi flaticon-user-o"></i>
+                <i class="Icon fal fa-user"></i>
                 <input type="text" name="Code" placeholder="username" />
-                <i class="Icon fi flaticon-key-o"></i>
+                <i class="Icon fal fa-key"></i>
                 <input type="password" name="Password" placeholder="password" />
             </label>
 
             <div class="Errors"></div>
 
             <div class="Buttons">
-                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="fi flaticon-arrow-right"></i>LOGIN</a>
+                <a class="Button DefaultButton GreyGreenButton" href="#" id="Sign"><i class="Icon fas fa-chevron-circle-right"></i>LOGIN</a>
             </div>
         </form>
     </div>

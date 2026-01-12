@@ -1,4 +1,5 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 body.Dialog {
     overflow: hidden;
@@ -28,6 +29,10 @@ div.Dialog {
 
         div.Content {
             overflow: auto;
+
+            label {
+                margin-bottom: 5px;
+            }
         }
 
         div.Buttons {
@@ -47,6 +52,7 @@ div.Dialog {
             textarea {
                 min-height: 60px;
                 resize: vertical;
+                padding-top: 10px;
             }
 
             &::after {
@@ -108,16 +114,23 @@ div.Dialog {
                         background: none;
                         position: absolute;
                         left: 10px;
-                        top: 6px;
+                        top: 7px;
                         margin: 0;
-                        font-size: 16px;
                     }
 
                     &::after {
                         content: none;
                     }
 
-                    &:hover {
+                    &.Disabled {
+                        color: $Color-Grey-Light;
+
+                        i {
+                            color: $Color-Grey-Light;
+                        }
+                    }
+
+                    &:not(.Disabled):hover {
                         background-color: $Color-Green-Regular;
                         color: white;
                     }
@@ -151,10 +164,102 @@ div.Dialog {
                     background-color: $Color-Red-Light !important;
 
                     i {
-                        color: $Color-Red-Light;
+                        color: $Color-Red-Light !important;
                     }
                 }
             }
+        }
+    }
+
+    &.ImageViewer {
+        div.Container {
+            h2 {
+                display: none;
+            }
+
+            div.Content {
+                max-height: calc(100vh - 40px);
+
+                img {
+                    display: block;
+                    position: relative;
+                    margin: auto;
+                }
+            }
+
+            div.ViewButtons {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+
+                a {
+                    float: left;
+                    margin-top: 10px;
+                    margin-left: 10px;
+                    color: white;
+                    border-radius: 50%;
+                    background: $Color-Green-Regular;
+                    height: 30px;
+                    width: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    opacity: .5;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            a.CloseButton {
+                right: 30px;
+                top: 30px;
+                border-radius: 50%;
+                background: $Color-Green-Regular;
+                opacity: .5;
+
+                i {
+                    font-size: 20px;
+                    color: white;
+                    line-height: 30px;
+
+                    &::before {
+                        content: fa-content($fa-var-times) !important;
+                    }
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            div.Buttons {
+                display: none;
+            }
+        }
+
+        &.Maximized {
+        }
+    }
+
+    div.Array {
+        padding-bottom: 10px;
+
+        span.Index {
+            float: left;
+            clear: both;
+            color: $Color-Grey-Light;
+        }
+
+        div.Value {
+            float: left;
+            margin-left: 25px;
+        }
+
+        &::after {
+            content: "";
+            display: table;
+            clear: both;
         }
     }
 
@@ -172,6 +277,7 @@ div.Dialog {
             width: 420px;
             margin: 0 auto;
             border-radius: 15px;
+            max-width: calc(100% - #{2 * $Metric-Separator-Extended});
 
             h2 {
                 border-radius: 15px 15px 0 0;

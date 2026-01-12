@@ -1,0 +1,158 @@
+﻿@import "_Library.scss";
+
+body.Report {
+    header, footer, div#Breadcrumbs {
+        display: none !important;
+    }
+
+    label.PrintDialog {
+        display: none;
+    }
+
+    table {
+        tbody {
+            tr:not(.NoRecord) {
+                &.Total {
+                    background: $Color-Silver-Light !important;
+
+                    td:not(:first-child) {
+                        border-top: solid 1px $Color-Grey-Light;
+                    }
+
+                    &:not(:nth-last-child(2)) {
+                        td:not(:first-child) {
+                            border-bottom: solid 1px $Color-Grey-Light;
+                        }
+                    }
+
+                    &:hover {
+                        background: $Color-Silver-Dark !important;
+                    }
+
+                    td:first-child {
+                        border-right: none !important;
+                    }
+                }
+
+                td:first-child {
+                    text-align: right !important;
+                    width: 10px;
+                }
+
+                &:not(.Total:last-child) {
+                    td:first-child {
+                        background: $Color-Silver-Light;
+                    }
+                }
+
+                &.Total:last-child {
+                    td {
+                        border-top: solid 1px $Color-Grey-Light !important;
+                        border-bottom: solid 2px $Color-Grey-Light !important;
+                    }
+
+                    background: $Color-Silver-Dark !important;
+
+                    &:hover {
+                        background: $Color-Grey-Light-Over !important;
+                    }
+                }
+            }
+        }
+    }
+
+    @media screen {
+        width: unset;
+        min-width: 100%;
+        zoom: 1 !important;
+
+        div#Content {
+            margin: 0 !important;
+            padding: 20px !important;
+
+            h1 {
+                font-size: 28px !important;
+
+                button.hamburger {
+                    padding: 0;
+                    margin-right: 10px;
+                }
+            }
+
+            table {
+                thead {
+                    position: -webkit-sticky !important;
+                    position: sticky !important;
+                    top: 0;
+                    cursor: default;
+
+                    .Resizable {
+                        cursor: ew-resize;
+                    }
+                }
+
+                tbody {
+                    tr {
+                        cursor: pointer;
+
+                        &:not(.Current) {
+                            td {
+                                white-space: nowrap;
+                                max-width: 200px;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                        }
+
+                        &.CurrentPrevious {
+                            td {
+                                border-bottom: solid 1px black !important;
+                            }
+                        }
+
+                        &.Current {
+                            td {
+                                border-top: solid 1px black !important;
+                                border-bottom: solid 1px black !important;
+                            }
+                        }
+
+                        &:hover {
+                            background-color: $Color-Pink;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media print {
+        background-color: white !important;
+
+        div#Content {
+            padding: 0 !important;
+            margin: 0 !important;
+
+            div.ShadowPanel {
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+
+                h1.Green {
+                    background-color: white !important;
+                    color: black !important;
+                    padding: 0 !important;
+                    margin: 0 0 10px !important;
+
+                    button.hamburger {
+                        display: none;
+                    }
+                }
+
+                table.Grid {
+                    width: 100vh;
+                }
+            }
+        }
+    }
+}

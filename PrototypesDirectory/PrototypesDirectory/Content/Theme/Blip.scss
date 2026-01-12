@@ -1,40 +1,86 @@
 ﻿@import "_Library.scss";
 
-div.Blip {
-    display: none;
-    overflow: auto;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: $Depth-Blip;
-    background-color: rgba(102, 102, 102, .7);
-    cursor: pointer;
-
-    div.Container {
-        position: fixed;
-        border-radius: 15px;
-        top: 50%;
-        left: 50%;
-        width: unset;
-        padding: 20px;
-        background-color: white;
-        box-shadow: $Box-Shadow;
-
-        i {
-            color: $Color-Green-Regular;
-            font-size: 30px;
-        }
+body.Blip {
+    div#Loader {
+        display: none !important;
     }
 
-    &.Error {
-        background-color: rgba(255, 102, 102, .7);
+    div.Blip {
+        display: none;
+        overflow: auto;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $Depth-Blip;
+        background-color: rgba(102, 102, 102, .7);
+        cursor: pointer;
 
         div.Container {
+            position: fixed;
+            background-color: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            text-align: center;
+            box-shadow: $Box-Shadow;
+            font-size: 30px;
+
             i {
-                color: $Color-Red-Regular;
+                color: $Color-Green-Regular;
                 font-size: 30px;
+            }
+        }
+
+        &.Error {
+            background-color: rgba(255, 102, 102, .7);
+
+            div.Container {
+                i {
+                    color: $Color-Red-Regular;
+                }
+            }
+        }
+
+        &.Warning {
+            background-color: rgba(255, 102, 0, .7);
+
+            div.Container {
+                i {
+                    color: $Color-Yellow-Regular;
+                }
+            }
+        }
+
+        &.Countdown {
+            background-color: rgba(255, 102, 0, .7);
+
+            div.Container {
+                color: white;
+                font-weight: bold;
+                background-color: unset;
+                line-height: unset;
+                width: 100%;
+                height: unset;
+                left: 0;
+                top: calc(50% - 62px);
+                box-shadow: unset;
+
+                span {
+                    display: block;
+
+                    &.Label {
+                        font-size: 14px;
+                    }
+
+                    &.Time {
+                        font-size: 80px;
+                    }
+                }
             }
         }
     }

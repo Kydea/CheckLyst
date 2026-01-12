@@ -2,64 +2,132 @@
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
-  margin-top: 20px; }
-  table.Grid thead {
-    background-color: #999; }
-    table.Grid thead tr th {
-      color: #fff;
-      padding: 0 20px;
-      text-align: left;
-      position: relative;
-      height: 50px;
-      border-left: 1px solid #ccc;
-      font-weight: 600; }
-      table.Grid thead tr th:after {
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: 20px;
-        width: 0;
-        height: 0;
-        transform: translateY(-50%);
-        border-width: 5px 8px;
-        border-color: transparent #ccc transparent transparent;
-        border-style: solid;
-        transform: rotate(-90deg); }
-  table.Grid tbody tr td {
-    color: #666;
-    padding: 3px 20px;
-    height: 40px;
-    border-right: solid 1px #ccc; }
-    table.Grid tbody tr td.Off {
-      opacity: .3; }
-    table.Grid tbody tr td.Centered {
-      text-align: center; }
-    table.Grid tbody tr td:last-child {
-      border-right: none; }
-    table.Grid tbody tr td.Odd {
-      background-color: white; }
-    table.Grid tbody tr td.Even {
-      background-color: #e8f7fc; }
-  table.Grid tbody tr:not(.Even):nth-child(odd), table.Grid tbody tr.Odd {
-    background-color: white; }
-  table.Grid tbody tr:not(.Odd):nth-child(even), table.Grid tbody tr.Even {
-    background-color: #e8f7fc; }
-  table.Grid tbody tr.Handler {
-    cursor: pointer; }
-    table.Grid tbody tr.Handler:hover {
-      background-color: #fce6e8; }
-  table.Grid tbody tr.SubRow.Odd {
-    background-color: #f5f5f5 !important; }
-  table.Grid tbody tr.SubRow.Even {
-    background-color: #f5f5f5 !important; }
-  table.Grid tbody tr.SubRow td {
-    color: #999; }
-    table.Grid tbody tr.SubRow td:not(.Odd):not(.Even) {
-      border-top: solid 1px white; }
-  table.Grid tbody tr.SubRow.Red td {
-    color: #ff3333; }
-  table.Grid tbody tr.SubRow.Green td {
-    color: #009688; }
-  table.Grid tbody tr.NoRecord td {
-    color: #999;
-    text-align: center; }
+  margin-top: 20px;
+}
+table.Grid thead {
+  background-color: #999;
+}
+table.Grid thead tr th {
+  color: #fff;
+  padding: 0 20px;
+  text-align: left;
+  position: relative;
+  height: 50px;
+  border-left: 1px solid #ccc;
+  font-weight: 600;
+}
+table.Grid thead tr th:after {
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  width: 0;
+  height: 0;
+  transform: translateY(-50%);
+  border-width: 5px 8px;
+  border-color: transparent #ccc transparent transparent;
+  border-style: solid;
+  transform: rotate(-90deg);
+}
+table.Grid tbody tr td {
+  color: #666;
+  padding: 3px 20px;
+  height: 40px;
+  border-right: solid 1px #ccc;
+}
+table.Grid tbody tr td span.Block {
+  display: block;
+}
+table.Grid tbody tr td span.Block + span.Block {
+  margin-top: 10px;
+}
+table.Grid tbody tr td.Red {
+  color: #cc0000;
+}
+table.Grid tbody tr td.Off {
+  opacity: 0.3;
+}
+table.Grid tbody tr td.Centered {
+  text-align: center;
+}
+table.Grid tbody tr td.Right {
+  text-align: right;
+}
+table.Grid tbody tr td.Inactive {
+  cursor: default !important;
+}
+table.Grid tbody tr td.Order i {
+  cursor: pointer;
+}
+table.Grid tbody tr td:last-child {
+  border-right: none;
+}
+table.Grid tbody tr td.Odd {
+  background-color: white;
+}
+table.Grid tbody tr td.Even {
+  background-color: #e8f7fc;
+}
+table.Grid tbody tr td[data-type=DateTimeOffset] {
+  min-width: 160px;
+}
+table.Grid tbody tr:not(.Even):nth-child(odd), table.Grid tbody tr.Odd {
+  background-color: white;
+}
+table.Grid tbody tr:not(.Odd):nth-child(even), table.Grid tbody tr.Even {
+  background-color: #e8f7fc;
+}
+table.Grid tbody tr:first-child td.Order i.Up {
+  display: none !important;
+}
+table.Grid tbody tr:last-child td.Order i.Down {
+  display: none !important;
+}
+table.Grid tbody tr.Handler {
+  cursor: pointer;
+}
+table.Grid tbody tr.Handler:hover {
+  background-color: #fce6e8;
+}
+table.Grid tbody tr.SubRow.Odd {
+  background-color: #f5f5f5 !important;
+}
+table.Grid tbody tr.SubRow.Even {
+  background-color: #f5f5f5 !important;
+}
+table.Grid tbody tr.SubRow td {
+  color: #999;
+}
+table.Grid tbody tr.SubRow td:not(.Odd):not(.Even) {
+  border-top: solid 1px white;
+}
+table.Grid tbody tr.SubRow.Red td {
+  color: #ff3333;
+}
+table.Grid tbody tr.SubRow.Green td {
+  color: #009688;
+}
+table.Grid tbody tr.NoRecord {
+  background-color: white !important;
+}
+table.Grid tbody tr.NoRecord td {
+  color: #999;
+  text-align: center;
+}
+table.Grid tbody tr.Next {
+  background-color: #f5f5f5 !important;
+  border-top: solid 1px #ccc;
+  cursor: pointer;
+}
+table.Grid tbody tr.Next td {
+  color: #999;
+  text-align: center;
+  height: 30px;
+  padding: 0 !important;
+}
+table.Grid tbody tr.Next:hover {
+  background-color: #ebebeb !important;
+}
+table.Grid:not(.AdvancedSearch) .AdvancedSearch {
+  display: none;
+}

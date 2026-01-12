@@ -10,7 +10,7 @@ div.Accordion-Bar {
         padding-right: $Metric-Control-Height + 20px;
         box-shadow: none;
 
-        i.fi {
+        i.Icon {
             transition: transform 300ms ease;
             color: $Color-Yellow-Regular;
         }
@@ -18,13 +18,13 @@ div.Accordion-Bar {
         &:hover {
             background-color: $Color-Yellow-Light !important;
 
-            i.fi {
+            i.Icon {
                 color: $Color-Yellow-Light !important;
             }
         }
 
         &.Closed {
-            i.fi {
+            i.Icon {
                 transform: rotate(-180deg);
             }
         }

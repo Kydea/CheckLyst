@@ -1,0 +1,19 @@
+﻿@import "_Library.scss";
+
+div.GridFixedHeader {
+    position: absolute;
+    z-index: 1;
+    overflow: hidden;
+    width: calc(100% - 40px);
+
+    tbody {
+        visibility: hidden;
+    }
+
+    & + div.ScrollablePanel {
+        table thead {
+            visibility: hidden;
+        }
+    }
+}
+

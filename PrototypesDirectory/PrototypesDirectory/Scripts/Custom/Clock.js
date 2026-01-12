@@ -1,4 +1,4 @@
-﻿matematici.Clock = function () {
+matematici.Clock = function () {
     //gestire weak = true con colore rosso e tooltip con errore
     var
         error = null,
@@ -41,6 +41,18 @@
             });
         },
 
+        updateLightNotifications = function () {
+            if (matematici.tokenManager.checkRole("Instances#View#"))
+                $.ajax({
+                    url: matematici.urls.api + "/Instances/List/CountTasks",
+                    type: "post",
+                    contentType: "application/json; charset=utf-8",
+                    suppressErrors: true
+                }).done(function (result) {
+                    matematici.menu.setNotificationBadge("/Dashboards/Tasks", result);
+                });
+        },
+
         update = function () {
             if (timeout) {
                 clearTimeout(timeout);
@@ -75,6 +87,8 @@
                         update();
                 }, 60 * 1000);
             });
+
+            updateLightNotifications();
         },
 
         getTime = function () {
@@ -116,6 +130,8 @@
                 }
         },
 
-        update: update
+        update: update,
+
+        updateLightNotifications: updateLightNotifications
     };
 };

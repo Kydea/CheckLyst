@@ -3,71 +3,90 @@
   box-shadow: rgba(0, 0, 0, 0.15) 0 0 15px 2px;
   text-align: center;
   font-size: 14px;
-  position: relative; }
-  div.Calendar.Calendar-Popup {
-    position: absolute;
-    z-index: 106;
-    display: none;
-    background: white; }
-    div.Calendar.Calendar-Popup.Calendar {
-      z-index: 106; }
-  div.Calendar a:hover {
-    text-decoration: none; }
-  div.Calendar span.Month {
-    color: black;
-    padding: 0 20px;
-    line-height: 30px; }
-  div.Calendar a.Arrow {
-    position: absolute;
-    line-height: 30px;
-    top: 10px;
-    color: #009688; }
-    div.Calendar a.Arrow i {
-      font-size: 14px !important; }
-    div.Calendar a.Arrow.PreviousMonth {
-      left: 10px; }
-    div.Calendar a.Arrow.NextMonth {
-      right: 10px; }
-    div.Calendar a.Arrow:hover {
-      color: #03c3b1; }
-    div.Calendar a.Arrow:not(.Active) {
-      cursor: default;
-      color: #ccc !important; }
-  div.Calendar table {
-    width: 100%;
-    min-width: 190px;
-    border-collapse: collapse;
-    opacity: 0; }
-    div.Calendar table tr th {
-      background-color: #009688;
-      padding: 10px 0;
-      width: 14.28571px;
-      text-align: center;
-      text-transform: uppercase;
-      font-size: 12px;
-      color: white; }
-    div.Calendar table tr td {
-      width: 14.28571px;
-      line-height: 22px;
-      text-align: right;
-      border: solid 1px white;
-      cursor: default;
-      opacity: .4;
-      padding: 0 5px; }
-      div.Calendar table tr td.Holyday {
-        color: #009688; }
-      div.Calendar table tr td.Active {
-        cursor: pointer;
-        opacity: 1; }
-        div.Calendar table tr td.Active:hover {
-          text-decoration: underline; }
-      div.Calendar table tr td.Today {
-        background-color: #ebebeb; }
-    div.Calendar table tr:nth-child(2) td {
-      padding-top: 5px; }
-  div.Calendar span.Month {
-    color: #009688;
-    padding: 0 20px;
-    line-height: 30px;
-    text-transform: uppercase; }
-
+  position: relative;
+}
+div.Calendar.Calendar-Popup {
+  position: absolute;
+  z-index: 992;
+  display: none;
+  background: white;
+}
+div.Calendar.Calendar-Popup.Calendar {
+  z-index: 992;
+}
+div.Calendar a:hover {
+  text-decoration: none;
+}
+div.Calendar span.Month {
+  color: black;
+  padding: 0 20px;
+  line-height: 30px;
+}
+div.Calendar a.Arrow {
+  position: absolute;
+  line-height: 30px;
+  top: 10px;
+  color: #009688;
+}
+div.Calendar a.Arrow i {
+  font-size: 14px !important;
+}
+div.Calendar a.Arrow.PreviousMonth {
+  left: 10px;
+}
+div.Calendar a.Arrow.NextMonth {
+  right: 10px;
+}
+div.Calendar a.Arrow:hover {
+  color: #03c3b1;
+}
+div.Calendar a.Arrow:not(.Active) {
+  cursor: default;
+  color: #ccc !important;
+}
+div.Calendar table {
+  width: 100%;
+  min-width: 190px;
+  border-collapse: collapse;
+  opacity: 0;
+}
+div.Calendar table tr th {
+  background-color: #009688;
+  padding: 10px 0;
+  width: 14.2857142857px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: white;
+}
+div.Calendar table tr td {
+  width: 14.2857142857px;
+  line-height: 22px;
+  text-align: right;
+  border: solid 1px white;
+  cursor: default;
+  opacity: 0.4;
+  padding: 0 5px;
+}
+div.Calendar table tr td.Holyday {
+  color: #009688;
+}
+div.Calendar table tr td.Active {
+  cursor: pointer;
+  opacity: 1;
+}
+div.Calendar table tr td.Active:hover {
+  text-decoration: underline;
+}
+div.Calendar table tr td.Today {
+  background-color: #ebebeb;
+}
+div.Calendar table tr:nth-child(2) td {
+  padding-top: 5px;
+}
+div.Calendar span.Month {
+  color: #009688;
+  padding: 0 20px;
+  line-height: 30px;
+  text-transform: uppercase;
+}

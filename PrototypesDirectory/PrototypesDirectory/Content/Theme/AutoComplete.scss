@@ -1,4 +1,5 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 select.AutoComplete {
     display: none !important;
@@ -6,7 +7,7 @@ select.AutoComplete {
 
 input.AutoComplete {
     text-overflow: ellipsis;
-    padding-right: $Metric-Control-Height !important;
+    padding-right: 28px !important;
 
     &.Open {
         border-bottom-left-radius: 0 !important;
@@ -14,18 +15,35 @@ input.AutoComplete {
         //default focus for chrome
         outline: 5px auto -webkit-focus-ring-color;
     }
+
+    &.Red {
+        color: $Color-Red-Regular;
+    }
+
+    &.Locked {
+        background-color: $Color-Silver-Light;
+    }
 }
 
 input.AutoComplete-Filter {
     min-width: unset !important;
-    position: absolute;
     border-radius: 0 !important;
     margin-top: 0 !important;
     border-top: none !important;
     border-bottom: none !important;
     background-color: $Color-Grey-Light !important;
-    z-index: $Depth-AutoComplete;
     outline: none;
+
+    &:not(.FullHeight) {
+        position: absolute;
+        z-index: $Depth-AutoComplete;
+    }
+
+    &.FullHeight {
+        display: block !important;
+        position: static;
+        width: 100% !important;
+    }
 }
 
 div.AutoComplete-List {
@@ -58,35 +76,68 @@ div.AutoComplete-List {
             padding-right: 20px;
 
             &::after {
-                line-height: $Metric-Control-Height;
-                content: "\f12b";
-                display: inline-block;
-                font-family: "Flaticon";
-                font-style: normal;
-                font-weight: normal;
-                font-variant: normal;
-                text-decoration: inherit;
-                text-rendering: optimizeLegibility;
-                text-transform: none;
-                -moz-osx-font-smoothing: grayscale;
-                -webkit-font-smoothing: antialiased;
-                font-smoothing: antialiased;
-                color: $Color-Grey-Dark;
+                content: fa-content($fa-var-check);
+                font-family: "Font Awesome 5 Pro";
+                color: $Color-Green-Dark;
                 position: absolute;
-                right: 0;
+                //right: 0;
                 padding: 0 5px;
             }
-        }
-
-        &:hover {
-            background: $Color-Silver-Dark !important;
-            text-decoration: none !important;
         }
 
         &.None {
             i {
                 font-style: normal;
                 color: $Color-Grey-Dark;
+            }
+        }
+
+        &:hover {
+            text-decoration: none !important;
+        }
+
+        &::before {
+            //notification badge
+            content: attr(data-badge);
+            display: none;
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            font-family: sans-serif;
+            font-size: 10px;
+            text-align: center;
+            position: absolute;
+            margin-top: 11px;
+            right: 5px;
+            border-radius: 50%;
+            background-color: $Color-Red-Regular;
+            color: white;
+        }
+
+        &[data-badge]:not([data-badge=""]):not([data-badge="0"])::before {
+            display: block;
+        }
+    }
+
+    &:not(.Locked) a:hover {
+        background: $Color-Silver-Dark !important;
+    }
+
+    &.Locked a {
+        cursor: default !important;
+    }
+
+    &.NoCheck {
+        a {
+            padding: 0 5px !important;
+            text-align: center;
+
+            &.Selected {
+                padding-right: 5px !important;
+
+                &::after {
+                    content: none;
+                }
             }
         }
     }
@@ -99,6 +150,15 @@ div.AutoComplete-List {
         border: none !important;
         background: none !important;
     }
+
+    &.FullHeight {
+        display: block;
+        position: static;
+        margin-top: 0;
+        height: 300px;
+        max-height: 300px;
+        width: 100% !important;
+    }
 }
 
 i.AutoComplete {
@@ -106,6 +166,8 @@ i.AutoComplete {
     height: $Metric-Control-Height;
     position: absolute !important;
     margin: 0 !important;
-    font-size: 14px !important;
     display: none; //shown by matematici.loader
+    &.FullHeight {
+        display: none !important;
+    }
 }

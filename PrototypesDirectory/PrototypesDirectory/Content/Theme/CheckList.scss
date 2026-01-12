@@ -31,7 +31,7 @@ div.CheckList {
 
     span {
         &.Error {
-            i.fi {
+            i.fa, i.fal, i.fas {
                 color: $Color-Red-Regular;
             }
         }
@@ -46,7 +46,7 @@ div.CheckList {
 
     div.TabLabels {
         a {
-            i.fi {
+            i.fa {
                 cursor: pointer;
             }
         }
@@ -166,11 +166,42 @@ div.CheckList {
                     opacity: 0.6;
                 }
             }
+
+            label.Controls2 {
+                div.Input {
+                    width: 100% !important;
+                }
+            }
         }
 
         &.Text {
-            width: calc(100% - #{$Metric-Control-Space});
             font-size: 13px;
+
+            p {
+                max-width: 100%;
+                padding-top: 0 !important;
+                margin: 0;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical
+            }
+
+            &.Wide {
+                width: calc(100% - #{$Metric-Control-Space});
+            }
+
+            &:not(.Wide) {
+                min-height: 54px;
+            }
+
+            &.SingleRow {
+                position: relative;
+
+                p {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    height: 54px;
+                }
+            }
         }
 
         &.Signature {
@@ -185,11 +216,72 @@ div.CheckList {
                 }
             }
         }
-    }
 
-    .Item {
-        p.Description {
-            margin: 0;
+        &.InstanceLink {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            > a.Button {
+                margin-top: calc(1em + 5px);
+
+                @media #{$Media-Extended} {
+                    margin-left: $Metric-Control-Space;
+                    float: right;
+                }
+            }
+        }
+
+        &.Image {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            a.Image {
+                min-width: 150px;
+            }
+        }
+
+        &.Link {
+            position: relative;
+            width: calc(100% - #{$Metric-Control-Space});
+            font-size: 13px;
+
+            i.Link {
+                font-size: 9px;
+                position: absolute;
+                top: 3px;
+                left: 0;
+                color: $Color-Yellow-Regular;
+                transition: all linear .1s;
+            }
+
+            a.Link {
+                color: $Color-Yellow-Regular;
+                padding-left: 15px;
+            }
+
+            &:hover {
+                i.Link {
+                    left: 5px;
+                }
+            }
+        }
+
+        &.Attachment {
+            width: calc(100% - #{$Metric-Control-Space});
+
+            a.Attachment {
+                white-space: nowrap;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            a.ViewAttachment {
+                vertical-align: top;
+                margin-left: $Metric-Control-Space;
+                white-space: nowrap;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
     }
 

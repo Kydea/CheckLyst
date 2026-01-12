@@ -41,7 +41,7 @@ matematici.dialog = function () {
                         .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")
                             .append($("<i />").addClass("fas fa-times-circle"))
 							.on("click", function () {
-								button.content.click();
+								button.content.trigger("click")
 							}));
 				if (button.id) button.content.attr("id");
 

@@ -10,7 +10,7 @@ body.AppMode {
     }
 
     div#Breadcrumbs {
-        display: none !important;
+        //display: none !important;
     }
 
     div#Content {
@@ -20,5 +20,9 @@ body.AppMode {
 
     div.Instance .Item.Field .Copy {
         display: none !important;
+    }
+
+    div#Breadcrumbs {
+        margin-left: 0 !important;
     }
 }

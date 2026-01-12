@@ -12,12 +12,11 @@ $Page-Width: 20px;
 
     a {
         text-align: center;
-        width: $Page-Width;
+        min-width: $Page-Width;
         height: $Page-Width;
         line-height: $Page-Width;
         color: $Color-Green-Dark;
         text-decoration: none !important;
-
         font-weight: bold;
 
         &:not(.Current) {
@@ -49,5 +48,32 @@ $Page-Width: 20px;
                 left: -8px;
             }
         }
+    }
+
+    input {
+        margin-left: $Metric-Control-Space;
+        width: 40px;
+        text-align: center;
+        border: 1px solid $Color-Green-Regular;
+        border-radius: 3px;
+        height: $Page-Width;
+        line-height: $Page-Width;
+
+        &:focus, &:not(:placeholder-shown) {
+            width: 100px;
+            border: 1px solid $Color-Green-Regular;
+            outline: none;
+
+            + i {
+                display: inline-block;
+                margin-left: 8px;
+            }
+        }
+    }
+
+    i {
+        color: $Color-Green-Dark;
+        display: none;
+        cursor: pointer;
     }
 }

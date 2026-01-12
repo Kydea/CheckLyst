@@ -1,34 +1,64 @@
 ﻿.Paginator {
   float: right;
-  cursor: default; }
-  .Paginator:not(:empty) {
-    margin: 20px 0 0 0; }
-  .Paginator a {
-    text-align: center;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    color: #00877a;
-    text-decoration: none !important;
-    font-weight: bold; }
-    .Paginator a:not(.Current) {
-      cursor: pointer; }
-    .Paginator a.Current {
-      color: white;
-      background-color: #00877a; }
-  .Paginator a, .Paginator span {
-    display: inline-block; }
-    .Paginator a:not(:first-child), .Paginator span:not(:first-child) {
-      position: relative;
-      margin-left: 16px; }
-      .Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
-        border-left: 2px solid #ccc;
-        display: inline-block;
-        position: absolute;
-        margin-top: 3px;
-        content: "";
-        color: black;
-        width: 0px;
-        height: 1em;
-        left: -8px; }
-
+  cursor: default;
+}
+.Paginator:not(:empty) {
+  margin: 20px 0 0 0;
+}
+.Paginator a {
+  text-align: center;
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
+  color: #00877a;
+  text-decoration: none !important;
+  font-weight: bold;
+}
+.Paginator a:not(.Current) {
+  cursor: pointer;
+}
+.Paginator a.Current {
+  color: white;
+  background-color: #00877a;
+}
+.Paginator a, .Paginator span {
+  display: inline-block;
+}
+.Paginator a:not(:first-child), .Paginator span:not(:first-child) {
+  position: relative;
+  margin-left: 16px;
+}
+.Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
+  border-left: 2px solid #ccc;
+  display: inline-block;
+  position: absolute;
+  margin-top: 3px;
+  content: "";
+  color: black;
+  width: 0px;
+  height: 1em;
+  left: -8px;
+}
+.Paginator input {
+  margin-left: 20px;
+  width: 40px;
+  text-align: center;
+  border: 1px solid #009688;
+  border-radius: 3px;
+  height: 20px;
+  line-height: 20px;
+}
+.Paginator input:focus, .Paginator input:not(:placeholder-shown) {
+  width: 100px;
+  border: 1px solid #009688;
+  outline: none;
+}
+.Paginator input:focus + i, .Paginator input:not(:placeholder-shown) + i {
+  display: inline-block;
+  margin-left: 8px;
+}
+.Paginator i {
+  color: #00877a;
+  display: none;
+  cursor: pointer;
+}

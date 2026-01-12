@@ -1,0 +1,27 @@
+﻿@import "_Library.scss";
+
+body.Companies {
+    div#CompaniesDetailPage {
+        table.Grid {
+            margin-top: 18px;
+        }
+    }
+
+    div.Dialog {
+        label {
+            width: 100%;
+            max-width: unset;
+            margin: 0 0 20px 0 !important;
+            padding-top: 0;
+        }
+
+        div.Content {
+            input, select {
+            }
+
+            div.Note {
+                color: $Color-Grey-Dark;
+            }
+        }
+    }
+}

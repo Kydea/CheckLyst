@@ -15,7 +15,7 @@
 
         toggleNext = function (value) {
             if (!next)
-                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", tableHeader.children().size()).append($("<i />").addClass("Icon fa fa-angle-double-down")));
+                next = $("<tr />").addClass("Next").append($("<td />").attr("colspan", tableHeader.children().length).append($("<i />").addClass("Icon fa fa-angle-double-down")));
 
             if (value)
                 next.appendTo(tableBody);

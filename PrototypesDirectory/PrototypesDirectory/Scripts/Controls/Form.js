@@ -13,7 +13,8 @@
         popupLink = function () {
             var url = window.location.protocol + "//" + window.location.host + window.location.pathname + prepareRequestString();
 
-            matematici.dialog.show("link builder", url, [{
+            matematici.dialog.show("link builder", url, 
+                [{
                     hidden: true,
                     cancelButton: true
                 }, {
@@ -302,7 +303,8 @@
                         autoComplete.refreshValues();
                         var control = $(autoComplete.getControl());
                         control.toggle(!fieldData.visibile);
-                        matematici.controls.setEditable(control, fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
+                        matematici.controls.setEditable(field, fieldData.editable && (fieldData.fixed || fieldData.options.length > 0) && !options.readOnly);
+                        autoComplete.checkReadOnly();
                     } else {
                         if (fieldData.value != null) setFieldValue(field, fieldData.value);
                         field.toggle(!fieldData.visibile);
@@ -387,6 +389,10 @@
 
     this.getElement = function () {
         return element;
+    };
+
+    this.isReadOnly = function () {
+        return options.readOnly;
     };
 };
 

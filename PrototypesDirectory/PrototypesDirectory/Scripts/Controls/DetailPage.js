@@ -9,20 +9,21 @@
         title,
 
         submit = function (event, callback, takeOpen) {
-            var settings = matematici.tokenManager.getCompanySettings(),
+            var
+                settings = matematici.tokenManager.getCompanySettings(),
                 input,
                 trigger = function () {
                     form.trigger(event, function (result) {
                         form.handleResult(result);
 
-                        if (settings && settings.requireUserReason) {
+                        if (settings && settings.requireUserReason && !options.ignoreUserReason) {
                             lastReason = !result.valid ? input.val() : "";
                             matematici.dialog.close();
                         }
 
                         if (result.valid) {
                             matematici.canClose = true;
-                            matematici.popup.getResult().saved = true;
+                            if (!options.wholePage) matematici.popup.getResult().saved = true;
                             if (!options.wholePage && !takeOpen) matematici.popup.close();
 
                             if (!data && result) refresh(result);
@@ -34,7 +35,7 @@
                     }, options.parametersPrepareHandler && options.parametersPrepareHandler());
                 };
 
-            if (settings && settings.requireUserReason) {
+            if (settings && settings.requireUserReason && !options.ignoreUserReason) {
                 matematici.dialog.show({
                     title: "Reason",
                     content: $("<div />")
@@ -67,7 +68,7 @@
                         { text: "cancel", hidden: false, icon: "times", cancelButton: true }
                     ],
                 });
-                setTimeout(function () { input.focus(); }, 1);
+                setTimeout(function () { input[0].focus(); }, 1);
             } else {
                 trigger();
                 if (event === "Delete") return false; // Close dialog in case event is delete and reason is not required
@@ -174,7 +175,7 @@
             var
                 id = data && (data.id || data.fields && data.fields.id && data.fields.id.value),
                 code = data && (data.code || data.fields && data.fields.code && data.fields.code.value);
-            matematici.popup.getTitle().html(title + (!data ? " (new)" : id ? " (ID: " + id + ")" : code ? " (Code: " + code + ")" : ""));
+            if (!options.wholePage) matematici.popup.getTitle().html(title + (!data ? " (new)" : id ? " (ID: " + id + ")" : code ? " (Code: " + code + ")" : ""));
         };
 
     this.getElement = function () {

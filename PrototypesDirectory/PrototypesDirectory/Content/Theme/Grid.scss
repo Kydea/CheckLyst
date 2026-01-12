@@ -46,12 +46,38 @@ table.Grid {
                 height: 40px;
                 border-right: solid 1px $Color-Grey-Light;
 
+                span.Block {
+                    display: block;
+
+                    + span.Block {
+                        margin-top: 10px;
+                    }
+                }
+
+                &.Red {
+                    color: $Color-Red-Regular;
+                }
+
                 &.Off {
                     opacity: .3;
                 }
 
                 &.Centered {
                     text-align: center;
+                }
+
+                &.Right {
+                    text-align: right;
+                }
+
+                &.Inactive {
+                    cursor: default !important;
+                }
+
+                &.Order {
+                    i {
+                        cursor: pointer;
+                    }
                 }
 
                 &:last-child {
@@ -65,6 +91,10 @@ table.Grid {
                 &.Even {
                     background-color: $Color-Cyan;
                 }
+
+                &[data-type="DateTimeOffset"] {
+                    min-width: 160px;
+                }
             }
 
             &:not(.Even):nth-child(odd), &.Odd {
@@ -73,6 +103,18 @@ table.Grid {
 
             &:not(.Odd):nth-child(even), &.Even {
                 background-color: $Color-Cyan;
+            }
+
+            &:first-child {
+                td.Order i.Up {
+                    display: none !important;
+                }
+            }
+
+            &:last-child {
+                td.Order i.Down {
+                    display: none !important;
+                }
             }
 
             &.Handler {
@@ -114,11 +156,34 @@ table.Grid {
             }
 
             &.NoRecord {
+                background-color: white !important;
+
                 td {
                     color: $Color-Grey-Regular;
                     text-align: center;
                 }
             }
+
+            &.Next {
+                background-color: $Color-Silver-Light !important;
+                border-top: solid 1px $Color-Grey-Light;
+                cursor: pointer;
+
+                td {
+                    color: $Color-Grey-Regular;
+                    text-align: center;
+                    height: 30px;
+                    padding: 0 !important;
+                }
+
+                &:hover {
+                    background-color: $Color-Silver-Dark !important;
+                }
+            }
         }
+    }
+
+    &:not(.AdvancedSearch) .AdvancedSearch {
+        display: none;
     }
 }

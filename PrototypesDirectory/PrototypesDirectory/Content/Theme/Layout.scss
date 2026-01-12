@@ -14,7 +14,10 @@ html, body {
     width: 100%;
     color: black;
     font-size: 14px;
-    background-color: $Color-Silver-Dark;
+
+    @media screen {
+        background-color: $Color-Silver-Dark;
+    }
 }
 
 ul.Plain {
@@ -40,10 +43,36 @@ a {
     &.Right {
         float: right;
     }
+
+    &.NoConnectionWarning {
+        position: fixed;
+        bottom: 70px;
+        right: 40px;
+        background-color: $Color-Silver-Light;
+        padding: 20px;
+        border-radius: 10px;
+        border: solid 1px $Color-Red-Regular;
+        opacity: .5;
+        cursor: pointer;
+        z-index: $Depth-NoConnectionIcon;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        i {
+            font-size: 30px;
+            color: $Color-Red-Regular;
+        }
+    }
 }
 
-i.fi {
-    font-size: 19px;
+pre {
+    margin: 0;  
+}
+
+i.fa, i.fal {
+    font-size: 16px;
 }
 
 .AutoCenter {
@@ -83,7 +112,19 @@ i.fi {
 }
 
 .Hidden {
-    display: none;
+    display: none !important;
+}
+
+.Grey {
+    color: $Color-Grey-Regular;
+}
+
+textarea.ClipboardBridge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
 }
 
 div#InitialCurtain {
@@ -152,10 +193,10 @@ header {
                 border-radius: 50%;
                 color: white;
                 background-color: $Color-Green-Regular;
-                width: 25px;
-                height: 25px;
-                font-size: 13px;
-                line-height: 25px;
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+                line-height: 20px;
                 text-align: center;
             }
 
@@ -191,7 +232,7 @@ footer {
         }
 
 
-        @media #{$Media-1000-} {
+        @media #{$Media-Extended} {
             left: $Metric-Separator-Extended;
 
             .Item {
@@ -207,10 +248,14 @@ footer {
                     margin-left: 0;
                     padding-left: 0;
                 }
+
+                a {
+                    display: inline-block;
+                }
             }
         }
 
-        @media #{$Media-0-1000} {
+        @media #{$Media-Mobile} {
             left: $Metric-Separator-Mobile;
 
             .Item {

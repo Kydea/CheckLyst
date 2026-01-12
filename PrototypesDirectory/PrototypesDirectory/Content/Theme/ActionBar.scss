@@ -15,6 +15,16 @@ div.ActionBar {
             i {
                 color: $Color-Red-Regular;
             }
+
+            &:hover {
+                i {
+                    color: $Color-Red-Light !important;
+                }
+            }
+        }
+
+        &.Hidden {
+            display: none;
         }
     }
 }

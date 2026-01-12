@@ -1,0 +1,72 @@
+﻿@import "FontAwesome/_variables.scss";
+@import "_Library.scss";
+
+body div.Tasks {
+    #Result {
+        color: $Color-Grey-Dark;
+
+        h2 {
+            display: block;
+            background: $Color-Grey-Regular;
+            font-size: 18px;
+            padding: 10px;
+            color: white;
+            margin-bottom: 0 !important;
+
+            &:first-child {
+                margin-top: 0 !important;
+            }
+        }
+
+        div.Item {
+            border: solid 1px $Color-Grey-Light;
+            padding: 10px;
+
+            + div.Item {
+                margin-top: 20px;
+            }
+
+            span {
+                display: block;
+                float: left;
+            }
+
+            .Label {
+                clear: both;
+                margin-right: 10px;
+            }
+
+            .Code {
+                color: $Color-Grey-Regular;
+            }
+
+            .Value {
+                color: $Color-Green-Regular;
+                margin-bottom: 10px;
+
+                &.Date {
+                    color: $Color-Yellow-Regular;
+                    font-weight: bold;
+                }
+            }
+
+            .Description {
+                color: $Color-Yellow-Regular;
+            }
+
+            a.Button {
+                display: block;
+                float: right;
+                clear: both;
+            }
+
+            &.NoRecord {
+                text-align: center;
+                font-style: italic;
+                color: $Color-Grey-Regular;
+                border:none;
+                padding: 0;
+            }
+        }
+    }
+}

@@ -19,6 +19,7 @@ $Color-Red-Regular: #cc0000;
 $Color-Grey-Darker: #333;
 $Color-Grey-Dark: #666;
 $Color-Grey-Regular: #999;
+$Color-Grey-Light-Over: #bbb;
 $Color-Grey-Light: #ccc;
 
 $Color-Silver-Light: #f5f5f5;
@@ -37,32 +38,33 @@ $Metric-Header-Height: 70px;
 $Metric-Breadcrumbs-Height: 14px + 20px; // 12px font size, 20px margin top
 
 //Depths
-$Depth-CheckList-IterationCommands: 30;
-$Depth-CheckList-Information: 31;
+
+$Depth-CheckList-Information: 28;
+$Depth-CheckList-IterationCommands: 29;
+$Depth-Tab: 30;
+$Depth-Tab-Selected: 31;
 $Depth-CheckList-Information-Active: 32;
 $Depth-CheckList-Date-Picker: 33;
 $Depth-CheckList-CountDown: 35;
 
-$Depth-Tab: 50;
-$Depth-Tab-Selected: 51;
-
 $Depth-Fixed-Header: 60;
 
 $Depth-PropertyPanel: 70;
-$Depth-Header: 103;
 $Depth-Logo: 100;
 $Depth-ButtonGroup: 101;
 $Depth-Menu: 102;
+$Depth-Header: 103;
 $Depth-Menu-Indicator: 103;
-$Depth-CheckListGrid: 104;
-$Depth-Popup: 105;
-$Depth-Calendar: 106;
+$Depth-Popup: 104;
+$Depth-CheckListGrid: 104; //checkelist grids and popup overlaps in order of call
 
 $Depth-Dialog: 990;
 $Depth-AutoComplete: 991;
+$Depth-Calendar: 992;
 $Depth-Help: 1000;
 $Depth-Blip: 1001;
-$Depth-InitialCurtain: 1002;
+$Depth-NoConnectionIcon: 1002;
+$Depth-InitialCurtain: 1003;
 
 //Media
 $Media-Mobile: "only screen and (max-width: 759px)";

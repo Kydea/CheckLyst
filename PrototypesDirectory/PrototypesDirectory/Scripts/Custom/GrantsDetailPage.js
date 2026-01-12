@@ -404,6 +404,19 @@
             tab.getItem(instancesTab).tab.on("toggle", "select.AutoComplete", function (e, value, on) {
                 applyConstraintToInstanceGrant(matematici.AutoComplete.get(this), value, on);
             });
+
+            if (page == "Users") {
+                var
+                    sender = detailPage.getSender(),
+                    form = detailPage.getForm(),
+                    data = {
+                        fields: {
+                            timeZone: sender.getBindResult().fields.timeZone
+                        }
+                    };
+
+                form.handleResult(data);
+            }
         },
 
         completeHandler = function () {
@@ -564,30 +577,35 @@
                 }
             }
 
-            if (page != "Users" || event != "Edit") 
+            if (page != "Users" || event != "Edit")
                 setTimeout(callback, 0);
-            else
-                $.ajax({
-                    type: "post",
-                    url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
-                    data: {
-                        groups: groupsSelect.val()
-                    }
-                }).done(function (result) {
-                    if (result.length == 0)
-                        callback();
-                    else {
-                        var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
-                        matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
-                            {
-                                text: "Ignore conflicts", icon: "check", handler: function () {
-                                    setTimeout(callback, 0);
-                                }
-                            },
-                            { text: "Cancel", icon: "times" }
-                        ]);
-                    }
-                });
+            else {
+                var groups = groupsSelect.val();
+                if (groups.length)
+                    $.ajax({
+                        type: "post",
+                        url: matematici.urls.api + "/AccessControl/Users/GetConflicts",
+                        data: {
+                            groups: groups
+                        }
+                    }).done(function (result) {
+                        if (result.length == 0)
+                            callback();
+                        else {
+                            var message = result.map(function (conflict) { return conflict.item1 + " + " + conflict.item2 }).join("<br />");
+                            matematici.dialog.show("warning", "The following conflincts have been detected among the user's groups:<br />" + message, [
+                                {
+                                    text: "Ignore conflicts", icon: "check", handler: function () {
+                                        setTimeout(callback, 0);
+                                    }
+                                },
+                                { text: "Cancel", icon: "times" }
+                            ]);
+                        }
+                    });
+                else
+                    callback();
+            }
         },
 
         setup = function () {
