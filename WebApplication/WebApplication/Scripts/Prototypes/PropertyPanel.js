@@ -547,6 +547,10 @@
                         this, new prototypes.DataSourceProperty(model, "commandExternalSourceName"), "Command source",
                         "A data source to call once signed."
                     ));
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.BooleanProperty(model, "closeInstance"), "Close instance",
+                        "If checked, tries to close the instance once issued."
+                    ));
                     break;
                 case "InstanceLink":
                     var parametersProperty;

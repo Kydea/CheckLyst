@@ -49,6 +49,8 @@
                                             } else
                                                 new instances.SignatureEmail(model.id).show();
                                         }
+                                        if (model.closeInstance)
+                                            instances.instance.complete();
                                     }).trigger();
                                 }
                             }

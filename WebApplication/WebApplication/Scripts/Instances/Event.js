@@ -54,15 +54,16 @@ instances.Event = function (type, itemId, data, accessToken, suppressError, file
 
 		options.data = data;
 
-		$.ajax(options).done(function (result) {
-			if (done) {
-				done(result);
-				done = null;
-			} else
-				instances.instance.update(result);
-		}).fail(function () {
-			if (error) error();
-		});
+		$.ajax(options)
+			.done(function (result) {
+				if (done) {
+					done(result);
+					done = null;
+				} else
+					instances.instance.update(result);
+			}).fail(function () {
+				if (error) error();
+			});
     };
 
     this.done = function (value) {

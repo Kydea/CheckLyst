@@ -25,7 +25,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public DateTimeOffset? ModifiedOn { get; private set; } //being nullable can't just inherit SignedOn
         public string SignerDescription { get; set; }
         public string CommandExternalSourceName { get; set; }
-
+        public bool CloseInstance { get; set; }
 
         public override dynamic GetViewModel(bool ReportModel)
         {
@@ -37,6 +37,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 ItemModel.SendEmail = SendEmail;
                 ItemModel.SendEmailAddress = SendEmailAddress;
             }
+            if (CloseInstance) ItemModel.CloseInstance = CloseInstance;
             if (!string.IsNullOrEmpty(ButtonLabel)) ItemModel.ButtonLabel = ButtonLabel;
             ItemModel.Signed = Signed;
             if (Signed)
@@ -89,8 +90,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 SignatureLevel = SignatureLevel,
                 SendEmail = SendEmail,
                 SendEmailAddress = SendEmailAddress,
-                CommandExternalSourceName = CommandExternalSourceName
-			};
+                CommandExternalSourceName = CommandExternalSourceName,
+                CloseInstance = CloseInstance
+            };
 
 			Copy(this, signature);
 			return signature;

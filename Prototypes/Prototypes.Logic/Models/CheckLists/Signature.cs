@@ -30,6 +30,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         [JsonIgnore]
         public DateTimeOffset? ModifiedOn { get; }
         public string CommandExternalSourceName { get; set; }
+        public bool CloseInstance { get; set; }
 
         public override bool BuildDependencies()
         {
@@ -66,7 +67,8 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 ButtonLabel = ButtonLabel,
                 Cancelable = Cancelable,
                 AcceptsPin = AcceptsPin,
-                CommandExternalSourceName = CommandExternalSourceName
+                CommandExternalSourceName = CommandExternalSourceName,
+                CloseInstance = CloseInstance
             };
 
             Copy(this, signature);
