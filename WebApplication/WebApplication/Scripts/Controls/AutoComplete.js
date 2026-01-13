@@ -344,7 +344,9 @@
         },
 
         setMainNotificationBadge = function (value) {
-            labelNode.closest("label").setAttribute("data-badge", value);
+            const label = labelNode.closest("label");
+            if (label)
+                label.setAttribute("data-badge", value);
         },
 
         setNotificationBadge = function (item, value) {
