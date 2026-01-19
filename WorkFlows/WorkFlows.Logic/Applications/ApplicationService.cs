@@ -277,8 +277,8 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     && request.Approved
                 )
                     throw new Exception("The prototype has a past validity end date");
-                if (!request.Approved && string.IsNullOrWhiteSpace(request.Comment))
-                    throw new Exception("The comment is mandatory for the rejections");
+                if (string.IsNullOrWhiteSpace(request.Comment))
+                    throw new Exception("The comment is mandatory");
 
                 await _authenticationService.AuthenticateAsync(identity.Code, request.Password);
 
