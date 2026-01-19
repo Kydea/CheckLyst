@@ -382,6 +382,7 @@
                     fields: {
                         query: { value: null },
                         reportSource: { value: null },
+                        version: { editable: false },
                         columns: [],
                         clauses: []
                     }
