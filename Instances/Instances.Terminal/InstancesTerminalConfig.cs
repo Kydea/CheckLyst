@@ -4,6 +4,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Json;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
+using CheckListManager.Common.Logic.Models.Expressions.LogicOperators;
 using CheckListManager.Common.Logic.Terminal.Configuration;
 using CheckListManager.Common.Logic.Trail;
 using CheckListManager.Instances.Logic.Models.CheckLists;
@@ -23,6 +24,7 @@ namespace CheckListManager.Instances.Terminal
 			RegisterChecklistItem<Signature, ICheckListSignature>(builder);
             RegisterChecklistItem<InstanceLink, ICheckListInstanceLink>(builder);
             RegisterChecklistItem<Text, ICheckListText>(builder);
+            RegisterChecklistItem<Note, ICheckListNote>(builder);
             RegisterChecklistItem<Link, ICheckListLink>(builder);
             RegisterChecklistItem<Image, ICheckListImage>(builder);
             RegisterChecklistItem<Attachment, ICheckListAttachment>(builder);

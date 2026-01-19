@@ -184,7 +184,7 @@
                 itemIndex = item.getIndex(),
                 isHeader = model.typeName == "Group" && parent.getModel().header === model;
 
-            if (!isHeader)
+            if (!isHeader && model.typeName != "Note")
                 properties.push(new prototypes.Property(
                     this, new prototypes.BooleanProperty(model, "pageBreak", false, model.typeName == "Page"), "Page break",
                     "Forces a page break in the pdf version of the checklist before the element."
@@ -208,21 +208,24 @@
                 }
             ));
 
-            if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image")
+            if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image" && model.typeName != "Note")
                 properties.push(new prototypes.Property(
                     this, new prototypes.ExpressionProperty(model, "readOnly", "read-only", true, true, 0), "Read-only",
                     "Determines if the element is editable by the operator or not."
                 ));
-            properties.push(new prototypes.Property(
-                this, new prototypes.ExpressionProperty(model, "hidden", "hidden", false, false, 2), "Hidden",
-                "Determines if the element is visible or not."
-            ));
-            properties.push(new prototypes.Property(
-                this, new prototypes.CountDownToProperty(model, "countDownToCode"), "Countdown to",
-                "Shows the countdown until the date and time are reached."
-            ));
 
-            if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image") {
+            if (model.typeName != "Note") {
+                properties.push(new prototypes.Property(
+                    this, new prototypes.ExpressionProperty(model, "hidden", "hidden", false, false, 2), "Hidden",
+                    "Determines if the element is visible or not."
+                ));
+                properties.push(new prototypes.Property(
+                    this, new prototypes.CountDownToProperty(model, "countDownToCode"), "Countdown to",
+                    "Shows the countdown until the date and time are reached."
+                ));
+            }
+
+            if (model.typeName != "Link" && model.typeName != "Text" && model.typeName != "Image" && model.typeName != "Note") {
                 properties.push(new prototypes.Property(
                     this, new prototypes.ExpressionProperty(model, "valid", "validity", true, true, 0), "Validity",
                     "Sets the condition under which the element is considered valid. By default pages and groups are valid if all the contained elements are valid, fields and attachments are valid if not empty, signature are valid if signed. Text are always valid. Attachments are valid if contains a file."
@@ -237,7 +240,7 @@
                 ));
             }
 
-            if (model.typeName != "Page") {
+            if (model.typeName != "Page" && model.typeName != "Note") {
                 properties.push(new prototypes.Property(
                     this, new prototypes.SimpleValueProperty(model, "fontSize", { number: true, readOnly: state != prototypes.Prototype.states.draft }).setCheck([
                         {
@@ -398,7 +401,7 @@
 
                     break;
                 case "Text":
-                    var widthBaseProperty, widthProperty, heightBaseProperty, heightProperty, newLineBaseProperty, newLineProperty;
+                    var heightBaseProperty, heightProperty, newLineBaseProperty, newLineProperty;
                     properties.push(new prototypes.Property(
                         this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
                         "Content",
@@ -428,7 +431,7 @@
                         }
                     ));
                     properties.push(new prototypes.Property(
-                        this, widthProperty = new prototypes.ListProperty(model, "width", [
+                        this, new prototypes.ListProperty(model, "width", [
                             { label: "Auto", code: "0" },
                             { label: "Single width", code: "1" },
                             { label: "Double width", code: "2" }
@@ -446,6 +449,15 @@
                             heightProperty.setReadOnly(state != prototypes.Prototype.states.draft || model.width == 0);
                             item.getSpecificItem().setSize();
                         }
+                    ));
+
+                    break;
+                case "Note":
+                    properties.push(new prototypes.Property(
+                        this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
+                        "Content",
+                        "The content of the text.",
+                        function () { $("p", item.getElement()).html((model.description || '').split('\n').join('<br />')); }
                     ));
 
                     break;

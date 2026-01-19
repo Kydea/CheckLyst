@@ -38,7 +38,6 @@ div.Prototype {
             }
 
             + a.MiniIcon {
-                border-left: solid 1px $Color-Green-Regular;
                 border-radius: 0 3px 3px 0 !important;
             }
 
@@ -151,6 +150,49 @@ div.Prototype {
             }
         }
 
+        &.Note {
+            font-size: 13px;
+
+            > i {
+                font-size: 12px;
+                position: relative;
+                color: white;
+                border-radius: 50%;
+            }
+
+            &:not(.Current) {
+                padding-top: 10px;
+                width: $Metric-Control-Height;
+                height: 54px;
+
+                > i {
+                    background-color: $Color-Yellow-Regular;
+                    width: 28px;
+                    height: 28px;
+                    text-align: center;
+                    line-height: 28px;
+                }
+
+                p {
+                    display: none;
+                }
+            }
+
+            &.Current {
+                width: calc(100% - #{$Metric-Control-Space});
+
+                > i {
+                    //display: none;
+                    margin-bottom: 10px;
+                }
+
+                p {
+                    position: relative;
+                    margin: 0;
+                }
+            }
+        }
+
         &.Text {
             p {
                 position: relative;
@@ -179,6 +221,11 @@ div.Prototype {
                 right: -10px;
                 top: -10px;
                 bottom: -10px;
+            }
+
+            &.Note::before {
+                background-color: $Color-Yellow-Light;
+                border-radius: 5px;
             }
         }
 

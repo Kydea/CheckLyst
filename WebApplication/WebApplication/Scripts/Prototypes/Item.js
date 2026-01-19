@@ -7,6 +7,7 @@
         index,
 
         typeNames = {
+            note: "Note",
             text: "Text",
             field: "Field",
             signature: "Signature",
@@ -24,14 +25,15 @@
             if (model.newLine) element.addClass("NewLine");
 
             if (specificItem = (
-                model.typeName == typeNames.text ? new prototypes.Text(item, model) :
-                    model.typeName == typeNames.field ? new prototypes.Field(item, model) :
-                        model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
-                            model.typeName == typeNames.instanceLink ? new prototypes.InstanceLink(item, model) :
-                                model.typeName == typeNames.link ? new prototypes.Link(item, model) :
-                                    model.typeName == typeNames.image ? new prototypes.Image(item, model) :
-                                        model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
-                                            null)) {
+                model.typeName == typeNames.note ? new prototypes.Note(item, model) :
+                    model.typeName == typeNames.text ? new prototypes.Text(item, model) :
+                        model.typeName == typeNames.field ? new prototypes.Field(item, model) :
+                            model.typeName == typeNames.signature ? new prototypes.Signature(item, model) :
+                                model.typeName == typeNames.instanceLink ? new prototypes.InstanceLink(item, model) :
+                                    model.typeName == typeNames.link ? new prototypes.Link(item, model) :
+                                        model.typeName == typeNames.image ? new prototypes.Image(item, model) :
+                                            model.typeName == typeNames.attachment ? new prototypes.Attachment(item, model) :
+                                                null)) {
                 parent.getElement().append(element);
                 specificItem.update(model);
             } else {

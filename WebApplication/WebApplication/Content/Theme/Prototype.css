@@ -31,7 +31,6 @@ div.Prototype div.Commands a.MiniIcon i.fa, div.Prototype div.Commands a.MiniIco
   color: #00877a !important;
 }
 div.Prototype div.Commands a.MiniIcon + a.MiniIcon {
-  border-left: solid 1px #009688;
   border-radius: 0 3px 3px 0 !important;
 }
 div.Prototype div.Commands a.MiniIcon:hover {
@@ -101,6 +100,40 @@ div.Prototype div.Item a.Placeholder {
 div.Prototype div.Item.Field div.Input {
   width: 100% !important;
 }
+div.Prototype div.Item.Note {
+  font-size: 13px;
+}
+div.Prototype div.Item.Note > i {
+  font-size: 12px;
+  position: relative;
+  color: white;
+  border-radius: 50%;
+}
+div.Prototype div.Item.Note:not(.Current) {
+  padding-top: 10px;
+  width: 36px;
+  height: 54px;
+}
+div.Prototype div.Item.Note:not(.Current) > i {
+  background-color: #ffba00;
+  width: 28px;
+  height: 28px;
+  text-align: center;
+  line-height: 28px;
+}
+div.Prototype div.Item.Note:not(.Current) p {
+  display: none;
+}
+div.Prototype div.Item.Note.Current {
+  width: calc(100% - 20px);
+}
+div.Prototype div.Item.Note.Current > i {
+  margin-bottom: 10px;
+}
+div.Prototype div.Item.Note.Current p {
+  position: relative;
+  margin: 0;
+}
 div.Prototype div.Item.Text p {
   position: relative;
 }
@@ -121,6 +154,10 @@ div.Prototype div.Item.Current::before {
   right: -10px;
   top: -10px;
   bottom: -10px;
+}
+div.Prototype div.Item.Current.Note::before {
+  background-color: #ffcc09;
+  border-radius: 5px;
 }
 div.Prototype div.Item > div.Commands {
   margin: 0 !important;

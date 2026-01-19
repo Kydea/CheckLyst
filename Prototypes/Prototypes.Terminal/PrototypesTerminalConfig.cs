@@ -22,6 +22,7 @@ namespace CheckListManager.Prototypes.Terminal
             RegisterChecklistItem<Signature, ICheckListSignature>(builder);
             RegisterChecklistItem<InstanceLink, ICheckListInstanceLink>(builder);
             RegisterChecklistItem<Text, ICheckListText>(builder);
+            RegisterChecklistItem<Note, ICheckListNote>(builder);
             RegisterChecklistItem<Link, ICheckListLink>(builder);
             RegisterChecklistItem<Image, ICheckListImage>(builder);
             RegisterChecklistItem<Attachment, ICheckListAttachment>(builder);

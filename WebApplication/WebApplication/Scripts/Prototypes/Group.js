@@ -79,6 +79,7 @@
             { text: "signature", icon: "check", handler: addElement, data: "Signature" },
             { text: "field", icon: "i-cursor", handler: addElement, data: "Field" },
             { text: "text", icon: "align-left", handler: addElement, data: "Text" },
+            { text: "note", icon: "info", handler: addElement, data: "Note" },
             { text: "group", icon: "list-ul", handler: addElement, data: "Group" }
         ]);
     }

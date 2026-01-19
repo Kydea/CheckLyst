@@ -219,6 +219,7 @@
     <Compile Include="License\LicenseManagerRequest.cs" />
     <Compile Include="License\LicenseManagerResponse.cs" />
     <Compile Include="License\LicenseService.cs" />
+    <Compile Include="Models\CheckLists\ICheckListNote.cs" />
     <Compile Include="Models\CheckLists\InstanceLinkRecord.cs" />
     <Compile Include="Models\CheckLists\InstanceLinkParameter.cs" />
     <Compile Include="Models\CheckLists\InstanceLinkActions.cs" />

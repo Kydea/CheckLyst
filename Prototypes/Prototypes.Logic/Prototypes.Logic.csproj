@@ -212,6 +212,7 @@
     <Compile Include="Models\CheckLists\Link.cs" />
     <Compile Include="Models\CheckLists\Image.cs" />
     <Compile Include="Models\CheckLists\Attachment.cs" />
+    <Compile Include="Models\CheckLists\Note.cs" />
     <Compile Include="Models\CheckLists\Text.cs" />
     <Compile Include="PDF\PrototypePDF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

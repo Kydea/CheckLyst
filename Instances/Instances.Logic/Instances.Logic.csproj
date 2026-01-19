@@ -169,6 +169,7 @@
     <Compile Include="Models\CheckLists\Attachment.cs" />
     <Compile Include="Models\CheckLists\Link.cs" />
     <Compile Include="Models\CheckLists\InstanceLink.cs" />
+    <Compile Include="Models\CheckLists\Note.cs" />
     <Compile Include="Models\InstanceCacheObject.cs" />
     <Compile Include="Models\CheckLists\Element.cs" />
     <Compile Include="Models\CheckLists\Field.cs" />

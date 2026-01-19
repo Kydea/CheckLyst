@@ -47,7 +47,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (Iterator)
                 {
                     ItemModel.Iterator = true;
-                    ItemModel.Iterations = Iterations.Select(i => ((Iteration)i).GetViewModel(ReportModel));
+                    ItemModel.Iterations = Iterations.OfType<Iteration>().Select(i => i.GetViewModel(ReportModel));
                     ItemModel.AddIterationButton = AddIterationButton;
                     ItemModel.RemoveIterationButton = RemoveIterationButton;
                     ItemModel.MoveIterationButton = MoveIterationButton;
@@ -56,7 +56,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     if (ExternalSources.Any()) ItemModel.ExternalSources = ExternalSources;
                 }
 
-                ItemModel.Items = Items.Select(i => ((Item)i).GetViewModel(ReportModel));
+                ItemModel.Items = Items.OfType<Item>().Where(i => !(i is Note)).Select(i => i.GetViewModel(ReportModel));
                 if (ShowAsTable) ItemModel.ShowAsTable = true;
             }
             return ItemModel;
@@ -214,7 +214,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group = parent
             };
             foreach (var item in Items)
-                group.Items.Add(item.Clone(group));
+            {
+                var clone = item.Clone(group);
+                if (clone != null) group.Items.Add(clone);
+            }
 
             Copy(this, group);
             return group;
