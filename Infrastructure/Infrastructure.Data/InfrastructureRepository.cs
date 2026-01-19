@@ -11,6 +11,7 @@ using CheckListManager.Infrastructure.Data.ListItems;
 using CheckListManager.Common.Core.Exceptions;
 using CheckListManager.Common.Logic.Models.Notifications;
 using CheckListManager.Common.Logic.Models;
+using CheckListManager.Common.Data.ListItems;
 
 namespace CheckListManager.Infrastructure.Data
 {
@@ -94,7 +95,7 @@ namespace CheckListManager.Infrastructure.Data
         public async Task<List<SettingValue>> GetSettings(IDefaultIdentity identity, long? company) =>
             await Entities
                 .Settings.OrderBy(s => s.Code)
-                .Select(s => 
+                .Select(s =>
                     s.SettingValues.Where(sv => sv.Company == company)
                     .Select(sv => new SettingValue { Code = sv.Setting, Value = sv.Setting == "SmtpPassword" || sv.Setting == "LicenseSignature" ? null : sv.Value }).FirstOrDefault() ?? new SettingValue { Code = s.Code, Value = null })
                 .ToListAsync();
@@ -386,7 +387,8 @@ namespace CheckListManager.Infrastructure.Data
                         userRecord.ReportWorkFlowLevel == x.tag.Tag
                     )
                 );
-            return await result.LongCountAsync();
+
+            return await result.Select(x => x.report.ID).Distinct().LongCountAsync();
         }
 
         private Task<long> CountInstancesToSign(long company, string user)
@@ -437,8 +439,73 @@ namespace CheckListManager.Infrastructure.Data
                             && ul.PrototypeWorkFlowLevel == x.tag.Tag
                         )
                     )
+
+                    && (
+                        Entities.UserFunctions.Any(uf =>
+                            uf.Company == company
+                            && uf.User == user
+                            && uf.FunctionGroup == "Instances"
+                            && uf.Function == "Confirm"
+                            && uf.Department == x.instance.Prototypes.Department
+                            && (uf.PrototypeType == null || uf.PrototypeType == x.instance.Prototypes.PrototypeType)
+                        )
+
+                        || Entities.UserGroups
+                            .Join(
+                                Entities.GroupFunctions,
+                                ug => new { ug.Company, ug.Group },
+                                gf => new { gf.Company, gf.Group },
+                                (ug, gf) => new { ug, gf }
+                            )
+                            .Any(z =>
+                                z.ug.Company == company
+                                && z.ug.User == user
+                                && z.gf.FunctionGroup == "Instances"
+                                && z.gf.Function == "Confirm"
+                                && z.gf.Department == x.instance.Prototypes.Department
+                                && (z.gf.PrototypeType == null || z.gf.PrototypeType == x.instance.Prototypes.PrototypeType)
+                            )
+
+                        || Entities.UserRoles
+                            .Join(
+                                Entities.RoleFunctions,
+                                ur => new { ur.Company, ur.Role },
+                                rf => new { rf.Company, rf.Role },
+                                (ur, rf) => new { ur, rf }
+                            )
+                            .Any(z =>
+                                z.ur.Company == company
+                                && z.ur.User == user
+                                && z.rf.FunctionGroup == "Instances"
+                                && z.rf.Function == "Confirm"
+                                && z.ur.Department == x.instance.Prototypes.Department
+                                && (z.ur.PrototypeType == null || z.ur.PrototypeType == x.instance.Prototypes.PrototypeType)
+                            )
+
+                        || Entities.UserGroups
+                            .Join(
+                                Entities.GroupRoles,
+                                ug => new { ug.Company, ug.Group },
+                                gr => new { gr.Company, gr.Group },
+                                (ug, gr) => new { ug, gr }
+                            )
+                            .Join(
+                                Entities.RoleFunctions,
+                                z => new { z.gr.Company, z.gr.Role },
+                                rf => new { rf.Company, rf.Role },
+                                (z, rf) => new { z.ug, z.gr, rf }
+                            )
+                            .Any(z =>
+                                z.ug.Company == company
+                                && z.ug.User == user
+                                && z.rf.FunctionGroup == "Instances"
+                                && z.rf.Function == "Confirm"
+                                && z.gr.Department == x.instance.Prototypes.Department
+                                && (z.gr.PrototypeType == null || z.gr.PrototypeType == x.instance.Prototypes.PrototypeType)
+                            )
+                    )
                 );
-            return result.LongCountAsync();
+            return result.Select(x => x.instance.ID).Distinct().LongCountAsync();
         }
 
         private Task<long> CountPrototypeVersionsToSign(long company, string user)
@@ -464,7 +531,7 @@ namespace CheckListManager.Infrastructure.Data
                 )
                 .Where(x =>
                     !x.application.Approved.HasValue
-                    
+
                     && x.step.User == null
 
                     && !Entities.WorkFlowApplicationSteps.Any(ps =>
@@ -489,8 +556,73 @@ namespace CheckListManager.Infrastructure.Data
                             && ul.PrototypeWorkFlowLevel == x.tag.Tag
                         )
                     )
+
+                    && (
+                        Entities.UserFunctions.Any(uf =>
+                            uf.Company == company
+                            && uf.User == user
+                            && uf.FunctionGroup == "Prototypes"
+                            && uf.Function == "Approve"
+                            && uf.Department == x.prototype.Department
+                            && (uf.PrototypeType == null || uf.PrototypeType == x.prototype.PrototypeType)
+                        )
+
+                        || Entities.UserGroups
+                            .Join(
+                                Entities.GroupFunctions,
+                                ug => new { ug.Company, ug.Group },
+                                gf => new { gf.Company, gf.Group },
+                                (ug, gf) => new { ug, gf }
+                            )
+                            .Any(z =>
+                                z.ug.Company == company
+                                && z.ug.User == user
+                                && z.gf.FunctionGroup == "Prototypes"
+                                && z.gf.Function == "Approve"
+                                && z.gf.Department == x.prototype.Department
+                                && (z.gf.PrototypeType == null || z.gf.PrototypeType == x.prototype.PrototypeType)
+                            )
+
+                        || Entities.UserRoles
+                            .Join(
+                                Entities.RoleFunctions,
+                                ur => new { ur.Company, ur.Role },
+                                rf => new { rf.Company, rf.Role },
+                                (ur, rf) => new { ur, rf }
+                            )
+                            .Any(z =>
+                                z.ur.Company == company
+                                && z.ur.User == user
+                                && z.rf.FunctionGroup == "Prototypes"
+                                && z.rf.Function == "Approve"
+                                && z.ur.Department == x.prototype.Department
+                                && (z.ur.PrototypeType == null || z.ur.PrototypeType == x.prototype.PrototypeType)
+                            )
+
+                        || Entities.UserGroups
+                            .Join(
+                                Entities.GroupRoles,
+                                ug => new { ug.Company, ug.Group },
+                                gr => new { gr.Company, gr.Group },
+                                (ug, gr) => new { ug, gr }
+                            )
+                            .Join(
+                                Entities.RoleFunctions,
+                                z => new { z.gr.Company, z.gr.Role },
+                                rf => new { rf.Company, rf.Role },
+                                (z, rf) => new { z.ug, z.gr, rf }
+                            )
+                            .Any(z =>
+                                z.ug.Company == company
+                                && z.ug.User == user
+                                && z.rf.FunctionGroup == "Prototypes"
+                                && z.rf.Function == "Approve"
+                                && z.gr.Department == x.prototype.Department
+                                && (z.gr.PrototypeType == null || z.gr.PrototypeType == x.prototype.PrototypeType)
+                            )
+                    )
                 );
-            return result.LongCountAsync();
+            return result.Select(x => x.prototype.ID).Distinct().LongCountAsync();
         }
 
         public async Task<NotificationsState> GetNotificationsAsync(long company, string user, NotificationsState currentState, Func<string, string, long?, long?, string, bool> hasPermission /*make the procedure faster if the authentication token is available*/)

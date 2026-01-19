@@ -305,7 +305,7 @@
             resizeList();
             list.show();
             setValue();
-            setMainNotificationBadge("");
+            setMainNotificationBadge(0);
             setTimeout(function () {
                 $(document).on("click.autocomplete", hideList)
                 $(document).on("keydown.autocomplete", function (e) {
@@ -339,17 +339,17 @@
             input.insertAfter(label);
             list.insertAfter(label);
             matematici.AutoComplete.current = null;
-            setMainNotificationBadge(notification ? notification.value : "");
+            setMainNotificationBadge(notification ? notification.value : 0);
             node.dispatchEvent(new Event('hideList', { 'bubbles': true }))
         },
 
         setMainNotificationBadge = function (value) {
             const label = labelNode.closest("label");
-            if (label)
-                label.setAttribute("data-badge", value);
+            if (label) label.setAttribute("data-badge", value == 0 ? "" : value);
         },
 
         setNotificationBadge = function (item, value) {
+            value = Number(value) || 0;
             notification = value == 0 ? null : { item: item, value: value };
             setMainNotificationBadge(value);
         },
@@ -388,7 +388,7 @@
                                 .toggleClass("Selected", option.prop("selected"));
 
                         if (value == notification?.item)
-                            a.attr("data-badge", notification.value);
+                            a.attr("data-badge", notification.value == 0 ? "" : notification.value);
 
                         list.append(a);
                     }
