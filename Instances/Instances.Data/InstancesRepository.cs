@@ -132,6 +132,7 @@ namespace CheckListManager.Instances.Data
                 "select " +
                     "i.\"ID\" " +
                 INSTANCES_BASE_QUERY +
+                "and i.\"InstanceState\" = 'In progress'" +
             ") " +
             "select count(*) " +
             "from " +
