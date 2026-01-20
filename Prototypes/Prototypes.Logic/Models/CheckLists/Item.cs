@@ -23,6 +23,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public virtual int? PageIndex { get; set; }
 		public abstract string TypeName { get; }
         public int FontSize { get; set; }
+        private Formula ColorFormula { get; } = new Formula();
         public string Color { get; set; }
         public bool Removed { get; set; }
 
@@ -60,6 +61,11 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             foreach (var Key in DescriptionFormula.ValueKeys)
                 if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+            ColorFormula.BuildDependencies(Color, null);
+            foreach (var Key in ColorFormula.ValueKeys)
+                if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                    AddDependingRelation(DependencyRelation.Properties.Color, Expression, DependencyRelation.Properties.Value);
 
             return Result;
         }

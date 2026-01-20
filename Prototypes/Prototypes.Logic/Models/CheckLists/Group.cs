@@ -43,7 +43,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         {
             var Result = base.Setup();
 
-            foreach (Item Item in Items)
+            foreach (Item Item in Items.Cast<Item>())
             {
                 Item.CheckList = CheckList;
                 Item.Group = this;
@@ -66,7 +66,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 action(this);
 
-            foreach (Iteration iteration in Iterations)
+            foreach (Iteration iteration in Iterations.Cast<Iteration>())
                 iteration.Traverse(condition, action);
 
             foreach (var item in Items)
@@ -81,7 +81,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (condition(this))
                 await action(this);
 
-            foreach (Iteration iteration in Iterations)
+            foreach (Iteration iteration in Iterations.Cast<Iteration>())
                 await iteration.TraverseAsync(condition, action);
 
             foreach (var item in Items)
@@ -152,7 +152,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (DumpExternalSourceName != null)
             {
                 var DumpResult = true;
-                if (!CheckList.ExternalSources.TryGetValue(DumpExternalSourceName, out var ExternalSourceNode))
+                if (!CheckList.ExternalSources.TryGetValue(DumpExternalSourceName, out _))
                 {
                     Errors.Add(new ConfigurationError("export-source", $"External source {DumpExternalSourceName} not found"));
                     DumpResult = false;
@@ -170,7 +170,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
                 Result &= DumpResult;
             }
 
-            foreach (Item Item in Items)
+            foreach (Item Item in Items.Cast<Item>())
             {
                 if (HiddenCondition != Conditions.True || HiddenCondition == Conditions.Expression)
                     Item.AddDependingRelation(DependencyRelation.Properties.Hidden, this, DependencyRelation.Properties.Hidden);
@@ -200,7 +200,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             if (DirectImportCondition == Conditions.Expression)
                 Result &= CheckExpression("direct-import", DirectImportExpressionCode, DataType.Boolean);
 
-            foreach (Item Item in Items)
+            foreach (Item Item in Items.Cast<Item>())
                 Result &= Item.Check();
             return Result;
         }

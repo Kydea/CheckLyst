@@ -26,6 +26,7 @@
     };
 
     this.setColor = function (value) {
+        p.css({ color: "black" }); //reset in case of invalid color
         p.css({ color: model.color });
     };
 

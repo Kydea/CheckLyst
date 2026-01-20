@@ -255,18 +255,10 @@
                     function () { item.setFontSize(model.fontSize); }
                 ));
                 properties.push(new prototypes.Property(
-                    this, new prototypes.ListProperty(model, "color", [
-                        { label: "(Default)", code: "" },
-                        { label: "Black", code: "#000" },
-                        { label: "Red", code: "#cc0000" },
-                        { label: "Cyan", code: "#e8f7fc" },
-                        { label: "Green", code: "#009688" },
-                        { label: "Grey", code: "#999" },
-                        { label: "Yellow", code: "#ffba00" }
-                    ]),
+                    this, new prototypes.ColorProperty(model, "color"),
                     "Color",
                     "The color of the text.",
-                    function (value) { item.setColor(model.color); }
+                    function () { item.setColor(model.color); }
                 ));
             }
 

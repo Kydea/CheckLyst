@@ -10,7 +10,7 @@ namespace CheckListManager.Common.Logic.Dependency
 {
     public class DependencyRelation
     {
-        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown, Iterations, AddIteration, RemoveIteration, MoveIteration, StateChange, Code, Parameter, DirectImport }
+        public enum Properties { Value, Validity, Hidden, ReadOnly, Signature, Formula, CountDown, Iterations, AddIteration, RemoveIteration, MoveIteration, StateChange, Code, Parameter, DirectImport, Color }
 
         public DependencyRelation()
         { }
@@ -66,6 +66,7 @@ namespace CheckListManager.Common.Logic.Dependency
                 Property == Properties.StateChange ? "state change" :
                 Property == Properties.Code ? "code" :
                 Property == Properties.Parameter ? "parameter" :
+                Property == Properties.Color ? "color" :
                 throw new ArgumentException();
 
 

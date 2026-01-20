@@ -14,7 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public virtual string CssClass => TypeName;
         public Formula DescriptionFormula { get; } = new Formula();
         public string Description { get; set; }
-        public string DescriptionValue { get => DescriptionFormula.Value; }
+        public string DescriptionValue => DescriptionFormula.Value;
         public ICheckListGroup Group { get; set; }
         public int Id { get; set; }
         public int ClonedBy { get; set; } //id of the iterator model item from which this iteration item has been cloned
@@ -30,7 +30,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public ICheckListValidityElement Previous { get; set; }
         public abstract string TypeName { get; }
         public int FontSize { get; set; }
+        public Formula ColorFormula { get; } = new Formula();
         public string Color { get; set; }
+        public string ColorValue => ColorFormula.Value;
         public bool Removed { get; set; }
         public DateTimeOffset? WorseCountDownToValue { get; set; }
 
@@ -57,13 +59,20 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public override void BuildDependencies()
         {
             if (!(this is Iteration))
+            {
                 DescriptionFormula.BuildDependencies(Description, Iteration == null ? null : FindIteratorModelItem().DescriptionFormula);
+                ColorFormula.BuildDependencies(Color, Iteration == null ? null : FindIteratorModelItem().ColorFormula);
+            }
 
             if (!IterationItem)
             {
                 foreach (var Key in DescriptionFormula.ValueKeys)
                     if (CheckList.Expressions.TryGetValue(Key, out var Expression))
                         AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
+
+                foreach (var Key in ColorFormula.ValueKeys)
+                    if (CheckList.Expressions.TryGetValue(Key, out var Expression))
+                        AddDependingRelation(DependencyRelation.Properties.Color, Expression, DependencyRelation.Properties.Value);
 
                 base.BuildDependencies();
             }
@@ -75,6 +84,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 case DependencyRelation.Properties.Formula:
                     UpdateFormula();
+                    break;
+                case DependencyRelation.Properties.Color:
+                    UpdateColor();
                     break;
                 default:
                     base.Update(Property);
@@ -109,6 +121,14 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 DescriptionFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
         }
 
+        protected virtual void UpdateColor()
+        {
+            if (IterationItem)
+                ColorFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes, FindIteratorModelItem().ColorFormula);
+            else
+                ColorFormula.Evaluate(CheckList, GetRuntimeValues(), Instance.DecimalSeparator, Instance.TimeZone, Iteration?.Indexes);
+        }
+
         protected override void UpdateHidden()
         {
             base.UpdateHidden();
@@ -123,9 +143,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             WorseCountDownToValue = !ParentCountDownToValue.HasValue || CountDownToValue > ParentCountDownToValue ? CountDownToValue : ParentCountDownToValue;
 
             if (
-                Removed 
-                || readOnlyInstance 
-                || Group != null && Group.ReadOnly 
+                Removed
+                || readOnlyInstance
+                || Group != null && Group.ReadOnly
                 || Page != null && Page.ReadOnly
                 || WorseCountDownToValue > DateTime.UtcNow //active countdown at some level
             )
@@ -141,9 +161,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 IteratorModelItem = (Item)Instance.Items[IteratorModelItemId];
             else
             {
-                IteratorModelItem = 
+                IteratorModelItem =
                     !IterationItem ? this :
-                    Group is Iteration Iteration ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] : 
+                    Group is Iteration Iteration ? (Item)((Group)((Group)Iteration.Group).FindIteratorModelItem()).Items[ItemIndex] :
                     (Item)((Group)((Group)Group).FindIteratorModelItem()).Items[ItemIndex];
                 IteratorModelItemId = IteratorModelItem.Id;
             }
@@ -157,11 +177,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 var Group = (Group)this.Group;
                 var IterationGroups = Group.FindIterationItems();
                 if (!Group.Iterator)
-                    foreach (Group IterationGroup in IterationGroups)
+                    foreach (Group IterationGroup in IterationGroups.Cast<Group>())
                         yield return (Item)IterationGroup.Items[ItemIndex];
                 else if (SpecificIteration != null)
                     yield return (Item)SpecificIteration.Items[ItemIndex];
-                else 
+                else
                 {
                     var Iterations = IterationGroups.SelectMany(i => ((Group)i).Iterations);
                     foreach (var Iteration in Iterations.Where(i => !i.Removed))
@@ -179,7 +199,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 var IteratorModel = FindIteratorModelItem();
                 IteratorModel.MarkNodeAsChanged(CheckList, Roots, Property);
             }
-            else 
+            else
                 base.MarkNodeAsChanged(CheckList, Roots, Property);
         }
 
@@ -201,7 +221,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         public override Dictionary<string, ICheckListElement> GetBranchElements() => Iteration?.Elements ?? base.GetBranchElements();
 
-        public virtual void Remove() =>  Removed = true;
+        public virtual void Remove() => Removed = true;
 
         public abstract ICheckListItem Clone(ICheckListGroup parent);
 
@@ -218,6 +238,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.FontSize = source.FontSize;
 
             destination.DescriptionFormula.IsSet = source.FindIteratorModelItem().DescriptionFormula.IsSet;
+            destination.ColorFormula.IsSet = source.FindIteratorModelItem().ColorFormula.IsSet;
         }
 
         public override dynamic GetViewModel(bool ReportModel)
@@ -230,7 +251,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (!ReportModel)
             {
                 if (NewLine) elementModel.NewLine = NewLine;
-                if (!string.IsNullOrEmpty(Color)) elementModel.Color = Color;
+                if (!string.IsNullOrEmpty(ColorValue)) elementModel.Color = ColorValue;
                 if (FontSize > 0) elementModel.FontSize = FontSize;
                 if (Removed) elementModel.Removed = true;
             }

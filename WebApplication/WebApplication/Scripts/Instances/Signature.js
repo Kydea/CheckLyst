@@ -238,7 +238,6 @@
             }
         }
 
-        console.log(model.id + " " + (!model.signed && !model.readOnly && !!model.closeInstance), model, button);
         button.classList.toggle("Red", !model.signed && !model.readOnly && !!model.closeInstance);
         exclamation.style.display = model.history && model.history.length > 1 ? "" : "none";
 
