@@ -344,6 +344,9 @@ div.Instance .Item.Signature a.Button i.fa-exclamation {
   color: red;
   margin: 2px 0 0 15px;
 }
+div.Instance .Item.Signature a.Button.Red i {
+  color: #cc0000;
+}
 div.Instance .Item.Signature i.fa-exclamation {
   color: #cc0000;
   font-size: inherit;

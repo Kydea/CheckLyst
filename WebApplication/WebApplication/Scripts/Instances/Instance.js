@@ -505,7 +505,7 @@
         }
         var handler = function (hasRelations) {
             var
-                hasPermissionOnPrototype = 
+                hasPermissionOnPrototype =
                     (matematici.tokenManager.checkRole("Prototypes#View#" + department + "##") || matematici.tokenManager.checkRole("Prototypes#View#" + department + "#" + prototypeType + "#"))
                     && (versionState == prototypes.Prototype.states.draft || versionState == prototypes.Prototype.states.simulation);
 
@@ -593,15 +593,22 @@
         });
     };
 
-    instance.complete = function () {
-        matematici.dialog.show("warning", "Please confirm the change of state.", [
-            {
-                text: "confirm", icon: "check", handler: function () {
-                    send("Complete");
-                }
-            },
-            { text: "cancel", icon: "times", cancelButton: true }
-        ]);
+    instance.complete = function (silent) {
+        var handler = function () {
+            send("Complete");
+        };
+
+        if (silent)
+            handler();
+        else
+            matematici.dialog.show("warning", "Please confirm the change of state.", [
+                {
+                    text: "confirm", icon: "check", handler: function () {
+                        handler();
+                    }
+                },
+                { text: "cancel", icon: "times", cancelButton: true }
+            ]);
     };
 
     instance.confirm = function () {

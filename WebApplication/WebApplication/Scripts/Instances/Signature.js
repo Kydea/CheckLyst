@@ -50,7 +50,7 @@
                                                 new instances.SignatureEmail(model.id).show();
                                         }
                                         if (model.closeInstance)
-                                            instances.instance.complete();
+                                            instances.instance.complete(true);
                                     }).trigger();
                                 }
                             }
@@ -163,7 +163,7 @@
             parent.appendChild(date);
 
             i = document.createElement("i");
-            i.className = "Icon fal fa-clock";
+            i.className = "Icon fal fa-lock";
             parent.appendChild(i);
             time = document.createElement("input");
             time.className = "Time";
@@ -200,7 +200,7 @@
         readOnly = model.readOnly;
 
         var icon = document.createElement("i");
-        icon.className = "Icon fa fa-check";
+        icon.className = "Icon fa fa-" + (model.closeInstance ? "lock" : "check");
 
         span.innerHTML = model.descriptionValue || "(no description)";
         if (model.descriptionValue)
@@ -238,6 +238,8 @@
             }
         }
 
+        console.log(model.id + " " + (!model.signed && !model.readOnly && !!model.closeInstance), model, button);
+        button.classList.toggle("Red", !model.signed && !model.readOnly && !!model.closeInstance);
         exclamation.style.display = model.history && model.history.length > 1 ? "" : "none";
 
         this.setColor(model.color);

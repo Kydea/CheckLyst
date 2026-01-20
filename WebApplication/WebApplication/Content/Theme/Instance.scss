@@ -504,6 +504,10 @@ div.Instance {
                     color: red;
                     margin: 2px 0 0 15px;
                 }
+
+                &.Red i {
+                    color: $Color-Red-Regular;
+                }
             }
 
             i.fa-exclamation {
