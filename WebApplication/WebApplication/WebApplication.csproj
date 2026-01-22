@@ -468,6 +468,7 @@
     <Content Include="Scripts\Matematici\Navigator.js" />
     <Content Include="Scripts\Matematici\Page.js" />
     <Content Include="Scripts\Matematici\Tab.js" />
+    <Content Include="Scripts\Prototypes\ColorProperty.js" />
     <Content Include="Scripts\Prototypes\ParametersProperty.js" />
     <Content Include="Scripts\Prototypes\DependenciesDialog.js" />
     <Content Include="Scripts\Prototypes\EmailProperty.js" />
