@@ -581,3 +581,11 @@ div.Instance table.Grid tbody tr.Removed {
 div.Instance table.Grid tbody tr.Removed td {
   background-color: #fce6e8 !important;
 }
+div.Instance.StickyHeader div.HeaderContainer {
+  position: sticky;
+  top: -23px;
+  z-index: 30;
+}
+div.Instance:not(.StickyHeader) div.TabContainer {
+  top: 35px !important;
+}

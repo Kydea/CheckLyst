@@ -833,4 +833,18 @@ div.Instance {
             }
         }
     }
+
+    &.StickyHeader {
+        div.HeaderContainer {
+            position: sticky;
+            top: -23px;
+            z-index: $Depth-Tab;
+        }
+    }
+
+    &:not(.StickyHeader) {
+        div.TabContainer {
+            top: 35px !important;
+        }
+    }
 }

@@ -3,7 +3,8 @@
         instance = this,
         items = [],
         title = $("h2", element),
-        header = new instances.Group($("div#Header", element)[0], "Group"),
+        headerElement = $("div#Header", element)[0],
+        header = new instances.Group(headerElement, "Group"),
         page = new instances.Group($("div.Page", element)[0], "Page"),
         versionState,
         code,
@@ -79,14 +80,26 @@
             return prototypeName + "." + version + "." + getFormattedYear() + "." + (number || "?");
         },
 
+        resize = function () {
+            tab.getElement().css("top", headerElement.parentNode.offsetHeight - 23 + "px");
+        },
+
         setupBreadcrumbs = function () {
+            var fixedHeaderIcon = $("<i />").addClass("fa fa-border-top NoSeparator");
+
             matematici.breadcrumbs.set([
+                { element: fixedHeaderIcon },
                 { content: departmentName, label: "department" },
                 { content: prototypeTypeName, label: "prototype type" },
                 { content: getInstanceCode(), label: "code" },
                 { content: state, label: "state" },
                 { content: id || "?", label: "id" }
             ]);
+
+            matematici.breadcrumbs.setCommandHandler(function (command) {
+                command.classList.toggle("Selected");
+                element.toggleClass("StickyHeader", command.classList.contains("Selected"));
+            });
         },
 
         getParentInstances = function (handler) {
@@ -247,6 +260,7 @@
             exceptionsButton.toggleClass("Hidden", Object.entries(exceptions).length === 0);
 
             expressionsButton.toggle(!!model.expressions);
+            resize();
         },
 
         load = function () {
@@ -775,6 +789,7 @@
     instance.showRelations = showRelations;
     instance.showExpressions = showExpressions;
     instance.showExceptions = showExceptions;
+    instance.resize = resize;
     instance.initialize();
 };
 

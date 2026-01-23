@@ -101,6 +101,10 @@
             instance.close(callback);
         };
 
+        matematici.events.onPageResize = function () {
+            instance.resize();
+        }
+
         callback.call();
     };
 

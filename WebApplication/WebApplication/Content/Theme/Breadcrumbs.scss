@@ -21,7 +21,7 @@ div#Breadcrumbs {
         display: inline-block;
         padding-right: 5px;
 
-        &::after {
+        &:not(.NoSeparator)::after {
             content: "|";
             font-weight: 100;
             padding-left: 5px;
@@ -55,6 +55,10 @@ div#Breadcrumbs {
         }
     }
 
+    i {
+        display: none;
+    }
+
     &.Fixed {
         position: absolute;
         visibility: visible;
@@ -68,6 +72,17 @@ div#Breadcrumbs {
             top: 0;
             background: white;
             border-bottom: solid 1px $Color-Grey-Light;
+
+            i {
+                display: unset;
+                margin-right: 10px;
+                color: $Color-Grey-Regular;
+                cursor: pointer;
+
+                &.Selected {
+                    color: black;
+                }
+            }
         }
     }
 }
