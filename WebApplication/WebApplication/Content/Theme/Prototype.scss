@@ -1,4 +1,5 @@
 ﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
 
 div.Prototype {
     h2 {
@@ -227,6 +228,16 @@ div.Prototype {
                 background-color: $Color-Yellow-Light;
                 border-radius: 5px;
             }
+        }
+
+        &.DragTarget::before {
+            content: fa-content($fa-var-long-arrow-alt-down);
+            font-family: "Font Awesome 5 Pro";
+            position: absolute;
+            font-size: 30px;
+            left: -7px;
+            bottom: 0;
+            z-index: 1;
         }
 
         > div.Commands {

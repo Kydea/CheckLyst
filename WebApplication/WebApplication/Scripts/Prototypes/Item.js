@@ -20,6 +20,7 @@
         create = function () {
             element = $("<div />")
                 .addClass("Element Item " + model.typeName)
+                .attr("draggable", true)
                 .on("click", function (event) { prototypes.prototype.select(event, item) });
 
             if (model.newLine) element.addClass("NewLine");

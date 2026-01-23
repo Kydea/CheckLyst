@@ -82,7 +82,7 @@
                 downloadButton = $("a.Download", buttonGroup);
 
             if (!matematici.canClose) //some property can always be editable                
-                saveButton.removeClass("Hidden"); 
+                saveButton.removeClass("Hidden");
 
             switch (model.state) {
                 case prototypes.Prototype.states.active:
@@ -314,6 +314,25 @@
             }
         },
 
+        swapItems = function (parent, fromIndex, toIndex) {
+            var items = parent.getChildren();
+            const item = items[fromIndex];
+            items[fromIndex] = items[toIndex];
+            items[toIndex] = item;
+            parent.setChildren(items);
+            update();
+            matematici.canClose = false;
+        },
+
+        moveItemTo = function (parent, itemIndex, position) {
+            var items = parent.getChildren();
+            const [item] = items.splice(itemIndex, 1);
+            items.splice(position - (position > itemIndex), 0, item);
+            parent.setChildren(items);
+            update();
+            matematici.canClose = false;
+        },
+
         command = function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -325,20 +344,10 @@
 
             switch ($(this).data("command")) {
                 case "up":
-                    var items = [];
-                    for (var index in siblings)
-                        items.push(siblings[index == itemIndex - 1 ? itemIndex : index == itemIndex ? index - 1 : index]);
-                    parent.setChildren(items);
-                    update();
-                    matematici.canClose = false;
+                    swapItems(parent, itemIndex, itemIndex - 1);
                     break;
                 case "down":
-                    var items = [];
-                    for (var index in siblings)
-                        items.push(siblings[index == itemIndex ? itemIndex + 1 : index == itemIndex + 1 ? itemIndex : index]);
-                    parent.setChildren(items);
-                    update();
-                    matematici.canClose = false;
+                    swapItems(parent, itemIndex, itemIndex + 1);
                     break;
                 case "add":
                     currentItem.add();
@@ -612,6 +621,19 @@
             title = $("h2", element).on("click", function () {
                 select(null, prototype);
             });
+
+            new matematici.DragContainer(document.getElementById("Content"), {
+                groupSelector: ".Group",
+                itemSelector: ".Item",
+                placeholderClassName: "DragPlaceholder",
+                onDrop: function (c) {
+                    if (c.target) {
+                        console.log("vero", c.itemIndex, c.targetIndex);
+                        c.item.click();
+                        moveItemTo(currentItem.getParent(), c.itemIndex, c.targetIndex);
+                    }
+                }
+            });            
 
             //opening
             $.ajax({

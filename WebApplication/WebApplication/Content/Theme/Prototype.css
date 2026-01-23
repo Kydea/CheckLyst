@@ -159,6 +159,15 @@ div.Prototype div.Item.Current.Note::before {
   background-color: #ffcc09;
   border-radius: 5px;
 }
+div.Prototype div.Item.DragTarget::before {
+  content: "\f309";
+  font-family: "Font Awesome 5 Pro";
+  position: absolute;
+  font-size: 30px;
+  left: -7px;
+  bottom: 0;
+  z-index: 1;
+}
 div.Prototype div.Item > div.Commands {
   margin: 0 !important;
 }
