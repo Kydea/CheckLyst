@@ -43,6 +43,7 @@ namespace CheckListManager.Reports.Logic.List
                 {
                     ID = r.ID,
                     Code = r.Code,
+                    Version = r.Version,
                     Description = r.Description,
                     ReportSource = r.ReportSource,
                     ReportState = r.ReportState,

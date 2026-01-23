@@ -345,12 +345,12 @@
 
         setMainNotificationBadge = function (value) {
             const label = labelNode.closest("label");
-            if (label) label.setAttribute("data-badge", value == 0 ? "" : value);
+            if (label) label.setAttribute("data-badge", value == 0 ? "" : Math.min(99, value));
         },
 
         setNotificationBadge = function (item, value) {
             value = Number(value) || 0;
-            notification = value == 0 ? null : { item: item, value: value };
+            notification = value == 0 ? null : { item: item, value: value};
             setMainNotificationBadge(value);
         },
 
@@ -388,7 +388,7 @@
                                 .toggleClass("Selected", option.prop("selected"));
 
                         if (value == notification?.item)
-                            a.attr("data-badge", notification.value == 0 ? "" : notification.value);
+                            a.attr("data-badge", notification.value == 0 ? "" : Math.min(99, notification.value));
 
                         list.append(a);
                     }

@@ -3,6 +3,10 @@
         tasks = this,
         resultContainer = document.getElementById(resultSelector),
 
+        testEmpty = function (value) {
+            return value == "" || value == null ? "&nbsp;" : value;
+        },
+
         resultHandler = function (result) {
             resultContainer.innerHTML = "";
             resultContainer.classList.remove("Hidden");
@@ -19,7 +23,7 @@
 
                     h2 = document.createElement("h2");
                     resultContainer.appendChild(h2);
-                    h2.innerText = record.taskCode;
+                    h2.innerText = record.taskDescription;
 
                     div = document.createElement("div");
                     resultContainer.appendChild(div);
@@ -29,6 +33,24 @@
                     div.appendChild(span);
                     span.classList.add("Value", "Date");
                     span.innerText = record.taskValue == "True" ? "(no date)" : record.taskValue;
+
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Task code:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.taskCode;
+
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Task description:";
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerHTML = testEmpty(record.taskDescription);
 
                     span = document.createElement("span");
                     div.appendChild(span);
@@ -69,29 +91,11 @@
                     span = document.createElement("span");
                     div.appendChild(span);
                     span.classList.add("Label");
-                    span.innerText = "Prototype:";
-                    span = document.createElement("span");
-                    div.appendChild(span);
-                    span.classList.add("Value");
-                    span.innerText = record.prototypeName + "." + record.version;
-
-                    span = document.createElement("span");
-                    div.appendChild(span);
-                    span.classList.add("Label");
                     span.innerText = "Instance description:";
                     span = document.createElement("span");
                     div.appendChild(span);
                     span.classList.add("Value");
-                    span.innerText = record.description;
-
-                    span = document.createElement("span");
-                    div.appendChild(span);
-                    span.classList.add("Label");
-                    span.innerText = "Task description:";
-                    span = document.createElement("span");
-                    div.appendChild(span);
-                    span.classList.add("Value");
-                    span.innerText = record.taskDescription;
+                    span.innerHTML = testEmpty(record.description);
 
                     var anchor = document.createElement("a");
                     div.appendChild(anchor);

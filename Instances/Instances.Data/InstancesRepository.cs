@@ -120,6 +120,7 @@ namespace CheckListManager.Instances.Data
                     "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
                     "i.\"Description\" " +
                 INSTANCES_BASE_QUERY +
+                "and i.\"InstanceState\" = 'In progress'" +
             ") " +
             "select i.*, t.\"Description\" \"TaskDescription\", t.\"Code\" \"TaskCode\", t.\"Value\" \"TaskValue\" " +
             "from " +

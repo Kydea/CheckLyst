@@ -6,6 +6,7 @@ namespace CheckListManager.Reports.Logic.List
     {
         public long ID { get; set; }
         public string Code { get; set; }
+        public int Version { get; set; }
         public string Description { get; set; }
         public string ReportSource { get; set; }
         public string ReportState { get; set; }
