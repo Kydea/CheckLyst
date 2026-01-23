@@ -29,6 +29,9 @@ div.GridFiltersBar span {
   display: inline-block;
   margin-left: 10px;
 }
+div.GridFiltersBar span.Separator {
+  margin-left: 30px;
+}
 div.GridFiltersBar label {
   display: inline-block;
   margin-left: 10px;

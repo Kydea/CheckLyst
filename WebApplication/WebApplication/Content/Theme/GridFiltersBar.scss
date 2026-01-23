@@ -35,6 +35,10 @@ div.GridFiltersBar {
     span {
         display: inline-block;
         margin-left: 10px;
+
+        &.Separator {
+            margin-left: 30px;
+        }
     }
 
     label {

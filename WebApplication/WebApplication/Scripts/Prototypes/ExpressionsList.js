@@ -260,7 +260,11 @@
                 if (!visible && flags[2]) visible = !!expression.serializedValue && expression.serializedValue.toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
                 if (visible && !flags[3]) visible = expression.error == null;
                 if (visible && !flags[4]) visible = expression.error != null;
-                if (visible && flags[5]) visible = expression.exception;
+
+                if (visible && flags[6]) visible = expression.unique > 0;
+                if (visible && flags[7]) visible = expression.exception;
+                if (visible && flags[8]) visible = expression.notification;
+                if (visible && flags[9]) visible = expression.task;
                 rows.eq(index).toggle(visible).toggleClass("Even", filtering && even).toggleClass("Odd", filtering && !even);
                 if (visible) even = !even;
             }
@@ -287,7 +291,12 @@
             filtersBar.addFlag("expression", true);
             filtersBar.addFlag($("<i />").addClass("fal fa-times"), true, true);
             filtersBar.addFlag($("<i />").addClass("fal fa-check"), true, true);
-            filtersBar.addFlag($("<i />").addClass("fal fa-exclamation"), false, true);
+            filtersBar.addSeparator(true);
+            filtersBar.addFlag("(any flag)", true, true, "flags");
+            filtersBar.addFlag($("<i />").addClass("fal fa-key"), false, true, "flags");
+            filtersBar.addFlag($("<i />").addClass("fal fa-exclamation"), false, true, "flags");
+            filtersBar.addFlag($("<i />").addClass("fal fa-bell"), false, true, "flags");
+            filtersBar.addFlag($("<i />").addClass("fal fa-tasks"), false, true, "flags");
 
             container
                 .append($("<a />").attr("href", "#").addClass("CloseButton CancelButton")

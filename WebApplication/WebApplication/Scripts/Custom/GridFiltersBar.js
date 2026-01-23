@@ -18,7 +18,7 @@
         callHandler = function () {
             handler(keywordPresent || flagPresent, keyword, flags.map(function (input) { return input.prop("checked"); }));
         },
-        
+
         filter = function (value) {
             if (timeout) clearTimeout(timeout);
             timeout = null;
@@ -41,8 +41,16 @@
             }, 1000);
         },
 
-        addFlag = function (label, value, alignToRight) {
-            var flag = $("<input />").attr({ type: "checkbox" }).prop("checked", value).on("click", function () {
+        addFlag = function (label, value, alignToRight, group) {
+            var flag = $("<input />").attr({ type: group ? "radio" : "checkbox" }).prop("checked", value).data("group", group);
+            if (group)
+                flag.on("click", function () {
+                    for (var flag of flags)
+                        if (flag.data("group") == group && flag[0] != this) 
+                            flag.prop("checked", false);
+                });
+
+            flag.on("click", function () {
                 setTimeout(function () {
                     flagPresent = false;
                     for (var index = 0; !flagPresent && index < flags.length; ++index)
@@ -54,6 +62,10 @@
             if (flags.length == 0) container.append($("<span />").text("filter for:"));
             (alignToRight ? rightDiv : container).append($("<label />").append(label).prepend(flag));
             flags.push(flag);
+        },
+
+        addSeparator = function (alignToRight) {
+            (alignToRight ? rightDiv : container).append($("<span />").addClass("Separator"));
         },
 
         setup = function () {
@@ -73,6 +85,7 @@
     };
 
     gridFiltersBar.addFlag = addFlag;
+    gridFiltersBar.addSeparator = addSeparator;
 
     setup();
 }
