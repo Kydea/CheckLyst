@@ -428,11 +428,39 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public async Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups)
-        {
-            return
-                groups == null || !groups.Any() ? new List<GroupConflicts>(0) :
+        public async Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups) =>
+            groups == null || !groups.Any() ? 
+                new List<GroupConflicts>(0) :
                 await Entities.GroupConflicts.Where(c => c.Company == company && groups.Contains(c.Group1) && groups.Contains(c.Group2)).ToListAsync();
+
+        public Task<string> LoadSettingsAsync(long company, string user, string setting, string code) =>
+            Entities.UserSettingValues.Where(x => x.Company == company && x.User == user && x.Setting == setting && x.Code == code).Select(x => x.Value).SingleOrDefaultAsync();
+
+        public async Task SaveSettingsAsync(long company, string user, string setting, string code, string value)
+        {
+            var record = await Entities.UserSettingValues.SingleOrDefaultAsync(sv => sv.Company == company && sv.User == user && sv.Setting == setting && sv.Code == code);
+
+            if (value == null && record != null)
+                Entities.UserSettingValues.Remove(record);
+            else if (value != null && record == null)
+            {
+                record = new UserSettingValues
+                {
+                    Company = company,
+                    User = user,
+                    Setting = setting,
+                    Code = code,
+                    Value = value,
+                    CreatedOn = DateTimeOffset.UtcNow
+                };
+                Entities.UserSettingValues.Add(record);
+            }
+            else if (value != null && record != null)
+            {
+                record.Value = value;
+                record.ModifiedOn = DateTimeOffset.UtcNow;
+            }
+            await SaveChangesAsync();
         }
     }
 }

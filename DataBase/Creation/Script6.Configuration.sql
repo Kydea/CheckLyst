@@ -69,3 +69,30 @@ create table "Configuration"."SettingValues"
 );
 
 create unique index "Index_SettingValues_Company_Setting" on "Configuration"."SettingValues" ("Company", "Setting");
+
+create table "Configuration"."UserSettings"
+(
+	"Code" varchar (100) primary key
+);
+
+insert into "Configuration"."UserSettings" ("Code") values
+	('GridSetup');
+
+create table "Configuration"."UserSettingValues"
+(
+	"Company" bigint not null,
+	"User" varchar (60),
+	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Setting" varchar (100) not null references "Configuration"."UserSettings",
+	"Code" varchar(100) not null,
+
+	constraint "UserSettings_PK" primary key ("Company", "User", "Setting", "Code"),
+
+	"Value" text not null,
+
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_UserSettingValues_ID" on "Configuration"."SettingValues" ("Company", "Setting");

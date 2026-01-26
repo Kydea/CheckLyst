@@ -157,6 +157,7 @@
     <Compile Include="Messages\Groups\GroupResponse.cs" />
     <Compile Include="Messages\Groups\GroupsRequest.cs" />
     <Compile Include="Messages\Groups\GroupsResponse.cs" />
+    <Compile Include="Messages\UserSettings\UserSettingsRequest.cs" />
     <Compile Include="Messages\Users\Function.cs" />
     <Compile Include="Messages\Users\UserRequest.cs" />
     <Compile Include="Messages\Users\UserResponse.cs" />

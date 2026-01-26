@@ -222,5 +222,9 @@
   {
     "outputFile": "Content/Theme/Tasks.css",
     "inputFile": "Content/Theme/Tasks.scss"
+  },
+  {
+    "outputFile": "Content/Theme/GridSettings.css",
+    "inputFile": "Content/Theme/GridSettings.scss"
   }
 ]

@@ -1,0 +1,54 @@
+﻿@import "_Library.scss";
+@import "FontAwesome/_variables.scss";
+
+div.Popup.GridSettings {
+    div.Container {
+        width: 600px;
+
+        div.Columns {
+            div.Column {
+                border-bottom: solid 1px $Color-Grey-Regular;
+                border-left: solid 1px $Color-Grey-Regular;
+                border-right: solid 1px $Color-Grey-Regular;
+                height: $Metric-Control-Height;
+                line-height: $Metric-Control-Height;
+                cursor: grab;
+                position: relative;
+
+                &:first-child {
+                    border-top: solid 1px $Color-Grey-Regular;
+                }
+
+                input {
+                    margin: 0 $Metric-Control-Space;
+                }
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0 auto 0 0;
+                    width: 10px;
+                    background: radial-gradient(circle, transparent 2px, $Color-Grey-Regular 2px);
+                    background-size: 4px 4px;
+                    background-position: center;
+                    opacity: .7;
+                    cursor: grab;
+                }
+
+                &.DragTarget::after {
+                    content: fa-content($fa-var-arrow-right);
+                    font-family: "Font Awesome 5 Pro";
+                    position: absolute;
+                    font-size: 15px;
+                    left: -15px;
+                    top: -$Metric-Control-Height / 2;
+                }
+
+                span.Note {
+                    margin-left: 5px;
+                    color: $Color-Grey-Regular;
+                }
+            }
+        }
+    }
+}

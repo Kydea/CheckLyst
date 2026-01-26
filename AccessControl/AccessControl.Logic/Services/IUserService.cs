@@ -9,6 +9,7 @@ using CheckListManager.Common.Data;
 using CheckListManager.Common.Logic.Api.Messages;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.AccessControl.Data.Models;
+using CheckListManager.AccessControl.Logic.Messages.UserSettings;
 
 namespace CheckListManager.AccessControl.Logic.Services
 {
@@ -36,5 +37,8 @@ namespace CheckListManager.AccessControl.Logic.Services
         Task CheckInactiveUsers(long company, CancellationToken cancellationToken = default);
 		Task CheckUnchangedPins(long company, CancellationToken cancellationToken = default);
         Task<List<Tuple<string, string>>> GetConflictsAsync(IDefaultIdentity identity, List<string> groups);
+        
+        Task<string> LoadSettingsAsync(DefaultIdentity identity, UserSettingsRequest data);
+        Task SaveSettingsAsync(DefaultIdentity identity, UserSettingsRequest data);
     }
 }

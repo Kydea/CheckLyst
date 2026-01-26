@@ -292,6 +292,12 @@
     <Compile Include="UserSessions.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="UserSettings.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserSettingValues.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="VersionState.cs" />
     <Compile Include="VersionStates.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>

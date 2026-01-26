@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using CheckListManager.AccessControl.Data.Models;
 using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.AccessControl.Logic.Messages.UserSettings;
 using CheckListManager.AccessControl.Logic.Services;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Data;
@@ -92,6 +93,21 @@ namespace CheckListManager.AccessControl.Api.Controllers
         public async Task<IHttpActionResult> SetTimeZone(Message<string> request)
         {
             await _userService.SetTimeZoneAsync(Identity, request.Data);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("LoadSettings")]
+        public async Task<IHttpActionResult> LoadSettings(Message<UserSettingsRequest> request)
+        {
+            return Ok(await _userService.LoadSettingsAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
+        [Route("SaveSettings")]
+        public async Task<IHttpActionResult> SaveSettings(Message<UserSettingsRequest> request)
+        {
+            await _userService.SaveSettingsAsync(Identity, request.Data);
             return Ok();
         }
 

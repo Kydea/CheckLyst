@@ -11,6 +11,7 @@ using CheckListManager.AccessControl.Data.Models;
 using CheckListManager.AccessControl.Logic.Authentication;
 using CheckListManager.AccessControl.Logic.Exceptions;
 using CheckListManager.AccessControl.Logic.Messages.Users;
+using CheckListManager.AccessControl.Logic.Messages.UserSettings;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Data;
@@ -881,5 +882,13 @@ namespace CheckListManager.AccessControl.Logic.Services
             var conflicts = await _userRepository.GetConflicts(identity.CompanyId, groups);
             return conflicts.Select(c => new Tuple<string, string>(c.Group1, c.Group2)).ToList();
         }
+
+
+        public Task<string> LoadSettingsAsync(DefaultIdentity identity, UserSettingsRequest data) =>
+            _userRepository.LoadSettingsAsync(identity.CompanyId, identity.Code, data.Setting, data.Code);
+
+        public Task SaveSettingsAsync(DefaultIdentity identity, UserSettingsRequest data) =>
+            _userRepository.SaveSettingsAsync(identity.CompanyId, identity.Code, data.Setting, data.Code, data.Value);
+
     }
 }

@@ -92,3 +92,30 @@ alter table "WorkFlows"."WorkFlowApplications" add constraint "Check_WorkFlowApp
 );
 insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Confirmed');
 insert into "WorkFlows"."WorkFlowActions" values ('Report – state to Obsolete');
+
+create table "Configuration"."UserSettings"
+(
+	"Code" varchar (100) primary key
+);
+
+insert into "Configuration"."UserSettings" ("Code") values
+	('GridSetup');
+
+create table "Configuration"."UserSettingValues"
+(
+	"Company" bigint not null,
+	"User" varchar (60),
+	constraint "UserSessions_User" foreign key ("Company", "User") references "Security"."Users" on update cascade on delete cascade,
+
+	"Setting" varchar (100) not null references "Configuration"."UserSettings",
+	"Code" varchar(100) not null,
+
+	constraint "UserSettings_PK" primary key ("Company", "User", "Setting", "Code"),
+
+	"Value" text not null,
+
+	"CreatedOn" timestamptz not null default current_timestamp,
+	"ModifiedOn" timestamptz
+);
+
+create unique index "Index_UserSettingValues_ID" on "Configuration"."SettingValues" ("Company", "Setting");

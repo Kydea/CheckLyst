@@ -1,0 +1,41 @@
+﻿div.Popup.GridSettings div.Container {
+  width: 600px;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column {
+  border-bottom: solid 1px #999;
+  border-left: solid 1px #999;
+  border-right: solid 1px #999;
+  height: 36px;
+  line-height: 36px;
+  cursor: grab;
+  position: relative;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column:first-child {
+  border-top: solid 1px #999;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column input {
+  margin: 0 20px;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 10px;
+  background: radial-gradient(circle, transparent 2px, #999 2px);
+  background-size: 4px 4px;
+  background-position: center;
+  opacity: 0.7;
+  cursor: grab;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column.DragTarget::after {
+  content: "\f061";
+  font-family: "Font Awesome 5 Pro";
+  position: absolute;
+  font-size: 15px;
+  left: -15px;
+  top: -18px;
+}
+div.Popup.GridSettings div.Container div.Columns div.Column span.Note {
+  margin-left: 5px;
+  color: #999;
+}

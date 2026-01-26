@@ -21,14 +21,18 @@
   color: white;
   background-color: #00877a;
 }
+.Paginator a.Settings {
+  position: absolute;
+  left: 20px;
+}
 .Paginator a, .Paginator span {
   display: inline-block;
 }
-.Paginator a:not(:first-child), .Paginator span:not(:first-child) {
+.Paginator a:not(:first-child):not(:nth-child(2)), .Paginator span:not(:first-child):not(:nth-child(2)) {
   position: relative;
   margin-left: 16px;
 }
-.Paginator a:not(:first-child)::before, .Paginator span:not(:first-child)::before {
+.Paginator a:not(:first-child):not(:nth-child(2))::before, .Paginator span:not(:first-child):not(:nth-child(2))::before {
   border-left: 2px solid #ccc;
   display: inline-block;
   position: absolute;
@@ -57,7 +61,7 @@
   display: inline-block;
   margin-left: 8px;
 }
-.Paginator i {
+.Paginator > i {
   color: #00877a;
   display: none;
   cursor: pointer;

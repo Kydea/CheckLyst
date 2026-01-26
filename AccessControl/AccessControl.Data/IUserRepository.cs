@@ -47,5 +47,8 @@ namespace CheckListManager.AccessControl.Data
         Task<Groups> EditGroupAsync(DefaultIdentity identity, Groups group, List<string> existingConflicts);
         Task DeleteGroupAsync(long companyId, string code);
         Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups);
+
+        Task<string> LoadSettingsAsync(long company, string user, string setting, string code);
+        Task SaveSettingsAsync(long company, string user, string setting, string code, string value);
     }
 }

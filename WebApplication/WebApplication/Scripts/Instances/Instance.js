@@ -85,7 +85,7 @@
         },
 
         setupBreadcrumbs = function () {
-            var fixedHeaderIcon = $("<i />").addClass("fa fa-border-top NoSeparator");
+            var fixedHeaderIcon = $("<i />").addClass("fa fa-arrow-to-top NoSeparator");
 
             matematici.breadcrumbs.set([
                 { element: fixedHeaderIcon },

@@ -4,13 +4,15 @@
         element = $(selector).hide(),
         noRecordRow = $("tr.NoRecord", selector).remove(),
         prototypeRow = $("tbody tr", selector).remove(),
-        columnNumber = prototypeRow.children().length,
         tableBody = $("tbody", element),
-        paginator,
+        columnsDomElementsMap = new Map(),
+        defaultSettings,
+        settings,
+        savedData,
 
-        setup = function () {
+        initialize = function () {
             element.appendTo($("<div style='overflow: auto' />").insertBefore(element));
-            $("td", noRecordRow).attr("colspan", columnNumber);
+            $("td", noRecordRow).attr("colspan", prototypeRow.children().length);
 
             options = options || {};
 
@@ -18,6 +20,49 @@
                 element.on("click", "tr.Handler", function () {
                     options.rowClick($(this));
                 });
+
+            if (options.handleSettings) {
+                defaultSettings = { columns: [] };
+                var
+                    tds = $("td", prototypeRow),
+                    ths = $("thead tr th", element);
+
+                tds.each(function (index) {
+                    const
+                        name = this.getAttribute("data-column"),
+                        th = ths.eq(index),
+                        model = {
+                            th: th,
+                            td: $(this),
+                            advancedSearch: th.hasClass("AdvancedSearch"),
+                            label: th.text()
+                        };
+
+                    columnsDomElementsMap.set(name, model);
+
+                    defaultSettings.columns.push({
+                        name: name,
+                        visible: true,
+                    });
+                });
+
+                matematici.userSettingsClient.load("GridSetup", options.name, function (data) {
+                    if (data == null)
+                        settings = defaultSettings;
+                    else {
+                        settings = JSON.parse(data);
+                        applySettings();
+                    }
+                });
+            }
+        },
+
+        applySettings = function () {
+            for (var column of settings.columns) {
+                var domElements = columnsDomElementsMap.get(column.name);
+                $("thead tr", element).append(domElements.th.toggleClass("Hidden", !column.visible));
+                prototypeRow.append(domElements.td.toggleClass("Hidden", !column.visible));
+            }
         },
 
         setCellValue = function (cell, data) {
@@ -37,9 +82,9 @@
                         break;
                     case "Custom":
                         break;
-					case "Text":
-						cell.text(value);
-						break;
+                    case "Text":
+                        cell.text(value);
+                        break;
                     default:
                         cell.html(value);
                 }
@@ -57,25 +102,46 @@
                 setCellValue($(this), data);
             });
             return row;
+        },
+
+        update = function (data) {
+            tableBody.empty();
+
+            if (!data || data.length == 0)
+                noRecordRow.clone().appendTo(tableBody);
+            else
+                for (var index in data)
+                    tableBody.append(createRow(data[index]));
+            element.show();
         };
 
-    this.updateCell = function (row, columnName, value) {
-        setCellValue()
+    this.initialize = initialize;
+
+    this.applySettings = function (newSettings) {
+        settings = newSettings;
+        applySettings()
+        update(savedData);
     };
 
-    this.initialize = function () {
-        setup();
+    this.getName = function () {
+        return options.name;
     };
 
     this.update = function (data) {
-        tableBody.empty();
+        savedData = data;
+        update(data);
+    };
 
-        if (!data || data.length == 0)
-            noRecordRow.clone().appendTo(tableBody);
-        else
-            for (var index in data)
-                tableBody.append(createRow(data[index]));
-        element.show();
+    this.getSettings = function () {
+        return settings;
+    };
+
+    this.getDefaultSettings = function () {
+        return defaultSettings;
+    };
+
+    this.getColumnDomElements = function (name) {
+        return columnsDomElementsMap.get(name);
     };
 
     this.getElement = function () {

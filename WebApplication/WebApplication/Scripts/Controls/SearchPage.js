@@ -80,7 +80,8 @@
 				name: options.pageName,
 				initializers: [
 					//new matematici.FixedHeader("div#Content table.Grid")
-					grid = new matematici.Grid(options.resultGridSelector, {
+                    grid = new matematici.Grid(options.resultGridSelector, {
+                        name: options.pageName,
 						rowClick: options.rowClickHandler || function (row) {
 							matematici.popup.show({
 								url: options.detailUrl,
@@ -89,7 +90,8 @@
 								closeHandler: closeHandler
 							});
                         },
-                        setCellValueHandler: options.setCellValueHandler
+                        setCellValueHandler: options.setCellValueHandler,
+                        handleSettings: true
 					}),
 					form = new matematici.Form(options.filterFormSelector, {
 						bindEvent: options.bindEvent,
@@ -99,8 +101,8 @@
 							handler: filterHandler,
 						},
 						searchPage: searchPage
-					}),
-					paginator = new matematici.Paginator("div#Content div.Paginator", function (index) {
+                    }),
+                    paginator = new matematici.Paginator("div#Content div.Paginator", grid, function (index) {
 						form.trigger("GetData", filterHandler, { CurrentPage: index });
 					})
 				],

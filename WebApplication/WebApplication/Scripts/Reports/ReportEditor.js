@@ -273,7 +273,20 @@
                 return true;
             }
 
-            var allowed = true;
+            var
+                allowed = false,
+                tags = row.tags.split(", ");
+
+            for (var role in tags)
+                if (matematici.tokenManager.checkRole("ReportWorkFlowLevel####" + tags[role])) {
+                    allowed = true;
+                    break;
+                }
+
+            if (!allowed) {
+                matematici.dialog.error("error", "Permission denied");
+                return true;
+            }
 
             for (var rowIndex in rows) {
                 if (rows[rowIndex].step < row.step && !rows[rowIndex].approved) {

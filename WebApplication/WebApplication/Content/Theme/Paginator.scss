@@ -27,12 +27,17 @@ $Page-Width: 20px;
             color: white;
             background-color: $Color-Green-Dark;
         }
+
+        &.Settings {
+            position: absolute;
+            left: $Metric-Control-Space;
+        }
     }
 
     a, span {
         display: inline-block;
 
-        &:not(:first-child) {
+        &:not(:first-child):not(:nth-child(2)) {
             position: relative;
             margin-left: 16px;
 
@@ -71,7 +76,7 @@ $Page-Width: 20px;
         }
     }
 
-    i {
+    > i {
         color: $Color-Green-Dark;
         display: none;
         cursor: pointer;

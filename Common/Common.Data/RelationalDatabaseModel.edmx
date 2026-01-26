@@ -206,6 +206,27 @@
           <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
         </EntityType>
+        <EntityType Name="UserSettings">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserSettingValues">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="User" />
+            <PropertyRef Name="Setting" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="int8" Nullable="false" />
+          <Property Name="User" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="Setting" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="text" Nullable="false" />
+          <Property Name="CreatedOn" Type="timestamptz" Precision="7" Nullable="false" />
+          <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
+        </EntityType>
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="ID" />
@@ -1770,6 +1791,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="UserSessions_User1">
+          <End Role="Users" Type="Self.Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserSettingValues" Type="Self.UserSettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserSettingValues">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserSettingValues_Setting_fkey">
+          <End Role="UserSettings" Type="Self.UserSettings" Multiplicity="1" />
+          <End Role="UserSettingValues" Type="Self.UserSettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserSettings">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserSettingValues">
+              <PropertyRef Name="Setting" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="WorkFlowApplications_Instance">
           <End Role="Instances" Type="Self.Instances" Multiplicity="0..1">
             <OnDelete Action="Cascade" />
@@ -1937,6 +1986,8 @@
           <EntitySet Name="Configurations" EntityType="Self.Configurations" Schema="Configuration" store:Type="Tables" />
           <EntitySet Name="Settings" EntityType="Self.Settings" Schema="Configuration" store:Type="Tables" />
           <EntitySet Name="SettingValues" EntityType="Self.SettingValues" Schema="Configuration" store:Type="Tables" />
+          <EntitySet Name="UserSettings" EntityType="Self.UserSettings" Schema="Configuration" store:Type="Tables" />
+          <EntitySet Name="UserSettingValues" EntityType="Self.UserSettingValues" Schema="Configuration" store:Type="Tables" />
           <EntitySet Name="DataSources" EntityType="Self.DataSources" Schema="DataSources" store:Type="Tables" />
           <EntitySet Name="Companies" EntityType="Self.Companies" Schema="Infrastructure" store:Type="Tables" />
           <EntitySet Name="Departments" EntityType="Self.Departments" Schema="Infrastructure" store:Type="Tables" />
@@ -2295,6 +2346,14 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserSessions" EntitySet="UserSessions" />
           </AssociationSet>
+          <AssociationSet Name="UserSessions_User1" Association="Self.UserSessions_User1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserSettingValues" EntitySet="UserSettingValues" />
+          </AssociationSet>
+          <AssociationSet Name="UserSettingValues_Setting_fkey" Association="Self.UserSettingValues_Setting_fkey">
+            <End Role="UserSettings" EntitySet="UserSettings" />
+            <End Role="UserSettingValues" EntitySet="UserSettingValues" />
+          </AssociationSet>
           <AssociationSet Name="WorkFlowApplications_Instance" Association="Self.WorkFlowApplications_Instance">
             <End Role="Instances" EntitySet="Instances" />
             <End Role="WorkFlowApplications" EntitySet="WorkFlowApplications" />
@@ -2427,6 +2486,7 @@
           <Property Name="ReportWorkFlowLevel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ReportRuns" Relationship="RelationalDatabaseModel.ReportRuns_User" FromRole="Users" ToRole="ReportRuns" />
           <NavigationProperty Name="UserReports" Relationship="RelationalDatabaseModel.UserReports_User" FromRole="Users" ToRole="UserReports" />
+          <NavigationProperty Name="UserSettingValues" Relationship="RelationalDatabaseModel.UserSessions_User1" FromRole="Users" ToRole="UserSettingValues" />
         </EntityType>
         <Association Name="Departments_Company_fkey">
           <End Role="Companies" Type="Self.Companies" Multiplicity="0..1">
@@ -2867,6 +2927,16 @@
           <AssociationSet Name="UserReports_User" Association="RelationalDatabaseModel.UserReports_User">
             <End Role="Users" EntitySet="Users" />
             <End Role="UserReports" EntitySet="UserReports" />
+          </AssociationSet>
+          <EntitySet Name="UserSettings" EntityType="RelationalDatabaseModel.UserSettings" />
+          <EntitySet Name="UserSettingValues" EntityType="RelationalDatabaseModel.UserSettingValues" />
+          <AssociationSet Name="UserSettingValues_Setting_fkey" Association="RelationalDatabaseModel.UserSettingValues_Setting_fkey">
+            <End Role="UserSettings" EntitySet="UserSettings" />
+            <End Role="UserSettingValues" EntitySet="UserSettingValues" />
+          </AssociationSet>
+          <AssociationSet Name="UserSessions_User1" Association="RelationalDatabaseModel.UserSessions_User1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserSettingValues" EntitySet="UserSettingValues" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="UserSessions">
@@ -4816,6 +4886,58 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UserSettings">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UserSettingValues" Relationship="RelationalDatabaseModel.UserSettingValues_Setting_fkey" FromRole="UserSettings" ToRole="UserSettingValues" />
+        </EntityType>
+        <EntityType Name="UserSettingValues">
+          <Key>
+            <PropertyRef Name="Company" />
+            <PropertyRef Name="User" />
+            <PropertyRef Name="Setting" />
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Company" Type="Int64" Nullable="false" />
+          <Property Name="User" Type="String" Nullable="false" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="Setting" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="ModifiedOn" Type="DateTimeOffset" Precision="7" />
+          <NavigationProperty Name="UserSettings" Relationship="RelationalDatabaseModel.UserSettingValues_Setting_fkey" FromRole="UserSettingValues" ToRole="UserSettings" />
+          <NavigationProperty Name="Users" Relationship="RelationalDatabaseModel.UserSessions_User1" FromRole="UserSettingValues" ToRole="Users" />
+        </EntityType>
+        <Association Name="UserSettingValues_Setting_fkey">
+          <End Type="RelationalDatabaseModel.UserSettings" Role="UserSettings" Multiplicity="1" />
+          <End Type="RelationalDatabaseModel.UserSettingValues" Role="UserSettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserSettings">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserSettingValues">
+              <PropertyRef Name="Setting" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserSessions_User1">
+          <End Type="RelationalDatabaseModel.Users" Role="Users" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="RelationalDatabaseModel.UserSettingValues" Role="UserSettingValues" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="UserSettingValues">
+              <PropertyRef Name="Company" />
+              <PropertyRef Name="User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5545,6 +5667,26 @@
             <EntityTypeMapping TypeName="RelationalDatabaseModel.UserReports">
               <MappingFragment StoreEntitySet="UserReports">
                 <ScalarProperty Name="ReportCode" ColumnName="ReportCode" />
+                <ScalarProperty Name="User" ColumnName="User" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserSettings">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserSettings">
+              <MappingFragment StoreEntitySet="UserSettings">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserSettingValues">
+            <EntityTypeMapping TypeName="RelationalDatabaseModel.UserSettingValues">
+              <MappingFragment StoreEntitySet="UserSettingValues">
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Setting" ColumnName="Setting" />
                 <ScalarProperty Name="User" ColumnName="User" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
               </MappingFragment>
