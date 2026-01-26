@@ -17,6 +17,8 @@
         noRow,
         oldValue,
         multiple,
+        free,
+        freeOption,
         open,
         readOnly,
         locked = false,
@@ -33,6 +35,8 @@
             list = $("<div />").addClass("AutoComplete-List").insertAfter(input).toggleClass("Locked", locked);
             if (options && options.noCheck) list.addClass("NoCheck");
             noRow = $("<i />").addClass("fa fa-minus");
+
+            if (free) element.prepend(freeOption = $("<option />").attr("value", "").data("hidden", true));
 
             input
                 .on("keydown", function (e) {
@@ -80,6 +84,7 @@
             matematici.AutoComplete.list.push(autoComplete);
 
             multiple = node.hasAttribute("multiple");
+            free = node.getAttribute("data-free") == "true";
 
             node.classList.add("AutoComplete");
             var parent = node.parentNode;
@@ -322,6 +327,7 @@
                 .off("click.autocomplete")
                 .off("keydown.autocomplete");
             matematici.elements.body.children(".Popup").off("scroll.autocomplete");
+
             list.hide();
             input.hide();
             if (!multiple) setCurrentItem(null);
@@ -376,7 +382,10 @@
                 .each(function () {
                     var
                         option = $(this),
-                        filter = input.val().toUpperCase();
+                        filter = input.val();
+                    if (free)
+                        freeOption.attr("value", filter).text(filter);
+                    filter = filter.toUpperCase();
                     if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0) {
                         const
                             value = option.attr("value"),
@@ -385,9 +394,11 @@
                                 .data("value", value)
                                 .text(option.text())
                                 .attr("title", option.text())
-                                .toggleClass("Selected", option.prop("selected"));
+                                .toggleClass("Selected", option.prop("selected"))
+                        if (free)
+                            a.toggleClass("Hidden", filter == "" && option.data("hidden") == true);
 
-                        if (value == notification?.item)
+                        if (notification != null && value == notification.item)
                             a.attr("data-badge", notification.value == 0 ? "" : Math.min(99, notification.value));
 
                         list.append(a);

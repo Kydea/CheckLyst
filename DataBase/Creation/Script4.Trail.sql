@@ -21,7 +21,7 @@ values
 	('User disabled'),
 	
 	('PIN banned'),
-	('PIN disabled');	
+	('PIN disabled'),
 
 	('Group created'),
 	('Group edited'),
@@ -48,7 +48,7 @@ values
 	('Instance signature issued'),
 	('Instance signature failed'),
 	('Instance signature canceled'),
-	('Instance signature cancelation failed'),	
+	('Instance signature cancelation failed'),
 	('Instance export completed'),
 	('Instance export failed'),
 	('Instance value changed'),
