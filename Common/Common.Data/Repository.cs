@@ -35,11 +35,11 @@ namespace CheckListManager.Common.Data
             if (disposing) Entities?.Dispose();
         }
 
-        public async Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync()
         {
             try
             {
-                return await Entities.SaveChangesAsync();
+                return Entities.SaveChangesAsync();
             }
             catch (DbUpdateException exception)
             {

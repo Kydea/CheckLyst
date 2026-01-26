@@ -10,6 +10,7 @@ using Amazon.SQS;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
+using Autofac.Features.AttributeFilters;
 using AutoMapper;
 using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Network;
@@ -100,13 +101,18 @@ namespace CheckListManager.Common.Logic.Configuration
 			builder.RegisterAssemblyTypes(Assemblies)
 				.AssignableTo<IRepository>()
 				.AsImplementedInterfaces()
-				.InstancePerScope(UseInstancePerRequest);
+				.InstancePerScope(UseInstancePerRequest)
+                .WithAttributeFiltering();
 
 			builder.RegisterType<RelationalDatabaseEntities>()
 				.AsSelf()
 				.InstancePerScope(UseInstancePerRequest);
 
-			builder.RegisterAssemblyTypes(Assemblies)
+            builder.RegisterType<RelationalDatabaseEntities>()
+				.Keyed<RelationalDatabaseEntities>("trail")
+                .InstancePerScope(UseInstancePerRequest);
+
+            builder.RegisterAssemblyTypes(Assemblies)
 				.AssignableTo<IRedisCache>()
 				.AsImplementedInterfaces()
 				.InstancePerDependency();

@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Core.Cache;
+﻿using Autofac.Features.AttributeFilters;
+using CheckListManager.Common.Core.Cache;
 using CheckListManager.Common.Core.Helpers;
 using CheckListManager.Common.Core.Web.Security;
 using Newtonsoft.Json;
@@ -13,20 +14,22 @@ namespace CheckListManager.Common.Data
 {
     public class CommonRepository : Repository, ICommonRepository
     {
+        protected readonly RelationalDatabaseEntities _trailEntities;
         private readonly IMemoryCache _memoryCache;
 
-        public CommonRepository(RelationalDatabaseEntities entities, IMemoryCache memoryCache) : base(entities)
+        public CommonRepository(RelationalDatabaseEntities entities, [KeyFilter("trail")] RelationalDatabaseEntities trailEntities, IMemoryCache memoryCache) : base(entities)
         {
+            _trailEntities = trailEntities;
             _memoryCache = memoryCache;
         }
 
-        public Task<Companies> GetCompanyAsync(long id) => 
+        public Task<Companies> GetCompanyAsync(long id) =>
             Entities.Companies.SingleAsync(c => c.ID == id);
 
-        public Task<List<ListItems.Company>> GetCompaniesAsync() => 
+        public Task<List<ListItems.Company>> GetCompaniesAsync() =>
             _memoryCache.GetOrAddAsync("Companies", key =>
                 Entities.Companies
-                    .Where (c => c.Online)
+                    .Where(c => c.Online)
                     .OrderBy(c => c.Name).ThenBy(c => c.ID)
                     .Select(c => new ListItems.Company
                     {
@@ -62,7 +65,7 @@ namespace CheckListManager.Common.Data
             "order by d.\"Name\", pt.\"Name\"";
         public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(IDefaultIdentity identity, long department, string functionGroup, string function)
         {
-            var PrototypeTypes = await Read<PrototypeTypes>(PROTOTYPE_TYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department});
+            var PrototypeTypes = await Read<PrototypeTypes>(PROTOTYPE_TYPES_QUERY, new { company = identity.CompanyId, user = identity.Code, functionGroup, function, department });
             return PrototypeTypes.ToList();
         }
 
@@ -178,12 +181,12 @@ namespace CheckListManager.Common.Data
         public async Task<List<PrototypeTypes>> GetPrototypeTypesAsync(long companyId, long? department = null) =>
             await Entities.PrototypeTypes.Where(pt => pt.Company == companyId && (department == null || pt.Department == department)).ToListAsync();
 
-        public Task<List<string>> GetVersionStatesAsync() => 
+        public Task<List<string>> GetVersionStatesAsync() =>
             _memoryCache.GetOrAddAsync("VersionStates", key => Entities.VersionStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
 
-        public Task<List<string>> GetInstanceStatesAsync() => 
+        public Task<List<string>> GetInstanceStatesAsync() =>
             _memoryCache.GetOrAddAsync("InstanceStates", key => Entities.InstanceStates.Select(s => s.Code).ToListAsync(), "CommonRepository");
-        
+
         public Users GetUser(long CompanyID, string Code) =>
             Entities.Users.SingleOrDefault(u => u.Company == CompanyID && u.Code == Code);
 
@@ -203,10 +206,10 @@ namespace CheckListManager.Common.Data
                     ftps.Company == CompanyID && (!PrototypeTypeRow.InstancesFTPServer.HasValue && ftps.InstancesDefault || ftps.ID == PrototypeTypeRow.InstancesFTPServer));
         }
 
-        public async Task AddTrailRecordAsync(Records record)
+        public Task AddTrailRecordAsync(Records record)
         {
-            Entities.Records.Add(record);
-            await SaveChangesAsync();
+            _trailEntities.Records.Add(record);
+            return _trailEntities.SaveChangesAsync();
         }
 
         public Task AuditAsync(IDefaultIdentity identity, string action, object information) =>
