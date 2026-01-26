@@ -230,7 +230,7 @@
             matematici.elements.body.removeClass("CheckListGrid");
             autoCenter.destroy();
             matematici.expressionsList = null;
-            if (options && options.closeHandler) options.closeHandler();
+            if (options.closeHandler) options.closeHandler();
         },
 
         use = function () {
@@ -274,7 +274,8 @@
             select();
         },
 
-        setup = function () {
+        initialize = function () {
+            options = options || {};
             matematici.elements.body.addClass("CheckListGrid");
             matematici.expressionsList = expressionsList;
 
@@ -343,7 +344,7 @@
             var
                 buttons = $("<div />").addClass("Buttons").appendTo(container);
 
-            if (options && options.useHandler)
+            if (options.useHandler)
                 buttons.append(useButton = $("<a />").addClass("Button").text("use").hide().prepend($("<i />").addClass("Icon fa fa-check")).on("click", function () {
                     updatePrototype();
                     use();
@@ -370,6 +371,11 @@
                 insert(model.expressions[code]);
 
             fixedHeader = new matematici.GridFixedHeader(table);
+
+            if (options.initialExpressionCode) {
+                expressionsList.select(options.initialExpressionCode);
+                open(currentIndex);
+            }
         };
 
     this.select = function (code) {
@@ -382,5 +388,5 @@
 
     this.close = close;
 
-    setup();
+    initialize();
 };

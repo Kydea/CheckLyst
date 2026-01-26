@@ -30,6 +30,7 @@
 
             new prototypes.ExpressionsList({
                 closeHandler: resumePropertyPanel,
+                initialExpressionCode: select.val(),
                 useHandler: function (expression) {
                     expressions = prototypes.prototype.getModel().expressions;
                     currentProperty.getType().setExpressionCode(expression.code);
