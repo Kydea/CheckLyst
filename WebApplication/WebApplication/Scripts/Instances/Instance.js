@@ -528,9 +528,9 @@
                     { text: "Cancel", icon: "times", cancelButton: true }                    
                 ];
                 if (window.opener)
-                    buttons.push({ text: "Open instances list", icon: "layer-group", handler: function () { matematici.navigator.open(options.listUrl); } });
-                else
                     buttons.push({ text: "Close the tab", icon: "door-closed", handler: function () { window.close(); } });
+                else
+                    buttons.push({ text: "Open instances list", icon: "layer-group", handler: function () { matematici.navigator.open(options.listUrl); } });
 
                 if (hasPermissionOnPrototype)
                     buttons.push({ text: "Open parent prototype", icon: "file-invoice", handler: function () { matematici.navigator.open(matematici.urls.prototypes.detail + "/" + prototype + "/" + version); } })

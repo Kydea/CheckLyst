@@ -86,6 +86,9 @@
             var editor = matematici.tokenManager.checkRole("Reports#Edit#");
 
             var
+                closeTab = function () {
+                    window.close();
+                },
                 openEditor = function () {
                     matematici.navigator.open(options.editorUrl);
                 },
