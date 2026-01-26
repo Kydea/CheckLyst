@@ -140,7 +140,7 @@
                     { content: "instances" }
                 ],
                 rowClickHandler: function (row) {
-                    matematici.navigator.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+                    window.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
                 },
                 setCellValueHandler: function (cell, data, column, type, value) {
                     if (column == "exceptions" && value)
@@ -195,7 +195,7 @@
                         type: "post",
                         data: { prototype: prototype }
                     }).done(function () {
-                        matematici.navigator.open("@Url.Action("Create")/" + prototype);
+                        window.open("@Url.Action("Create")/" + prototype);
                     });
             });
         else {

@@ -99,16 +99,16 @@
                 if (result.error)
                     matematici.dialog.error("error", result.error);
                 else
-                    matematici.navigator.open("@Url.Action("Version")/" + data.id + "/" + data.version);
+                    window.open("@Url.Action("Version")/" + data.id + "/" + data.version);
             });
         },
 
         openPrototypeHandler = function (data) {
-            matematici.navigator.open("@Url.Action("Detail")/" + data.id + "/" + data.version);
+            window.open("@Url.Action("Detail")/" + data.id + "/" + data.version);
         },
 
         useAsTemplateHandler = function (data) {
-            matematici.navigator.open("@Url.Action("Clone")/" + data.id + "/" + data.version);
+            window.open("@Url.Action("Clone")/" + data.id + "/" + data.version);
         };
 
     matematici.events.onPageLoad = function (callback) {
@@ -150,7 +150,7 @@
             }),
 
             addButton = $("#AddButton").on("click", function (e) {
-                matematici.navigator.open("@Url.Action("Create")");
+                window.open("@Url.Action("Create")");
             });
 
         $("input[name=id]").keyfilter(/[\d]/);

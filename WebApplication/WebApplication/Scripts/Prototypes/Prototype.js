@@ -981,7 +981,10 @@
     };
 
     prototype.quit = function () {
-        matematici.navigator.open(options.listUrl);
+        if (window.opener)
+            window.close();
+        else
+            matematici.navigator.open(options.listUrl);
     };
 
     prototype.deleteImage = function (key) {

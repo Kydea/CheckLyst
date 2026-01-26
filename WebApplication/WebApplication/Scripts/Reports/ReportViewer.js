@@ -96,9 +96,13 @@
             if (editor) {
                 var buttons = [
                     { text: "cancel", icon: "times", cancelButton: true },
-                    { text: "report editor", icon: "pencil", handler: openEditor },
-                    { text: "report list", icon: "list", handler: openList }
+                    { text: "report editor", icon: "pencil", handler: openEditor }
                 ];
+
+                if (window.opener)
+                    buttons.push({ text: "close the tab", icon: "door-closed", handler: closeTab });
+                else
+                    buttons.push({ text: "report list", icon: "list", handler: openList });
                 matematici.dialog.popupMenu(buttons);
             } else
                 openList();
