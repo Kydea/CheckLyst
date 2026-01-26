@@ -64,7 +64,7 @@
             if (group.isPage())
                 model.typeName = "Page";
             if (title)
-                title.text(model.description ? model.description : "(no title)")
+                title.html(model.description ? model.description : "(no title)")
             group.setColor(model.color);
             group.setFontSize(model.fontSize);
         };

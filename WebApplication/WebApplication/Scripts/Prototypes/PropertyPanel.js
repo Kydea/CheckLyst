@@ -109,7 +109,7 @@
             properties.push(new prototypes.Property(
                 this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                 "Description", "A short description of the prototype.",
-                function () { $("h2 span", item.getElement()).text(model.description); }
+                function () { $("h2 span", item.getElement()).html(model.description); }
             ));
             var lifeCycleProperty;
             properties.push(lifeCycleProperty = new prototypes.Property(
@@ -268,7 +268,7 @@
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Caption",
                         "The caption of the page.",
-                        function () { $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).text(model.description); }
+                        function () { $("div.TabLabels a.Selected", prototypes.prototype.getTab().getElement()).html(model.description); }
                     ));
                     break;
                 case "Group":
@@ -276,7 +276,7 @@
                         this, new prototypes.SimpleValueProperty(model, "description", { fullHeight: true, readOnly: state != prototypes.Prototype.states.draft }),
                         "Caption",
                         "The caption of the group.",
-                        function () { item.getElement().children("h3").text(model.description); }
+                        function () { item.getElement().children("h3").html(model.description); }
                     ));
                     var tableContent = false;
                     for (var node = parent; node.getModel().typeName == "Group"; node = node.getParent())
@@ -458,7 +458,7 @@
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the item.",
-                        function () { $("label", item.getElement()).children("span").text(model.description); }
+                        function () { $("label", item.getElement()).children("span").html(model.description); }
                     ));
 
                     var
@@ -518,7 +518,7 @@
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label (cause) of the signature.",
-                        function () { $("label", item.getElement()).children("span").text(model.description); }
+                        function () { $("label", item.getElement()).children("span").html(model.description); }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.SimpleValueProperty(model, "buttonLabel", { readOnly: state != prototypes.Prototype.states.draft }),
@@ -562,7 +562,7 @@
                         this, new prototypes.SimpleValueProperty(model, "description", { readOnly: state != prototypes.Prototype.states.draft }),
                         "Label",
                         "The label of the instance link.",
-                        function () { $("label", item.getElement()).children("span").text(model.description); }
+                        function () { $("label", item.getElement()).children("span").html(model.description); }
                     ));
                     properties.push(new prototypes.Property(
                         this, new prototypes.PrototypeProperty(model),
