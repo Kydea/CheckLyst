@@ -220,6 +220,48 @@
         },
 
         load = function () {
+
+            if (new URLSearchParams(window.location.search).has("test")) {
+                console.log("test mode")
+                (async () => {
+                    const url = matematici.urls.reports.api + "/Viewer/GetReportData";
+
+                    const data = { id: options.id, run: options.run, parameters };
+                    const body = $.param(data);
+
+                    const r = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": "Bearer " + (localStorage.accessToken || ""),
+                            ...(localStorage.timeZone ? { "ClientTimeZone": localStorage.timeZone } : {}),
+                            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        body
+                    });
+
+                    const buf = await r.arrayBuffer();
+                    console.log("STATUS:", r.status);
+                    console.log("BYTE REALI RICEVUTI:", buf.byteLength);
+
+                    const headSize = 8192;
+                    const headBuf = buf.slice(0, headSize);
+                    const head = new TextDecoder("utf-8", { fatal: false }).decode(headBuf);
+
+                    console.log("HEAD(first 8KB):");
+                    console.log(head);
+
+                    const tailSize = 8192;
+                    const tailBuf = buf.slice(Math.max(0, buf.byteLength - tailSize));
+                    const tail = new TextDecoder("utf-8", { fatal: false }).decode(tailBuf);
+
+                    console.log("TAIL(last 8KB):");
+                    console.log(tail);
+                })();
+
+                return;
+            }
+
             var request = $.ajax({
                 type: "post",
                 url: matematici.urls.reports.api + "/Viewer/GetReportData",
