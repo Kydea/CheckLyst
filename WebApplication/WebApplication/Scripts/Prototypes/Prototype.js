@@ -736,6 +736,7 @@
 
         var
             array = pako.gzip(JSON.stringify(model)),
+            reason,
             handler = function (base64CheckList) {
                 var
                     //base64CheckList = btoa(String.fromCharCode.apply(null, new Uint8Array(array))),
@@ -753,7 +754,8 @@
                         department: model.department,
                         prototypeType: model.prototypeType,
                         imagesToDelete: imagesToDelete,
-                        base64CheckList: base64CheckList
+                        base64CheckList: base64CheckList,
+                        creationReason: reason
                     });
 
                 $.ajax({
@@ -803,7 +805,13 @@
                 });
             };
 
-        toBase64(array, handler);
+        if (model.version == null)
+            new matematici.ReasonDialog(function (value) {
+                reason = value;
+                toBase64(array, handler);
+            }).show();
+        else
+            toBase64(array, handler);
     };
 
     prototype.delete = function () {

@@ -5,21 +5,18 @@
         sender = !options.wholePage && matematici.popup.getSender(),
         buttons = options.buttons || [],
         form,
-        lastReason,
         title,
 
         submit = function (event, callback, takeOpen) {
             var
                 settings = matematici.tokenManager.getCompanySettings(),
-                input,
+
                 trigger = function () {
                     form.trigger(event, function (result) {
                         form.handleResult(result);
 
-                        if (settings && settings.requireUserReason && !options.ignoreUserReason) {
-                            lastReason = !result.valid ? input.val() : "";
+                        if (settings && settings.requireUserReason && !options.ignoreUserReason) 
                             matematici.dialog.close();
-                        }
 
                         if (result.valid) {
                             matematici.canClose = true;
@@ -35,41 +32,12 @@
                     }, options.parametersPrepareHandler && options.parametersPrepareHandler());
                 };
 
-            if (settings && settings.requireUserReason && !options.ignoreUserReason) {
-                matematici.dialog.show({
-                    title: "Reason",
-                    content: $("<div />")
-                        .append(
-                            $("<label />")
-                                .attr("for", "DetailPageReasonInput")
-                                .text("Reason for change")
-                        )
-                        .append(
-                            input = $("<input />")
-                                .attr("id", "DetailPageReasonInput")
-                                .attr("type", "text")
-                                .attr("autocomplete", "off")
-                            //.val(lastReason) //we are currently asking the reason each time as desired by the customer, restore the old value to set last reason
-                        ),
-                    buttons: [
-                        {
-                            text: "save", icon: "check", defaultButton: true, handler: function () {
-                                if (input.val().trim() === "")
-                                    input.addClass("Error");
-                                else {
-                                    input.removeClass("Error");
-                                    form.setValue("reason", input.val());
-                                    trigger();
-                                }
-
-                                return true;
-                            }
-                        },
-                        { text: "cancel", hidden: false, icon: "times", cancelButton: true }
-                    ],
-                });
-                setTimeout(function () { input[0].focus(); }, 1);
-            } else {
+            if (settings && settings.requireUserReason && !options.ignoreUserReason) 
+                new matematici.ReasonDialog(function (value) {
+                    form.setValue("reason", value);
+                    trigger();
+                }).show();
+            else {
                 trigger();
                 if (event === "Delete") return false; // Close dialog in case event is delete and reason is not required
             }

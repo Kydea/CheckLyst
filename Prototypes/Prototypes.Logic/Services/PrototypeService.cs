@@ -21,6 +21,7 @@ using NLog;
 using CheckListManager.Common.Logic.FTP;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Common.Logic.License;
+using CheckListManager.Common.Core.Exceptions;
 
 namespace CheckListManager.Prototypes.Logic.Services
 {
@@ -283,6 +284,8 @@ namespace CheckListManager.Prototypes.Logic.Services
 
             if (NewVersion)
             {
+                if (string.IsNullOrEmpty(request.CreationReason))
+                    throw new HandledException($"Specify the creation reason");
                 Prototype.PrototypeVersions.Add(PrototypeVersion = new PrototypeVersions
                 {
                     VersionState = VersionState.Draft,
@@ -303,11 +306,11 @@ namespace CheckListManager.Prototypes.Logic.Services
             else
             {
                 PrototypeVersion = await _prototypeRepository.GetPrototypeVersionAsync(identity.CompanyId, request.ID, request.Version);
-                //if (PrototypeVersion.VersionState != VersionState.Draft) throw new Exception($"The version {request.ID}.{request.Version} is not editable"); //now there are properties always editable
+                //if (PrototypeVersion.VersionState != VersionState.Draft) throw new HandledException($"The version {request.ID}.{request.Version} is not editable"); //now there are properties always editable
                 if (
                     (PrototypeVersion.ModifiedOn?.UtcDateTime.Ticks ?? 0) - (request.ModifiedOn?.UtcDateTime.Ticks ?? 0) > 10000 /*ignored under milliseconds*/
                     || PrototypeVersion.ModifiedBy != request.ModifiedBy
-                ) throw new Exception($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
+                ) throw new HandledException($"Concurrency error: the prototype has already been modified by the user {request.ModifiedBy}"); //the db approximate some tick, we take 10 as maximum
 
                 PrototypeVersion.LifeCycle = request.LifeCycle;
                 PrototypeVersion.ModifiedOn = Now;
@@ -353,7 +356,11 @@ namespace CheckListManager.Prototypes.Logic.Services
                     Action = TrailAction.PrototypeCreated,
                     Date = DateTimeOffset.UtcNow,
                     CheckListCode = $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}",
-                    CheckListID = PrototypeVersion.Prototype
+                    CheckListID = PrototypeVersion.Prototype,
+                    Information = JsonConvert.SerializeObject(new
+                    {
+                        request.CreationReason
+                    })
                 });
             else
                 await _commonRepository.AddTrailRecordAsync(new Records
@@ -620,7 +627,7 @@ namespace CheckListManager.Prototypes.Logic.Services
                 throw new UnauthorizedAccessException();
 
             if (isEdit && prototypeVersion.VersionState != VersionState.Draft)
-                throw new Exception("The prototype version is not in state draft");
+                throw new HandledException("The prototype version is not in state draft");
         }
 
         public async Task<UploadAttachmentResponse> UploadAttachmentAsync(DefaultIdentity identity, UploadAttachmentRequest request)
@@ -635,7 +642,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             {
                 var success = await _storageService.PutAsync(_configurationService.PrototypesStorageBucket, key, memoryStream);
                 if (!success)
-                    throw new Exception("Error uploading the attachment");
+                    throw new HandledException("Error uploading the attachment");
             }
 
             return new UploadAttachmentResponse { Key = key, ImageName = imageName };

@@ -40,5 +40,7 @@ namespace CheckListManager.Prototypes.Logic.Messages
         public string TimeZone { get; set; }
 
         public bool InstanceCreation { get; set; }
+
+        public string CreationReason { get; set; }
     }
 }
