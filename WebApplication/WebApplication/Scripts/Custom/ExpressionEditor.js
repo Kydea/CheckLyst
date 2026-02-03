@@ -90,6 +90,15 @@
                             meta: element.type
                         });
                     }
+                    var expressions = prototypes.prototype.getModel().expressions;
+                    for (var index in expressions) {
+                        var expression = expressions[index];
+                        completions.push({
+                            name: "#" + expression.code,
+                            value: expression.code,
+                            meta: "expression"
+                        });
+                    }
                 }
                 callback(null, completions);
             },

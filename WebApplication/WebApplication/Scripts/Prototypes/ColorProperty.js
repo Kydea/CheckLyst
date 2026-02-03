@@ -9,9 +9,9 @@
             { label: "(Formula)", code: "-" },
             { label: "Black", code: "#000" },
             { label: "Red", code: "#cc0000" },
-            { label: "Cyan", code: "#e8f7fc" },
+            { label: "Blue", code: "#0000ff" },
             { label: "Green", code: "#009688" },
-            { label: "Grey", code: "#999" },
+            { label: "Orange", code: "#ff6600" },
             { label: "Yellow", code: "#ffba00" },
         ],
 

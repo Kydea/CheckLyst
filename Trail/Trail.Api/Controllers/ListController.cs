@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Trail.Api.Controllers
 {
@@ -133,7 +134,7 @@ namespace CheckListManager.Trail.Api.Controllers
             return Content(HttpStatusCode.OK, Rows, new CSVFormatter<TrailRow>(Header, "AuditTrail", tm =>
                 new string[] {
                     tm.ID.ToString(),
-                    tm.Date.ToLocalTime(Data.TimeZone).ToString(),
+                    tm.Date.Format(Data.TimeZone),
                     tm.User,
                     tm.Action,
                     tm.CheckListCode,

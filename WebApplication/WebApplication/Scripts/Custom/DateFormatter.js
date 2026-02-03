@@ -67,5 +67,5 @@
 
 	dateFormat: "YYYY-MM-DD",
 
-    timeFormat: "HH:mm"
+    timeFormat: "HH:mm:ss"
 }

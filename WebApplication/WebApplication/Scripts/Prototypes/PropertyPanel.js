@@ -16,8 +16,10 @@
         options,
 
         copyModel = function (source, destination) {
-            for (var property in source)
-                destination[property] = source[property];
+            Object.keys(destination).forEach(k => delete destination[k]);
+            Object.assign(destination, source);
+            //for (var property in source)
+            //    destination[property] = source[property];
             if (source.errors) {
                 destination.errors = [];
                 for (var error in source.errors)

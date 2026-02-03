@@ -200,9 +200,25 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                 user.NumberOfPINAttempts = 0;
                 await _userRepository.SaveChangesAsync();
+                await _commonRepository.AddTrailRecordAsync(new Records
+                {
+                    Company = user.Company,
+                    User = user.Code,
+                    Action = TrailAction.Login,
+                    Date = DateTimeOffset.UtcNow
+                });
             }
-            catch (AuthenticationException)
+            catch (AuthenticationException authenticationException)
             {
+                await _commonRepository.AddTrailRecordAsync(new Records
+                {
+                    Company = companyId.Value,
+                    User = code,
+                    Action = TrailAction.LoginFailed,
+                    Date = DateTimeOffset.UtcNow,
+                    Information = authenticationException.Message
+                });
+
                 if (!await _userRepository.UserPINFailedAsync(user))
                     await _commonRepository.AddTrailRecordAsync(new Records
                     {

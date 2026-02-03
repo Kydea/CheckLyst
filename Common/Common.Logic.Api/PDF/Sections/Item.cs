@@ -20,20 +20,22 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
         {
         }
 
-        private void DrawSignature(string Description, bool Valid, string User = null, string Date = null, string Time = null, string Signature = null)
+        private void DrawSignature(string Description, bool Valid, string User = null, string Date = null, string Time = null, string Signature = null, string Note = null)
         {
-            PdfPTable Table = new PdfPTable(4) { WidthPercentage = 100 };
+            PdfPTable Table = new PdfPTable(5) { WidthPercentage = 100 };
 
-            Table.AddCell(new PdfPCell(new Paragraph().SetText("Signed by").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Description).SetFont(PDFBase.BoldFont).Padding(5)));
             Table.AddCell(new PdfPCell(new Paragraph().SetText("Date").SetFont(PDFBase.BoldFont).Padding(5)));
             Table.AddCell(new PdfPCell(new Paragraph().SetText("Time").SetFont(PDFBase.BoldFont).Padding(5)));
             Table.AddCell(new PdfPCell(new Paragraph().SetText("Signature").SetFont(PDFBase.BoldFont).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText("Note").SetFont(PDFBase.BoldFont).Padding(5)));
             Table.CompleteRow();
 
             Table.AddCell(new PdfPCell(new Paragraph().SetText(User).Padding(5)));
             Table.AddCell(new PdfPCell(new Paragraph().SetText(Date).Padding(5)));
             Table.AddCell(new PdfPCell(new Paragraph().SetText(Time).Padding(5)));
-            Table.AddCell(new PdfPCell(new Paragraph().SetText(Date == null ? " " : Signature).Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature ?? " ").Padding(5)));
+            Table.AddCell(new PdfPCell(new Paragraph().SetText(Note ?? " ").Padding(5)));
             Table.CompleteRow();
 
             if (!Valid && !CheckListPDF.IsPrototype())
@@ -91,7 +93,7 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
                     foreach (var Sign in SignatureElement.History)
                     {
                         var Date = Sign.DateTime.ToLocalTime(CheckListPDF.TimeZone);
-                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", SignatureElement.Valid, Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm:ss"), Sign.Signature);
+                        DrawSignature(string.IsNullOrEmpty(Sign.Note) ? "Signed by" : "Canceled by", SignatureElement.Valid, Sign.User, Date.ToString("yyyy-MM-dd"), Date.ToString("HH:mm:ss"), Sign.Signature, Sign.Note);
                     }
                 else
                     DrawSignature("Signed by", SignatureElement.Valid);

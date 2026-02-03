@@ -72,11 +72,6 @@ body.Report {
 
             h1 {
                 font-size: 28px !important;
-
-                button.hamburger {
-                    padding: 0;
-                    margin-right: 10px;
-                }
             }
 
             table {
@@ -85,6 +80,12 @@ body.Report {
                     position: sticky !important;
                     top: 0;
                     cursor: default;
+
+                    button.hamburger {
+                        padding: 0 0 0 1px;
+                        margin-top: -10px;
+                        position: absolute;
+                    }
 
                     .Resizable {
                         cursor: ew-resize;

@@ -173,13 +173,16 @@
             if (initialized)
                 while (tableBody.firstChild && tableBody.removeChild(tableBody.firstChild));
             else {
-                h1.html(h1.html() + result.code + " - " + result.description);
-                hamburger = new matematici.Hamburger(selector + " h1 button", showMenu)
+                var title = result.code + " - " + result.description;
+                document.title = title;
+                h1.html(title);
+                hamburger = new matematici.Hamburger(selector + " thead button", showMenu)
 
-                tr = document.createElement("tr");
-                tableHead.appendChild(tr);
-                th = document.createElement("th");
-                tr.appendChild(th);
+                tr = tableHead.children[0];
+                //tr = document.createElement("tr");
+                //tableHead.appendChild(tr);
+                //th = document.createElement("th");
+                //tr.appendChild(th);
                 for (var columnIndex in result.columns) {
                     th = document.createElement("th");
                     th.innerText = result.columns[columnIndex];
