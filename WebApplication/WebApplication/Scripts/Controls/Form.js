@@ -106,7 +106,6 @@
                 bind(options.bindEvent, handleResult, loadForm(true) || prepareRequest());
             else {
                 var fieldValues = loadForm(false);
-                console.log(fieldValues);
                 if (fieldValues && fieldValues.data)
                     for (var index in fieldValues.data)
                         form.setValue(index, fieldValues.data[index]);

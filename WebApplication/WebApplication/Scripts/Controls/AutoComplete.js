@@ -17,6 +17,7 @@
         noRow,
         oldValue,
         multiple,
+        nullValue,
         free,
         freeOption,
         open,
@@ -58,7 +59,7 @@
                 .on("keyup", function (e) {
                     if (e.which < 37 || e.which > 40) { //arrow keys
                         updateList();
-                        if (!multiple) setCurrentItem(0);
+                        if (!multiple) setCurrentItem(free ? 1 : 0);
                     }
                 });
 
@@ -84,7 +85,11 @@
             matematici.AutoComplete.list.push(autoComplete);
 
             multiple = node.hasAttribute("multiple");
+            nullValue = node.getAttribute("data-nullable");
             free = node.getAttribute("data-free") == "true";
+
+            if (isNullable())
+                node.value = null;
 
             node.classList.add("AutoComplete");
             var parent = node.parentNode;
@@ -140,7 +145,7 @@
         },
 
         isNullable = function () {
-            return node.getAttribute("data-nullable") != null;
+            return nullValue != null;
         },
 
         createMap = function () {
@@ -170,7 +175,7 @@
                     }
                     text = texts.join(", ");
                 } else
-                    text = value && valuesMap.get(value) || "";
+                    text = value && valuesMap.get(value) || (free ? freeOption.text() : "");
             }
 
             labelNode.value = text;
@@ -281,6 +286,7 @@
                     scroll = list.scrollTop(),
                     listHeight = list.height(),
                     top = currentItem * itemHeight;
+
                 if (top < scroll)
                     list.scrollTop(top);
                 else if (top + itemHeight - listHeight > scroll)
@@ -374,18 +380,16 @@
 
         updateList = function () {
             list.empty();
-            var nullValue = node.getAttribute("data-nullable");
             if (nullValue != null)
                 list.append($("<a />").addClass("None").attr("href", "#").append($("<i />").text(nullValue == "" ? "(none)" : nullValue)));
 
+            var filter = input.val();
+            if (free) freeOption.attr("value", filter).text(filter);
+            filter = filter.toUpperCase();
+
             selectOptions
                 .each(function () {
-                    var
-                        option = $(this),
-                        filter = input.val();
-                    if (free)
-                        freeOption.attr("value", filter).text(filter);
-                    filter = filter.toUpperCase();
+                    var option = $(this);
                     if (filter == "" || option.text().toUpperCase().indexOf(filter) >= 0) {
                         const
                             value = option.attr("value"),
