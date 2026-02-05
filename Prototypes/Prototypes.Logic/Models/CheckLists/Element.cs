@@ -27,6 +27,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public bool ReadOnly { get; }
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
+        public string UserGroup { get; set; }
         public string SignatureCode { get; set; }
         public Conditions ValidCondition { get; set; }
         public string ValidExpressionCode { get; set; }

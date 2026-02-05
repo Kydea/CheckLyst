@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 using CheckListManager.Common.Logic.Models.Expressions;
@@ -138,7 +139,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
         protected override bool IsReadOnlyByDefault() => Previous != null && !Previous.Valid;
 
-        public virtual void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
+        public virtual void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
             WorseCountDownToValue = !ParentCountDownToValue.HasValue || CountDownToValue > ParentCountDownToValue ? CountDownToValue : ParentCountDownToValue;
 
@@ -151,7 +152,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             )
                 ReadOnly = true;
             else
-                UpdateReadOnly(userCode, readOnlyInstance);
+                UpdateReadOnly(identity, lockUser, readOnlyInstance);
         }
 
         public Item FindIteratorModelItem()

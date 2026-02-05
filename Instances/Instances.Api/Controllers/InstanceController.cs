@@ -168,7 +168,7 @@ namespace CheckListManager.Instances.Api.Controllers
             var cacheObject = await _instanceManagerService.GetCacheObjectForEditAsync(Identity, request.Code, false);
             _instanceManagerService.CheckViewPermission(Identity, cacheObject);
             cacheObject = await _instanceManagerService.GetInstanceAsync(Identity, cacheObject);
-            cacheObject.Instance.UpdateReadOnly(Identity.Code, cacheObject.InstanceState, false);
+            cacheObject.Instance.UpdateReadOnly(Identity, Identity.Code, cacheObject.InstanceState, false);
 
             var response = new InstanceResponse
             {

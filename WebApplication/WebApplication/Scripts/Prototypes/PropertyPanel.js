@@ -210,11 +210,16 @@
                 }
             ));
 
-            if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image" && model.typeName != "Note")
+            if (model.typeName != "Text" && model.typeName != "Link" && model.typeName != "Image" && model.typeName != "Note") {
                 properties.push(new prototypes.Property(
                     this, new prototypes.ExpressionProperty(model, "readOnly", "read-only", true, true, 0), "Read-only",
                     "Determines if the element is editable by the operator or not."
                 ));
+                properties.push(new prototypes.Property(
+                    this, new prototypes.SimpleValueProperty(model, "userGroup", { readOnly: state != prototypes.Prototype.states.draft }), "User group",
+                    "lockes the edit only to users logged to this group."
+                ));
+            }
 
             if (model.typeName != "Note") {
                 properties.push(new prototypes.Property(

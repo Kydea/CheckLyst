@@ -17,6 +17,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
         bool ReadOnly { get; }
         Conditions ReadOnlyCondition { get; set; }
         string ReadOnlyExpressionCode { get; set; }
+        string UserGroup { get; set; }
         [JsonIgnore]
         ICheckListSignature Signature { get; }
         string SignatureCode { get; set; }

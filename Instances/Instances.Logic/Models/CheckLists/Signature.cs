@@ -5,6 +5,7 @@ using System.Linq;
 using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -156,21 +157,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = SignerDescription });
         }
 
-        public void Unsign(string UserCode, string UserDescription, DateTimeOffset Now, string Note, string InstanceState)
+        public void Unsign(IDefaultIdentity identity, string lockUser, string userDescription, DateTimeOffset now, string note, string instanceState)
         {
             try
             {
                 Signed = false;
                 var Instance = ((Instance)CheckList);
-                Instance.UpdateReadOnly(UserCode, InstanceState, false);
+                Instance.UpdateReadOnly(identity, lockUser, instanceState, false);
                 if (ReadOnly)
                     throw new Exception("This signature is not editable"); //Signature is still readonly after unsign, may be locked by another signature or a special condition
 
-                SignedBy = UserCode;
-                SignerDescription = UserDescription;
-                ModifiedOn = SignedOn = Now;
+                SignedBy = lockUser;
+                SignerDescription = userDescription;
+                ModifiedOn = SignedOn = now;
 
-                History.Add(new SignatureRecord { DateTime = SignedOn, User = UserCode, Signature = UserDescription , Note = Note });
+                History.Add(new SignatureRecord { DateTime = SignedOn, User = lockUser, Signature = userDescription , Note = note });
             }
             catch
             {
@@ -179,9 +180,9 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             }
         }
 
-        public override void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
+        public override void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
-            base.UpdateReadOnly(userCode, readOnlyInstance, ParentCountDownToValue);
+            base.UpdateReadOnly(identity, lockUser, readOnlyInstance, ParentCountDownToValue);
             ReadOnly |= Signed && !Cancelable;
         }
     }

@@ -95,7 +95,7 @@ namespace CheckListManager.Instances.Logic.Services
         public async Task<InstanceCacheObject> GetCacheObjectForDownloadAsync(long company, string code, bool ignoreCache)
         {
             var cacheObject = await GetCacheObjectAsync(company, code, true, ignoreCache);
-            cacheObject.Instance.UpdateReadOnly(null, cacheObject.InstanceState, false);
+            cacheObject.Instance.UpdateReadOnly(null, null, cacheObject.InstanceState, false);
             return cacheObject;
         }
 
@@ -108,7 +108,7 @@ namespace CheckListManager.Instances.Logic.Services
                     !cacheObject.InstanceState.In(InstanceState.Draft, InstanceState.Progress)
                     || !HasPermission(identity, "Edit", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType)
                     || cacheObject.Year == 0 && !cacheObject.VersionState.In(VersionState.Draft, VersionState.InSimulation);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
+                cacheObject.Instance.UpdateReadOnly(identity, identity.Code, cacheObject.InstanceState, false);
             }
             return cacheObject;
         }
@@ -231,7 +231,7 @@ namespace CheckListManager.Instances.Logic.Services
                             await HandleValueChangeAsync(cacheObject, identity.Code, item.Id, parameter.Value);
 
                 cacheObject.Instance.UpdateAll(cacheObject);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, cacheObject.InstanceState, false);
+                cacheObject.Instance.UpdateReadOnly(identity, identity.Code, cacheObject.InstanceState, false);
 
                 if (saveCache) await SaveCacheObjectAsync(cacheObject);
 
@@ -322,7 +322,7 @@ namespace CheckListManager.Instances.Logic.Services
                     cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.StateChange);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
 
-                    cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Progress, false);
+                    cacheObject.Instance.UpdateReadOnly(identity, identity.Code, InstanceState.Progress, false);
 
                     _instancesRepository.SaveChildren(row.ID, CreateTags(cacheObject), CreateExpressionValues(cacheObject));
 
@@ -406,7 +406,7 @@ namespace CheckListManager.Instances.Logic.Services
                     throw new InstanceException("Access denied");
 
                 cacheObject = await UpdateDataBaseAsync(cacheObject, identity, true, true, false, identity.Code, DateTimeOffset.UtcNow);
-                cacheObject.Instance.UpdateReadOnly(identity.Code, InstanceState.Completed, false);
+                cacheObject.Instance.UpdateReadOnly(identity, identity.Code, InstanceState.Completed, false);
 
                 await _commonRepository.AddTrailRecordAsync(new Records
                 {
@@ -1375,7 +1375,7 @@ namespace CheckListManager.Instances.Logic.Services
 
                 //A signer may sign also if the page is locked by the main user (the lock is for concurrency purpose, not for security), NB: SignatureCheck is before the choice of signer
                 var lockUser = request.Type == "Signature" ? request.Username : identity.Code;
-                cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, request.Type == EventTypes.AttachInstance || request.Type == EventTypes.RefreshAttachedInstance);
+                cacheObject.Instance.UpdateReadOnly(identity, lockUser, cacheObject.InstanceState, request.Type == EventTypes.AttachInstance || request.Type == EventTypes.RefreshAttachedInstance);
 
                 stopWatch = Stopwatch.StartNew();
 
@@ -1489,10 +1489,10 @@ namespace CheckListManager.Instances.Logic.Services
                     foreach (var Element in AffectedElements)
                         Element.MarkNodeAsChanged(cacheObject.Instance, Roots, Property.Value);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
-                    cacheObject.Instance.UpdateReadOnly(lockUser ?? identity.Code, cacheObject.InstanceState, false);
+                    cacheObject.Instance.UpdateReadOnly(identity, lockUser ?? identity.Code, cacheObject.InstanceState, false);
                 }
                 else if (Property == DependencyRelation.Properties.ReadOnly)
-                    cacheObject.Instance.UpdateReadOnly(lockUser, cacheObject.InstanceState, false);
+                    cacheObject.Instance.UpdateReadOnly(identity, lockUser, cacheObject.InstanceState, false);
 
                 stopWatch.Stop();
                 handleTime = stopWatch.Elapsed.TotalMilliseconds;
@@ -1888,7 +1888,7 @@ namespace CheckListManager.Instances.Logic.Services
                 if (!HasPermission(identity, "Unsign", cacheObject.VersionState, cacheObject.Department, cacheObject.PrototypeType, signature.SignatureLevel))
                     throw new InstanceException($"The signature can be canceled by an user with function Unsign{(string.IsNullOrWhiteSpace(signature.SignatureLevel) ? string.Empty : $" and level {signature.SignatureLevel}")}");
 
-                signature.Unsign(identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
+                signature.Unsign(identity, identity.Code, identity.Description, DateTimeOffset.UtcNow, request.Note, cacheObject.InstanceState);
                 TrackChanges(cacheObject, identity.Code);
                 if (cacheObject.InstanceState == InstanceState.Progress)
                     await UpdateDataBaseAsync(cacheObject, identity, false, false, true, cacheObject.ModifiedBy, cacheObject.ModifiedOn);

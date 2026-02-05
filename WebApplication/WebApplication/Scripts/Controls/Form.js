@@ -106,6 +106,7 @@
                 bind(options.bindEvent, handleResult, loadForm(true) || prepareRequest());
             else {
                 var fieldValues = loadForm(false);
+                console.log(fieldValues);
                 if (fieldValues && fieldValues.data)
                     for (var index in fieldValues.data)
                         form.setValue(index, fieldValues.data[index]);
@@ -150,7 +151,7 @@
                 urlParameters = {},
                 hasParameters = false;
             if (window.location.search != "") {
-                window.location.search.substr(1).split("&").map(function (value) {
+                window.location.search.slice(1).split("&").forEach(function (value) {
                     var parameter = value.split("=");
                     if (parameter.length == 2 && parameter[0] != "") {
                         //console.log (parameter[0], parameter[1]);

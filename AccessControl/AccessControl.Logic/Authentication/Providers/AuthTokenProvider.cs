@@ -61,6 +61,8 @@ namespace CheckListManager.AccessControl.Logic.Authentication.Providers
                     var user = await userService.AuthenticateAsync(companyId, context.UserName, context.Password);
                     var grants = PrepareUserFunctions(user).SelectMany(f => f.GetClaims()).Distinct().ToList();
                     if (user.ReportWorkFlowLevel != null) grants.Add($"ReportWorkFlowLevel####{user.ReportWorkFlowLevel}");
+                    foreach(var group in user.UserGroups)
+                        grants.Add($"UserGroup####{group.Group}");
                     var identity = CreateIdentity(context.Options.AuthenticationType, user, grants);
 
                     var properties = new AuthenticationProperties(CreateProperties(user, grants))

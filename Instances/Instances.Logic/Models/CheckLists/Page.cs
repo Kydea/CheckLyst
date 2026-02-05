@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.CheckLists;
 
@@ -68,16 +69,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public void UpdateReadOnly(string userCode, bool ReadOnlyInstance, bool ignoreNullLock)
+        public void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool ReadOnlyInstance, bool ignoreNullLock)
 		{
-            var PageUnlocked = ignoreNullLock && Lock == null || Lock?.User == userCode;
+            var PageUnlocked = ignoreNullLock && Lock == null || Lock?.User == lockUser;
             if (PageUnlocked && !ReadOnlyInstance)
-                UpdateReadOnly(userCode, false);
+                UpdateReadOnly(identity, lockUser, false);
             else
                 ReadOnly = true;
 
             foreach (var group in Groups)
-				((Group)group).UpdateReadOnly(userCode, ReadOnlyInstance, CountDownToValue);
+				((Group)group).UpdateReadOnly(identity, lockUser, ReadOnlyInstance, CountDownToValue);
 		}
 
         public override void BuildDependencies()

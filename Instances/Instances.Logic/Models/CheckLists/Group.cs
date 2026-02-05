@@ -6,6 +6,7 @@ using CheckListManager.Instances.Logic.Exceptions;
 using System.Threading.Tasks;
 using CheckListManager.Common.Logic.Dependency;
 using System.Reflection;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -180,16 +181,16 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return true;
         }
 
-        public override void UpdateReadOnly(string userCode, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
+        public override void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool readOnlyInstance, DateTimeOffset? ParentCountDownToValue)
         {
-            base.UpdateReadOnly(userCode, readOnlyInstance, ParentCountDownToValue);
+            base.UpdateReadOnly(identity, lockUser, readOnlyInstance, ParentCountDownToValue);
 
             if (Iterator)
                 foreach (var iteration in Iterations)
-                    ((Iteration)iteration).UpdateReadOnly(userCode, readOnlyInstance, WorseCountDownToValue);
+                    ((Iteration)iteration).UpdateReadOnly(identity, lockUser, readOnlyInstance, WorseCountDownToValue);
             else
                 foreach (var item in Items)
-                    ((Item)item).UpdateReadOnly(userCode, readOnlyInstance, WorseCountDownToValue);
+                    ((Item)item).UpdateReadOnly(identity, lockUser, readOnlyInstance, WorseCountDownToValue);
 
         }
 

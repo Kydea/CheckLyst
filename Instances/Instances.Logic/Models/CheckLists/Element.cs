@@ -7,6 +7,8 @@ using CheckListManager.Common.Logic.Dependency;
 using CheckListManager.Common.Logic.Models.Expressions;
 using System.Linq;
 using System.Dynamic;
+using System.ServiceModel.Security;
+using CheckListManager.Common.Core.Web.Security;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -100,14 +102,21 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public bool ReadOnly { get; protected set; } //set is protected because this property is not persistent
         public Conditions ReadOnlyCondition { get; set; }
         public string ReadOnlyExpressionCode { get; set; }
+        public string UserGroup { get; set; }
         protected virtual bool IsReadOnlyByDefault() => false;
-        public void UpdateReadOnly(string userCode, bool readOnlyInstance)
+        public void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool readOnlyInstance)
 		{
 			if (readOnlyInstance)
 			{
 				ReadOnly = true;
 				return;
 			}
+
+            if (UserGroup != null && identity != null && !identity.HasPermission("UserGroup", null, null, null, UserGroup))
+            {
+                ReadOnly = true;
+                return;
+            }
 
             var expressionValue = CheckList?.GetExpressionValue(ReadOnlyExpressionCode, this)?.Value as bool? == true;
 			ReadOnly = 
