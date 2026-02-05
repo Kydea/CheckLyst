@@ -490,28 +490,43 @@ namespace CheckListManager.Prototypes.Logic.Services
             )
                 throw new UnauthorizedAccessException();
 
-            return (await Task.WhenAll(PrototypeVersion.PrototypeVersionsHistory.OrderBy(h => h.ID).Select(async h => new HistoryRow
+            List<HistoryRow> history = new List<HistoryRow>();
+            foreach (var record in PrototypeVersion.PrototypeVersionsHistory.OrderBy(h => h.ID))
             {
-                ID = h.ID,
-                Date = h.Date,
-                User = $"{h.User} - {_commonRepository.GetUser(identity.CompanyId, h.User)?.Description ?? "(unknown user)"}",
-                HasWorkFlow = h.WorkFlowApplications != null,
-                State = h.WorkFlowApplications == null ? h.State : h.WorkFlowApplications.FinalState,
-                ProposedState = h.WorkFlowApplications == null ? null : h.State,
-                Approved = h.WorkFlowApplications?.Approved,
-                Steps = h.WorkFlowApplications == null ? null : (await Task.WhenAll(h.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID).Select(async s => new HistoryStep
+                var historyRow = new HistoryRow
                 {
-                    ID = s.ID,
-                    Step = s.Step + 1,
-                    Date = s.Date,
-                    User = s.User == null ? string.Empty : $"{s.User} - {s.UserDescription}",
-                    Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
-                    Reason = s.Reason,
-                    Comment = s.Comment,
-                    Approved = s.Approved,
-                    AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
-                }))).ToList()
-            }))).ToList();
+                    ID = record.ID,
+                    Date = record.Date,
+                    User = $"{record.User} - {_commonRepository.GetUser(identity.CompanyId, record.User)?.Description ?? "(unknown user)"}",
+                    HasWorkFlow = record.WorkFlowApplications != null,
+                    State = record.WorkFlowApplications == null ? record.State : record.WorkFlowApplications.FinalState,
+                    ProposedState = record.WorkFlowApplications == null ? null : record.State,
+                    Approved = record.WorkFlowApplications?.Approved
+                };
+
+                if (record.WorkFlowApplications != null)
+                {
+                    historyRow.Steps = new List<HistoryStep>();
+                    foreach (var s in record.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID))
+                    {
+                        var step = new HistoryStep
+                        {
+                            ID = s.ID,
+                            Step = s.Step + 1,
+                            Date = s.Date,
+                            User = s.User == null ? string.Empty : $"{s.User} - {s.UserDescription}",
+                            Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                            Reason = s.Reason,
+                            Comment = s.Comment,
+                            Approved = s.Approved,
+                            AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, "Prototypes", "Approve", PrototypeVersion.Prototypes.Department, PrototypeVersion.Prototypes.PrototypeType, "PrototypeWorkFlowLevel", s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                        };
+                        historyRow.Steps.Add(step);
+                    }
+                }
+                history.Add(historyRow);
+            }
+            return history;
         }
 
         private async Task SetPrototypeVersionState(PrototypeVersions PrototypeVersion, string State, DateTimeOffset Date)
