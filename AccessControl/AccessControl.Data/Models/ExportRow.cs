@@ -21,6 +21,7 @@ namespace CheckListManager.AccessControl.Data.Models
         public long? PrototypeType { get; set; }
         public string PrototypeTypeName { get; set; }
         public string Role { get; set; }
+        public string ReportWorkFlowLevel { get; set; }
         public string FunctionGroup { get; set; }
         public string Function { get; set; }
         public string SignatureLevel { get; set; }
