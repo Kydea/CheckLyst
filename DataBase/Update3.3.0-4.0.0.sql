@@ -119,3 +119,5 @@ create table "Configuration"."UserSettingValues"
 );
 
 create unique index "Index_UserSettingValues_ID" on "Configuration"."SettingValues" ("Company", "Setting");
+
+insert into "Trail"."Actions" values ('Report state changed');

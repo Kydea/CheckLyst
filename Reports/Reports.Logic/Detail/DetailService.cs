@@ -15,6 +15,7 @@ using System.Security.Principal;
 using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.WorkFlows;
 using static SAP.Middleware.Connector.RfcAbapClassException;
+using System.Dynamic;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -338,7 +339,7 @@ namespace CheckListManager.Reports.Logic.Detail
             try
             {
                 await _reportsRepository.DeleteReportAsync(identity, request.ID.Value);
-                await AuditAsync(identity, TrailAction.ReportDeleted, request.ID.Value, request.Reason);
+                await AuditAsync(identity, TrailAction.ReportDeleted, request.ID.Value);
             }
             catch (Exception Exception)
             {
@@ -359,12 +360,13 @@ namespace CheckListManager.Reports.Logic.Detail
         public async Task<DetailResponse> SetStateAsync(IDefaultIdentity identity, DetailRequest request)
         {
             var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
+            dynamic information = new ExpandoObject();
             if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow == null)
-                report.ReportState = ReportState.Obsolete;
+                information.State = report.ReportState = ReportState.Obsolete;
             else if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow != null)
             {
-                report.ProposedState = ReportState.Obsolete;
-                report.ProposedDate = DateTimeOffset.UtcNow;
+                information.ProposedState = report.ProposedState = ReportState.Obsolete;
+                information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
                 await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {
@@ -372,15 +374,14 @@ namespace CheckListManager.Reports.Logic.Detail
                     Report = report.ID,
                     Action = "Report – state to Obsolete"
                 });
-
             }
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow == null)
-                report.ReportState = ReportState.Confirmed;
+                information.State = report.ReportState = ReportState.Confirmed;
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow != null)
             {
-                report.ReportState = ReportState.Completed;
-                report.ProposedState = ReportState.Confirmed;
-                report.ProposedDate = DateTimeOffset.UtcNow;
+                information.State = report.ReportState = ReportState.Completed;
+                information.ProposedState = report.ProposedState = ReportState.Confirmed;
+                information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
                 await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {
@@ -398,7 +399,7 @@ namespace CheckListManager.Reports.Logic.Detail
             report.ModifiedOn = DateTimeOffset.UtcNow;
 
             await _reportsRepository.SaveChangesAsync();
-            await AuditAsync(identity, TrailAction.ReportUpdated, request);
+            await _commonRepository.AuditAsync(identity, TrailAction.ReportStateChanged, information);
             return await LoadReportAsync(identity.CompanyId, request);
         }
 
@@ -421,30 +422,25 @@ namespace CheckListManager.Reports.Logic.Detail
             {
                 record.ID,
                 record.Code,
+                record.Version,
                 record.Description,
                 record.ReportSource,
                 record.Query,
-                //record.InstancesRangeRestricted,
-                //record.InstancesIDAlias,
-                //record.PrototypesRangeRestricted,
-                //record.PrototypesIDAlias,
                 record.Note,
                 record.WorkFlow,
                 record.Restricted,
                 ReportGroups = record.Groups,
                 ReportColumns = record.Columns,
-                ReportClauses = record.Clauses,
-                ReasonForChange = record.Reason
+                ReportClauses = record.Clauses
             };
             return _commonRepository.AuditAsync(identity, action, information);
         }
 
-        private Task AuditAsync(IDefaultIdentity identity, string action, long id, string reason)
+        private Task AuditAsync(IDefaultIdentity identity, string action, long id)
         {
             var information = new
             {
-                ID = id,
-                ReasonForChange = reason
+                ID = id
             };
             return _commonRepository.AuditAsync(identity, action, information);
         }

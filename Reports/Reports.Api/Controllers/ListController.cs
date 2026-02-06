@@ -60,7 +60,6 @@ namespace CheckListManager.Reports.Api.Controllers
         [Route("Verify")]
         public async Task<IHttpActionResult> Verify(Message<DetailRequest> request)
         {
-            request.Data.Reason = "-";
             return Ok(await _detailService.VerifyReportAsync(Identity, request.Data));
         }
 

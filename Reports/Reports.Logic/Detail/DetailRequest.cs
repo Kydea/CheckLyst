@@ -18,7 +18,6 @@ namespace CheckListManager.Reports.Logic.Detail
         public string PrototypesIDAlias { get; set; }
         public bool Restricted { get; set; }
         public long? WorkFlow { get; set; }
-        public string Reason { get; set; }
         public string State { get; set; }
         public bool NewVersion { get; set; }
         public List<string> Groups { get; set; }

@@ -96,7 +96,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             };
         }
 
-        private async Task SetState(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
+        private async Task SetStateAsync(DefaultIdentity identity, PrototypeVersions PrototypeVersion, string State, DateTimeOffset Now)
         {
             PrototypeVersion.ProposedState = null;
             PrototypeVersion.ProposedDate = null;
@@ -119,7 +119,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             }
         }
 
-        private async Task<bool> Approve(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        private async Task<bool> ApproveAsync(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             var UtcNow = DateTimeOffset.UtcNow;
             var Export = false;
@@ -140,7 +140,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 var OldVersion = PrototypeVersion.Prototypes.PrototypeVersions.SingleOrDefault(pv => pv.VersionState == VersionState.Active);
                 if (OldVersion != null)
                 {
-                    await SetState(identity, OldVersion, VersionState.Obsolete, UtcNow);
+                    await SetStateAsync(identity, OldVersion, VersionState.Obsolete, UtcNow);
                     OldVersion.PrototypeVersionsHistory.Add(new PrototypeVersionsHistory
                     {
                         Date = DateTimeOffset.UtcNow,
@@ -151,7 +151,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             }
 
             if (State == VersionState.Active || State == VersionState.Obsolete) Export = true;
-            await SetState(identity, PrototypeVersion, State, UtcNow);
+            await SetStateAsync(identity, PrototypeVersion, State, UtcNow);
             return Export;
         }
 
@@ -168,17 +168,17 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             });
         }
 
-        private async Task Reject(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
+        private async Task RejectAsync(DefaultIdentity identity, PrototypeVersions PrototypeVersion)
         {
             if (PrototypeVersion.VersionState == VersionState.InApproval)
                 _workFlowsRepository.DeletePrototypeVersionInstances(PrototypeVersion);
-            await SetState(identity, PrototypeVersion,
+            await SetStateAsync(identity, PrototypeVersion,
                 PrototypeVersion.VersionState == VersionState.InApproval
                     ? VersionState.Draft
                     : PrototypeVersion.VersionState, DateTimeOffset.UtcNow);
         }
 
-        private async Task SetState(DefaultIdentity identity, Instances Instance, string State)
+        private async Task SetStateAsync(DefaultIdentity identity, Instances Instance, string State)
         {
             Instance.InstanceState = State;
 
@@ -194,16 +194,16 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             });
         }
 
-        private async Task<bool> Approve(DefaultIdentity identity, Instances Instance)
+        private async Task<bool> ApproveAsync(DefaultIdentity identity, Instances Instance)
         {
             var Export = false;
-            await SetState(identity, Instance, InstanceState.Confirmed);
+            await SetStateAsync(identity, Instance, InstanceState.Confirmed);
 
             if (!string.IsNullOrWhiteSpace(Instance.FileName)) Export = true;
             return Export;
         }
 
-        private async Task Export(DefaultIdentity identity, Instances Instance)
+        private async Task ExportAsync(DefaultIdentity identity, Instances Instance)
         {
             await _queueService.SendObjectAsync(QueueName.InstancesFTP, new InstancesFTPMessage
             {
@@ -214,12 +214,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             });
         }
 
-        private async Task Reject(DefaultIdentity identity, Instances Instance)
+        private async Task RejectAsync(DefaultIdentity identity, Instances Instance)
         {
-            await SetState(identity, Instance, InstanceState.Deleted);
+            await SetStateAsync(identity, Instance, InstanceState.Deleted);
         }
 
-        private async Task SetState(DefaultIdentity identity, Reports Report, string State)
+        private async Task SetStateAsync(DefaultIdentity identity, Reports Report, string State)
         {
             Report.ReportState = State;
             Report.ProposedState = null;
@@ -229,30 +229,28 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 Company = identity.CompanyId,
                 User = identity.Code,
-                Action = TrailAction.ReportUpdated,
+                Action = TrailAction.ReportStateChanged,
                 Date = DateTimeOffset.UtcNow,
-                Information = JsonConvert.SerializeObject(new { State })
+                Information = JsonConvert.SerializeObject(new { Report.ID, Report.Code, Report.Version, State })
             });
         }
 
-        private async Task Approve(DefaultIdentity identity, Reports Report)
+        private async Task ApproveAsync(DefaultIdentity identity, Reports Report)
         {
             var State = Report.ReportState == ReportState.Confirmed ? ReportState.Obsolete : ReportState.Confirmed;
-            await SetState(identity, Report, State);
+            await SetStateAsync(identity, Report, State);
 
             if (State == ReportState.Confirmed && Report.Version > 1)
             {
                 var OldVersion = await _workFlowsRepository.GetReportVersionAsync(Report.Code, Report.Version - 1);
                 if (OldVersion != null)
-                    await SetState(identity, OldVersion, VersionState.Obsolete);
+                    await SetStateAsync(identity, OldVersion, VersionState.Obsolete);
             }
 
         }
 
-        private async Task Reject(DefaultIdentity identity, Reports Report) 
-        {
-            await SetState(identity, Report, Report.ReportState == ReportState.Confirmed ? ReportState.Confirmed : ReportState.Draft);
-        }
+        private Task RejectAsync(DefaultIdentity identity, Reports Report) =>
+            SetStateAsync(identity, Report, Report.ReportState == ReportState.Confirmed ? ReportState.Confirmed : ReportState.Draft);
 
         public async Task<SignResponse> SignAsync(DefaultIdentity identity, SignRequest request, string timeZone)
         {
@@ -373,7 +371,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
 
                         if (AllApproved)
                         {
-                            ExportFTP = await Approve(identity, PrototypeVersion);
+                            ExportFTP = await ApproveAsync(identity, PrototypeVersion);
                             Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
                         }
                     }
@@ -381,7 +379,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         if (AllApproved)
                         {
-                            ExportFTP = await Approve(identity, Instance);
+                            ExportFTP = await ApproveAsync(identity, Instance);
                             Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                         }
                     }
@@ -389,7 +387,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     {
                         if (AllApproved)
                         {
-                            await Approve(identity, Report);
+                            await ApproveAsync(identity, Report);
                             Step.WorkFlowApplications.FinalState = Report.ReportState;
                         }
                     }
@@ -405,17 +403,17 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     SignResponse.Completed = true;
                     if (PrototypeVersion != null)
                     {
-                        await Reject(identity, PrototypeVersion);
+                        await RejectAsync(identity, PrototypeVersion);
                         Step.WorkFlowApplications.FinalState = PrototypeVersion.VersionState;
                     }
                     else if (Instance != null)
                     {
-                        await Reject(identity, Instance);
+                        await RejectAsync(identity, Instance);
                         Step.WorkFlowApplications.FinalState = Instance.InstanceState;
                     }
                     else if (Report != null)
                     {
-                        await Reject(identity, Report);
+                        await RejectAsync(identity, Report);
                         Step.WorkFlowApplications.FinalState = Report.ReportState;
                     }
                 }
@@ -427,7 +425,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     if (PrototypeVersion != null)
                         await Export(identity, PrototypeVersion);
                     else if (Instance != null)
-                        await Export(identity, Instance);
+                        await ExportAsync(identity, Instance);
                 }
 
                 if (PrototypeVersion != null)
