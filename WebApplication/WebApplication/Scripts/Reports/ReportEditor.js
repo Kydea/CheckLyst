@@ -185,10 +185,8 @@
 
                 $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
 
-                if (options.newVersion) {
+                if (options.newVersion) 
                     model.fields.description.editable = true;
-                    model.fields.workFlow.editable = model.fields.workFlow.value == null;
-                }
 
                 detailPage = new matematici.DetailPage({
                     readOnly: !model.editable,
@@ -372,37 +370,24 @@
                 completeHandler(reportSources);
             });
 
-            if (options.id >= 0)
-                $.ajax({
-                    type: "post",
-                    url: matematici.urls.reports.api + "/List/Load",
+            $.ajax({
+                type: "post",
+                url: matematici.urls.reports.api + "/List/Load",
+                data: {
                     data: {
-                        data: {
-                            id: options.id
-                        }
+                        id: options.id
                     }
-                }).done(function (result) {
-                    model = result;
-                    if (options.newVersion) {
-                        model.newVersion = true;
-                        ++model.version;
-                        model.state = reports.Report.states.draft;
-                        model.editable = true;
-                    }
-                    completeHandler(reportSources);
-                });
-            else
-                model = {
-                    state: "Draft",
-                    editable: true,
-                    fields: {
-                        query: { value: null },
-                        reportSource: { value: null },
-                        version: { editable: false },
-                        columns: [],
-                        clauses: []
-                    }
-                };
+                }
+            }).done(function (result) {
+                model = result;
+                if (options.newVersion) {
+                    model.newVersion = true;
+                    ++model.version;
+                    model.state = reports.Report.states.draft;
+                    model.editable = true;
+                }
+                completeHandler(reportSources);
+            });
         };
 
     reportEditor.getModel = function () {

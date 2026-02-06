@@ -161,63 +161,68 @@ namespace CheckListManager.Reports.Logic.Detail
 
             try
             {
-                var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
                 var workFlows = (await _reportsRepository.GetWorkFlowsAsync(company)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
-                var lastVersion = await _reportsRepository.GetLastVersionAsync(company, report.Code);
-
-                response.ID = report.ID;
-                response.Code = report.Code;
-                response.Version = report.Version;
-                response.State = report.ReportState;
-                response.ProposedState = report.ProposedState;
-                response.ProposedDate = report.ProposedDate;
-                response.Editable = report.ReportState == "Draft";
-                response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
-                response.Fields["code"] = new Field { Value = report.Code, Editable = false };
-                response.Fields["description"] = new Field { Value = report.Description, Editable = response.Editable };
-                response.Fields["note"] = new Field { Value = report.Note, Editable = response.Editable };
-                response.Fields["reportSource"] = new Field { Value = report.ReportSource, Editable = response.Editable };
-                response.Fields["workFlow"] = new Field { Value = report.WorkFlow?.ToString(), Options = workFlows, Editable = response.Editable && (lastVersion == null || !lastVersion.WorkFlow.HasValue) };
-                response.Fields["query"] = new Field { Value = report.Query, Editable = response.Editable };
-                response.Fields["reportState"] = new Field { Value = report.ReportState, Editable = false };
-                response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false", Editable = response.Editable };
-                response.Fields["version"] = new Field { Value = report.Version.ToString(), Editable = false };
-                response.CreatedBy = report.CreatedBy;
-                response.CreatedOn = report.CreatedOn;
-                response.ModifiedBy = report.ModifiedBy;
-                response.ModifiedOn = report.ModifiedOn;
-
-                /*
-                response.Fields["instancesRangeRestricted"] = new Field { Value = report.InstancesRangeRestricted.ToString() };
-                response.Fields["instancesIDAlias"] = new Field { Value = report.InstancesIDAlias };
-                response.Fields["prototypesRangeRestricted"] = new Field { Value = report.PrototypesRangeRestricted.ToString() };
-                response.Fields["prototypesIDAlias"] = new Field { Value = report.PrototypesIDAlias };
-                */
-
-                response.Groups = report.Groups.Select(g => g.Code).ToList();
-
-                response.Columns = report.ReportColumns.OrderBy(c => c.ID).Select(c => new ReportColumn
+                if (request.ID.HasValue && request.ID >= 0)
                 {
-                    Label = c.Label,
-                    Column = c.Column,
-                    Format = c.Format,
-                    Visible = c.Visible,
-                    GroupColumn = c.GroupColumn,
-                    OrderColumn = c.OrderColumn,
-                    GroupAggregation = c.GroupAggregation,
-                    ValueAggregation = c.ValueAggregation
-                }).ToList();
+                    var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
 
-                response.Clauses = report.ReportClauses.OrderBy(c => c.ID).Select(c => new ReportClause
+                    response.ID = report.ID;
+                    response.Code = report.Code;
+                    response.Version = report.Version;
+                    response.State = report.ReportState;
+                    response.ProposedState = report.ProposedState;
+                    response.ProposedDate = report.ProposedDate;
+                    response.Editable = report.ReportState == "Draft";
+                    response.Fields["id"] = new Field { Value = report.ID.ToString(), Editable = false };
+                    response.Fields["code"] = new Field { Value = report.Code, Editable = false };
+                    response.Fields["description"] = new Field { Value = report.Description, Editable = response.Editable };
+                    response.Fields["note"] = new Field { Value = report.Note, Editable = response.Editable };
+                    response.Fields["reportSource"] = new Field { Value = report.ReportSource, Editable = response.Editable };
+                    response.Fields["workFlow"] = new Field { Value = report.WorkFlow?.ToString(), Options = workFlows };
+                    response.Fields["query"] = new Field { Value = report.Query, Editable = response.Editable };
+                    response.Fields["reportState"] = new Field { Value = report.ReportState, Editable = false };
+                    response.Fields["restricted"] = new Field { Value = report.Restricted ? "true" : "false", Editable = response.Editable };
+                    response.Fields["version"] = new Field { Value = report.Version.ToString(), Editable = false };
+                    response.CreatedBy = report.CreatedBy;
+                    response.CreatedOn = report.CreatedOn;
+                    response.ModifiedBy = report.ModifiedBy;
+                    response.ModifiedOn = report.ModifiedOn;
+
+                    response.Groups = report.Groups.Select(g => g.Code).ToList();
+
+                    response.Columns = report.ReportColumns.OrderBy(c => c.ID).Select(c => new ReportColumn
+                    {
+                        Label = c.Label,
+                        Column = c.Column,
+                        Format = c.Format,
+                        Visible = c.Visible,
+                        GroupColumn = c.GroupColumn,
+                        OrderColumn = c.OrderColumn,
+                        GroupAggregation = c.GroupAggregation,
+                        ValueAggregation = c.ValueAggregation
+                    }).ToList();
+
+                    response.Clauses = report.ReportClauses.OrderBy(c => c.ID).Select(c => new ReportClause
+                    {
+                        Label = c.Label,
+                        Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(c.Clause),
+                        Visible = c.Visible,
+                        Editable = c.Editable,
+                        ParameterName = c.ParameterName,
+                        ParameterType = c.ParameterType,
+                        ClauseType = c.ClauseType
+                    }).ToList();
+                }
+                else
                 {
-                    Label = c.Label,
-                    Clause = JsonConvert.DeserializeObject<ReportClause.ClauseRecord>(c.Clause),
-                    Visible = c.Visible,
-                    Editable = c.Editable,
-                    ParameterName = c.ParameterName,
-                    ParameterType = c.ParameterType,
-                    ClauseType = c.ClauseType
-                }).ToList();
+                    response.State = "Draft";
+                    response.Editable = true;
+                    response.Fields["id"] = new Field { Editable = false };
+                    response.Fields["code"] = new Field { Editable = false };
+                    response.Fields["workFlow"] = new Field { Options = workFlows };
+                    response.Fields["reportState"] = new Field { Value = "Draft", Editable = false };
+                    response.Fields["version"] = new Field { Editable = false };
+                }
             }
             catch (Exception exception)
             {
@@ -281,8 +286,20 @@ namespace CheckListManager.Reports.Logic.Detail
                         request.ID = null;
                     }
 
-                    if (lastVersion != null && lastVersion.WorkFlow.HasValue)
-                        request.WorkFlow = lastVersion.WorkFlow;
+                    if (lastVersion != null && lastVersion.WorkFlow.HasValue && !request.WorkFlow.HasValue)
+                    {
+                        response.Fields["WorkFlow"] = new Field
+                        {
+                            ValidationMessages = new List<ValidationMessage> {
+                                new ValidationMessage {
+                                    Level = ValidationMessage.LevelError,
+                                    Message = "Wirkflow is mandatory for new versions of reports with a workflow."
+                                }
+                            }
+                        };
+                        response.Valid = false;
+                        return response;
+                    }
 
                     if (request.ID.HasValue)
                     {
@@ -298,7 +315,6 @@ namespace CheckListManager.Reports.Logic.Detail
                     {
                         await _reportsRepository.AddReportAsync(identity, report, request.Groups, lastVersion == null ? 1 : lastVersion.Version + 1);
                         request.ID = response.ID = report.ID;
-                        if (request.NewVersion) lastVersion.ReportState = ReportState.Obsolete;
                         await _reportsRepository.SaveChangesAsync();
                         await AuditAsync(identity, TrailAction.ReportCreated, request);
                     }
@@ -374,7 +390,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 });
 
             }
-            else 
+            else
                 throw new InvalidOperationException($"State change from {report.ReportState} to {request.State} not allowed");
 
 

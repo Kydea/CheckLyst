@@ -162,9 +162,10 @@ namespace CheckListManager.WorkFlows.Data
             return WorkFlowApplication;
         }
 
-        public void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion)
-        {
+        public void DeletePrototypeVersionInstances(PrototypeVersions prototypeVersion) =>
             Entities.Instances.RemoveRange(prototypeVersion.Instances);
-        }
+
+        public Task<Reports> GetReportVersionAsync(string code, int version) =>
+            Entities.Reports.SingleOrDefaultAsync(r => r.Code == code && r.Version == version);
     }
 }

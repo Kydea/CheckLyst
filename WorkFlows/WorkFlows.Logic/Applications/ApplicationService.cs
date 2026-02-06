@@ -21,6 +21,7 @@ using CheckListManager.Common.Data.ListItems;
 using System.Security.Principal;
 using CheckListManager.Common.Logic.Models.Expressions.Parsing;
 using CheckListManager.Common.Logic.Models.Notifications;
+using CheckListManager.Common.Logic.DataEngine;
 
 namespace CheckListManager.WorkFlows.Logic.Applications
 {
@@ -234,8 +235,19 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             });
         }
 
-        private Task Approve(DefaultIdentity identity, Reports Report) =>
-            SetState(identity, Report, Report.ReportState == ReportState.Confirmed ? ReportState.Obsolete : ReportState.Confirmed);
+        private async Task Approve(DefaultIdentity identity, Reports Report)
+        {
+            var State = Report.ReportState == ReportState.Confirmed ? ReportState.Obsolete : ReportState.Confirmed;
+            await SetState(identity, Report, State);
+
+            if (State == ReportState.Confirmed && Report.Version > 1)
+            {
+                var OldVersion = await _workFlowsRepository.GetReportVersionAsync(Report.Code, Report.Version - 1);
+                if (OldVersion != null)
+                    await SetState(identity, OldVersion, VersionState.Obsolete);
+            }
+
+        }
 
         private async Task Reject(DefaultIdentity identity, Reports Report) 
         {
