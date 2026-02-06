@@ -84,6 +84,15 @@ div.Prototype div.Group > div.Commands {
 div.Prototype div.Group.Current {
   background-color: #fce6e8;
 }
+div.Prototype div.Group.DragTarget::before {
+  content: "\f309";
+  font-family: "Font Awesome 5 Pro";
+  position: absolute;
+  font-size: 30px;
+  left: -7px;
+  top: -30px;
+  z-index: 69;
+}
 div.Prototype div.Item {
   cursor: pointer;
 }

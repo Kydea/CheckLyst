@@ -7,7 +7,8 @@
         addButton,
 
         create = function () {
-            element = $("<div />");
+            element = $("<div />")
+                .attr("draggable", true);
 
             if (parent.isPage())
                 element.appendTo(parent.getElement());

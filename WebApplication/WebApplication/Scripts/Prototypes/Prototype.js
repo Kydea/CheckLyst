@@ -624,16 +624,29 @@
 
             new matematici.DragContainer(document.getElementById("Content"), {
                 groupSelector: ".Group",
-                itemSelector: ".Item",
+                itemSelector: ".Group > .Element",
                 placeholderClassName: "DragPlaceholder",
                 onDrop: function (c) {
                     if (c.target) {
-                        console.log("vero", c.itemIndex, c.targetIndex);
-                        c.item.click();
+                        if (!c.item.classList.contains("Current"))
+                            c.item.click();
                         moveItemTo(currentItem.getParent(), c.itemIndex, c.targetIndex);
                     }
                 }
             });            
+
+            new matematici.DragContainer(document.getElementById("Content"), {
+                groupSelector: ".Page",
+                itemSelector: ".Page > .Group",
+                placeholderClassName: "DragPlaceholder",
+                onDrop: function (c) {
+                    if (c.target) {
+                        if (!c.item.classList.contains("Current"))
+                            c.item.click();
+                        moveItemTo(currentItem.getParent(), c.itemIndex, c.targetIndex);
+                    }
+                }
+            });
 
             //opening
             $.ajax({

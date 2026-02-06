@@ -127,6 +127,16 @@ div.Prototype {
         &.Current {
             background-color: $Color-Pink;
         }
+
+        &.DragTarget::before {
+            content: fa-content($fa-var-long-arrow-alt-down);
+            font-family: "Font Awesome 5 Pro";
+            position: absolute;
+            font-size: 30px;
+            left: -7px;
+            top: -30px;
+            z-index: $Depth-DragPlaceHolder;
+        }
     }
 
     div.Item {

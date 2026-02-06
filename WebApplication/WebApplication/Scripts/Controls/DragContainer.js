@@ -27,8 +27,15 @@
             const item = e.target.closest(options.itemSelector);
             if (!item) return;
 
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+
             dragContext.item = item;
-            dragContext.group = item.closest(options.groupSelector);
+
+            let group = item.closest(options.groupSelector);
+            if (group === item) group = item.parentElement?.closest(options.groupSelector);
+
+            dragContext.group = group;
 
             e.dataTransfer.setData("text/plain", "");
 
@@ -41,9 +48,10 @@
             const group = e.target.closest(options.groupSelector);
             if (group !== dragContext.group) return;
             e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
 
             const target = findTarget(group, e.clientX, e.clientY);
-
             if (dragContext.target != target) {
                 dragContext.target && dragContext.target.classList.remove("DragTarget");
                 dragContext.target = target
@@ -58,6 +66,8 @@
             const group = e.target.closest(options.groupSelector);
             if (group !== dragContext.group) return;
             e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
 
             if (options.onDrop) {
                 var items = Array.from(dragContext.group.querySelectorAll(options.itemSelector));
