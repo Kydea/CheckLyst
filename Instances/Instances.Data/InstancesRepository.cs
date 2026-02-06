@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Common.CommandTrees;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
@@ -267,6 +268,7 @@ namespace CheckListManager.Instances.Data
         public async Task<List<TasksRecord>> GetTasksAsync
         (
             IDefaultIdentity identity,
+            string timeZone,
             InstanceFilters filters
         )
         {
@@ -294,6 +296,8 @@ namespace CheckListManager.Instances.Data
             };
 
             var List = await Read<TasksRecord>(TASKS_LIST_QUERY, Filters);
+            foreach (var item in List)
+                item.DateTimeTaskValue = DateTimeOffsetHelper.TryParse(item.TaskValue, timeZone, out _, out _, out var value, $"{DateTimeOffsetHelper.DateFormat} {DateTimeOffsetHelper.TimeFormat} UTC") ? value : null;
             return List.ToList();
         }
 

@@ -23,7 +23,7 @@ namespace CheckListManager.Common.Logic.Models.Expressions.Functions
 
         public override TypedValue GetValue(List<TypedValue> ArgumentValues, Dictionary<string, int> IterationIndexes, string TimeZone) =>
             base.GetValue(ArgumentValues, IterationIndexes, TimeZone) ??
-            new TypedValue(DataType.Date, DateTimeOffsetHelper.Parse($"{ArgumentValues[0].NumberValue:0000}-{ArgumentValues[1].NumberValue:00}-{ArgumentValues[2].NumberValue:00}", TimeZone, out var Ambiguous, out var AmbiguousTimesSpans, DateTimeOffsetHelper.DateFormat));
+            new TypedValue(DataType.Date, DateTimeOffsetHelper.Parse($"{ArgumentValues[0].NumberValue:0000}-{ArgumentValues[1].NumberValue:00}-{ArgumentValues[2].NumberValue:00}", TimeZone, out _, out _, DateTimeOffsetHelper.DateFormat));
 
         protected override DataType GetDataType() => DataType.Date;
     }

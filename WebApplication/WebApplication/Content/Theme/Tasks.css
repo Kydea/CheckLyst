@@ -8,35 +8,45 @@ body div.Tasks #Result h2 {
   padding: 10px;
   color: white;
   margin-bottom: 0 !important;
+  cursor: pointer;
 }
 body div.Tasks #Result h2:first-child {
   margin-top: 0 !important;
+}
+body div.Tasks #Result h2::after {
+  content: "\f106";
+  font-family: "Font Awesome 5 Pro";
+  float: right;
+}
+body div.Tasks #Result h2.Expanded::after {
+  content: "\f107";
+}
+body div.Tasks #Result h2.Expanded + * + * {
+  display: none;
+}
+body div.Tasks #Result h2:not(.Expanded) + * {
+  display: none;
 }
 body div.Tasks #Result div.Item {
   border: solid 1px #ccc;
   padding: 10px;
 }
-body div.Tasks #Result div.Item + div.Item {
-  margin-top: 20px;
-}
 body div.Tasks #Result div.Item span {
   display: block;
   float: left;
-}
-body div.Tasks #Result div.Item .Label {
-  clear: both;
-  margin-right: 10px;
 }
 body div.Tasks #Result div.Item .Code {
   color: #999;
 }
 body div.Tasks #Result div.Item .Value {
   color: #009688;
-  margin-bottom: 10px;
 }
 body div.Tasks #Result div.Item .Value.Date {
   color: #ffba00;
   font-weight: bold;
+}
+body div.Tasks #Result div.Item .Value.Date.Overdue {
+  color: #cc0000;
 }
 body div.Tasks #Result div.Item .Description {
   color: #ffba00;
@@ -44,7 +54,6 @@ body div.Tasks #Result div.Item .Description {
 body div.Tasks #Result div.Item a.Button {
   display: block;
   float: right;
-  clear: both;
 }
 body div.Tasks #Result div.Item.NoRecord {
   text-align: center;
@@ -52,4 +61,25 @@ body div.Tasks #Result div.Item.NoRecord {
   color: #999;
   border: none;
   padding: 0;
+}
+body div.Tasks #Result div.Item.Expanded .Label {
+  clear: both;
+  margin-right: 10px;
+}
+body div.Tasks #Result div.Item.Expanded .Value {
+  margin-bottom: 10px;
+}
+body div.Tasks #Result div.Item.Expanded a.Button {
+  clear: both;
+}
+body div.Tasks #Result div.Item.Collapsed .Label {
+  line-height: 36px;
+  margin-right: 5px;
+}
+body div.Tasks #Result div.Item.Collapsed .Label::before {
+  content: "";
+  margin-left: 20px;
+}
+body div.Tasks #Result div.Item.Collapsed .Value {
+  line-height: 36px;
 }

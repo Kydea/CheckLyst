@@ -168,10 +168,10 @@ namespace CheckListManager.Instances.Logic.List
                 Records = await _instancesRepository.LifeCycleAsync(identity, filters)
             };
 
-        public async Task<TasksResponse> GetTasksAsync(IDefaultIdentity identity, InstanceFilters filters) =>
+        public async Task<TasksResponse> GetTasksAsync(IDefaultIdentity identity, string timeZone, InstanceFilters filters) =>
             new TasksResponse
             {
-                Records = await _instancesRepository.GetTasksAsync(identity, filters)
+                Records = await _instancesRepository.GetTasksAsync(identity, timeZone, filters)
             };
 
         public async Task<long> CountTasksAsync(IDefaultIdentity identity) =>

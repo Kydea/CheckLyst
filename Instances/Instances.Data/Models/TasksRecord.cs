@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using static CheckListManager.Common.Core.Helpers.DateTimeOffsetHelper;
 namespace CheckListManager.Instances.Data.Models
 {
     public class TasksRecord
@@ -25,6 +25,7 @@ namespace CheckListManager.Instances.Data.Models
         public string TaskDescription { get; set; }
         public string TaskCode { get; set; }
         public string TaskValue { get; set; }
+        public DateTimeOffset? DateTimeTaskValue { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
     }

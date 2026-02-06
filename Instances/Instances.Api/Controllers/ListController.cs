@@ -65,7 +65,8 @@ namespace CheckListManager.Instances.Api.Controllers
         [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> Tasks(Message<InstanceFilters> request)
         {
-            return Ok(await _listService.GetTasksAsync(Identity, request.Data));
+            var Company = await _commonRepository.GetCompanyAsync(Identity.CompanyId);
+            return Ok(await _listService.GetTasksAsync(Identity, Company.TimeZone, request.Data));
         }
 
         [HttpPost]

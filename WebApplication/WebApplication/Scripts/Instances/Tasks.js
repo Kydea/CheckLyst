@@ -25,14 +25,41 @@
                     resultContainer.appendChild(h2);
                     h2.innerText = record.taskDescription;
 
+                    h2.addEventListener("click", function () {
+                        this.classList.toggle("Expanded");
+                        var expanded = this.classList.contains("Expanded");
+                        this.nextSibling.style.display = expanded ? "block" : "none";
+                        this.nextSibling.nextSibling.style.display = expanded ? "none" : "block";
+                    });
+
                     div = document.createElement("div");
                     resultContainer.appendChild(div);
-                    div.classList.add("Item", "Container");
+                    div.classList.add("Item", "Container", "Expanded");
+
+                    var collapsedDiv = document.createElement("div");
+                    resultContainer.appendChild(collapsedDiv);
+                    collapsedDiv.classList.add("Item", "Container", "Collapsed");
 
                     span = document.createElement("span");
                     div.appendChild(span);
                     span.classList.add("Value", "Date");
-                    span.innerText = record.taskValue == "True" ? "(no date)" : record.taskValue;
+                    if (record.taskValue == "True")
+                        span.innerText = "(no date)";
+                    else {
+                        var
+                            date = moment(record.taskValue),
+                            format = matematici.dateFormatter.format(date);
+
+                        if (format.hours == "00" && format.minutes == "00" && format.seconds == "00")
+                            span.innerText = format.date;
+                        else {
+                            span.innerText = format.date + " " + format.time;
+                            span.setAttribute("title", format.offset);
+                        }
+
+                        if (date.isBefore(new Date())) span.classList.add("Overdue");
+                    }
+                    collapsedDiv.appendChild(span.cloneNode(true));
 
                     span = document.createElement("span");
                     div.appendChild(span);
@@ -55,11 +82,24 @@
                     span = document.createElement("span");
                     div.appendChild(span);
                     span.classList.add("Label");
-                    span.innerText = "Instance:";
+                    span.innerText = "Instance code:";
+                    collapsedDiv.appendChild(span.cloneNode(true));
                     span = document.createElement("span");
                     div.appendChild(span);
                     span.classList.add("Value");
                     span.innerText = record.instanceCode;
+                    collapsedDiv.appendChild(span.cloneNode(true));
+
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Label");
+                    span.innerText = "Instance ID:";
+                    collapsedDiv.appendChild(span.cloneNode(true));
+                    span = document.createElement("span");
+                    div.appendChild(span);
+                    span.classList.add("Value");
+                    span.innerText = record.id;
+                    collapsedDiv.appendChild(span.cloneNode(true));
 
                     span = document.createElement("span");
                     div.appendChild(span);
@@ -108,6 +148,7 @@
                     anchor.appendChild(i);
                     i.classList.add("Icon", "fa", "fa-link");
 
+                    collapsedDiv.appendChild(anchor.cloneNode(true));
                 }
 
             matematici.clock.updateLightNotifications();

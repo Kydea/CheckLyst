@@ -12,9 +12,32 @@ body div.Tasks {
             padding: 10px;
             color: white;
             margin-bottom: 0 !important;
+            cursor: pointer;
 
             &:first-child {
                 margin-top: 0 !important;
+            }
+
+            &::after {
+                content: fa-content($fa-var-angle-up);
+                font-family: "Font Awesome 5 Pro";
+                float: right;
+            }
+
+            &.Expanded {
+                &::after {
+                    content: fa-content($fa-var-angle-down);
+                }
+
+                + * + * {
+                    display: none;
+                }
+            }
+
+            &:not(.Expanded) {
+                + * {
+                    display: none;
+                }
             }
         }
 
@@ -22,18 +45,12 @@ body div.Tasks {
             border: solid 1px $Color-Grey-Light;
             padding: 10px;
 
-            + div.Item {
-                margin-top: 20px;
-            }
-
             span {
                 display: block;
                 float: left;
             }
 
             .Label {
-                clear: both;
-                margin-right: 10px;
             }
 
             .Code {
@@ -42,11 +59,14 @@ body div.Tasks {
 
             .Value {
                 color: $Color-Green-Regular;
-                margin-bottom: 10px;
 
                 &.Date {
                     color: $Color-Yellow-Regular;
                     font-weight: bold;
+
+                    &.Overdue {
+                        color: $Color-Red-Regular;
+                    }
                 }
             }
 
@@ -57,15 +77,45 @@ body div.Tasks {
             a.Button {
                 display: block;
                 float: right;
-                clear: both;
             }
 
             &.NoRecord {
                 text-align: center;
                 font-style: italic;
                 color: $Color-Grey-Regular;
-                border:none;
+                border: none;
                 padding: 0;
+            }
+
+            &.Expanded {
+                .Label {
+                    clear: both;
+                    margin-right: 10px;
+                }
+
+                .Value {
+                    margin-bottom: 10px;
+                }
+
+                a.Button {
+                    clear: both;
+                }
+            }
+
+            &.Collapsed {
+                .Label {
+                    line-height: 36px;
+                    margin-right: 5px;
+
+                    &::before {
+                        content: "";
+                        margin-left: 20px
+                    }
+                }
+
+                .Value {
+                    line-height: 36px;
+                }
             }
         }
     }
