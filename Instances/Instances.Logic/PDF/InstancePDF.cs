@@ -60,8 +60,8 @@ namespace CheckListManager.Instances.Logic.PDF
                 new Tuple<string, string> ("Prototype version", Instance.Version.ToString()),
                 new Tuple<string, string> ("Instance code", Instance.InstanceCode),
                 new Tuple<string, string> ("Instance state", Instance.InstanceState),
-                new Tuple<string, string> ("Instance creation", Instance.CreatedOn.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz")),
-                new Tuple<string, string> ("Instance confirmation", Instance.InstanceState == InstanceState.Confirmed ? Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm UTC zzz") : "N/A")
+                new Tuple<string, string> ("Instance creation", Instance.CreatedOn.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss UTC zzz")),
+                new Tuple<string, string> ("Instance confirmation", Instance.InstanceState == InstanceState.Confirmed ? Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss UTC zzz") : "N/A")
             };
 
             var Exceptions = new StringBuilder();

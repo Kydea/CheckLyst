@@ -42,19 +42,23 @@
 
 		addInput = function () {
 			var input = $("<input />").attr("placeholder", "page");
-            input.on("blur", function () {
+			input.on("blur", function () {
 				var value = parseInt($(this).val());
 				if (value < 1) value = 1;
 				if (value > options.pages) value = options.pages;
-				
+
 				if (isNaN(value))
 					input.val("");
-				else
-				{
+				else {
 					input.val(value);
 					handler(value);
 				}
-            });
+			}).on("keydown", function (e) {
+				if (e.key === "Enter") {
+                    e.preventDefault();
+                    input.blur();
+				}
+			});
 			element.append(input);
 			element.append($("<i />").addClass("Icon fas fa-arrow-right"));
 		};

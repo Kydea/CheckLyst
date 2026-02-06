@@ -66,16 +66,16 @@
 
         }
 
-        valueCopy = function (e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
-                instances.instance.update(result);
-                next();
-            }).trigger();
-        },
+    valueCopy = function (e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
+            instances.instance.update(result);
+            next();
+        }).trigger();
+    },
 
         scan = function () {
             new matematici.Scanner(raiseChangeEvent);
@@ -311,12 +311,12 @@
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function () {
-        label.style.color = model.color;
+    this.setColor = function (color) {
+        label.style.color = color;
     };
 
-    this.setFontSize = function () {
-        label.style.fontSize = model.fontSize && model.fontSize + "px";
+    this.setFontSize = function (size) {
+        label.style.fontSize = size && size + "px";
     };
 
     setup();

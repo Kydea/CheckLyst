@@ -43,13 +43,13 @@
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function () {
-        i.style.color = model.color;
-        a.style.color = model.color;
+    this.setColor = function (value) {
+        i.style.color = value;
+        a.style.color = value;
     };
 
-    this.setFontSize = function () {
-        a.style.fontSize = model.fontSize && model.fontSize + "px";
+    this.setFontSize = function (value) {
+        a.style.fontSize = value && value + "px";
     };
 
     setup();

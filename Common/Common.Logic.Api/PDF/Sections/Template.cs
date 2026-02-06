@@ -46,12 +46,12 @@ namespace CheckListManager.Common.Logic.Api.PDF.Sections
             footer.Format.Alignment = ParagraphAlignment.Right;
             footer.Format.Borders.Top = PDFBase.DefaultBorder;
             footer.Format.Borders.DistanceFromTop = 10;
-            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
+            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size.Point, UnitType.Point);
 
             footer = PDF.Container.Footers.Primary.AddParagraph();
             footer.Format.Font = PDFBase.GrayFont;
-            footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm UTC zzz} - RESTRICTED");
-            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size, UnitType.Point);
+            footer.AddText($"Generated on {DateTimeOffset.UtcNow.ToLocalTime(PDF.TimeZone):yyyy-MM-dd HH:mm:ss UTC zzz} - RESTRICTED");
+            footer.Format.SpaceAfter = new Unit(-footer.Format.Font.Size.Point, UnitType.Point);
         }
 
         public void Render(FirstPage firstPage = null)

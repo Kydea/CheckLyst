@@ -112,13 +112,13 @@
     };
 
     this.setColor = function (value) {
-        uploadButton.style.backgroundColor = model.color;
-        viewButton.style.backgroundColor = model.color;
+        uploadButton.style.backgroundColor = value;
+        viewButton.style.backgroundColor = value;
     };
 
     this.setFontSize = function (value) {
-        uploadButton.style.fontSize = model.fontSize && model.fontSize + "px";
-        viewButton.style.fontSize = model.fontSize && model.fontSize + "px";
+        uploadButton.style.fontSize = value && value + "px";
+        viewButton.style.fontSize = value && value + "px";
     };
 
     this.trigger = function () {

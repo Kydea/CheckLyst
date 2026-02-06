@@ -42,11 +42,11 @@
     };
 
     this.setColor = function (value) {
-        a.css({ color: model.color });
+        a.css({ color: value });
     };
 
     this.setFontSize = function (value) {
-        a.css({ fontSize: model.fontSize && model.fontSize + "px" });
+        a.css({ fontSize: value && value + "px" });
     };
 
     this.trigger = clickHandler;

@@ -196,12 +196,12 @@
         this.setFontSize(model.fontSize);
     };
 
-    this.setColor = function () {
-        label.style.color = model.color;
+    this.setColor = function (value) {
+        label.style.color = value;
     };
 
-    this.setFontSize = function () {
-        label.style.fontSize = model.fontSize && model.fontSize + "px";
+    this.setFontSize = function (value) {
+        label.style.fontSize = value && value + "px";
     }
 
     setup();
