@@ -18,9 +18,16 @@
         },
 
         findTarget = function (group, mouseX, mouseY) {
-            const elementAtPoint = document.elementFromPoint(mouseX, mouseY);
-            const itemUnderMouse = elementAtPoint ? elementAtPoint.closest(options.itemSelector) : null;
-            return itemUnderMouse && group.contains(itemUnderMouse) && itemUnderMouse !== dragContext.item ? itemUnderMouse : null;
+            let element = document.elementFromPoint(mouseX, mouseY);
+            if (!element) return null;
+
+            while (element && element !== group) {
+                if (element.matches(options.itemSelector) && element.parentElement === group && element !== dragContext.item)
+                    return element;
+                element = element.parentElement;
+            }
+
+            return null;
         },
 
         dragStart = function (e) {
@@ -43,15 +50,13 @@
         },
 
         dragOver = function (e) {
-            if (!dragContext.group) return;
+            if (!dragContext.group || !dragContext.group.contains(e.target)) return;
 
-            const group = e.target.closest(options.groupSelector);
-            if (group !== dragContext.group) return;
             e.preventDefault();
             e.stopImmediatePropagation();
             e.stopPropagation();
 
-            const target = findTarget(group, e.clientX, e.clientY);
+            const target = findTarget(dragContext.group, e.clientX, e.clientY);
             if (dragContext.target != target) {
                 dragContext.target && dragContext.target.classList.remove("DragTarget");
                 dragContext.target = target
@@ -61,10 +66,8 @@
         },
 
         drop = function (e) {
-            if (!dragContext.group) return;
+            if (!dragContext.group || !dragContext.group.contains(e.target)) return;
 
-            const group = e.target.closest(options.groupSelector);
-            if (group !== dragContext.group) return;
             e.preventDefault();
             e.stopImmediatePropagation();
             e.stopPropagation();
