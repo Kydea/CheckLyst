@@ -244,7 +244,15 @@ namespace CheckListManager.WorkFlows.Logic.Applications
             {
                 var OldVersion = await _workFlowsRepository.GetReportVersionAsync(Report.Code, Report.Version - 1);
                 if (OldVersion != null)
+                {
                     await SetStateAsync(identity, OldVersion, VersionState.Obsolete);
+                    OldVersion.ReportsHistory.Add(new ReportsHistory
+                    {
+                        Date = DateTimeOffset.UtcNow,
+                        State = VersionState.Obsolete,
+                        User = identity.Code
+                    });
+                }
             }
 
         }

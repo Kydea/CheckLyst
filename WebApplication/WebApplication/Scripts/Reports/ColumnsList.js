@@ -168,13 +168,16 @@
                     verify();
                 };
 
-            var buttons = [
-                { text: "cancel", icon: "times", cancelButton: true },
-                { text: "delete columns", icon: "trash-alt", handler: deleteColumns },
-                { text: "replace columns", icon: "sync", handler: replaceColumns },
-                { text: "add columns", icon: "plus", handler: createColumns }
-            ];
-            matematici.dialog.popupMenu(buttons);
+            if (list.length > 0) {
+                var buttons = [
+                    { text: "cancel", icon: "times", cancelButton: true },
+                    { text: "delete columns", icon: "trash-alt", handler: deleteColumns },
+                    { text: "replace columns", icon: "sync", handler: replaceColumns },
+                    { text: "add columns", icon: "plus", handler: createColumns }
+                ];
+                matematici.dialog.popupMenu(buttons);
+            } else
+                createColumns();
         },
 
         removeItem = function (index) {

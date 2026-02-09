@@ -152,6 +152,9 @@
         <EntityTypeShape EntityType="RelationalDatabaseModel.UserSettingValues" Width="1.5" PointX="7.5" PointY="0.75" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSettingValues_Setting_fkey" />
         <AssociationConnector Association="RelationalDatabaseModel.UserSessions_User1" />
+        <EntityTypeShape EntityType="RelationalDatabaseModel.ReportsHistory" Width="1.5" PointX="26.875" PointY="13.25" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportsHistory_Report" />
+        <AssociationConnector Association="RelationalDatabaseModel.ReportsHistory_WorkFlowApplication_fkey" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

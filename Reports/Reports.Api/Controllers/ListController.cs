@@ -86,5 +86,14 @@ namespace CheckListManager.Reports.Api.Controllers
         {
             return Ok(await _detailService.GetColumnsAsync(Identity, request.Query, request.Clauses?.Where(c => c.ClauseType == "parameter").ToDictionary(k => k.ParameterName, v => v.ParameterType)));
         }
+
+        [HttpPost]
+        [Route("History")]
+        [Authorize(Roles = "Reports#Edit")]
+        public async Task<IHttpActionResult> History(DetailRequest request)
+        {
+            return Ok(await _detailService.History(Identity, request));
+        }
+
     }
 }

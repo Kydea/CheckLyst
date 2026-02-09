@@ -191,6 +191,9 @@
     <Compile Include="InstancesHistory.cs">
       <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ReportsHistory.cs">
+      <DependentUpon>RelationalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ReportState.cs" />
     <Compile Include="InstanceState.cs" />
     <Compile Include="InstanceStates.cs">

@@ -22,6 +22,7 @@ namespace CheckListManager.Common.Data
             this.Groups = new HashSet<Groups>();
             this.WorkFlowApplications = new HashSet<WorkFlowApplications>();
             this.ReportRuns = new HashSet<ReportRuns>();
+            this.ReportsHistory = new HashSet<ReportsHistory>();
         }
     
         public long ID { get; set; }
@@ -62,5 +63,7 @@ namespace CheckListManager.Common.Data
         public virtual ICollection<WorkFlowApplications> WorkFlowApplications { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ReportRuns> ReportRuns { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ReportsHistory> ReportsHistory { get; set; }
     }
 }

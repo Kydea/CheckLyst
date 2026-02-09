@@ -183,7 +183,9 @@
                     ]);
                 }
 
-                $("div.ActionBar a.ButtonGroup a.Delete", element).toggleClass("Hidden", options.id == null);
+                var buttonGroup = $("div.ActionBar a.ButtonGroup", element);
+                $("a.History", buttonGroup).toggleClass("Hidden", options.id <= 0);
+                $("a.Delete", buttonGroup).toggleClass("Hidden", !model.editable);
 
                 if (options.newVersion) 
                     model.fields.description.editable = true;
@@ -353,6 +355,48 @@
             new matematici.WorkFlowSignatureBook().showForReport(model.code, model.id, sign);
         },
 
+        showHistory = function () {
+            $.ajax({
+                url: matematici.urls.reports.api + "/List/History",
+                type: "post",
+                data: {
+                    id: model.id
+                }
+            }).done(function (result) {
+                var
+                    columns = [
+                        { label: "State", name: "state" },
+                        { label: "Date", name: "date", type: "DateTimeOffset" },
+                        { label: "User", name: "user" },
+                        { label: "Approved", name: "approved", type: "Boolean", align: "center" },
+                        { label: "Proposed state", name: "proposedState" },
+                        { label: "Signature step", name: "step", align: "center" },
+                        { label: "Signature reason", name: "reason" },
+                        { label: "Signature comment", name: "comment" },
+                        { label: "Appointed signer", name: "appointedUser" }
+                    ],
+                    rowRenderHandler = function (checkListGrid, rowIndex, data) {
+                        checkListGrid.addRow(data, rowIndex % 2 == 0 ? "Odd" : "Even");
+                        for (var subRowIndex in data.steps) {
+                            var
+                                subRow = data.steps[subRowIndex],
+                                tr = checkListGrid.addRow(subRow, "SubRow " + (subRowIndex % 2 == 0 ? "Odd " : "Even ") + (subRow.approved == true ? "Green" : subRow.approved == false ? "Red" : ""));
+
+                            $("td", tr).eq(0).addClass(rowIndex % 2 == 0 ? "Odd" : "Even");
+                        }
+                        checkListGrid.refresh();
+                        return true;
+                    },
+                    checkListGrid = new matematici.CheckListGrid("Report " + model.id, result, null, null, columns, rowRenderHandler),
+                    parameters = checkListGrid.getParameters(),
+                    attributes = { type: "text", readonly: "readonly" };
+
+                parameters.append($("<label />").append($("<span />").text("ID")).append($("<i />").addClass("Icon fal fa-industry")).append($("<input />").attr(attributes).val(model.id)));
+                parameters.append($("<label />").append($("<span />").text("Code")).append($("<i />").addClass("Icon fal fa-folder")).append($("<input />").attr(attributes).val(model.code)));
+                parameters.append($("<label />").append($("<span />").text("Version")).append($("<i />").addClass("Icon fal fa-list-ol")).append($("<input />").attr(attributes).val(model.version)));
+            });
+        },
+
         initialize = function () {
             var
                 reportSources = null;
@@ -412,6 +456,7 @@
     reportEditor.deleteRecord = deleteRecord;
     reportEditor.loadSignatureBook = loadSignatureBook;
     reportEditor.setState = setState;
+    reportEditor.showHistory = showHistory;
 
     initialize();
 };

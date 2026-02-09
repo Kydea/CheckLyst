@@ -16,5 +16,6 @@ namespace CheckListManager.Reports.Logic.Detail
 
         Task<List<ReportSource>> GetReportSourcesAsync();
         Task<List<string>> GetColumnsAsync(IDefaultIdentity identity, string query, Dictionary<string, string> parameters);
+        Task<List<HistoryRow>> History(DefaultIdentity identity, DetailRequest request);
     }
 }

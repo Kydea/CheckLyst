@@ -203,6 +203,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detail\HistoryRow.cs" />
+    <Compile Include="Detail\HistoryStep.cs" />
     <Compile Include="Viewer\ToggleFavouriteRequest.cs" />
     <Compile Include="ReportIdentity.cs" />
     <Compile Include="Run\IRunService.cs" />

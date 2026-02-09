@@ -219,7 +219,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     response.State = "Draft";
                     response.Editable = true;
                     response.Fields["id"] = new Field { Editable = false };
-                    response.Fields["code"] = new Field { Editable = false };
+                    response.Fields["code"] = new Field { Editable = !request.NewVersion };
                     response.Fields["workFlow"] = new Field { Options = workFlows };
                     response.Fields["reportState"] = new Field { Value = "Draft", Editable = false };
                     response.Fields["version"] = new Field { Editable = false };
@@ -316,6 +316,13 @@ namespace CheckListManager.Reports.Logic.Detail
                     {
                         await _reportsRepository.AddReportAsync(identity, report, request.Groups, lastVersion == null ? 1 : lastVersion.Version + 1);
                         request.ID = response.ID = report.ID;
+                        report.ReportsHistory.Add(new ReportsHistory
+                        {
+                            Date = DateTimeOffset.UtcNow,
+                            State = ReportState.Draft,
+                            User = identity.Code
+                        });
+
                         await _reportsRepository.SaveChangesAsync();
                         await AuditAsync(identity, TrailAction.ReportCreated, request);
                     }
@@ -368,11 +375,19 @@ namespace CheckListManager.Reports.Logic.Detail
                 information.ProposedState = report.ProposedState = ReportState.Obsolete;
                 information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
-                await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
+                var workFlowApplication = await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {
                     WorkFlow = report.WorkFlow.Value,
                     Report = report.ID,
                     Action = "Report – state to Obsolete"
+                });
+
+                report.ReportsHistory.Add(new ReportsHistory
+                {
+                    Date = DateTimeOffset.UtcNow,
+                    State = information.State,
+                    User = identity.Code,
+                    WorkFlowApplication = workFlowApplication.ID
                 });
             }
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow == null)
@@ -383,13 +398,27 @@ namespace CheckListManager.Reports.Logic.Detail
                 information.ProposedState = report.ProposedState = ReportState.Confirmed;
                 information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
-                await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
+                var workFlowApplication = await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {
                     WorkFlow = report.WorkFlow.Value,
                     Report = report.ID,
                     Action = "Report – state to Confirmed"
                 });
 
+                report.ReportsHistory.Add(new ReportsHistory
+                {
+                    Date = DateTimeOffset.UtcNow,
+                    State = information.State,
+                    User = identity.Code
+                });
+
+                report.ReportsHistory.Add(new ReportsHistory
+                {
+                    Date = DateTimeOffset.UtcNow,
+                    State = ReportState.Confirmed,
+                    User = identity.Code,
+                    WorkFlowApplication = workFlowApplication.ID
+                });
             }
             else
                 throw new InvalidOperationException($"State change from {report.ReportState} to {request.State} not allowed");
@@ -414,6 +443,48 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             using (var dataTable = await _reportViewerRepository.GetDataTableAsync(identity.CompanyId, query, parameters))
                 return dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+        }
+
+        public async Task<List<HistoryRow>> History(DefaultIdentity identity, DetailRequest request)
+        {
+            var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
+            List<HistoryRow> history = new List<HistoryRow>();
+            foreach (var record in report.ReportsHistory.OrderBy(h => h.ID))
+            {
+                var historyRow = new HistoryRow
+                {
+                    ID = record.ID,
+                    Date = record.Date,
+                    User = $"{record.User} - {_commonRepository.GetUser(identity.CompanyId, record.User)?.Description ?? "(unknown user)"}",
+                    HasWorkFlow = record.WorkFlowApplications != null,
+                    State = record.WorkFlowApplications == null ? record.State : record.WorkFlowApplications.FinalState,
+                    ProposedState = record.WorkFlowApplications == null ? null : record.State,
+                    Approved = record.WorkFlowApplications?.Approved
+                };
+
+                if (record.WorkFlowApplications != null)
+                {
+                    historyRow.Steps = new List<HistoryStep>();
+                    foreach (var s in record.WorkFlowApplications?.WorkFlowApplicationSteps.OrderBy(s => s.Step).ThenBy(s => s.ID))
+                    {
+                        var step = new HistoryStep
+                        {
+                            ID = s.ID,
+                            Step = s.Step + 1,
+                            Date = s.Date,
+                            User = s.User == null ? string.Empty : $"{s.User} - {s.UserDescription}",
+                            Level = $"({string.Join(", ", s.WorkFlowApplicationStepTags.Select(t => t.Tag))})",
+                            Reason = s.Reason,
+                            Comment = s.Comment,
+                            Approved = s.Approved,
+                            AppointedUser = s.User == null ? string.Join(", ", (await _commonRepository.GetAppointedUsersAsync(identity.CompanyId, s.WorkFlowApplicationStepTags.Select(t => t.Tag))).Select(u => u.Code)) : null
+                        };
+                        historyRow.Steps.Add(step);
+                    }
+                }
+                history.Add(historyRow);
+            }
+            return history;
         }
 
         private Task AuditAsync(IDefaultIdentity identity, string action, DetailRequest record)
