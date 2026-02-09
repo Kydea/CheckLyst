@@ -102,13 +102,14 @@
             rowClickHandler: function (row) {
                 var
                     openEditor = function () {
-                        window.open("@Url.Action("Editor")/" + encodeURIComponent(row.data("values").id));
+                        var id = row.data("values").id;
+                        window.open("@Url.Action("Editor")/" + id, "Report#" + id);
                     },
                     newVersion = function () {
-                        window.open("@Url.Action("Editor")/NewVersion/" + encodeURIComponent(row.data("values").id));
+                        window.open("@Url.Action("Editor")/NewVersion/" + row.data("values").id);
                     },
                     openViewer = function () {
-                        window.open("@Url.Action("Viewer")/" + encodeURIComponent(row.data("values").id));
+                        window.open("@Url.Action("Viewer")/" + row.data("values").id);
                     };
 
                 if (editor) {

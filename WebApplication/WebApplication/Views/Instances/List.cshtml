@@ -140,7 +140,8 @@
                     { content: "instances" }
                 ],
                 rowClickHandler: function (row) {
-                    window.open("@Url.Action("Detail")/" + encodeURIComponent(row.data("values").code));
+                    var code = encodeURIComponent(row.data("values").code);
+                    window.open("@Url.Action("Detail")/" + code, "Instance#" + code);
                 },
                 setCellValueHandler: function (cell, data, column, type, value) {
                     if (column == "exceptions" && value)

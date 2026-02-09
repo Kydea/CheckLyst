@@ -133,7 +133,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             Common.Data.Reports report;
             if (request.Run.HasValue)
             {
-                var run = await _reportsRepository.GetRunAsync(request.Run.Value);
+                var run = await _reportsRepository.GetRunAsync(request.Run.Value) ?? throw new Exception($"Report run {request.Run} not found");
                 if (run.Company != identity.CompanyId) throw new UnauthorizedAccessException("company");
                 if (run.User != identity.Code) throw new UnauthorizedAccessException("user");
                 if (run.Data == null || !run.CompletedOn.HasValue) throw new InvalidOperationException();
@@ -143,7 +143,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             }
             else
             {
-                report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, identity.HasPermission("Reports", "Edit") ? null : identity.Code);
+                report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, identity.HasPermission("Reports", "Edit") ? null : identity.Code) ?? throw new Exception($"Report {request.ID} not found"); ;
                 var parameters = new List<Parameter>(report.ReportClauses.Count);
                 var query = BuildQuery(identity.CompanyId, report, parameters, request.Parameters?.ToDictionary(k => k.Code, v => v.Value)).ToString();
                 var rows = await _reportViewerRepository.GetDataAsync(identity.CompanyId, await _settingService.TimeZoneAsync(identity.CompanyId), await _settingService.DecimalSeparatorAsync(identity.CompanyId), query, report.ReportColumns.ToList(), parameters, cancellationToken);

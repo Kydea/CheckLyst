@@ -326,15 +326,11 @@
 
         moveItemTo = function (parent, itemIndex, position) {
             var items = parent.getChildren();
+            if (itemIndex < 0 || itemIndex >= items.length || position < 0 || position >= items.length || itemIndex == position) return;
+
             const [item] = items.splice(itemIndex, 1);
             items.splice(position - (position > itemIndex), 0, item);
             parent.setChildren(items);
-
-            /* uncommon bug that creates an undefined item */
-            for (var i of items) 
-                if (i == null)
-                    console.log(parent, itemIndex, position);
-
             update();
             matematici.canClose = false;
         },

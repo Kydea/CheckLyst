@@ -144,6 +144,23 @@ create table "Reports"."UserReports"
 
 alter table "WorkFlows"."WorkFlowApplications" add constraint "WorkFlowApplications_Reports" foreign key ("Report") references "CheckLists"."Reports" on delete cascade;
 
+create table "Reports"."ReportsHistory"
+(
+	"ID" bigserial primary key,
+
+	"Report" bigint not null,
+  constraint "ReportsHistory_Report" foreign key ("Report") references "Reports"."Reports" on delete cascade,
+
+	"Date" timestamptz not null default current_timestamp,
+
+	"State" varchar (100) not null,
+	"User" varchar (60) not null,
+
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+);
+
+create index "Index_ReportsHistory_Report" on "Reports"."ReportsHistory"("Report");
+
 alter table "Infrastructure"."Companies" enable row level security;
 alter table "Infrastructure"."Departments" enable row level security;
 alter table "Security"."Users" enable row level security;

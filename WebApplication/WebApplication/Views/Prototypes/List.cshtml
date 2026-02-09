@@ -104,7 +104,7 @@
         },
 
         openPrototypeHandler = function (data) {
-            window.open("@Url.Action("Detail")/" + data.id + "/" + data.version);
+            window.open("@Url.Action("Detail")/" + data.id + "/" + data.version, "Prototype#" + data.id + "#" + data.version);
         },
 
         useAsTemplateHandler = function (data) {

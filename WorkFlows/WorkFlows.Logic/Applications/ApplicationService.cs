@@ -457,6 +457,12 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     information.Add("ValidUntil", SignResponse.ValidUntil?.ToLocalTime(timeZone) ?? (object)"(never expires)");
                 }
 
+                if (Report != null)
+                {
+                    information.Add("ReportID", Report.ID);
+                    information.Add("ReportCode", Report.Code);
+                }
+
                 await _commonRepository.AddTrailRecordAsync(new Records
                 {
                     Company = identity.CompanyId,

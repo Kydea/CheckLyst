@@ -121,3 +121,20 @@ create table "Configuration"."UserSettingValues"
 create unique index "Index_UserSettingValues_ID" on "Configuration"."SettingValues" ("Company", "Setting");
 
 insert into "Trail"."Actions" values ('Report state changed');
+
+create table "Reports"."ReportsHistory"
+(
+	"ID" bigserial primary key,
+
+	"Report" bigint not null,
+  constraint "ReportsHistory_Report" foreign key ("Report") references "Reports"."Reports" on delete cascade,
+
+	"Date" timestamptz not null default current_timestamp,
+
+	"State" varchar (100) not null,
+	"User" varchar (60) not null,
+
+	"WorkFlowApplication" bigint references "WorkFlows"."WorkFlowApplications"
+);
+
+create index "Index_ReportsHistory_Report" on "Reports"."ReportsHistory"("Report");
