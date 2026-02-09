@@ -216,8 +216,14 @@
                     "Determines if the element is editable by the operator or not."
                 ));
                 properties.push(new prototypes.Property(
-                    this, new prototypes.SimpleValueProperty(model, "userGroup", { readOnly: state != prototypes.Prototype.states.draft }), "User group",
-                    "lockes the edit only to users logged to this group."
+                    this, new prototypes.WorkFlowProperty(model, "instanceConfirmationWorkFlow", { readOnly: state != prototypes.Prototype.states.draft }),
+                    "Instance confirmation workflow", "The confirmation workflow of the instance of this prototype. Leave empty to have the instances confirmed without a confirmation workflow."
+                ));
+
+                properties.push(new prototypes.Property(
+                    this, new prototypes.UserGroupProperty(model, "userGroup", { readOnly: state != prototypes.Prototype.states.draft }),
+                    "User group",
+                    "Locks the edit only to users logged to this group."
                 ));
             }
 
