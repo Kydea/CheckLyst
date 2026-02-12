@@ -53,7 +53,7 @@
                 select.append($("<option />").attr({ value: option.code, selected: value == option.code }).text(option.label));
                 if (value == option.code) custom = false;
             }
-            if (custom) select.val("-");
+            if (custom && value != null && value != "") select.val("-");
             select.on("change", change);
             valuePanel.append(select);
 

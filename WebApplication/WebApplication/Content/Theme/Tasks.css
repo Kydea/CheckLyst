@@ -14,12 +14,12 @@ body div.Tasks #Result h2:first-child {
   margin-top: 0 !important;
 }
 body div.Tasks #Result h2::after {
-  content: "\f106";
+  content: "\f107";
   font-family: "Font Awesome 5 Pro";
   float: right;
 }
 body div.Tasks #Result h2.Expanded::after {
-  content: "\f107";
+  content: "\f106";
 }
 body div.Tasks #Result h2.Expanded + * + * {
   display: none;

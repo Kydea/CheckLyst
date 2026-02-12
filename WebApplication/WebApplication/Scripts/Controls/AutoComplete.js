@@ -229,12 +229,14 @@
                 readOnly = true;
                 labelNode.classList.add("ReadOnly");
                 labelNode.readOnly = true;
+                labelNode.disabled = true;
                 iconNode.remove();
                 if (open) setTimeout(hideList, 0);
             } else {
                 readOnly = false;
                 labelNode.classList.remove("ReadOnly");
                 labelNode.readOnly = false;
+                labelNode.disabled = false;
                 if (input)
                     icon.insertAfter(input);
                 else

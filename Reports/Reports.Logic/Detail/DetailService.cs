@@ -16,6 +16,7 @@ using CheckListManager.Common.Data.ListItems;
 using CheckListManager.Common.Logic.WorkFlows;
 using static SAP.Middleware.Connector.RfcAbapClassException;
 using System.Dynamic;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Reports.Logic.Detail
 {
@@ -289,16 +290,19 @@ namespace CheckListManager.Reports.Logic.Detail
 
                     if (lastVersion != null && lastVersion.WorkFlow.HasValue && !request.WorkFlow.HasValue)
                     {
+                        var workFlows = (await _reportsRepository.GetWorkFlowsAsync(identity.CompanyId)).Select(wf => new Option(wf.ID.ToString(), wf.Description));
                         response.Fields["WorkFlow"] = new Field
                         {
+                            Options = workFlows,
                             ValidationMessages = new List<ValidationMessage> {
                                 new ValidationMessage {
                                     Level = ValidationMessage.LevelError,
-                                    Message = "Wirkflow is mandatory for new versions of reports with a workflow."
+                                    Message = "Workflow is mandatory for new versions of reports with a workflow."
                                 }
                             }
                         };
                         response.Valid = false;
+                        response.Editable = true;
                         return response;
                     }
 
@@ -368,12 +372,24 @@ namespace CheckListManager.Reports.Logic.Detail
         {
             var report = await _reportsRepository.GetReportAsync(identity.CompanyId, request.ID.Value, null);
             dynamic information = new ExpandoObject();
+            information.ID = report.ID;
+            information.Code = report.Code;
+            information.Versione = report.Version;
             if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow == null)
+            {
                 information.State = report.ReportState = ReportState.Obsolete;
+
+                report.ReportsHistory.Add(new ReportsHistory
+                {
+                    Date = DateTimeOffset.UtcNow,
+                    State = ReportState.Obsolete,
+                    User = identity.Code,
+                });
+            }
             else if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow != null)
             {
+                information.State = ReportState.Confirmed;
                 information.ProposedState = report.ProposedState = ReportState.Obsolete;
-                information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
                 var workFlowApplication = await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {
@@ -385,18 +401,26 @@ namespace CheckListManager.Reports.Logic.Detail
                 report.ReportsHistory.Add(new ReportsHistory
                 {
                     Date = DateTimeOffset.UtcNow,
-                    State = information.State,
+                    State = ReportState.Obsolete,
                     User = identity.Code,
                     WorkFlowApplication = workFlowApplication.ID
                 });
             }
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow == null)
+            {
                 information.State = report.ReportState = ReportState.Confirmed;
+
+                report.ReportsHistory.Add(new ReportsHistory
+                {
+                    Date = DateTimeOffset.UtcNow,
+                    State = ReportState.Completed,
+                    User = identity.Code,
+                });
+            }
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow != null)
             {
                 information.State = report.ReportState = ReportState.Completed;
                 information.ProposedState = report.ProposedState = ReportState.Confirmed;
-                information.ProposedDate = report.ProposedDate = DateTimeOffset.UtcNow;
 
                 var workFlowApplication = await _workFlowsService.CreateWorkFlowApplicationAsync(identity, new CreateRequest
                 {

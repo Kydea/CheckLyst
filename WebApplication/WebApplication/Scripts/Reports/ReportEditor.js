@@ -403,7 +403,6 @@
 
             reports.reportEditor = reportEditor;
             reportSourceSelect = $("select[name=reportSource]", element).on("change", reportSourceChanged);
-            workFlowSelect = $("select[name=workFlow]", element);
             editor = new matematici.SQLEditor("AceEditor");
 
             $.ajax({

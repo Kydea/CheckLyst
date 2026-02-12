@@ -19,14 +19,14 @@ body div.Tasks {
             }
 
             &::after {
-                content: fa-content($fa-var-angle-up);
+                content: fa-content($fa-var-angle-down);
                 font-family: "Font Awesome 5 Pro";
                 float: right;
             }
 
             &.Expanded {
                 &::after {
-                    content: fa-content($fa-var-angle-down);
+                    content: fa-content($fa-var-angle-up);
                 }
 
                 + * + * {

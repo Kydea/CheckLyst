@@ -66,7 +66,7 @@
 			}
 
 			if (!model.comment) {
-				matematici.controls.setValidationMessages($("textarea#Comment", element), [{ message: "The comment is mandatory for the rejections" }])
+				matematici.controls.setValidationMessages($("textarea#Comment", element), [{ message: "The comment is mandatory" }])
 				error = true;
 			}
 			if (!model.password) {
