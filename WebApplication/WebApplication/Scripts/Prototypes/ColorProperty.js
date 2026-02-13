@@ -5,7 +5,7 @@
         input,
 
         values = [
-            { label: "(Default)", code: "" },
+            { label: "(Default)", code: "--" },
             { label: "(Formula)", code: "-" },
             { label: "Black", code: "#000" },
             { label: "Red", code: "#cc0000" },
@@ -18,7 +18,7 @@
         change = function () {
             var value = select.val();
             input.toggle(value == "-");
-            model[property] = value == "-" ? input.val() : value;
+            model[property] = value == "--" ? "" : value == "-" ? input.val() : value;
             base.updateModel(model);
         },
 
@@ -53,7 +53,8 @@
                 select.append($("<option />").attr({ value: option.code, selected: value == option.code }).text(option.label));
                 if (value == option.code) custom = false;
             }
-            if (custom && value != null && value != "") select.val("-");
+            if (custom) 
+                select.val(value == null || value == "" ? "--" : "-");
             select.on("change", change);
             valuePanel.append(select);
 
@@ -63,6 +64,8 @@
                 .on("change", change)
                 .appendTo(valuePanel)
                 .toggle(custom);
+
+            change();
         }
     }
 

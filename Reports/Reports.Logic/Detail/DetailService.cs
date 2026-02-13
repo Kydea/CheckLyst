@@ -413,7 +413,7 @@ namespace CheckListManager.Reports.Logic.Detail
                 report.ReportsHistory.Add(new ReportsHistory
                 {
                     Date = DateTimeOffset.UtcNow,
-                    State = ReportState.Completed,
+                    State = ReportState.Confirmed,
                     User = identity.Code,
                 });
             }
