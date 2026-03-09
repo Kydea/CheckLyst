@@ -217,7 +217,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             foreach (var item in Items)
             {
                 var clone = item.Clone(group);
-                if (clone != null) group.Items.Add(clone);
+                group.Items.Add(clone);
             }
 
             Copy(this, group);

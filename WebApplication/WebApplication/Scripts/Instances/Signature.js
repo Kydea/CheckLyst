@@ -218,8 +218,8 @@
             user.value = model.signedBy + " - " + model.signerDescription;
             var format = matematici.dateFormatter.format(moment.parseZone(model.signedOn));
             date.value = format.date;
-            time.value = format.time + ":" + format.seconds;
-            element.setAttribute("title", user.value + " | " + format.date + " " + " " + format.time + ":" + format.seconds + " " + format.offset);
+            time.value = format.time;
+            element.setAttribute("title", user.value + " | " + format.date + " " + " " + format.time + " " + format.offset);
             if (cancelButton) {
                 cancelButton.style.display = "inline-block";
                 button.style.display = "none";

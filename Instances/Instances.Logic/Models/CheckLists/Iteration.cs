@@ -59,11 +59,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 foreach (var Item in Group.Items)
                 {
                     var Clone = Item.Clone(this);
-                    if (Clone != null)
-                    {
-                        Clone.Iteration = this;
-                        Items.Add(Clone);
-                    }
+                    Clone.Iteration = this;
+                    Items.Add(Clone);
                 }
             }
             SetupItems();

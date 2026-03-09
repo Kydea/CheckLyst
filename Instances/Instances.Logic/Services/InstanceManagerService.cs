@@ -2088,7 +2088,7 @@ namespace CheckListManager.Instances.Logic.Services
                 {
                     var AffectedField = (Field)ExternalSourceDependencyRelation.GetNode(cacheObject.Instance);
                     if (!AffectedField.IteratorModelItem) //other scope
-                        AffectedElements.Add(AffectedField); 
+                        AffectedElements.Add(AffectedField);
                 }
             }
 

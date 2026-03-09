@@ -14,7 +14,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public ICheckListAttachmentBase GetTarget() =>
-            this.Target == null || !GetBranchElements().TryGetValue(this.Target, out var Item) || !(Item is Image Image) ? this : Image;
+            Target == null || !GetBranchElements().TryGetValue(Target, out var Item) || !(Item is Image Image) ? this : Image;
 
         public override dynamic GetViewModel(bool ReportModel)
         {
