@@ -680,7 +680,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.UsersCount;
             if (licensedCount.HasValue)
             {
-                var currentCount = await _userRepository.CountUsersAsync(true);
+                var currentCount = await _userRepository.CountUsersAsync(identity.CompanyId, true);
                 if (licensedCount.Value <= currentCount)
                     throw new LicenseException("The maximum number of users allowed by the license has been reached");
             }

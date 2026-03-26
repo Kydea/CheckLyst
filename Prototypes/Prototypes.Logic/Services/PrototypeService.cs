@@ -228,7 +228,7 @@ namespace CheckListManager.Prototypes.Logic.Services
             var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.PrototypesCount;
             if (licensedCount.HasValue)
             {
-                var currentCount = await _prototypeRepository.CountPrototypesAsync();
+                var currentCount = await _prototypeRepository.CountPrototypesAsync(identity.CompanyId);
                 if (licensedCount.Value <= currentCount)
                     throw new LicenseException("The maximum number of prototypes allowed by the license has been reached");
             }

@@ -299,8 +299,8 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public Task<long> CountUsersAsync(bool? enabled) =>
-            Entities.Users.LongCountAsync(u => enabled == true && u.Enabled || enabled == false && !u.Enabled || !enabled.HasValue);
+        public Task<long> CountUsersAsync(long companyId, bool? enabled) =>
+            Entities.Users.LongCountAsync(u => u.Company == companyId && (enabled == true && u.Enabled || enabled == false && !u.Enabled || !enabled.HasValue));
 
         public async Task SetTimeZoneAsync(long companyId, string code, string value)
         {

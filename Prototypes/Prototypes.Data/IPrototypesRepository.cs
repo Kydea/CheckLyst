@@ -27,6 +27,6 @@ namespace CheckListManager.Prototypes.Data
         void DeletePrototypeVersionTags(IEnumerable<PrototypeVersionTags> versionTags);
         Task<SetStateResult> SetStateAsync(DefaultIdentity defaultIdentity, PrototypeVersions prototypeVersion, string state, bool proposed);
         Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters);
-        Task<long> CountPrototypesAsync();
+        Task<long> CountPrototypesAsync(long company);
     }
 }

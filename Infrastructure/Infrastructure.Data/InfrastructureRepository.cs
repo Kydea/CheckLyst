@@ -165,7 +165,7 @@ namespace CheckListManager.Infrastructure.Data
             return prototypeType;
         }
 
-        public Task<long> CountPrototypeTypesAsync() => Entities.PrototypeTypes.LongCountAsync();
+        public Task<long> CountPrototypeTypesAsync(long company) => Entities.PrototypeTypes.LongCountAsync(pt => pt.Company == company);
 
         public async Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id)
         {

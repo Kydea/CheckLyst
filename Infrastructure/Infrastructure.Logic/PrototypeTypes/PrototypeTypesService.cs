@@ -179,7 +179,7 @@ namespace CheckListManager.Infrastructure.Logic.PrototypeTypes
             var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.PrototypeTypesCount;
             if (licensedCount.HasValue)
             {
-                var currentCount = await _infrastructureRepository.CountPrototypeTypesAsync();
+                var currentCount = await _infrastructureRepository.CountPrototypeTypesAsync(identity.CompanyId);
                 if (licensedCount.Value <= currentCount)
                     throw new LicenseException("The maximum number of prototype types allowed by the license has been reached");
             }

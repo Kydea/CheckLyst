@@ -293,8 +293,8 @@ namespace CheckListManager.Prototypes.Data
         public Task<List<PrototypeVersions>> GetPrototypeVersionsAsync(Expression<Func<PrototypeVersions, bool>> filters) =>
             Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
 
-        public Task<long> CountPrototypesAsync() => 
-            Entities.Prototypes.LongCountAsync();
+        public Task<long> CountPrototypesAsync(long company) => 
+            Entities.Prototypes.LongCountAsync(p => p.Company == company);
 
     }
 }

@@ -25,7 +25,7 @@ namespace CheckListManager.Infrastructure.Data
 
         Task<PrototypeTypes> EditPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
         Task<PrototypeTypes> AddPrototypeTypeAsync(IDefaultIdentity identity, PrototypeTypes prototypeType);
-        Task<long> CountPrototypeTypesAsync();
+        Task<long> CountPrototypeTypesAsync(long company);
         Task DeletePrototypeTypeAsync(IDefaultIdentity identity, long id);
 
         Task<FTPServers> EditFTPServerAsync(IDefaultIdentity identity, FTPServers ftpServer);
