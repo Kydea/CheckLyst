@@ -189,7 +189,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             ((Group)Header).ClearDependencies();
             int Index = 0;
-            foreach (Page Page in Pages)
+            foreach (Page Page in Pages.Cast<Page>())
             {
                 Page.Index = Index++;
                 Page.ClearDependencies();
@@ -210,7 +210,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     AddDependingRelation(DependencyRelation.Properties.Formula, Expression, DependencyRelation.Properties.Value);
 
             ((Group)Header).BuildDependencies();
-            foreach (Page Page in Pages)
+            foreach (Page Page in Pages.Cast<Page>())
                 Page.BuildDependencies();
         }
 
@@ -236,9 +236,8 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             };
         }
 
-        public void UpdateAll(InstanceCacheObject cacheObject = null)
+        public void UpdateAll()
         {
-            Stack<Tuple<DependencyNode, DependencyRelation.Properties>> DependencyChain = new Stack<Tuple<DependencyNode, DependencyRelation.Properties>>();
             var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
 
             MarkNodeAsChanged(this, Roots, DependencyRelation.Properties.Formula);
@@ -248,7 +247,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
 
             ((Group)Header).MarkAllAsChanged(Roots);
 
-            foreach (Page Page in Pages)
+            foreach (Page Page in Pages.Cast<Page>())
                 Page.MarkAllAsChanged(Roots);
 
             UpdateNodes(this, Roots);
@@ -307,7 +306,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             return Value;
         }
 
-        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes) => GetExpressionValue(ExpressionCode, IterationIndexes, out var Error);
+        public TypedValue GetExpressionValue(string ExpressionCode, List<int> IterationIndexes) => GetExpressionValue(ExpressionCode, IterationIndexes, out var _);
 
         public override string DependencyClassName => "checklist";
 
@@ -329,7 +328,6 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public static string GetYearCode(string VersionState, int? Year) =>
-            //VersionState == Common.Data.VersionState.Draft ? "Test" : VersionState == Common.Data.VersionState.InSimulation || Year == 0 ? "SE" : (Year?.ToString() ?? "?");
             VersionState == Common.Data.VersionState.Draft ? "Test" : VersionState == Common.Data.VersionState.InSimulation ? "SE" : (Year?.ToString() ?? "?");
 
         public static string GetCode(string PrototypeName, int Version, string VersionState, int? Year, int? Number) =>

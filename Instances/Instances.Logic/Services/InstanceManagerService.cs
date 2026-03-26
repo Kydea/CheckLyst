@@ -125,7 +125,7 @@ namespace CheckListManager.Instances.Logic.Services
             }
 
             if (includeData && !cacheObject.Instance.CheckVersion(2, false)) //version 2 introduces persistency
-                cacheObject.Instance.UpdateAll(cacheObject);
+                cacheObject.Instance.UpdateAll();
 
             return cacheObject;
         }
@@ -230,7 +230,7 @@ namespace CheckListManager.Instances.Logic.Services
                         if (cacheObject.Instance.Elements.TryGetValue(parameter.Key, out ICheckListElement element) && element is ICheckListItem item)
                             await HandleValueChangeAsync(cacheObject, identity.Code, item.Id, parameter.Value);
 
-                cacheObject.Instance.UpdateAll(cacheObject);
+                cacheObject.Instance.UpdateAll();
                 cacheObject.Instance.UpdateReadOnly(identity, identity.Code, cacheObject.InstanceState, false);
 
                 if (saveCache) await SaveCacheObjectAsync(cacheObject);
@@ -316,11 +316,10 @@ namespace CheckListManager.Instances.Logic.Services
                     TrackChanges(cacheObject, identity.Code);
 
                     cacheObject.Instance.UpdateInstanceRuntimeValues(cacheObject);
-                    cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
-
                     var Roots = new HashSet<Tuple<DependencyNode, DependencyRelation.Properties>>();
                     cacheObject.Instance.MarkNodeAsChanged(cacheObject.Instance, Roots, DependencyRelation.Properties.StateChange);
                     DependencyNode.UpdateNodes(cacheObject.Instance, Roots);
+                    cacheObject.Instance.Update(DependencyRelation.Properties.Formula);
 
                     cacheObject.Instance.UpdateReadOnly(identity, identity.Code, InstanceState.Progress, false);
 
@@ -582,7 +581,7 @@ namespace CheckListManager.Instances.Logic.Services
                 }
 
                 if (!cacheObject.Instance.CheckVersion(2, true)) //version 2 introduces persistency
-                    cacheObject.Instance.UpdateAll(cacheObject);
+                    cacheObject.Instance.UpdateAll();
 
                 cacheObject.NeedToSave = false;
                 row.Data = JsonConvert.SerializeObject(cacheObject.Instance, _converters);
