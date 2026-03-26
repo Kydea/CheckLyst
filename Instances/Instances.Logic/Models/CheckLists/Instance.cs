@@ -227,6 +227,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 { "InstancePrototypeTypeName", cacheObject.PrototypeTypeName },
                 { "InstancePrototype", cacheObject.Prototype },
                 { "InstancePrototypeName", cacheObject.PrototypeName },
+                { "InstancePrototypeVersionState", cacheObject.VersionState },
                 { "InstanceVersion", cacheObject.Version },
                 { "InstanceYear", cacheObject.YearCode },
                 { "InstanceNumber", cacheObject.Number },

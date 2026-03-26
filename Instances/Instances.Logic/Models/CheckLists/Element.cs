@@ -9,6 +9,8 @@ using System.Linq;
 using System.Dynamic;
 using System.ServiceModel.Security;
 using CheckListManager.Common.Core.Web.Security;
+using CheckListManager.Common.Data;
+using CheckListManager.Common.Core.Helpers;
 
 namespace CheckListManager.Instances.Logic.Models.CheckLists
 {
@@ -24,7 +26,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 throw new InstanceException((string.IsNullOrEmpty(Code) ? "An element" : $"The element {Code}") + $" references to a signature with code {SignatureCode} that is not a signature");
             return Signature;
         }
-        
+
         private Instance _instance;
         [JsonIgnore]
         public Instance Instance => _instance ?? (_instance = (Instance)CheckList);
@@ -32,10 +34,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public virtual Dictionary<string, ICheckListElement> GetBranchElements() => CheckList.Elements;
 
         public virtual bool Setup()
-		{
+        {
             Code = string.IsNullOrEmpty(Code) ? null : Code;
             if (Code != null)
-				CheckList.Elements[Code] = this;
+                CheckList.Elements[Code] = this;
             if (!(this is ICheckListValidityElement))
                 Valid = true;
             return true;
@@ -90,7 +92,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         protected virtual void UpdateValid()
         {
             var ExpressionValue = CheckList?.GetExpressionValue(ValidExpressionCode, this)?.Value as bool? == true;
-            Valid = 
+            Valid =
                 Hidden ||
                 ValidCondition == Conditions.Default && IsValidByDefault() ||
                 ValidCondition == Conditions.Expression && ExpressionValue ||
@@ -105,28 +107,41 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public string UserGroup { get; set; }
         protected virtual bool IsReadOnlyByDefault() => false;
         public void UpdateReadOnly(IDefaultIdentity identity, string lockUser, bool readOnlyInstance)
-		{
-			if (readOnlyInstance)
-			{
-				ReadOnly = true;
-				return;
-			}
-
-            if (UserGroup != null && identity != null && !identity.HasPermission("UserGroup", null, null, null, UserGroup))
+        {
+            if (readOnlyInstance)
             {
                 ReadOnly = true;
                 return;
             }
 
+            if (UserGroup != null && identity != null)
+            {
+                var versionState = (string)Instance.InstanceRuntimeValues["InstancePrototypeVersionState"];
+                var department = (long)Instance.InstanceRuntimeValues["InstanceDepartment"];
+                var prototypeType = (long)Instance.InstanceRuntimeValues["InstancePrototypeType"];
+                if (
+                    !versionState.In(VersionState.Draft, VersionState.InSimulation)
+                    && !identity.HasPermission("UserGroup", null, null, null, UserGroup)
+                    ||
+                    versionState.In(VersionState.Draft, VersionState.InSimulation)
+                    && !identity.HasPermission("Prototypes", "Preview", department)
+                    && !identity.HasPermission("Prototypes", "Preview", department, prototypeType)
+                )
+                {
+                    ReadOnly = true;
+                    return;
+                }
+            }
+
             var expressionValue = CheckList?.GetExpressionValue(ReadOnlyExpressionCode, this)?.Value as bool? == true;
-			ReadOnly = 
+            ReadOnly =
                 (Signature?.Signed ?? false) ||
                 ReadOnlyCondition == Conditions.Default && IsReadOnlyByDefault() ||
-				ReadOnlyCondition == Conditions.Expression && expressionValue ||
-				ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||
-				ReadOnlyCondition == Conditions.ExpressionAndDefault && expressionValue && IsReadOnlyByDefault() ||
-				ReadOnlyCondition == Conditions.True;
-		}
+                ReadOnlyCondition == Conditions.Expression && expressionValue ||
+                ReadOnlyCondition == Conditions.ExpressionOrDefault && (expressionValue || IsReadOnlyByDefault()) ||
+                ReadOnlyCondition == Conditions.ExpressionAndDefault && expressionValue && IsReadOnlyByDefault() ||
+                ReadOnlyCondition == Conditions.True;
+        }
 
         public Conditions CountDownCondition { get; set; }
         public DateTimeOffset? CountDownToValue { get; set; }
@@ -163,18 +178,18 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         }
 
         public static void Copy(Element source, Element destination)
-		{
-			destination.CheckList = source.CheckList;
-			destination.Code = source.Code;
+        {
+            destination.CheckList = source.CheckList;
+            destination.Code = source.Code;
             destination.CountDownToCode = source.CountDownToCode;
             destination.ReadOnlyExpressionCode = source.ReadOnlyExpressionCode;
-			destination.ReadOnlyCondition = source.ReadOnlyCondition;
-			destination.HiddenExpressionCode = source.HiddenExpressionCode;
-			destination.HiddenCondition = source.HiddenCondition;
-			destination.ValidExpressionCode = source.ValidExpressionCode;
-			destination.ValidCondition = source.ValidCondition;
-			destination.ValidityMessage = source.ValidityMessage;
-			destination.SignatureCode = source.SignatureCode;
+            destination.ReadOnlyCondition = source.ReadOnlyCondition;
+            destination.HiddenExpressionCode = source.HiddenExpressionCode;
+            destination.HiddenCondition = source.HiddenCondition;
+            destination.ValidExpressionCode = source.ValidExpressionCode;
+            destination.ValidCondition = source.ValidCondition;
+            destination.ValidityMessage = source.ValidityMessage;
+            destination.SignatureCode = source.SignatureCode;
             destination.PageBreak = source.PageBreak;
         }
 
@@ -226,7 +241,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.Hidden);
             MarkNodeAsChanged(CheckList, Roots, DependencyRelation.Properties.CountDown);
         }
-        
+
         public override string DependencyClassName => "element";
 
         #endregion
