@@ -64,7 +64,6 @@ namespace CheckListManager.Infrastructure.Api.Controllers
                 }
             }
 
-            [HttpGet]
             [Authorize(Roles = "Companies#Edit")]
             [Route("Diagnostics")]
             public IHttpActionResult Diagnostics()

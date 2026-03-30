@@ -56,6 +56,12 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
+        [Route("NotificationsDiagnostics")]
+        public ActionResult NotificationsDiagnostics()
+        {
+            return ConditionalView();
+        }
+
         [AllowAnonymous]
         [Route("Ping")]
         public ActionResult Ping()

@@ -1,0 +1,150 @@
+@{
+    ViewBag.Title = "Notifications diagnostics";
+}
+
+<div class="NotificationsDiagnostics">
+    <h1>Notifications diagnostics</h1>
+
+    <div class="ActionBar">
+    </div>
+
+    <div class="ShadowPanel">
+        <form id="NotificationsDiagnosticsForm" action="@BaseUrl/Infrastructure/Notifications">
+            <label class="Clearing">
+                <span>globalWaiters</span><br>
+                <input type="text" name="globalWaiters" readonly />
+            </label>
+            <p>
+                Currently open long-poll requests.<br>
+                OK: stable / oscillating<br>
+                Warning: keeps growing and does not drop
+            </p>
+
+            <label class="Clearing">
+                <span>total wakeups</span><br>
+                <input type="text" name="totalWakeups" readonly />
+            </label>
+            <p>
+                Polls completed because of a real update.<br>
+                Read as delta/rate, not as an absolute total.<br>
+                OK: increases when the system is active
+            </p>
+
+            <label class="Clearing">
+                <span>total timeouts</span><br>
+                <input type="text" name="totalTimeouts" readonly />
+            </label>
+            <p>
+                Polls completed by natural timeout (30s).<br>
+                Read as delta/rate.<br>
+                Note: high values alone are not abnormal
+            </p>
+
+            <label class="Clearing">
+                <span>total overload returns</span><br>
+                <input type="text" name="totalOverloadReturns" readonly />
+            </label>
+            <p>
+                Polls not put in wait state because limits/load were reached.<br>
+                OK: should stay at 0<br>
+                Alert: any increase
+            </p>
+
+            <label class="Clearing">
+                <span>total aborts</span><br>
+                <input type="text" name="totalAborts" readonly />
+            </label>
+            <p>
+                Polls interrupted by client/network.<br>
+                OK: small increases are normal<br>
+                Warning: high or continuous growth
+            </p>
+
+            <label class="Clearing">
+                <span>total wait completed</span><br>
+                <input type="text" name="totalWaitCompleted" readonly />
+            </label>
+            <p>
+                Normally completed waits.<br>
+                Check: should equal <code>totalWakeups + totalTimeouts</code>
+            </p>
+
+            <label class="Clearing">
+                <span>total wait (ms)</span><br>
+                <input type="text" name="totalWaitMillisecons" readonly />
+            </label>
+            <p>
+                Sum of completed wait times.<br>
+                Useful only as the base for the average
+            </p>
+
+            <label class="Clearing">
+                <span>average wait (ms)</span><br>
+                <input type="text" name="averageWaitMillisecons" readonly />
+            </label>
+            <p>
+                Average completed poll wait time.<br>
+                ~30000 ms: mostly timeouts<br>
+                &lt;30000 ms: frequent wakeups
+            </p>
+
+            <label class="Clearing">
+                <span>server time utc</span><br>
+                <input type="text" name="serverTimeUtc" readonly />
+            </label>
+            <p>
+                Diagnostic snapshot timestamp
+            </p>
+
+            <p style="clear: both;">
+                <strong>Quick rules</strong><br>
+                - Read all total values as recent delta or rate/min<br>
+                - High timeouts alone do not mean an error<br>
+                - total overload returns &gt; 0 is abnormal<br>
+                - If the system is active but wakeups stay near zero, investigate<br>
+                - If global waiters keeps growing, investigate<br>
+                - If aborts grow significantly, check client/network
+            </p>
+
+            <label class="FullWidth">
+                <span>Full result</span>
+                <textarea id="Output" readonly style="height: 400px"></textarea>
+            </label>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var
+        textArea = document.getElementById("Output"),
+        formSelector = "form#NotificationsDiagnosticsForm";
+
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "NotificationsDiagnostics",
+            filterFormSelector: formSelector,
+            getDataEvent: "Diagnostics",
+            searchButtonLabel: "refresh",
+            readOnly: true,
+            breadCrumbs: [
+                { content: "notifications diagnostics" }
+            ],
+            filterHandler: function (data) {
+                for (var key in data)
+                    $("input[name='" + key + "']", formSelector).val(data[key]);
+                textArea.value = JSON.stringify(data, null, 4);
+                console.log(data);
+            }
+        });
+
+        callback.call();
+    };
+</script>
+
+<style>
+    p {
+        margin-top: 20px;
+        margin-left: 20px;
+        float: left;
+    }
+</style>

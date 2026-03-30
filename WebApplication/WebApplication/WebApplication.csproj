@@ -661,6 +661,7 @@
     <Content Include="Views\Reports\Runs.cshtml" />
     <Content Include="Views\Help\Reports.cshtml" />
     <Content Include="Content\Theme\GridSettings.scss" />
+    <Content Include="Views\Default\NotificationsDiagnostics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">
