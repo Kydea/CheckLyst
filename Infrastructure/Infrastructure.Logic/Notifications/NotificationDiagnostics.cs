@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CheckListManager.Common.Logic.Models.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,5 +20,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         public double AverageWaitMillisecons { get; set; }
 
         public DateTime ServerTimeUtc { get; set; }
+
+        public List<NotificationBucketEvent> History { get; set; }
     }
 }

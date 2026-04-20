@@ -4,6 +4,7 @@ using CheckListManager.Infrastructure.Data;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,13 +14,17 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
     {
         private const int MaxWaitersPerUser = 10;
         private const int MaxWaitersGlobal = 10000;
+        private const int MaxHistoryRows = 50000;
+
         private static readonly TimeSpan LongPollTimeout = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan BucketTtl = TimeSpan.FromHours(1);
         private static readonly TimeSpan BucketIdleTtl = TimeSpan.FromMinutes(5);
 
         private readonly ConcurrentDictionary<(long Company, string User), UserBucket> _users = new ConcurrentDictionary<(long, string), UserBucket>();
+        private readonly ConcurrentQueue<NotificationBucketEvent> _history = new ConcurrentQueue<NotificationBucketEvent>();
 
         private int _globalWaiters;
+        private long _historySequence;
 
         // counters
         private long _totalWakeups;
@@ -31,7 +36,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private long _waitCompletedTotal;
         private long _waitMillisecondsTotal;
 
-        public async Task InvalidateAsync(long company, string user, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, NotificationInvalidateMask mask)
+        public async Task InvalidateAsync(
+            long company,
+            string user,
+            Func<NotificationsState, Task<NotificationsState>> loadStateAsync,
+            NotificationInvalidateMask mask)
         {
             if (!_users.TryGetValue((company, user), out var b))
                 return;
@@ -39,75 +48,12 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             EnterBucket(b);
             try
             {
-                NotificationsState currentState;
-                lock (b.Gate)
-                {
-                    if (mask.HasFlag(NotificationInvalidateMask.CompletedReportCount)) b.State.CompletedReportCount = null;
-                    if (mask.HasFlag(NotificationInvalidateMask.EnqueuedReportCount)) b.State.EnqueuedReportCount = null;
-                    if (mask.HasFlag(NotificationInvalidateMask.ReportsToSignCount)) b.State.ReportsToSignCount = null;
-                    if (mask.HasFlag(NotificationInvalidateMask.InstancesToSignCount)) b.State.InstancesToSignCount = null;
-                    if (mask.HasFlag(NotificationInvalidateMask.PrototypeVersionsToSignCount)) b.State.PrototypeVersionsToSignCount = null;
-
-                    b.LastLoadedUtc = DateTime.MinValue;
-                    b.IncrementVersion();
-
-                    if (b.Waiters.Count == 0) return;
-
-                    currentState = b.State.Clone();
-                }
-
-                var state = await loadStateAsync(currentState).ConfigureAwait(false);
-
-                List<WaiterEntry> toWake = null;
-                NotificationSnapshot snap;
-
-                lock (b.Gate)
-                {
-                    b.State.CompletedReportCount = state.CompletedReportCount;
-                    b.State.EnqueuedReportCount = state.EnqueuedReportCount;
-                    b.State.ReportsToSignCount = state.ReportsToSignCount;
-                    b.State.InstancesToSignCount = state.InstancesToSignCount;
-                    b.State.PrototypeVersionsToSignCount = state.PrototypeVersionsToSignCount;
-                    b.LastLoadedUtc = DateTime.UtcNow;
-                    b.IncrementVersion();
-
-                    snap = b.ToSnapshot(timedOut: false);
-                    snap.Overloaded = false;
-
-                    if (b.Waiters.Count > 0)
-                    {
-                        toWake = new List<WaiterEntry>(b.Waiters.Values);
-                        b.Waiters.Clear();
-                    }
-
-                    snap.ActiveWaiters = 0;
-                }
-
-                if (toWake != null && toWake.Count > 0)
-                {
-                    var nowTicks = DateTime.UtcNow.Ticks;
-                    var woken = 0;
-
-                    foreach (var w in toWake)
-                    {
-                        if (w.Tcs.TrySetResult(snap))
-                        {
-                            woken++;
-
-                            var ms = (nowTicks - w.StartedTicksUtc) / TimeSpan.TicksPerMillisecond;
-                            if (ms < 0) ms = 0;
-
-                            Interlocked.Add(ref _waitMillisecondsTotal, ms);
-                            Interlocked.Increment(ref _waitCompletedTotal);
-                        }
-                    }
-
-                    if (woken > 0)
-                    {
-                        Interlocked.Add(ref _totalWakeups, woken);
-                        Interlocked.Add(ref _globalWaiters, -woken);
-                    }
-                }
+                await RefreshBucketAsync(
+                    b,
+                    loadStateAsync,
+                    forceRefresh: true,
+                    invalidateMask: mask
+                ).ConfigureAwait(false);
             }
             finally
             {
@@ -115,40 +61,148 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private async Task EnsureInitializedOrRefreshAsync(UserBucket b, Func<NotificationsState, Task<NotificationsState>> loadStateAsync)
+        private async Task EnsureInitializedOrRefreshAsync(
+            UserBucket b,
+            Func<NotificationsState, Task<NotificationsState>> loadStateAsync)
         {
-            var nowUtc = DateTime.UtcNow;
-            if (b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl)
-                return;
+            lock (b.Gate)
+            {
+                if (IsFresh_NoLock(b, DateTime.UtcNow))
+                    return;
+            }
 
+            await RefreshBucketAsync(
+                b,
+                loadStateAsync,
+                forceRefresh: false,
+                invalidateMask: null
+            ).ConfigureAwait(false);
+        }
+
+        private async Task RefreshBucketAsync
+        (
+            UserBucket b,
+            Func<NotificationsState, Task<NotificationsState>> loadStateAsync,
+            bool forceRefresh,
+            NotificationInvalidateMask? invalidateMask
+        )
+        {
             await b.InitSemaphore.WaitAsync().ConfigureAwait(false);
             try
             {
-                nowUtc = DateTime.UtcNow;
-                NotificationsState currentState;
+                NotificationsState requestState;
+
                 lock (b.Gate)
                 {
-                    if (b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl)
+                    if (!forceRefresh && IsFresh_NoLock(b, DateTime.UtcNow))
                         return;
 
-                    currentState = b.State.Clone();
+                    requestState = b.State.Clone();
+
+                    if (invalidateMask.HasValue)
+                        ApplyInvalidateMask(requestState, invalidateMask.Value);
                 }
 
-                var state = await loadStateAsync(currentState).ConfigureAwait(false);
+                var loadedState = await loadStateAsync(requestState).ConfigureAwait(false);
+
+                List<WaiterEntry> toWake = null;
+                NotificationSnapshot snap = null;
+
                 lock (b.Gate)
                 {
-                    b.State.CompletedReportCount = state.CompletedReportCount;
-                    b.State.EnqueuedReportCount = state.EnqueuedReportCount;
-                    b.State.ReportsToSignCount = state.ReportsToSignCount;
-                    b.State.InstancesToSignCount = state.InstancesToSignCount;
-                    b.State.PrototypeVersionsToSignCount = state.PrototypeVersionsToSignCount;
+                    ApplyLoadedState(b.State, loadedState);
+
+                    b.LastLoadedUtc = DateTime.UtcNow;
                     b.IncrementVersion();
-                    b.LastLoadedUtc = nowUtc;
+
+                    if (b.Waiters.Count > 0)
+                    {
+                        snap = b.ToSnapshot(timedOut: false);
+                        snap.Overloaded = false;
+
+                        toWake = new List<WaiterEntry>(b.Waiters.Values);
+                        b.Waiters.Clear();
+
+                        snap.ActiveWaiters = 0;
+                    }
                 }
+
+                WakeWaiters(toWake, snap);
             }
             finally
             {
                 b.InitSemaphore.Release();
+            }
+        }
+
+        private static bool IsFresh_NoLock(UserBucket b, DateTime nowUtc)
+        {
+            return b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl;
+        }
+
+        private static void ApplyInvalidateMask
+        (
+            NotificationsState state,
+            NotificationInvalidateMask mask
+        )
+        {
+            if (mask.HasFlag(NotificationInvalidateMask.CompletedReportCount))
+                state.CompletedReportCount = null;
+
+            if (mask.HasFlag(NotificationInvalidateMask.EnqueuedReportCount))
+                state.EnqueuedReportCount = null;
+
+            if (mask.HasFlag(NotificationInvalidateMask.ReportsToSignCount))
+                state.ReportsToSignCount = null;
+
+            if (mask.HasFlag(NotificationInvalidateMask.InstancesToSignCount))
+                state.InstancesToSignCount = null;
+
+            if (mask.HasFlag(NotificationInvalidateMask.PrototypeVersionsToSignCount))
+                state.PrototypeVersionsToSignCount = null;
+        }
+
+        private static void ApplyLoadedState
+        (
+            NotificationsState target,
+            NotificationsState source
+        )
+        {
+            target.CompletedReportCount = source.CompletedReportCount;
+            target.EnqueuedReportCount = source.EnqueuedReportCount;
+            target.ReportsToSignCount = source.ReportsToSignCount;
+            target.InstancesToSignCount = source.InstancesToSignCount;
+            target.PrototypeVersionsToSignCount = source.PrototypeVersionsToSignCount;
+        }
+
+        private void WakeWaiters(
+            List<WaiterEntry> toWake,
+            NotificationSnapshot snap)
+        {
+            if (toWake == null || toWake.Count == 0)
+                return;
+
+            var nowTicks = DateTime.UtcNow.Ticks;
+            var woken = 0;
+
+            foreach (var w in toWake)
+            {
+                if (w.Tcs.TrySetResult(snap))
+                {
+                    woken++;
+
+                    var ms = (nowTicks - w.StartedTicksUtc) / TimeSpan.TicksPerMillisecond;
+                    if (ms < 0) ms = 0;
+
+                    Interlocked.Add(ref _waitMillisecondsTotal, ms);
+                    Interlocked.Increment(ref _waitCompletedTotal);
+                }
+            }
+
+            if (woken > 0)
+            {
+                Interlocked.Add(ref _totalWakeups, woken);
+                Interlocked.Add(ref _globalWaiters, -woken);
             }
         }
 
@@ -322,8 +376,58 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 TotalWaitMillisecons = totalMilliseconds,
                 AverageWaitMillisecons = average,
 
-                ServerTimeUtc = DateTime.UtcNow
+                ServerTimeUtc = DateTime.UtcNow,
+                History = _history.ToList()
             };
+        }
+
+        private void AppendHistory(
+            string eventType,
+            string source,
+            long company,
+            string user,
+            UserBucket b,
+            ulong? sinceVersion = null,
+            NotificationInvalidateMask? mask = null,
+            string note = null
+        )
+        {
+            NotificationBucketEvent e;
+
+            lock (b.Gate)
+                e = new NotificationBucketEvent
+                {
+                    Sequence = Interlocked.Increment(ref _historySequence),
+                    TimestampUtc = DateTime.UtcNow,
+
+                    EventType = eventType,
+                    Source = source,
+
+                    Company = company,
+                    User = user,
+
+                    SinceVersion = sinceVersion,
+                    Version = b.Version,
+                    Mask = mask.HasValue ? (int)mask.Value : (int?)null,
+
+                    CompletedReportCount = b.State.CompletedReportCount,
+                    EnqueuedReportCount = b.State.EnqueuedReportCount,
+                    ReportsToSignCount = b.State.ReportsToSignCount,
+                    InstancesToSignCount = b.State.InstancesToSignCount,
+                    PrototypeVersionsToSignCount = b.State.PrototypeVersionsToSignCount,
+
+                    ActiveWaiters = b.Waiters.Count,
+                    GlobalWaiters = Volatile.Read(ref _globalWaiters),
+                    InFlight = Volatile.Read(ref b.InFlight),
+
+                    LastLoadedUtc = b.LastLoadedUtc,
+                    Note = note
+                };
+
+            _history.Enqueue(e);
+
+            while (_history.Count > MaxHistoryRows)
+                _history.TryDequeue(out _);
         }
 
         private sealed class UserBucket
