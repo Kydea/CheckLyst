@@ -1,6 +1,4 @@
-﻿using CheckListManager.Common.Logic.Models.Expressions.ArithmeticOperators;
-using CheckListManager.Common.Logic.Models.Notifications;
-using CheckListManager.Infrastructure.Data;
+﻿using CheckListManager.Common.Logic.Models.Notifications;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -36,11 +34,13 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         private long _waitCompletedTotal;
         private long _waitMillisecondsTotal;
 
-        public async Task InvalidateAsync(
+        public async Task InvalidateAsync
+        (
             long company,
             string user,
             Func<NotificationsState, Task<NotificationsState>> loadStateAsync,
-            NotificationInvalidateMask mask)
+            NotificationInvalidateMask mask
+        )
         {
             if (!_users.TryGetValue((company, user), out var b))
             {
@@ -62,8 +62,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 NotificationBucketEventLevel.Info,
                 "InvalidateRequested",
                 "invalidate",
-                company,
-                user,
                 b,
                 mask: mask
             );
@@ -80,13 +78,15 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
             finally
             {
-                ExitBucket(company, user, b);
+                ExitBucket(b);
             }
         }
 
-        private async Task EnsureInitializedOrRefreshAsync(
+        private async Task EnsureInitializedOrRefreshAsync
+        (
             UserBucket b,
-            Func<NotificationsState, Task<NotificationsState>> loadStateAsync)
+            Func<NotificationsState, Task<NotificationsState>> loadStateAsync
+        )
         {
             lock (b.Gate)
             {
@@ -131,11 +131,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     NotificationBucketEventLevel.Debug,
                     "RefreshStart",
                     invalidateMask.HasValue ? "invalidate" : "polling",
-                    b.Company,
-                    b.User,
                     b,
                     mask: invalidateMask,
-                    note: forceRefresh ? "forceRefresh" : "normalRefresh"
+                    note: forceRefresh ? "forced" : "normal"
                 );
 
                 var loadedState = await loadStateAsync(requestState).ConfigureAwait(false);
@@ -169,8 +167,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     NotificationBucketEventLevel.Debug,
                     "RefreshEnd",
                     invalidateMask.HasValue ? "invalidate" : "polling",
-                    b.Company,
-                    b.User,
                     b,
                     mask: invalidateMask
                 );
@@ -183,10 +179,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private static bool IsFresh_NoLock(UserBucket b, DateTime nowUtc)
-        {
-            return b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl;
-        }
+        private static bool IsFresh_NoLock(UserBucket b, DateTime nowUtc) => b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl;
 
         private static void ApplyInvalidateMask
         (
@@ -223,11 +216,13 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             target.PrototypeVersionsToSignCount = source.PrototypeVersionsToSignCount;
         }
 
-        private void WakeWaiters(
+        private void WakeWaiters
+        (
             UserBucket b,
             List<WaiterEntry> toWake,
             NotificationSnapshot snap,
-            int expectedWoken)
+            int expectedWoken
+        )
         {
             if (toWake == null || toWake.Count == 0)
                 return;
@@ -257,20 +252,20 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     NotificationBucketEventLevel.Debug,
                     "WaitersWoken",
                     "system",
-                    b.Company,
-                    b.User,
                     b,
                     note: $"Woken={woken}; Expected={expectedWoken}"
                 );
             }
         }
 
-        public async Task<NotificationSnapshot> PollingAsync(
+        public async Task<NotificationSnapshot> PollingAsync
+        (
             long company,
             string user,
             ulong sinceVersion,
             Func<NotificationsState, Task<NotificationsState>> loadStateAsync,
-            CancellationToken requestAborted)
+            CancellationToken requestAborted
+        )
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
@@ -315,11 +310,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Warn,
+                            NotificationBucketEventLevel.Warning,
                             "OverloadReturned",
                             "polling",
-                            company,
-                            user,
                             b,
                             sinceVersion
                         );
@@ -337,8 +330,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     NotificationBucketEventLevel.Debug,
                     "WaiterRegistered",
                     "polling",
-                    company,
-                    user,
                     b,
                     sinceVersion
                 );
@@ -354,11 +345,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Warn,
+                            NotificationBucketEventLevel.Warning,
                             "WaiterAborted",
                             "polling",
-                            company,
-                            user,
                             b,
                             sinceVersion
                         );
@@ -389,11 +378,9 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Warn,
+                            NotificationBucketEventLevel.Warning,
                             "WaiterTimeout",
                             "polling",
-                            company,
-                            user,
                             b,
                             sinceVersion
                         );
@@ -404,15 +391,17 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
             finally
             {
-                ExitBucket(company, user, b);
+                ExitBucket(b);
             }
         }
 
-        private static async Task<NotificationSnapshot> AwaitAndCleanupAsync(
+        private static async Task<NotificationSnapshot> AwaitAndCleanupAsync
+        (
             Task<NotificationSnapshot> task,
             CancellationTokenRegistration abortReg,
             CancellationTokenRegistration timeoutReg,
-            CancellationTokenSource timeoutCts)
+            CancellationTokenSource timeoutCts
+        )
         {
             try
             {
@@ -428,16 +417,16 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
         private UserBucket GetBucket(long company, string user)
         {
-            var created = false;
+            var key = (company, user);
 
-            var bucket = _users.GetOrAdd((company, user), _ =>
-            {
-                created = true;
-                return new UserBucket(company, user);
-            });
+            if (_users.TryGetValue(key, out var existing))
+                return existing;
 
-            if (created)
-                AppendHistory(NotificationBucketEventLevel.Debug, "BucketCreated", "system", company, user, bucket);
+            var candidate = new UserBucket(company, user);
+            var bucket = _users.GetOrAdd(key, candidate);
+
+            if (ReferenceEquals(bucket, candidate))
+                AppendHistory(NotificationBucketEventLevel.Debug, "BucketCreated", "system", bucket);
 
             return bucket;
         }
@@ -448,7 +437,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             Interlocked.Exchange(ref b.LastAccessTicks, DateTime.UtcNow.Ticks);
         }
 
-        private void ExitBucket(long company, string user, UserBucket b)
+        private void ExitBucket(UserBucket b)
         {
             var left = Interlocked.Decrement(ref b.InFlight);
             if (left == 0)
@@ -462,19 +451,17 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 if ((DateTime.UtcNow - lastAccess) < BucketIdleTtl)
                     return;
 
-                if (_users.TryGetValue((company, user), out var current) && ReferenceEquals(current, b))
+                if (_users.TryGetValue((b.Company, b.User), out var current) && ReferenceEquals(current, b))
                 {
                     AppendHistory
                     (
                         NotificationBucketEventLevel.Info,
                         "BucketEvicted",
                         "system",
-                        company,
-                        user,
                         b
                     );
 
-                    _users.TryRemove((company, user), out _);
+                    _users.TryRemove((b.Company, b.User), out _);
                 }
             }
         }
@@ -516,12 +503,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             };
         }
 
-        private void AppendHistory(
+        private void AppendHistory
+        (
             NotificationBucketEventLevel level,
             string eventType,
             string source,
-            long company,
-            string user,
             UserBucket b,
             ulong? sinceVersion = null,
             NotificationInvalidateMask? mask = null,
@@ -540,8 +526,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     EventType = eventType,
                     Source = source,
 
-                    Company = company,
-                    User = user,
+                    Company = b.Company,
+                    User = b.User,
 
                     SinceVersion = sinceVersion,
                     Version = b.Version,
@@ -566,7 +552,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             while (_history.Count > MaxHistoryRows && _history.TryDequeue(out _)) ;
         }
 
-        private void AppendHistory(
+        private void AppendHistory
+        (
             NotificationBucketEventLevel level,
             string eventType,
             string source,
