@@ -92,7 +92,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         )
         {
             lock (b.Gate)
-                if (IsFresh_NoLock(b, DateTime.UtcNow))
+                if (IsFresh(b, DateTime.UtcNow))
                     return;
 
             await RefreshBucketAsync(
@@ -118,7 +118,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 lock (b.Gate)
                 {
-                    if (!forceRefresh && IsFresh_NoLock(b, DateTime.UtcNow))
+                    if (!forceRefresh && IsFresh(b, DateTime.UtcNow))
                         return;
 
                     requestState = b.State.Clone();
@@ -180,7 +180,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private static bool IsFresh_NoLock(UserBucket b, DateTime nowUtc) => b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl;
+        private static bool IsFresh(UserBucket b, DateTime nowUtc) => b.State.Valid && (nowUtc - b.LastLoadedUtc) < BucketTtl;
 
         private static void ApplyInvalidateMask
         (
@@ -486,6 +486,14 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             if (completed > 0)
                 average = (double)totalMilliseconds / completed;
 
+            var data = _history.Where(h =>
+                    h.Level >= request.Data.Level
+                    && (request.Data.Event == string.Empty || h.EventType.ToUpper().Contains(request.Data.Event.ToUpper()))
+                    && (!request.Data.Company.HasValue || h.Company == request.Data.Company.Value)
+                    && (request.Data.User == string.Empty || h.User.ToUpper().Contains(request.Data.User.ToUpper()))
+                )
+                .OrderBy(h => h.Sequence);
+
             return new NotificationDiagnostics
             {
                 TotalWakeups = Interlocked.Read(ref _totalWakeups),
@@ -501,20 +509,14 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 ServerTimeUtc = DateTime.UtcNow,
 
-                Count = _history.Count,
+                Count = data.Count(),
                 ItemsPerPage = request.ItemsPerPage,
                 CurrentPage = request.CurrentPage,
 
-                Data = _history.Where(h =>
-                    h.Level >= request.Data.Level
-                    && (request.Data.Event == string.Empty || h.EventType.Contains(request.Data.Event))
-                    && (!request.Data.Company.HasValue || h.Company == request.Data.Company.Value)
-                    && (request.Data.User == string.Empty || h.User.Contains(request.Data.User))
-                )
-                .OrderBy(h => h.Sequence)
-                .Skip(request.ItemsPerPage * (request.CurrentPage - 1))
-                .Take(request.ItemsPerPage)
-                .ToList()
+                Data = data
+                    .Skip(request.ItemsPerPage * (request.CurrentPage - 1))
+                    .Take(request.ItemsPerPage)
+                    .ToList()
             };
         }
 
