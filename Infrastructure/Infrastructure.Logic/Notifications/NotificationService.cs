@@ -49,7 +49,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             {
                 AppendHistory
                 (
-                    NotificationBucketEventLevel.Info,
+                    NotificationBucketEventLevel.Debug,
                     "InvalidateMiss",
                     "invalidate",
                     company,
@@ -92,10 +92,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         )
         {
             lock (b.Gate)
-            {
                 if (IsFresh_NoLock(b, DateTime.UtcNow))
                     return;
-            }
 
             await RefreshBucketAsync(
                 b,
@@ -348,7 +346,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Info,
+                            NotificationBucketEventLevel.Debug,
                             "WaiterAborted",
                             "polling",
                             b,
@@ -513,6 +511,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     && (!request.Data.Company.HasValue || h.Company == request.Data.Company.Value)
                     && (request.Data.User == string.Empty || h.User.Contains(request.Data.User))
                 )
+                .OrderBy(h => h.Sequence)
                 .Skip(request.ItemsPerPage * (request.CurrentPage - 1))
                 .Take(request.ItemsPerPage)
                 .ToList()
