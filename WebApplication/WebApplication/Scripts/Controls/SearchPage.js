@@ -76,35 +76,35 @@
                     .attr("href", "#")
                     .append($("<i >").addClass("Icon fal fa-caret-down"));
 
-			new matematici.Page({
-				name: options.pageName,
-				initializers: [
-					//new matematici.FixedHeader("div#Content table.Grid")
+            new matematici.Page({
+                name: options.pageName,
+                initializers: [
+                    //new matematici.FixedHeader("div#Content table.Grid")
                     grid = new matematici.Grid(options.resultGridSelector, {
                         name: options.pageName,
-						rowClick: options.rowClickHandler || function (row) {
-							matematici.popup.show({
-								url: options.detailUrl,
-								data: row.data("values"),
-								sender: form,
-								closeHandler: closeHandler
-							});
+                        rowClick: options.rowClickHandler || function (row) {
+                            matematici.popup.show({
+                                url: options.detailUrl,
+                                data: row.data("values"),
+                                sender: form,
+                                closeHandler: closeHandler
+                            });
                         },
                         setCellValueHandler: options.setCellValueHandler,
                         handleSettings: true
-					}),
-					form = new matematici.Form(options.filterFormSelector, {
-						bindEvent: options.bindEvent,
-						applyButton: {
-							button: "#ApplyButton",
-							event: options.getDataEvent || "GetData",
-							handler: filterHandler,
-						},
-						searchPage: searchPage
+                    }),
+                    form = new matematici.Form(options.filterFormSelector, {
+                        bindEvent: options.bindEvent,
+                        applyButton: {
+                            button: "#ApplyButton",
+                            event: options.getDataEvent || "GetData",
+                            handler: filterHandler,
+                        },
+                        searchPage: searchPage
                     }),
                     paginator = new matematici.Paginator("div#Content div.Paginator", grid, function (index) {
-						form.trigger("GetData", filterHandler, { CurrentPage: index });
-					})
+                        form.trigger(options.getDataEvent || "GetData", filterHandler, { CurrentPage: index });
+                    })
 				],
 
                 breadcrumbs: options.breadCrumbs,
@@ -121,6 +121,10 @@
 
 	searchPage.getForm = function () {
 		return form;
+    };
+
+    searchPage.getGrid = function () {
+        return grid;
     };
 
     searchPage.isAdvancedSearchMode = function () {

@@ -12,6 +12,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         public DateTime TimestampUtc { get; set; }
 
         public NotificationBucketEventLevel Level { get; set; }
+        public string LevelDescription => Level.ToString();
         public string EventType { get; set; }
         public string Source { get; set; } // polling / invalidate / system
 

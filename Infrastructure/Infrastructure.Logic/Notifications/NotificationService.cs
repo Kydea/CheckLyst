@@ -1,4 +1,5 @@
-﻿using CheckListManager.Common.Logic.Models.Notifications;
+﻿using CheckListManager.Common.Logic.Api.Messages;
+using CheckListManager.Common.Logic.Models.Notifications;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,9 +21,11 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
         private readonly ConcurrentDictionary<(long Company, string User), UserBucket> _users = new ConcurrentDictionary<(long, string), UserBucket>();
         private readonly ConcurrentQueue<NotificationBucketEvent> _history = new ConcurrentQueue<NotificationBucketEvent>();
+        private readonly object _historyLock = new object();
 
         private int _globalWaiters;
         private long _historySequence;
+        private int _historyCount;
 
         // counters
         private long _totalWakeups;
@@ -128,7 +131,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 AppendHistory
                 (
-                    NotificationBucketEventLevel.Debug,
+                    NotificationBucketEventLevel.Info,
                     "RefreshStart",
                     invalidateMask.HasValue ? "invalidate" : "polling",
                     b,
@@ -164,7 +167,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 AppendHistory
                 (
-                    NotificationBucketEventLevel.Debug,
+                    NotificationBucketEventLevel.Info,
                     "RefreshEnd",
                     invalidateMask.HasValue ? "invalidate" : "polling",
                     b,
@@ -345,7 +348,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Warning,
+                            NotificationBucketEventLevel.Info,
                             "WaiterAborted",
                             "polling",
                             b,
@@ -378,7 +381,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                         AppendHistory
                         (
-                            NotificationBucketEventLevel.Warning,
+                            NotificationBucketEventLevel.Debug,
                             "WaiterTimeout",
                             "polling",
                             b,
@@ -426,7 +429,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             var bucket = _users.GetOrAdd(key, candidate);
 
             if (ReferenceEquals(bucket, candidate))
-                AppendHistory(NotificationBucketEventLevel.Debug, "BucketCreated", "system", bucket);
+                AppendHistory(NotificationBucketEventLevel.Info, "BucketCreated", "system", bucket);
 
             return bucket;
         }
@@ -476,7 +479,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 Interlocked.Decrement(ref _globalWaiters);
         }
 
-        public NotificationDiagnostics GetDiagnostics()
+        public NotificationDiagnostics GetDiagnostics(PagingRequest<NotificationDiagnosticsFilter> request)
         {
             var completed = Interlocked.Read(ref _waitCompletedTotal);
             var totalMilliseconds = Interlocked.Read(ref _waitMillisecondsTotal);
@@ -499,7 +502,20 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 AverageWaitMillisecons = average,
 
                 ServerTimeUtc = DateTime.UtcNow,
-                History = _history.ToList()
+
+                Count = _history.Count,
+                ItemsPerPage = request.ItemsPerPage,
+                CurrentPage = request.CurrentPage,
+
+                Data = _history.Where(h =>
+                    h.Level >= request.Data.Level
+                    && (request.Data.Event == string.Empty || h.EventType.Contains(request.Data.Event))
+                    && (!request.Data.Company.HasValue || h.Company == request.Data.Company.Value)
+                    && (request.Data.User == string.Empty || h.User.Contains(request.Data.User))
+                )
+                .Skip(request.ItemsPerPage * (request.CurrentPage - 1))
+                .Take(request.ItemsPerPage)
+                .ToList()
             };
         }
 
@@ -547,9 +563,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     Note = note
                 };
 
-            _history.Enqueue(e);
-
-            while (_history.Count > MaxHistoryRows && _history.TryDequeue(out _)) ;
+            EnqueueHistory(e);
         }
 
         private void AppendHistory
@@ -562,9 +576,8 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             ulong? sinceVersion = null,
             NotificationInvalidateMask? mask = null,
             string note = null
-        )
-        {
-            _history.Enqueue(new NotificationBucketEvent
+        ) =>
+            EnqueueHistory(new NotificationBucketEvent
             {
                 Sequence = Interlocked.Increment(ref _historySequence),
                 TimestampUtc = DateTime.UtcNow,
@@ -582,7 +595,16 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                 Note = note
             });
 
-            while (_history.Count > MaxHistoryRows && _history.TryDequeue(out _)) ;
+        private void EnqueueHistory(NotificationBucketEvent item)
+        {
+            lock (_historyLock)
+            {
+                _history.Enqueue(item);
+                _historyCount++;
+
+                while (_historyCount > MaxHistoryRows && _history.TryDequeue(out _))
+                    _historyCount--;
+            }
         }
 
         private sealed class UserBucket

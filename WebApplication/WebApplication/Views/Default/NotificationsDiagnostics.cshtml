@@ -8,7 +8,14 @@
         form > #ApplyButton {
             display: none;
         }
+
+        p {
+            margin-top: 20px;
+            margin-left: 20px;
+            float: left;
+        }
     </style>
+
     <h1>Notifications diagnostics</h1>
 
     <div class="ActionBar">
@@ -20,10 +27,39 @@
         <form id="NotificationsDiagnosticsForm" action="@BaseUrl/Infrastructure/Notifications" style="border: none !important; padding-bottom: 0 !important; margin: -20px !important; background: none;">
             <div class="TabContainer" style="margin-left: 0 !important;">
                 <div class="TabLabels">
-                    <a href="#">Details</a>
-                    <a href="#">Log</a>
+                    <a href="#">Filters</a>
+                    <a href="#">Snapshot</a>
                 </div>
                 <div class="Tab">
+                    <label>
+                        <span>Minimum level</span>
+                        <select name="level">
+                            <option value="Trace">Trace</option>
+                            <option value="Debug">Debug</option>
+                            <option value="Info">Info</option>
+                            <option value="Warning">Warning</option>
+                            <option value="Error">Error</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>event</span>
+                        <input type="text" name="event" />
+                    </label>
+
+                    <label>
+                        <span>company</span>
+                        <input type="text" name="company" />
+                    </label>
+
+                    <label>
+                        <span>user</span>
+                        <input type="text" name="user" />
+                    </label>
+
+                    <div class="Clearing"></div>
+                </div>
+                <div class="Tab Log">
                     <label class="Clearing">
                         <span>globalWaiters</span><br>
                         <input type="text" name="globalWaiters" readonly />
@@ -125,209 +161,75 @@
                         <textarea id="Output" readonly style="height: 400px"></textarea>
                     </label>
                 </div>
-                <div class="Tab Log">
-                    <label>
-                        <span>Minimum level</span>
-                        <select id="min-level">
-                            <option value="Trace">Trace</option>
-                            <option value="Debug">Debug</option>
-                            <option value="Info">Info</option>
-                            <option value="Warning">Warning</option>
-                            <option value="Error">Error</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        <span>event</span>
-                        <input type="text" name="event" />
-                    </label>
-
-                    <label>
-                        <span>company</span>
-                        <input type="text" name="company" />
-                    </label>
-
-                    <label>
-                        <span>user</span>
-                        <input type="text" name="user" />
-                    </label>
-
-                    <label>
-                        <span>waiter id</span>
-                        <input type="text" name="waiterId" />
-                    </label>
-
-
-                    <label>
-                        <span>state</span>
-                        <input type="text" name="state" />
-                    </label>
-
-                    <label>
-                        <span>reason</span>
-                        <input type="text" name="reason" />
-                    </label>
-
-                    <label>
-                        <span>note</span>
-                        <input type="text" name="note" />
-                    </label>
-
-                    <div class="Clearing"></div>
-
-                    <div style="overflow-x: auto; margin-top: 20px;">
-                        <table class="Grid">
-                            <thead>
-                                <tr>
-                                    <th>Squence</th>
-                                    <th>Timestamp</th>
-                                    <th>Level</th>
-                                    <th>Event</th>
-                                    <th>Source</th>
-                                    <th>Company</th>
-                                    <th>User</th>
-                                    <th>Since version</th>
-                                    <th>Version</th>
-                                    <th>Mask</th>
-                                    <th>Completed</th>
-                                    <th>Enqueued</th>
-                                    <th>Reports to sign</th>
-                                    <th>Instances to sign</th>
-                                    <th>Prototype versions to sign</th>
-                                    <th>Idle</th>
-                                    <th>Valid</th>
-                                    <th>Active waiters</th>
-                                    <th>Global waiters</th>
-                                    <th>In flight</th>
-                                    <th>Last loaded</th>
-                                    <th>Note</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="NoRecord">
-                                    <td colspan="22">(empty)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="Paginator">
-                        <a title="grid settings" class="Settings">
-                            <i class="fal fa-cog"></i>
-                        </a>
-                    </div>
-
-                    <div style="padding: 20px; clear: both;">
-                        <div name="detailEmpty">(no row selected)</div>
-
-                        <div name="detail" style="display:none;">
-                            <label>
-                                <span>seq</span>
-                                <input type="text" name="seq" readonly />
-                            </label>
-
-                            <label>
-                                <span>utc</span>
-                                <input type="text" name="utc" readonly />
-                            </label>
-
-                            <label>
-                                <span>level</span>
-                                <input type="text" name="level" readonly />
-                            </label>
-
-                            <label>
-                                <span>event</span>
-                                <input type="text" name="event" readonly />
-                            </label>
-
-                            <label>
-                                <span>company</span>
-                                <input type="text" name="company" readonly />
-                            </label>
-
-                            <label>
-                                <span>user</span>
-                                <input type="text" name="user" readonly />
-                            </label>
-
-                            <label>
-                                <span>waiter id</span>
-                                <input type="text" name="waiterId" readonly />
-                            </label>
-
-                            <label>
-                                <span>since version</span>
-                                <input type="text" name="sinceVersion" readonly />
-                            </label>
-
-                            <label>
-                                <span>current version</span>
-                                <input type="text" name="currentVersion" readonly />
-                            </label>
-
-                            <label>
-                                <span>local waiters</span>
-                                <input type="text" name="localWaiters" readonly />
-                            </label>
-
-                            <label>
-                                <span>global waiters</span>
-                                <input type="text" name="globalWaiters" readonly />
-                            </label>
-
-                            <label>
-                                <span>in flight</span>
-                                <input type="text" name="inFlight" readonly />
-                            </label>
-
-                            <label>
-                                <span>mask</span>
-                                <input type="text" name="mask" readonly />
-                            </label>
-
-                            <label>
-                                <span>reason</span>
-                                <input type="text" name="reason" readonly />
-                            </label>
-
-                            <label>
-                                <span>timed out</span>
-                                <input type="text" name="timedOut" readonly />
-                            </label>
-
-                            <label>
-                                <span>overloaded</span>
-                                <input type="text" name="overloaded" readonly />
-                            </label>
-
-                            <label>
-                                <span>removed</span>
-                                <input type="text" name="removed" readonly />
-                            </label>
-
-                            <label>
-                                <span>elapsed ms</span>
-                                <input type="text" name="elapsedMs" readonly />
-                            </label>
-
-                            <label>
-                                <span>state</span>
-                                <input type="text" name="state" readonly />
-                            </label>
-
-                            <label class="Clearing FullWidth">
-                                <span>exception</span>
-                                <textarea name="exception" rows="6" readonly></textarea>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div style="padding: 20px; clear: both;"></div>
-
-                </div>
             </div>
         </form>
+
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Squence</th>
+                    <th>Timestamp</th>
+                    <th>Last loaded</th>
+                    <th>Level</th>
+                    <th>Event</th>
+                    <th>Source</th>
+                    <th>Company</th>
+                    <th>User</th>
+                    <th>Since version</th>
+                    <th>Version</th>
+                    <th>Mask</th>
+                    <th>Completed</th>
+                    <th>Enqueued</th>
+                    <th>Reports to sign</th>
+                    <th>Instances to sign</th>
+                    <th>Prototype versions to sign</th>
+                    <th>Idle</th>
+                    <th>Valid</th>
+                    <th>Active waiters</th>
+                    <th>Global waiters</th>
+                    <th>In flight</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="Handler">
+                    <td data-column="sequence"></td>
+                    <td data-column="timestampUtc" data-type="DateTimeOffset"></td>
+                    <td data-column="lastLoadedUtc" data-type="DateTimeOffset"></td>
+
+
+                    <td data-column="levelDescription"></td>
+                    <td data-column="eventType"></td>
+                    <td data-column="source"></td>
+
+                    <td data-column="company"></td>
+                    <td data-column="user"></td>
+
+                    <td data-column="sinceVersion"></td>
+                    <td data-column="version"></td>
+
+                    <td data-column="mask"></td>
+
+                    <td data-column="completedReportCount"></td>
+                    <td data-column="enqueuedReportCount"></td>
+                    <td data-column="reportsToSignCount"></td>
+                    <td data-column="instancesToSignCount"></td>
+                    <td data-column="prototypeVersionsToSignCount"></td>
+
+                    <td data-column="idle" data-type="Boolean"></td>
+                    <td data-column="valid" data-type="Boolean"></td>
+
+                    <td data-column="activeWaiters"></td>
+                    <td data-column="globalWaiters"></td>
+                    <td data-column="inFlight"></td>
+
+                    <td data-column="note"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Paginator"></div>
+        <div class="Clearing" style="padding: 20px;"></div>
     </div>
 </div>
 
@@ -337,476 +239,11 @@
         textArea = document.getElementById("Output"),
         formSelector = "form#NotificationsDiagnosticsForm";
 
-    function createNotificationLogViewer(root) {
-        var pageSize = 20;
-
-        var levelOrder =
-        {
-            Verbose: 0,
-            Info: 1,
-            Warning: 2,
-            Error: 3,
-            Disabled: 4
-        };
-
-        var fields =
-            [
-                "seq",
-                "utc",
-                "level",
-                "event",
-                "company",
-                "user",
-                "waiterId",
-                "sinceVersion",
-                "currentVersion",
-                "localWaiters",
-                "globalWaiters",
-                "inFlight",
-                "mask",
-                "reason",
-                "timedOut",
-                "overloaded",
-                "removed",
-                "elapsedMs",
-                "state",
-                "exception"
-            ];
-
-        var filters =
-        {
-            minLevel: root.querySelector("#min-level"),
-            event: root.querySelector("input[name='event']:not([readonly])"),
-            company: root.querySelector("input[name='company']:not([readonly])"),
-            user: root.querySelector("input[name='user']:not([readonly])"),
-            waiterId: root.querySelector("input[name='waiterId']:not([readonly])"),
-            state: root.querySelector("input[name='state']:not([readonly])"),
-            reason: root.querySelector("input[name='reason']:not([readonly])"),
-            note: root.querySelector("input[name='note']")
-        };
-
-        var tableBody = root.querySelector("table.Grid tbody");
-        var paginator = root.querySelector(".Paginator");
-        var pageInput = paginator.querySelector("input[placeholder='page']");
-        var goPage = paginator.querySelector("i.Icon");
-        var detailEmpty = root.querySelector("[name='detailEmpty']");
-        var detail = root.querySelector("[name='detail']");
-
-        var allRows = [];
-        var filteredRows = [];
-        var currentPage = 1;
-        var selectedSeq = null;
-
-        function setLogs(lines) {
-            allRows = (lines || []).map(parseLogLine);
-            filteredRows = [];
-            currentPage = 1;
-            selectedSeq = null;
-            refresh();
-        }
-
-        function refresh() {
-            filteredRows = allRows.filter(matchesFilters);
-
-            if (currentPage < 1)
-                currentPage = 1;
-
-            if (currentPage > getTotalPages())
-                currentPage = getTotalPages();
-
-            if (selectedSeq !== null && !containsSeq(filteredRows, selectedSeq))
-                selectedSeq = null;
-
-            renderGrid();
-            renderPager();
-            renderDetail();
-        }
-
-        function parseLogLine(line) {
-            var values = String(line || "").split("|");
-
-            return {
-                raw: line || "",
-                seq: values[0] || "",
-                utc: values[1] || "",
-                level: values[2] || "",
-                event: values[3] || "",
-                company: values[4] || "",
-                user: values[5] || "",
-                waiterId: values[6] || "",
-                sinceVersion: values[7] || "",
-                currentVersion: values[8] || "",
-                localWaiters: values[9] || "",
-                globalWaiters: values[10] || "",
-                inFlight: values[11] || "",
-                mask: values[12] || "",
-                reason: values[13] || "",
-                timedOut: values[14] || "",
-                overloaded: values[15] || "",
-                removed: values[16] || "",
-                elapsedMs: values[17] || "",
-                state: values[18] || "",
-                exception: values.length > 19
-                    ? values.slice(19).join("|")
-                    : ""
-            };
-        }
-
-        function matchesFilters(row) {
-            if (!matchesMinLevel(row.level, filters.minLevel.value))
-                return false;
-
-            if (!contains(row.event, filters.event.value))
-                return false;
-
-            if (!contains(row.company, filters.company.value))
-                return false;
-
-            if (!contains(row.user, filters.user.value))
-                return false;
-
-            if (!contains(row.waiterId, filters.waiterId.value))
-                return false;
-
-            if (!contains(row.state, filters.state.value))
-                return false;
-
-            if (!contains(row.reason, filters.reason.value))
-                return false;
-
-            if (!containsDiagnosticText(row, filters.note.value))
-                return false;
-
-            return true;
-        }
-
-        function matchesMinLevel(level, minLevel) {
-            if (!minLevel)
-                return true;
-
-            if (levelOrder[level] === undefined)
-                return true;
-
-            return levelOrder[level] >= levelOrder[minLevel];
-        }
-
-        function contains(value, search) {
-            if (!search)
-                return true;
-
-            return String(value || "")
-                .toLowerCase()
-                .indexOf(String(search || "").trim().toLowerCase()) >= 0;
-        }
-
-        function containsDiagnosticText(row, search) {
-            if (!search)
-                return true;
-
-            var text =
-                [
-                    row.event,
-                    row.mask,
-                    row.reason,
-                    row.state,
-                    row.exception
-                ].join(" ");
-
-            return contains(text, search);
-        }
-
-        function getTotalPages() {
-            var totalPages = Math.ceil(filteredRows.length / pageSize);
-            return totalPages > 0 ? totalPages : 1;
-        }
-
-        function getPageRows() {
-            var start = (currentPage - 1) * pageSize;
-            return filteredRows.slice(start, start + pageSize);
-        }
-
-        function renderGrid() {
-            var rows = getPageRows();
-            var html = "";
-
-            if (!rows.length) {
-                tableBody.innerHTML =
-                    '<tr class="NoRecord">' +
-                    '<td colspan="20">(empty)</td>' +
-                    '</tr>';
-                return;
-            }
-
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                var selectedClass = row.seq === selectedSeq ? "Current" : "";
-
-                html +=
-                    "<tr  class='Handler " + selectedClass + "' data-seq=\"" + escapeHtml(row.seq) + "\" style=\"cursor: pointer;\">" +
-                    "<td>" + escapeHtml(row.seq) + "</td>" +
-                    "<td>" + escapeHtml(row.utc) + "</td>" +
-                    "<td>" + escapeHtml(row.level) + "</td>" +
-                    "<td>" + escapeHtml(row.event) + "</td>" +
-                    "<td>" + escapeHtml(row.company) + "</td>" +
-                    "<td>" + escapeHtml(row.user) + "</td>" +
-                    "<td>" + escapeHtml(row.waiterId) + "</td>" +
-                    "<td>" + escapeHtml(row.sinceVersion) + "</td>" +
-                    "<td>" + escapeHtml(row.currentVersion) + "</td>" +
-                    "<td>" + escapeHtml(row.localWaiters) + "</td>" +
-                    "<td>" + escapeHtml(row.globalWaiters) + "</td>" +
-                    "<td>" + escapeHtml(row.inFlight) + "</td>" +
-                    "<td>" + escapeHtml(row.mask) + "</td>" +
-                    "<td>" + escapeHtml(row.reason) + "</td>" +
-                    "<td>" + escapeHtml(row.timedOut) + "</td>" +
-                    "<td>" + escapeHtml(row.overloaded) + "</td>" +
-                    "<td>" + escapeHtml(row.removed) + "</td>" +
-                    "<td>" + escapeHtml(row.elapsedMs) + "</td>" +
-                    "<td>" + escapeHtml(row.state) + "</td>" +
-                    "<td>" + escapeHtml(shorten(row.exception, 120)) + "</td>" +
-                    "</tr>";
-            }
-
-            tableBody.innerHTML = html;
-        }
-
-        function renderPager() {
-            var totalPages = getTotalPages();
-            var items = buildPagerItems(totalPages, currentPage);
-            var html =
-                '<a title="grid settings" class="Settings">' +
-                '<i class="fal fa-cog"></i>' +
-                '</a>';
-
-            for (var i = 0; i < items.length; i++) {
-                if (items[i] === "...") {
-                    html += "<span>...</span>";
-                    continue;
-                }
-
-                if (items[i] === currentPage) {
-                    html += "<a class=\"Current\" data-page=\"" + items[i] + "\">" + items[i] + "</a>";
-                    continue;
-                }
-
-                html += "<a data-page=\"" + items[i] + "\">" + items[i] + "</a>";
-            }
-
-            paginator.innerHTML = html;
-
-            pageInput = paginator.querySelector("input[placeholder='page']");
-            goPage = paginator.querySelector("i.Icon");
-        }
-
-        function buildPagerItems(totalPages, currentPage) {
-            if (totalPages <= 10)
-                return range(1, totalPages);
-
-            var items = [];
-            var start = currentPage - 3;
-            var end = currentPage + 3;
-
-            if (start < 2)
-                start = 2;
-
-            if (end > totalPages - 1)
-                end = totalPages - 1;
-
-            items.push(1);
-
-            if (start > 2)
-                items.push("...");
-
-            for (var i = start; i <= end; i++)
-                items.push(i);
-
-            if (end < totalPages - 1)
-                items.push("...");
-
-            items.push(totalPages);
-
-            return items;
-        }
-
-        function renderDetail() {
-            var row = getSelectedRow();
-
-            if (!row) {
-                detail.style.display = "none";
-                detailEmpty.style.display = "";
-                clearDetail();
-                return;
-            }
-
-            detailEmpty.style.display = "none";
-            detail.style.display = "";
-
-            for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                var input = detail.querySelector("[name='" + field + "']");
-                if (!input)
-                    continue;
-
-                input.value = row[field] || "";
-            }
-        }
-
-        function clearDetail() {
-            for (var i = 0; i < fields.length; i++) {
-                var field = fields[i];
-                var input = detail.querySelector("[name='" + field + "']");
-                if (!input)
-                    continue;
-
-                input.value = "";
-            }
-        }
-
-        function getSelectedRow() {
-            for (var i = 0; i < filteredRows.length; i++)
-                if (filteredRows[i].seq === selectedSeq)
-                    return filteredRows[i];
-
-            return null;
-        }
-
-        function containsSeq(rows, seq) {
-            for (var i = 0; i < rows.length; i++)
-                if (rows[i].seq === seq)
-                    return true;
-
-            return false;
-        }
-
-        function range(from, to) {
-            var items = [];
-
-            for (var i = from; i <= to; i++)
-                items.push(i);
-
-            return items;
-        }
-
-        function shorten(value, maxLength) {
-            var text = String(value || "");
-
-            if (text.length <= maxLength)
-                return text;
-
-            return text.substring(0, maxLength - 3) + "...";
-        }
-
-        function escapeHtml(value) {
-            return String(value || "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
-
-        function goToTypedPage() {
-            var targetPage = parseInt(pageInput.value, 10);
-
-            if (isNaN(targetPage))
-                return;
-
-            if (targetPage < 1)
-                targetPage = 1;
-
-            if (targetPage > getTotalPages())
-                targetPage = getTotalPages();
-
-            currentPage = targetPage;
-            renderGrid();
-            renderPager();
-        }
-
-        tableBody.addEventListener("click", function (e) {
-            var tr = e.target.closest("tr[data-seq]");
-            if (!tr)
-                return;
-
-            selectedSeq = tr.getAttribute("data-seq");
-            renderGrid();
-            renderDetail();
-            tab.resize();
-        });
-
-        paginator.addEventListener("click", function (e) {
-            var link = e.target.closest("a");
-            if (!link)
-                return;
-
-            if (link.classList.contains("Settings"))
-                return;
-
-            var targetPage = parseInt(link.getAttribute("data-page") || link.textContent, 10);
-            if (isNaN(targetPage))
-                return;
-
-            currentPage = targetPage;
-            renderGrid();
-            renderPager();
-        });
-
-        paginator.addEventListener("click", function (e) {
-            if (!e.target.closest("i.Icon"))
-                return;
-
-            goToTypedPage();
-        });
-
-        paginator.addEventListener("keydown", function (e) {
-            if (e.key !== "Enter")
-                return;
-
-            if (e.target !== pageInput)
-                return;
-
-            e.preventDefault();
-            goToTypedPage();
-        });
-
-        filters.minLevel.addEventListener("change", function () {
-            currentPage = 1;
-            refresh();
-        });
-
-        [
-            filters.event,
-            filters.company,
-            filters.user,
-            filters.waiterId,
-            filters.state,
-            filters.reason,
-            filters.note
-        ].forEach(function (input) {
-            input.addEventListener("keydown", function (e) {
-                if (e.key !== "Enter")
-                    return;
-
-                e.preventDefault();
-                currentPage = 1;
-                refresh();
-            });
-
-            input.addEventListener("change", function () {
-                currentPage = 1;
-                refresh();
-            });
-        });
-
-        return {
-            setLogs: setLogs
-        };
-    }
-
     matematici.events.onPageLoad = function (callback) {
-        var logViewer = createNotificationLogViewer(document.querySelector(".NotificationsDiagnostics .Tab.Log"));
-
         var searchPage = new matematici.SearchPage({
             pageName: "NotificationsDiagnostics",
             filterFormSelector: formSelector,
+            resultGridSelector: "div#Content table.Grid",
             getDataEvent: "Diagnostics",
             searchButtonLabel: "refresh",
             readOnly: true,
@@ -815,12 +252,10 @@
             ],
             filterHandler: function (data) {
                 console.log(data);
-
                 for (var key in data)
-                    $("input[name='" + key + "']", formSelector).val(data[key]);
+                    $(".Log input[name='" + key + "']", formSelector).val(data[key]);
 
                 textArea.value = JSON.stringify(data, null, 4);
-                logViewer.setLogs(data.logs || []);
                 tab.resize();
             }
         });
@@ -832,11 +267,3 @@
         callback.call();
     };
 </script>
-
-<style>
-    p {
-        margin-top: 20px;
-        margin-left: 20px;
-        float: left;
-    }
-</style>

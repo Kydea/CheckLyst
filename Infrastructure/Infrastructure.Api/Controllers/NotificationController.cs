@@ -15,6 +15,7 @@ using CheckListManager.Common.Logic.Cache;
 using CheckListManager.Common.Core.Web.Security;
 using CheckListManager.Common.Logic.Models;
 using CheckListManager.Infrastructure.Data;
+using CheckListManager.Common.Logic.Api.Messages;
 
 namespace CheckListManager.Infrastructure.Api.Controllers
 {
@@ -66,9 +67,9 @@ namespace CheckListManager.Infrastructure.Api.Controllers
 
             [Authorize(Roles = "Companies#Edit")]
             [Route("Diagnostics")]
-            public IHttpActionResult Diagnostics()
+            public IHttpActionResult Diagnostics(PagingRequest<NotificationDiagnosticsFilter> request)
             {
-                return Ok(_notificationService.GetDiagnostics());
+                return Ok(_notificationService.GetDiagnostics(request));
             }
 
             [AllowAnonymous]
