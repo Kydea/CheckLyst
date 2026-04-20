@@ -43,7 +43,30 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             NotificationInvalidateMask mask)
         {
             if (!_users.TryGetValue((company, user), out var b))
+            {
+                AppendHistory
+                (
+                    NotificationBucketEventLevel.Info,
+                    "InvalidateMiss",
+                    "invalidate",
+                    company,
+                    user,
+                    mask: mask
+                );
+
                 return;
+            }
+
+            AppendHistory
+            (
+                NotificationBucketEventLevel.Info,
+                "InvalidateRequested",
+                "invalidate",
+                company,
+                user,
+                b,
+                mask: mask
+            );
 
             EnterBucket(b);
             try
@@ -103,10 +126,23 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                         ApplyInvalidateMask(requestState, invalidateMask.Value);
                 }
 
+                AppendHistory
+                (
+                    NotificationBucketEventLevel.Debug,
+                    "RefreshStart",
+                    invalidateMask.HasValue ? "invalidate" : "polling",
+                    b.Company,
+                    b.User,
+                    b,
+                    mask: invalidateMask,
+                    note: forceRefresh ? "forceRefresh" : "normalRefresh"
+                );
+
                 var loadedState = await loadStateAsync(requestState).ConfigureAwait(false);
 
                 List<WaiterEntry> toWake = null;
                 NotificationSnapshot snap = null;
+                var woken = 0;
 
                 lock (b.Gate)
                 {
@@ -121,13 +157,25 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                         snap.Overloaded = false;
 
                         toWake = new List<WaiterEntry>(b.Waiters.Values);
+                        woken = toWake.Count;
                         b.Waiters.Clear();
 
                         snap.ActiveWaiters = 0;
                     }
                 }
 
-                WakeWaiters(toWake, snap);
+                AppendHistory
+                (
+                    NotificationBucketEventLevel.Debug,
+                    "RefreshEnd",
+                    invalidateMask.HasValue ? "invalidate" : "polling",
+                    b.Company,
+                    b.User,
+                    b,
+                    mask: invalidateMask
+                );
+
+                WakeWaiters(b, toWake, snap, woken);
             }
             finally
             {
@@ -176,8 +224,10 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         }
 
         private void WakeWaiters(
+            UserBucket b,
             List<WaiterEntry> toWake,
-            NotificationSnapshot snap)
+            NotificationSnapshot snap,
+            int expectedWoken)
         {
             if (toWake == null || toWake.Count == 0)
                 return;
@@ -186,7 +236,6 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             var woken = 0;
 
             foreach (var w in toWake)
-            {
                 if (w.Tcs.TrySetResult(snap))
                 {
                     woken++;
@@ -197,16 +246,31 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     Interlocked.Add(ref _waitMillisecondsTotal, ms);
                     Interlocked.Increment(ref _waitCompletedTotal);
                 }
-            }
 
             if (woken > 0)
             {
                 Interlocked.Add(ref _totalWakeups, woken);
                 Interlocked.Add(ref _globalWaiters, -woken);
+
+                AppendHistory
+                (
+                    NotificationBucketEventLevel.Debug,
+                    "WaitersWoken",
+                    "system",
+                    b.Company,
+                    b.User,
+                    b,
+                    note: $"Woken={woken}; Expected={expectedWoken}"
+                );
             }
         }
 
-        public async Task<NotificationSnapshot> PollingAsync(long company, string user, ulong sinceVersion, Func<NotificationsState, Task<NotificationsState>> loadStateAsync, CancellationToken requestAborted)
+        public async Task<NotificationSnapshot> PollingAsync(
+            long company,
+            string user,
+            ulong sinceVersion,
+            Func<NotificationsState, Task<NotificationsState>> loadStateAsync,
+            CancellationToken requestAborted)
         {
             var b = GetBucket(company, user);
             EnterBucket(b);
@@ -248,6 +312,18 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                         s.ActiveWaiters = b.Waiters.Count;
 
                         Interlocked.Increment(ref _totalOverloadReturns);
+
+                        AppendHistory
+                        (
+                            NotificationBucketEventLevel.Warn,
+                            "OverloadReturned",
+                            "polling",
+                            company,
+                            user,
+                            b,
+                            sinceVersion
+                        );
+
                         return s;
                     }
 
@@ -256,13 +332,37 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
                 Interlocked.Increment(ref _globalWaiters);
 
+                AppendHistory
+                (
+                    NotificationBucketEventLevel.Debug,
+                    "WaiterRegistered",
+                    "polling",
+                    company,
+                    user,
+                    b,
+                    sinceVersion
+                );
+
                 // Abort/disconnect
                 var abortReg = requestAborted.Register(() =>
                 {
                     RemoveWaiter(b, waiterId);
 
                     if (tcs.TrySetCanceled())
+                    {
                         Interlocked.Increment(ref _totalAborts);
+
+                        AppendHistory
+                        (
+                            NotificationBucketEventLevel.Warn,
+                            "WaiterAborted",
+                            "polling",
+                            company,
+                            user,
+                            b,
+                            sinceVersion
+                        );
+                    }
                 });
 
                 // Timeout
@@ -286,6 +386,17 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                         // timeout = completed wait
                         Interlocked.Add(ref _waitMillisecondsTotal, (long)LongPollTimeout.TotalMilliseconds);
                         Interlocked.Increment(ref _waitCompletedTotal);
+
+                        AppendHistory
+                        (
+                            NotificationBucketEventLevel.Warn,
+                            "WaiterTimeout",
+                            "polling",
+                            company,
+                            user,
+                            b,
+                            sinceVersion
+                        );
                     }
                 });
 
@@ -315,9 +426,21 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             }
         }
 
-        private UserBucket GetBucket(long company, string user) =>
-            _users.GetOrAdd((company, user), _ => new UserBucket());
+        private UserBucket GetBucket(long company, string user)
+        {
+            var created = false;
 
+            var bucket = _users.GetOrAdd((company, user), _ =>
+            {
+                created = true;
+                return new UserBucket(company, user);
+            });
+
+            if (created)
+                AppendHistory(NotificationBucketEventLevel.Debug, "BucketCreated", "system", company, user, bucket);
+
+            return bucket;
+        }
 
         private void EnterBucket(UserBucket b)
         {
@@ -332,7 +455,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
             {
                 bool noWaiters;
                 lock (b.Gate) noWaiters = b.Waiters.Count == 0;
-                if (!noWaiters) 
+                if (!noWaiters)
                     return;
 
                 var lastAccess = new DateTime(Interlocked.Read(ref b.LastAccessTicks), DateTimeKind.Utc);
@@ -340,7 +463,19 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     return;
 
                 if (_users.TryGetValue((company, user), out var current) && ReferenceEquals(current, b))
+                {
+                    AppendHistory
+                    (
+                        NotificationBucketEventLevel.Info,
+                        "BucketEvicted",
+                        "system",
+                        company,
+                        user,
+                        b
+                    );
+
                     _users.TryRemove((company, user), out _);
+                }
             }
         }
 
@@ -382,6 +517,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
         }
 
         private void AppendHistory(
+            NotificationBucketEventLevel level,
             string eventType,
             string source,
             long company,
@@ -400,6 +536,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     Sequence = Interlocked.Increment(ref _historySequence),
                     TimestampUtc = DateTime.UtcNow,
 
+                    Level = level,
                     EventType = eventType,
                     Source = source,
 
@@ -426,16 +563,56 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
 
             _history.Enqueue(e);
 
-            while (_history.Count > MaxHistoryRows)
-                _history.TryDequeue(out _);
+            while (_history.Count > MaxHistoryRows && _history.TryDequeue(out _)) ;
+        }
+
+        private void AppendHistory(
+            NotificationBucketEventLevel level,
+            string eventType,
+            string source,
+            long company,
+            string user,
+            ulong? sinceVersion = null,
+            NotificationInvalidateMask? mask = null,
+            string note = null
+        )
+        {
+            _history.Enqueue(new NotificationBucketEvent
+            {
+                Sequence = Interlocked.Increment(ref _historySequence),
+                TimestampUtc = DateTime.UtcNow,
+
+                Level = level,
+                EventType = eventType,
+                Source = source,
+
+                Company = company,
+                User = user,
+
+                SinceVersion = sinceVersion,
+                Version = 0,
+                Mask = mask.HasValue ? (int)mask.Value : (int?)null,
+                Note = note
+            });
+
+            while (_history.Count > MaxHistoryRows && _history.TryDequeue(out _)) ;
         }
 
         private sealed class UserBucket
         {
+            public UserBucket(long company, string user)
+            {
+                Company = company;
+                User = user;
+            }
+
+            public long Company { get; }
+            public string User { get; }
+
             public object Gate { get; } = new object();
             public NotificationsState State { get; } = new NotificationsState();
             public ulong Version { get; private set; } = 1;
-            
+
             public int InFlight;
             public long LastAccessTicks;
 

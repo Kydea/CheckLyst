@@ -140,6 +140,7 @@
     <Compile Include="Infrastruture\ClockResponse.cs" />
     <Compile Include="Notifications\INotificationService.cs" />
     <Compile Include="Notifications\NotificationBucketEvent.cs" />
+    <Compile Include="Notifications\NotificationBucketEventLevel.cs" />
     <Compile Include="Notifications\NotificationDiagnostics.cs" />
     <Compile Include="Notifications\NotificationSnapshot.cs" />
     <Compile Include="Notifications\NotificationService.cs" />
