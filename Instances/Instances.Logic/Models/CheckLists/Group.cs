@@ -18,6 +18,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
         public HashSet<string> ExternalSources { get; } = new HashSet<string>();
         public bool Iterator { get; set; }
+        public bool Inverted { get; set; }
         public bool ShowAsTable { get; set; }
         public int InstanceIterations { get; set; }
         public int PrototypeIterations { get; set; }
@@ -48,6 +49,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 if (Iterator)
                 {
                     ItemModel.Iterator = true;
+                    if (Inverted) ItemModel.Inverted = true;
                     ItemModel.Iterations = Iterations.OfType<Iteration>().Select(i => i.GetViewModel(ReportModel));
                     ItemModel.AddIterationButton = AddIterationButton;
                     ItemModel.RemoveIterationButton = RemoveIterationButton;
@@ -200,6 +202,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             {
                 CheckList = CheckList,
                 Iterator = Iterator,
+                Inverted = Inverted,
                 ShowAsTable = ShowAsTable,
                 InstanceIterations = InstanceIterations,
                 PrototypeIterations = PrototypeIterations,
@@ -280,7 +283,10 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group = this
             };
             iteration.Setup();
-            Iterations.Add(iteration);
+            if (Inverted)
+                Iterations.Insert(0, iteration);
+            else
+                Iterations.Add(iteration);
             return iteration;
         }
 

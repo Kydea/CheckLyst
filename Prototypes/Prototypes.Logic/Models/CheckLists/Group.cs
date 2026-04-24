@@ -18,6 +18,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
         public List<ICheckListItem> Items { get; set; } = new List<ICheckListItem>();
         public List<ICheckListIteration> Iterations { get; } = new List<ICheckListIteration>();
         public bool Iterator { get; set; }
+        public bool Inverted { get; set; }
         public bool ShowAsTable { get; set; }
         public int InstanceIterations { get; set; }
         public int PrototypeIterations { get; set; }
@@ -112,6 +113,7 @@ namespace CheckListManager.Prototypes.Logic.Models.CheckLists
             {
                 CheckList = CheckList,
                 Iterator = Iterator,
+                Inverted = Inverted,
                 ShowAsTable = ShowAsTable,
                 InstanceIterations = InstanceIterations,
                 PrototypeIterations = PrototypeIterations,

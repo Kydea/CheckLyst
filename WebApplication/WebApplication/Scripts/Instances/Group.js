@@ -232,7 +232,7 @@
         update = function (model) {
             readOnly = !!model.readOnly;
             directImport = !!model.directImport;
-			if (title) title.innerHTML = model.descriptionValue;
+            if (title) title.innerHTML = model.descriptionValue;
             if (!group.isPage()) {
                 id = model.id;
                 instances.instance.getItems()[id] = group;
@@ -295,17 +295,19 @@
             item,
             itemModel;
 
+        if (actionButtonsBar && model.inverted) element.insertBefore(actionButtonsBar, element.firstChild);
+
         update(model);
 
         /* aggiorna ricorsivamente: Groups per le pagine, Items per i gruppi e Iterations per gli iteratori; crea le nuove iterazioni  */
         var
             children = model.groups ? model.groups : model.iterator ? model.iterations : model.items,
             even = true;
-        
+
         for (index in children) {
-		    itemModel = children[index];
-            
-            if (!itemIndexes[itemModel.id]) 
+            itemModel = children[index];
+
+            if (!itemIndexes[itemModel.id])
                 item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, itemModel) : new instances.Item(itemModel, this);
             else
                 item = items[itemIndexes[itemModel.id]];
@@ -346,8 +348,7 @@
             lastItem.getElement().classList.add("LastIteration")
 
         if (iterationCommands) element.appendChild(iterationCommands);
-        if (actionButtonsBar) element.appendChild(actionButtonsBar);
-
+        if (actionButtonsBar && !model.inverted) element.appendChild(actionButtonsBar);
     };
 
     this.getSetupModel = function () {
@@ -393,21 +394,21 @@
         return tableContent;
     };
 
-	this.isSubRow = function () {
-		return subRow;
-	};
+    this.isSubRow = function () {
+        return subRow;
+    };
 
     this.getParent = function () {
         return parent;
     };
 
-	this.setPageIndex = function (value) {
-		pageIndex = value;
-	};
+    this.setPageIndex = function (value) {
+        pageIndex = value;
+    };
 
-	this.getPageIndex = function () {
-		return pageIndex;
-	};
+    this.getPageIndex = function () {
+        return pageIndex;
+    };
 
     setup();
 }

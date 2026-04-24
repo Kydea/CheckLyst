@@ -89,6 +89,7 @@ namespace CheckListManager.AccessControl.Data
                 ") " +
                 "and (:enabled = 'All' or :enabled = 'Enabled' and u.\"Enabled\" or :enabled = 'Disabled' and not u.\"Enabled\") " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
+
         public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
         {
             var List = await Read<ExportRow>(EXPORT_QUERY, new

@@ -300,11 +300,12 @@
 
                     if (!tableContent && !isHeader) {
                         var
-                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, addIteration, removeIteration, moveIteration, directImport,
+                            instanceIterationsNumber, prototypeIterationsNumber, showAsTable, inverted, addIteration, removeIteration, moveIteration, directImport,
 
                             toggleIteratorControls = function () {
                                 var itaratorCommandsEnabled = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft && model.iterator;
                                 showAsTable.getType().setReadOnly(!itaratorCommandsEnabled);
+                                inverted.getType().setReadOnly(!itaratorCommandsEnabled);
                                 instanceIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
                                 prototypeIterationsNumber.getType().setReadOnly(!itaratorCommandsEnabled);
                                 addIteration.getType().setReadOnly(!itaratorCommandsEnabled);
@@ -317,6 +318,7 @@
                                     model.prototypeIterationsNumber = 0;
 
                                     model.showAsTable = false;
+                                    model.inverted = false;
                                     model.addIterationCondition = 1;
                                     model.removeIterationCondition = 1;
                                     model.moveIterationCondition = 1
@@ -326,6 +328,7 @@
                                     instanceIterationsNumber.setValue();
                                     prototypeIterationsNumber.setValue();
                                     showAsTable.setValue();
+                                    inverted.setValue();
                                 }
 
                                 addIteration.setValue();
@@ -344,6 +347,12 @@
                             "Displays the group as a table."
                         );
                         properties.push(showAsTable);
+
+                        inverted = new prototypes.Property(
+                            this, new prototypes.BooleanProperty(model, "inverted", !model.iterator), "Order inverted",
+                            "Inverts the order of the iterations from last to first."
+                        );
+                        properties.push(inverted);
 
                         instanceIterationsNumber = new prototypes.Property(
                             this, new prototypes.SimpleValueProperty(model, "instanceIterations", { number: true, readOnly: state != prototypes.Prototype.states.draft || !model.iterator }), "Instance iterations",

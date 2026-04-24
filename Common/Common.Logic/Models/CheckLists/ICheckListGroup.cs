@@ -9,6 +9,7 @@ namespace CheckListManager.Common.Logic.Models.CheckLists
 		List<ICheckListItem> Items { get; set; }
 		List<ICheckListIteration> Iterations { get; }
 		bool Iterator { get; set; }
+        bool Inverted { get; set; }
         bool ShowAsTable { get; set; }
         int InstanceIterations { get; set; }
         int PrototypeIterations { get; set; }
