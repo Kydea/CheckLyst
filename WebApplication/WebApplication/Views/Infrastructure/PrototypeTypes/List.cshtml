@@ -9,7 +9,7 @@
             <label>
                 <span>Department</span>
                 <i class="Icon fal fa-industry"></i>
-                <select name="department"></select>
+                <select name="department" data-nullable="(all)"></select>
             </label>
             <label>
                 <span>Prototype type name</span>
@@ -21,6 +21,8 @@
         <table class="Grid">
             <thead>
                 <tr>
+                    <th>Department ID</th>
+                    <th>Department name</th>
                     <th>Prototype type ID</th>
                     <th>Prototype type name</th>
                     <th>Life cycle</th>
@@ -34,6 +36,8 @@
             </thead>
             <tbody>
                 <tr class="Handler">
+                    <td data-column="department"></td>
+                    <td data-column="departmentName"></td>
                     <td data-column="id"></td>
                     <td data-column="name"></td>
                     <td data-column="lifeCycle"></td>
