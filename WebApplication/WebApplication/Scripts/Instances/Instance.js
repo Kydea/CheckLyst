@@ -162,9 +162,11 @@
                     } else if (typeName == "Array") {
                         td.text("(click to open)");
                         tr.addClass("Handler");
-                        tr.on("click", function () {
+                        tr.on("click", function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
                             showArray($(this));
-                            matematici.checkListGrid.close();
+                            return false;
                         }).data("array", value);
                     } else if (typeName == "Boolean") {
                         if (value != null) td.addClass("Centered").append($("<i />").addClass("fal").addClass("fa-" + (value ? "check" : "times")));

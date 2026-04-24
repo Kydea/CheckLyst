@@ -241,7 +241,7 @@
           <Property Name="ModifiedBy" Type="varchar" MaxLength="60" />
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="Class" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="text" />
         </EntityType>
         <EntityType Name="Companies">
           <Key>

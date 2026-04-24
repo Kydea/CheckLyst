@@ -505,6 +505,7 @@ namespace CheckListManager.Infrastructure.Data
                             )
                     )
                 );
+            //var list = result.Select(x => x.instance.ID).Distinct().ToList();
             return result.Select(x => x.instance.ID).Distinct().LongCountAsync();
         }
 
@@ -622,6 +623,7 @@ namespace CheckListManager.Infrastructure.Data
                             )
                     )
                 );
+            //var list = result.Select(x => x.prototype.ID).Distinct().ToList();
             return result.Select(x => x.prototype.ID).Distinct().LongCountAsync();
         }
 

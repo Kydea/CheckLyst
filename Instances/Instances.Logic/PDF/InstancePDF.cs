@@ -53,12 +53,12 @@ namespace CheckListManager.Instances.Logic.PDF
         protected override FirstPage GenerateFirstPage()
         {
             var Rows = new List<Tuple<string, string>> {
-                new Tuple<string, string> ("Plant", CompanyName),
-                new Tuple<string, string> ("Department", Instance.DepartmentName),
-                new Tuple<string, string> ("Prototype type", Instance.PrototypeTypeName),
-                new Tuple<string, string> ("Prototype name", Instance.PrototypeName),
+                new Tuple<string, string> ("Plant", Split(CompanyName)),
+                new Tuple<string, string> ("Department", Split(Instance.DepartmentName)),
+                new Tuple<string, string> ("Prototype type", Split(Instance.PrototypeTypeName)),
+                new Tuple<string, string> ("Prototype name", Split(Instance.PrototypeName)),
                 new Tuple<string, string> ("Prototype version", Instance.Version.ToString()),
-                new Tuple<string, string> ("Instance code", Instance.InstanceCode),
+                new Tuple<string, string> ("Instance code", Split(Instance.InstanceCode)),
                 new Tuple<string, string> ("Instance state", Instance.InstanceState),
                 new Tuple<string, string> ("Instance creation", Instance.CreatedOn.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss UTC zzz")),
                 new Tuple<string, string> ("Instance confirmation", Instance.InstanceState == InstanceState.Confirmed ? Instance.ModifiedOn?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd HH:mm:ss UTC zzz") : "N/A")

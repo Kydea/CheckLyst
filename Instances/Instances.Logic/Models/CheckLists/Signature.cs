@@ -104,6 +104,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             if (Item.SignatureCode == Code && !Item.Removed && !Item.IteratorModelItem && Item is ICheckListValidityElement checkListValidityElement && !checkListValidityElement.Valid) throw new InstanceException($"The item {(string.IsNullOrEmpty(Item.Description) ? Item.Id.ToString() : $"{Item.Description} (id: {Item.Id})")} is not valid");
         }
 
+        private void CheckPage(int Index, ICheckListPage Page)
+        {
+            if (Page.SignatureCode == Code && !Page.Valid) throw new InstanceException($"The page {(string.IsNullOrEmpty(Page.Description) ? Index.ToString() : $"{Page.Description} (index: {Index})")} is not valid");
+        }
+
         private void FindInvalidItem(ICheckListGroup Group)
         {
             if (Group.Iterator)
@@ -134,7 +139,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                     if (IterationItem)
                         FindInvalidItem(Iteration);
                     else
+                    {
                         Instance.Items.Values.ToList().ForEach(x => CheckItem(x));
+                        for(var pageIndex = 0; pageIndex < Instance.Pages.Count; pageIndex++)
+                            CheckPage(pageIndex, Instance.Pages[pageIndex]);
+                    }
                 }
             }
             finally

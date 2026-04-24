@@ -13,6 +13,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using CheckListManager.Common.Core.Helpers;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 
 namespace CheckListManager.Common.Logic.Api.PDF
 {
@@ -224,13 +225,12 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
                 foreach (var Signature in Signatures)
                 {
-                    var user = string.Join("\u200B", $"{Signature.User} - {Signature.UserDescription}".ToCharArray());
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(user, GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Split($"{Signature.User} - {Signature.UserDescription}"), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("yyyy-MM-dd"), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Date?.ToLocalTime(TimeZone).ToString("HH:mm:ss UTC zzz"), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText((Signature.Step + 1).ToString(), GenericFont).Padding(5)));
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Reason, GenericFont).Padding(5)));
-                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Signature.Comment, GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Split(Signature.Reason), GenericFont).Padding(5)));
+                    Table.AddCell(new PdfPCell(new Paragraph().SetText(Split(Signature.Comment), GenericFont).Padding(5)));
                     Table.AddCell(new PdfPCell(new Paragraph().SetText(!Signature.Approved.HasValue ? "Pending" : Signature.Approved.Value ? "Approved" : "Rejected", GenericFont).Padding(5)));
                     Table.CompleteRow();
                 }
@@ -238,5 +238,7 @@ namespace CheckListManager.Common.Logic.Api.PDF
                 Container.Add(Table);
             }
         }
+
+        protected string Split(string text) => string.Join("\u200B", text.ToCharArray());
     }
 }
