@@ -170,4 +170,5 @@
     this.deleteRecord = deleteRecord;
 
     setup();
+    console.log(matematici.canClose ? "CC" : "NO");
 }
