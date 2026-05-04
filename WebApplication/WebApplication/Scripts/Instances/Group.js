@@ -302,10 +302,11 @@
         /* aggiorna ricorsivamente: Groups per le pagine, Items per i gruppi e Iterations per gli iteratori; crea le nuove iterazioni  */
         var
             children = model.groups ? model.groups : model.iterator ? model.iterations : model.items,
-            even = true;
+            even = true,
+            count = children.length;
 
         for (index in children) {
-            itemModel = children[index];
+            itemModel = children[model.inverted ? count - 1 - index : index];
 
             if (!itemIndexes[itemModel.id])
                 item = itemModel.typeName == "Group" || itemModel.typeName == "Iteration" ? new instances.Group(null, itemModel.typeName, this, itemModel) : new instances.Item(itemModel, this);

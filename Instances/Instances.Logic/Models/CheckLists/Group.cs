@@ -144,11 +144,11 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
         public void SetupIterationsIndexes()
         {
             var Index = 0;
-            foreach (Item Item in Items.Where(i => !i.IteratorModelItem))
+            foreach (Item Item in Items.Where(i => !i.IteratorModelItem).Cast<Item>())
                 if (Item is Group Group)
                     Group.SetupIterationsIndexes();
 
-            foreach (Iteration iteration in Iterations)
+            foreach (Iteration iteration in Iterations.Cast<Iteration>())
                 SetupIterationIntexes(iteration, ref Index);
         }
 
@@ -283,10 +283,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
                 Group = this
             };
             iteration.Setup();
-            if (Inverted)
-                Iterations.Insert(0, iteration);
-            else
-                Iterations.Add(iteration);
+            Iterations.Add(iteration);
             return iteration;
         }
 
