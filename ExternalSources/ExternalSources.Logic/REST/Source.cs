@@ -268,7 +268,7 @@ namespace CheckListManager.ExternalSources.Logic.REST
                         GetJsonValue(Responses[reponseIndex], value.Substring(end + 2)) ?? value;
             }
 
-            if (ParameterValues.TryGetValue(value, out var parameterValue))
+            if (ParameterValues != null && ParameterValues.TryGetValue(value, out var parameterValue))
                 return parameterValue;
 
             if (value == "password") return Password;
