@@ -300,5 +300,8 @@ namespace CheckListManager.Reports.Data
 
         public Task<bool> IsFavouriteAsync(long company, string user, string code) =>
             Entities.UserReports.AnyAsync(ur => ur.Company == company && ur.User == user && ur.ReportCode == code);
+
+        public Task<Users> GetUserAsync(long companyId, string userCode) =>
+            Entities.Users.SingleOrDefaultAsync(u => u.Company == companyId && u.Code == userCode);
     }
 }

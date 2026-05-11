@@ -30,5 +30,6 @@ namespace CheckListManager.Reports.Data
         Task<Common.Data.Reports> GetLastVersionAsync(long company, string code);
         Task ToggleFavourite(long company, string user, string code, bool value);
         Task<bool> IsFavouriteAsync(long company, string user, string code);
+        Task<Users> GetUserAsync(long companyId, string userCode);
     }
 }

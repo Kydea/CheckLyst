@@ -31,8 +31,8 @@ namespace CheckListManager.Reports.Logic.Viewer
         private readonly IRedisCache _redisCache;
 
         public ReportViewerService(
-            IReportsRepository reportsRepository, 
-            IReportViewerRepository reportViewerRepository, 
+            IReportsRepository reportsRepository,
+            IReportViewerRepository reportViewerRepository,
             ISettingService settingService,
             IServiceClient client,
             IRedisCache redisCache
@@ -162,8 +162,19 @@ namespace CheckListManager.Reports.Logic.Viewer
         public async Task EnqueueReportRun(DefaultIdentity identity, ReportRequest request)
         {
             request.CompanyId = identity.CompanyId;
-            request.UserCode = identity.Code;
-            request.UserDescription = identity.Description;
+
+            if (request.UserCode == null || request.UserCode == identity.Code)
+            {
+                request.UserCode = identity.Code;
+                request.UserDescription = identity.Description;
+            }
+            else
+            {
+                if (!identity.HasPermission("Reports", "Edit")) throw new UnauthorizedAccessException($"User {identity.Code} cannot enqueue reports for other users");
+                var enqueuedUser = await _reportsRepository.GetUserAsync(identity.CompanyId, request.UserCode) ?? throw new Exception($"User {request.UserCode} not found on company {identity.CompanyId}");
+                request.UserDescription = enqueuedUser.Description;
+            }
+
             await _reportsRepository.EnqueueReportRunAsync(identity, request.ID.Value, request.Format, JsonConvert.SerializeObject(request));
             var token = identity.Code + ":" + Guid.NewGuid();
             var user = new User
