@@ -57,6 +57,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             {
                 Code = g.Code,
                 Description = g.Description,
+                Users = g.UserGroups.Select(ug => ug.User).ToList(),
                 CreatedBy = g.CreatedBy,
                 CreatedOn = g.CreatedOn,
                 ModifiedBy = g.ModifiedBy,
