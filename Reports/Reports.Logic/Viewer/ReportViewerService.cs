@@ -175,12 +175,12 @@ namespace CheckListManager.Reports.Logic.Viewer
                 request.UserDescription = enqueuedUser.Description;
             }
 
-            await _reportsRepository.EnqueueReportRunAsync(identity, request.ID.Value, request.Format, JsonConvert.SerializeObject(request));
+            await _reportsRepository.EnqueueReportRunAsync(identity.CompanyId, request.UserCode, request.ID.Value, request.Format, JsonConvert.SerializeObject(request));
             var token = identity.Code + ":" + Guid.NewGuid();
             var user = new User
             {
                 Company = identity.CompanyId,
-                Code = identity.Code
+                Code = request.UserCode
             };
             await _redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
             await _client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)Common.Logic.Models.Notifications.NotificationInvalidateMask.EnqueuedReportCount}");

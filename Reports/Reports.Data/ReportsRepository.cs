@@ -181,12 +181,12 @@ namespace CheckListManager.Reports.Data
             await SaveChangesAsync();
         }
 
-        public async Task EnqueueReportRunAsync(IDefaultIdentity identity, long report, string format, string parameters)
+        public async Task EnqueueReportRunAsync(long companyId, string userCode, long report, string format, string parameters)
         {
             Entities.ReportRuns.Add(new ReportRuns
             {
-                Company = identity.CompanyId,
-                User = identity.Code,
+                Company = companyId,
+                User = userCode,
                 Report = report,
                 Parameters = parameters,
                 Format = format,
