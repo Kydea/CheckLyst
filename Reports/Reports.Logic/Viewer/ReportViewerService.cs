@@ -172,6 +172,7 @@ namespace CheckListManager.Reports.Logic.Viewer
             {
                 if (!identity.HasPermission("Reports", "Edit")) throw new UnauthorizedAccessException($"User {identity.Code} cannot enqueue reports for other users");
                 var enqueuedUser = await _reportsRepository.GetUserAsync(identity.CompanyId, request.UserCode) ?? throw new Exception($"User {request.UserCode} not found on company {identity.CompanyId}");
+                if (!enqueuedUser.Enabled) throw new Exception($"User {request.UserCode} is not enabled"); 
                 request.UserDescription = enqueuedUser.Description;
             }
 
