@@ -307,6 +307,7 @@
     <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\GridSettingsPopup.js" />
     <Content Include="Scripts\Custom\ReasonDialog,js.js" />
+    <Content Include="Scripts\Custom\VersionComparer.js" />
     <Content Include="Scripts\Custom\UserSettingsClient.js" />
     <Content Include="Scripts\Custom\ImageUpload.js" />
     <Content Include="Scripts\Custom\LongPollingCoordinator.js" />
