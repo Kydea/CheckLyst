@@ -964,8 +964,8 @@
         });
     };
 
-    prototype.scriptEditor = function () {
-        new matematici.ScriptEditor();
+    prototype.scriptEditor = function (mode) {
+        new matematici.ScriptEditor(mode);
     };
 
     prototype.download = function () {

@@ -75,8 +75,11 @@
                 .add("History", function () {
                     prototype.showHistory();
                 }, "History")
+                .add("Version comparer", function () {
+                    prototype.scriptEditor('version comparer');
+                }, "ScriptEditor")
                 .add("Script editor", function () {
-                    prototype.scriptEditor();
+                    prototype.scriptEditor('script editor');
                 }, "ScriptEditor")
                 .add("Download", function () {
                     prototype.download();

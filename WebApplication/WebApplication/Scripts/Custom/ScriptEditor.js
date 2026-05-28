@@ -1,4 +1,4 @@
-﻿matematici.ScriptEditor = function (form) {
+﻿matematici.ScriptEditor = function (mode) {
     var
         options = {},
         scriptEditor = this,
@@ -6,6 +6,7 @@
         editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
         exclusions = ["dependentRelations", "dependingRelations", "error", "errors", "removed", "pageIndex", "elements"],
         flags,
+        versionComparer = mode == 'version comparer',
 
         getFlagValues = function () {
             return flags.map(function () {
@@ -98,14 +99,18 @@
             options.cancelHandler && options.cancelHandler();
         },
 
-        prepare = function () {
+        prepare = function (form) {
+            if (versionComparer) {
+                $("label.Flag", form).hide();
+                $("h2", form).text("Version comparer");
+            }
             flags = $("input[type=checkbox]", form);
 
             editor = ace.edit("AceExpressionEditor");
             editor.session.setMode("ace/mode/json");
             editor.setTheme("ace/theme/custom")
             editor.setShowPrintMargin(false);
-            editor.setReadOnly(!editable);
+            editor.setReadOnly(versionComparer || !editable);
             editor.on("input", function () {
                 if (editable) $("a.Button.Save", matematici.popup.getButtonsBar()).toggle(!editor.session.getUndoManager().isClean());
             });
@@ -220,20 +225,34 @@
             return true;
         },
 
+        compare = function () {
+            alert("comparison");
+            return true;
+        },
+
         setup = function () {
             var buttons = [
-                { cancelButton: true, hidden: true, handler: cancel },
-                { text: "copy", icon: "copy", handler: copy }
+                { cancelButton: true, hidden: true, handler: cancel }
             ];
 
-            if (editable)
+            if (versionComparer) 
                 buttons.push(
-                    { text: "update prototype", icon: "sign-in", handler: save, hidden: true, cssClass: "Save" },
+                    { text: "compare", icon: "sign-in", handler: compare }
+                );
+            else {
+                buttons.push(
+                    { text: "copy", icon: "copy", handler: copy }
                 );
 
-            buttons.push(
-                { text: "generate json", icon: "sign-out", handler: load, cssClass: "Load" }
-            );
+                if (editable)
+                    buttons.push(
+                        { text: "update prototype", icon: "sign-in", handler: save, hidden: true, cssClass: "Save" },
+                    );
+
+                buttons.push(
+                    { text: "generate json", icon: "sign-out", handler: load, cssClass: "Load" }
+                );
+            }
 
             matematici.popup.show({
                 url: matematici.urls.prototypes.scriptEditor,
