@@ -1,12 +1,14 @@
 ﻿matematici.ScriptEditor = function (mode) {
     var
+        form,
+        tab,
         options = {},
         scriptEditor = this,
         editor,
-        editable = prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
         exclusions = ["dependentRelations", "dependingRelations", "error", "errors", "removed", "pageIndex", "elements"],
         flags,
         versionComparer = mode == 'version comparer',
+        prototypeEditable = !versionComparer && prototypes.prototype.getModel().state == prototypes.Prototype.states.draft,
 
         getFlagValues = function () {
             return flags.map(function () {
@@ -50,7 +52,7 @@
         traverseForExport = function (source, destination) {
             if (source.typeName == "Prototype") {
                 var flagValues = getFlagValues();
-                if (flagValues[1]) {
+                if (versionComparer || flagValues[1]) {
                     destination.expressions = {};
                     for (var index in source.expressions) {
                         destination.expressions[index] = {};
@@ -58,13 +60,13 @@
                     }
                 }
 
-                if (flagValues[2]) {
+                if (versionComparer || flagValues[2]) {
                     destination.externalSources = {};
                     for (var index in source.externalSources)
                         destination.externalSources[index] = source.externalSources[index];
                 }
 
-                if (flagValues[0]) {
+                if (versionComparer || flagValues[0]) {
                     if (!source.header) throw new Error("key header not found");
                     if (!source.pages) throw new Error("key pages not found");
                     destination.header = {};
@@ -296,20 +298,21 @@
             options.cancelHandler && options.cancelHandler();
         },
 
-        prepare = function (form) {
-            if (versionComparer) {
-                $("label.Flag", form).hide();
-                $("h2", form).text("Version comparer");
-            }
+        prepare = function (formElement, tabElement) {
+            form = formElement;
+            tab = tabElement;
             flags = $("input[type=checkbox]", form);
 
             editor = ace.edit("AceExpressionEditor");
             editor.session.setMode("ace/mode/json");
             editor.setTheme("ace/theme/custom")
             editor.setShowPrintMargin(false);
-            editor.setReadOnly(!versionComparer && !editable);
+            editor.setReadOnly(!versionComparer && !prototypeEditable);
             editor.on("input", function () {
-                if (editable) $("a.Button.Save", matematici.popup.getButtonsBar()).toggle(!editor.session.getUndoManager().isClean());
+                if (prototypeEditable)
+                    $("a.Button.Save", matematici.popup.getButtonsBar()).toggle(!editor.session.getUndoManager().isClean());
+                else if (versionComparer)
+                    clearReport();
             });
         },
 
@@ -423,25 +426,91 @@
         },
 
         compare = function () {
-            var
-                json = editor.getValue();
-            if (json.trim().length == 0)
-                matematici.dialog.error("Version comparer", "Provide a model for the comparison");
+            if (editor.getSession().getAnnotations().length > 0)
+                matematici.dialog.error({
+                    title: "Script editor",
+                    content: "The model has errors",
+                });
             else {
-                var
-                    comparison = {},
-                    prototypeModel = {},
-                    coparingModel = JSON.parse(editor.getValue()),
-                    reportRows;
+                var json = editor.getValue();
+                if (json.trim().length == 0)
+                    matematici.dialog.error("Version comparer", "Provide a model for the comparison");
+                else {
+                    var
+                        comparison = {},
+                        prototypeModel = {},
+                        coparingModel = JSON.parse(editor.getValue()),
+                        reportRows;
 
-                traverseForExport(prototypes.prototype.getModel(), prototypeModel);
-                comparison = traverseForComparison(prototypeModel, coparingModel, ["itemIDSequence"]) || {};
-                reportRows = flattenComparison(comparison, prototypeModel, coparingModel);
+                    traverseForExport(prototypes.prototype.getModel(), prototypeModel);
+                    comparison = traverseForComparison(prototypeModel, coparingModel, ["itemIDSequence"]) || {};
+                    reportRows = flattenComparison(comparison, prototypeModel, coparingModel);
 
-                console.log(comparison, reportRows);
+                    //console.log(prototypeModel);
+                    //console.log(comparison);
+                    //console.log(reportRows);
+                    renderComparisonReport(reportRows);
+                    tab.select(1);
+                }
+            }
+            return true;
+        },
+
+        clearReport = function () {
+            var
+                body = $("#Report tbody", form),
+                template = body.find("tr:first"),
+                noRecord = body.find("tr.NoRecord").show();
+
+            body.find("tr").not(template).not(noRecord).remove();
+            noRecord.find("td").text("no comparison in progress");
+        },
+
+        formatReportValue = function (type, value) {
+            if (value == null)
+                return "";
+
+            if (typeof value == "object")
+                return type + (value.code != null && value.code != "" ? " with code " + value.code : value.id != null && value.id != "" ? " with id " + value.id : "");
+
+            return value.toString();
+        },
+
+        renderComparisonReport = function (rows) {
+            var
+                body = $("#Report tbody", form),
+                template = body.find("tr:first"),
+                noRecord = body.find("tr.NoRecord"),
+                index,
+                row,
+                tr;
+
+            clearReport();
+
+            if (!rows || rows.length == 0) {
+                noRecord.show();
+                noRecord.find("td").text("the compared prototypes have no difference");
+                matematici.blip.ok();
+                return;
             }
 
-            return true;
+            noRecord.hide();
+            matematici.blip.warning();
+
+            for (index = 0; index < rows.length; index++) {
+                row = rows[index];
+
+                tr = template.clone();
+                tr.show();
+
+                tr.find("[data-column='status']").text(row.status || "");
+                tr.find("[data-column='type']").text(row.type || "");
+                tr.find("[data-column='path']").text(row.path || "");
+                tr.find("[data-column='local']").text(formatReportValue(row.type, row.before));
+                tr.find("[data-column='external']").text(formatReportValue(row.type, row.after));
+
+                body.append(tr);
+            }
         },
 
         setup = function () {
@@ -458,7 +527,7 @@
                     { text: "copy", icon: "copy", handler: copy }
                 );
 
-                if (editable)
+                if (prototypeEditable)
                     buttons.push(
                         { text: "update prototype", icon: "sign-in", handler: save, hidden: true, cssClass: "Save" },
                     );
@@ -469,7 +538,7 @@
             }
 
             matematici.popup.show({
-                url: matematici.urls.prototypes.scriptEditor,
+                url: versionComparer ? matematici.urls.prototypes.versionComparer : matematici.urls.prototypes.scriptEditor,
                 data: scriptEditor,
                 sender: scriptEditor,
                 buttons: buttons,

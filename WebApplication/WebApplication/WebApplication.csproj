@@ -307,7 +307,6 @@
     <Content Include="Scripts\Controls\TypedInput.js" />
     <Content Include="Scripts\Custom\GridSettingsPopup.js" />
     <Content Include="Scripts\Custom\ReasonDialog,js.js" />
-    <Content Include="Scripts\Custom\VersionComparer.js" />
     <Content Include="Scripts\Custom\UserSettingsClient.js" />
     <Content Include="Scripts\Custom\ImageUpload.js" />
     <Content Include="Scripts\Custom\LongPollingCoordinator.js" />
@@ -663,6 +662,7 @@
     <Content Include="Views\Help\Reports.cshtml" />
     <Content Include="Content\Theme\GridSettings.scss" />
     <Content Include="Views\Default\NotificationsDiagnostics.cshtml" />
+    <Content Include="Views\Prototypes\VersionComparer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

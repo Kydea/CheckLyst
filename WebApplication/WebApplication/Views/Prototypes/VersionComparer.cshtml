@@ -1,0 +1,57 @@
+﻿<div id="VersionComparer">
+    <h2>Version comparer</h2>
+
+    <form id="Detail">
+        <div class="TabContainer">
+            <div class="TabLabels">
+                <a href="#">JSON</a>
+                <a href="#" class="Result">Report</a>
+            </div>
+            <div class="Tab">
+                <label class="Clearing FullWidth" style="margin-top: 0;">
+                    <pre id="AceExpressionEditor" style="width: 100%; min-height: calc(100vh - 300px);"></pre>
+                </label>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Tab">
+                <div id="Report" style="height: calc(100vh - 300px); overflow: auto; margin-top: 20px;">
+                    <table class="Grid" style="margin-top: 0; border: 0;">
+                        <thead style="position: sticky; top: 0;">
+                            <tr>
+                                <th>Status</th>
+                                <th>Type</th>
+                                <th>Path</th>
+                                <th>This prototype</th>
+                                <th>External prototype</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="display: none">
+                                <td data-column="status"></td>
+                                <td data-column="type"></td>
+                                <td data-column="path"></td>
+                                <td data-column="local"></td>
+                                <td data-column="external"></td>
+                            </tr>
+                            <tr class="NoRecord"><td colspan="5">(no record)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="Clearing"></div>
+            </div>
+            <div class="Clearing"></div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var
+        scriptEditor = matematici.popup.getData(),
+        formSelector = "div#VersionComparer form#Detail",
+        form = $(formSelector),
+        tab = new matematici.Tab(formSelector + " div.TabContainer", {
+            fixedHeight: true
+        });
+
+    scriptEditor.prepare(form, tab);
+</script>

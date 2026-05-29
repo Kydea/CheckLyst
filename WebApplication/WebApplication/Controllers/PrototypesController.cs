@@ -55,5 +55,11 @@ namespace CheckListManager.WebApplication.Controllers
         {
             return ConditionalView("ScriptEditor");
         }
+
+        [Route("VersionComparer")]
+        public ActionResult VersionComparer()
+        {
+            return ConditionalView("VersionComparer");
+        }
     }
 }
