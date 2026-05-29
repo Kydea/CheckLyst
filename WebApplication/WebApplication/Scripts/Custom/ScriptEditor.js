@@ -95,6 +95,203 @@
                 map(source, destination, []);
         },
 
+        isObject = function (value) {
+            return value !== null &&
+                typeof value === "object" &&
+                !Array.isArray(value);
+        },
+
+        traverseForComparison = function (yours, theirs, exclusions) {
+            var
+                comparison,
+                properties,
+                length,
+                index,
+                property,
+                diff,
+                hasYour,
+                hasTheir;
+
+            yours = yours == null ? "" : yours;
+            theirs = theirs == null ? "" : theirs;
+
+            if (Array.isArray(yours) || Array.isArray(theirs)) {
+                yours = Array.isArray(yours) ? yours : [];
+                theirs = Array.isArray(theirs) ? theirs : [];
+
+                comparison = {};
+                length = Math.max(yours.length, theirs.length);
+
+                for (index = 0; index < length; index++) {
+                    hasYour = index < yours.length;
+                    hasTheir = index < theirs.length;
+
+                    if (!hasYour && hasTheir)
+                        comparison[index] = {
+                            status: "added",
+                            value: theirs[index]
+                        };
+                    else if (hasYour && !hasTheir)
+                        comparison[index] = {
+                            status: "removed",
+                            value: yours[index]
+                        };
+                    else {
+                        diff = traverseForComparison(yours[index], theirs[index]);
+
+                        if (diff !== undefined)
+                            comparison[index] = diff;
+                    }
+                }
+
+                return Object.keys(comparison).length
+                    ? comparison
+                    : undefined;
+            }
+
+            if (isObject(yours) || isObject(theirs)) {
+                yours = isObject(yours) ? yours : {};
+                theirs = isObject(theirs) ? theirs : {};
+
+                comparison = {};
+
+                properties = [...new Set([
+                    ...Object.keys(yours),
+                    ...Object.keys(theirs)
+                ])].sort((a, b) => a.localeCompare(b));
+
+                for (index in properties) {
+                    property = properties[index];
+                    if (exclusions && exclusions.includes(property)) continue;
+
+                    hasYour = Object.hasOwn(yours, property);
+                    hasTheir = Object.hasOwn(theirs, property);
+
+                    if (!hasYour && hasTheir)
+                        comparison[property] = {
+                            status: "added",
+                            value: theirs[property]
+                        };
+                    else if (hasYour && !hasTheir)
+                        comparison[property] = {
+                            status: "removed",
+                            value: yours[property]
+                        };
+                    else {
+                        diff = traverseForComparison(yours[property], theirs[property]);
+                        if (diff !== undefined) comparison[property] = diff;
+                    }
+                }
+
+                return Object.keys(comparison).length
+                    ? comparison
+                    : undefined;
+            }
+
+            if (yours === theirs)
+                return undefined;
+
+            return {
+                status: "changed",
+                before: yours,
+                after: theirs
+            };;
+        },
+
+        isComparisonLeaf = function (value) {
+            return isObject(value) &&
+                Object.hasOwn(value, "status") &&
+                ["added", "removed", "changed"].includes(value.status);
+        },
+
+        appendPath = function (path, property) {
+            if (/^\d+$/.test(property))
+                return path + "[" + property + "]";
+
+            return path
+                ? path + "." + property
+                : property;
+        },
+
+        getComparisonType = function (yours, theirs, currentType, property) {
+            var
+                node = isObject(yours) ? yours : isObject(theirs) ? theirs : null;
+
+            if (node && node.typeName)
+                return node.typeName;
+
+            if (property == "expressions")
+                return "Expression";
+
+            return currentType || "";
+        },
+
+        getComparisonValue = function (comparison, property) {
+            if (Object.prototype.hasOwnProperty.call(comparison, property))
+                return comparison[property] == null ? "" : comparison[property];
+
+            if (Object.prototype.hasOwnProperty.call(comparison, "value"))
+                return comparison.value == null ? "" : comparison.value;
+
+            return "";
+        },
+
+        flattenComparison = function (comparison, yours, theirs, path, currentType) {
+            var
+                rows = [],
+                property,
+                diff,
+                yourValue,
+                theirValue,
+                nextPath,
+                nextType,
+                childRows;
+
+            if (!comparison)
+                return rows;
+
+            if (isComparisonLeaf(comparison)) {
+                rows.push({
+                    status: comparison.status,
+                    type: currentType || "",
+                    path: path,
+                    before: comparison.status == "added" ? "" : getComparisonValue(comparison, "before"),
+                    after: comparison.status == "removed" ? "" : getComparisonValue(comparison, "after")
+                });
+
+                return rows;
+            }
+
+            currentType = getComparisonType(yours, theirs, currentType);
+
+            for (property in comparison) {
+                diff = comparison[property];
+
+                yourValue = isObject(yours) || Array.isArray(yours)
+                    ? yours[property]
+                    : undefined;
+
+                theirValue = isObject(theirs) || Array.isArray(theirs)
+                    ? theirs[property]
+                    : undefined;
+
+                nextPath = appendPath(path || "", property);
+                nextType = getComparisonType(yourValue, theirValue, currentType, property);
+
+                childRows = flattenComparison(
+                    diff,
+                    yourValue,
+                    theirValue,
+                    nextPath,
+                    nextType
+                );
+
+                rows.push(...childRows);
+            }
+
+            return rows;
+        },
+
         cancel = function () {
             options.cancelHandler && options.cancelHandler();
         },
@@ -110,7 +307,7 @@
             editor.session.setMode("ace/mode/json");
             editor.setTheme("ace/theme/custom")
             editor.setShowPrintMargin(false);
-            editor.setReadOnly(versionComparer || !editable);
+            editor.setReadOnly(!versionComparer && !editable);
             editor.on("input", function () {
                 if (editable) $("a.Button.Save", matematici.popup.getButtonsBar()).toggle(!editor.session.getUndoManager().isClean());
             });
@@ -226,7 +423,24 @@
         },
 
         compare = function () {
-            alert("comparison");
+            var
+                json = editor.getValue();
+            if (json.trim().length == 0)
+                matematici.dialog.error("Version comparer", "Provide a model for the comparison");
+            else {
+                var
+                    comparison = {},
+                    prototypeModel = {},
+                    coparingModel = JSON.parse(editor.getValue()),
+                    reportRows;
+
+                traverseForExport(prototypes.prototype.getModel(), prototypeModel);
+                comparison = traverseForComparison(prototypeModel, coparingModel, ["itemIDSequence"]) || {};
+                reportRows = flattenComparison(comparison, prototypeModel, coparingModel);
+
+                console.log(comparison, reportRows);
+            }
+
             return true;
         },
 
@@ -235,7 +449,7 @@
                 { cancelButton: true, hidden: true, handler: cancel }
             ];
 
-            if (versionComparer) 
+            if (versionComparer)
                 buttons.push(
                     { text: "compare", icon: "sign-in", handler: compare }
                 );
