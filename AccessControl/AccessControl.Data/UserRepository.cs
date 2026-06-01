@@ -90,6 +90,19 @@ namespace CheckListManager.AccessControl.Data
                 "and (:enabled = 'All' or :enabled = 'Enabled' and u.\"Enabled\" or :enabled = 'Disabled' and not u.\"Enabled\") " +
             "order by u.\"Code\", g.\"Department\", g.\"PrototypeType\", g.\"Role\", g.\"FunctionGroup\", g.\"Function\"";
 
+        private const string SUMMARY_QUERY =
+            "select " +
+                "c.\"ID\" \"CompanyID\", max(c.\"Name\") \"CompanyDescription\", " +
+                "count(*) \"TotalUsers\", " +
+                "sum(case when u.\"LastLoginOn\" > :from then 1 else 0 end) \"ActiveUsers\" " +
+            "from " +
+                "\"Security\".\"Users\" u " +
+                "inner join \"Infrastructure\".\"Companies\" c on i.\"Company\" = c.\"ID\" " +
+            "where " +
+                "u.\"Enabled\" " +
+            "group by c.\"ID\" " +
+            "order by c.\"ID\"";
+
         public async Task<List<ExportRow>> GetUsersForExportAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
         {
             var List = await Read<ExportRow>(EXPORT_QUERY, new
@@ -231,7 +244,7 @@ namespace CheckListManager.AccessControl.Data
         private IQueryable<Users> GetAsync(long company, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled)
             =>
             Entities.Users
-                .Where(u => 
+                .Where(u =>
                     u.Company == company
                     && (code == string.Empty || u.Code != null && u.Code.ToUpper().Contains(code.ToUpper()))
                     && (description == string.Empty || u.Description != null && u.Description.ToUpper().Contains(description.ToUpper()))
@@ -310,7 +323,7 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public Task<Roles> GetRoleAsync(long companyId, string code) => 
+        public Task<Roles> GetRoleAsync(long companyId, string code) =>
             Entities.Roles.SingleOrDefaultAsync(u => u.Company == companyId && u.Code.ToUpper() == code.ToUpper());
 
         private IQueryable<Roles> GetRolesAsync(long company, string code)
@@ -430,7 +443,7 @@ namespace CheckListManager.AccessControl.Data
         }
 
         public async Task<List<GroupConflicts>> GetConflicts(long company, List<string> groups) =>
-            groups == null || !groups.Any() ? 
+            groups == null || !groups.Any() ?
                 new List<GroupConflicts>(0) :
                 await Entities.GroupConflicts.Where(c => c.Company == company && groups.Contains(c.Group1) && groups.Contains(c.Group2)).ToListAsync();
 
@@ -463,5 +476,17 @@ namespace CheckListManager.AccessControl.Data
             }
             await SaveChangesAsync();
         }
-    }
+
+        public async Task<List<SummaryRecord>> SummaryAsync(DefaultIdentity identity, DateTimeOffset from)
+        {
+            var Filters = new
+            {
+                from = from.ToString("yyyy-MM-dd")
+            };
+
+            var List = await Read<SummaryRecord>(SUMMARY_QUERY, Filters);
+            return List.ToList();
+        }
+    } 
+
 }

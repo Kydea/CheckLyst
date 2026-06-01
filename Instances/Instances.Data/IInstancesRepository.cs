@@ -14,6 +14,7 @@ namespace CheckListManager.Instances.Data
         Task<PagingResponse<List<InstanceRecord>>> GetInstancesAsync(IDefaultIdentity identity, InstanceFilters filters, int currentPage, int itemsPerPage);
         Task<List<OverviewRecord>> OverviewAsync(IDefaultIdentity identity, InstanceFilters filters);
         Task<List<LifeCycleRecord>> LifeCycleAsync(IDefaultIdentity identity, InstanceFilters filters);
+        Task<List<SummaryRecord>> SummaryAsync(IDefaultIdentity identity, InstanceFilters filters);
         Task<List<TasksRecord>> GetTasksAsync(IDefaultIdentity identity, string TimeZone, InstanceFilters filters);
         Task<long> CountTasksAsync(IDefaultIdentity identity);
         Task<List<InstanceRecord>> ExportAsync(InstanceFilters filters);

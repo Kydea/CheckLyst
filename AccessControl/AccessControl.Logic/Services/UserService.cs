@@ -45,12 +45,12 @@ namespace CheckListManager.AccessControl.Logic.Services
         private readonly IEmailServiceBase _emailService;
 
         public UserService(
-            IUserRepository userRepository, 
+            IUserRepository userRepository,
             IUserSessionRepository userSessionRepository,
-            IHashService hashService, 
+            IHashService hashService,
             IQueueService queueService,
             ICommonRepository commonRepository,
-            IRedisCache cache, 
+            IRedisCache cache,
             ISettingService settingService,
             IEmailServiceBase emailService)
         {
@@ -124,7 +124,7 @@ namespace CheckListManager.AccessControl.Logic.Services
                         Action = TrailAction.UserBanned,
                         Date = DateTimeOffset.UtcNow,
                         Information = user.Code
-                    }); 
+                    });
 
                 throw;
             }
@@ -521,7 +521,8 @@ namespace CheckListManager.AccessControl.Logic.Services
                     ));
                     response.InstanceFunctions = functions.ToArray();
 
-                    response.Levels = user.UserLevels.Select(l => new Grant {
+                    response.Levels = user.UserLevels.Select(l => new Grant
+                    {
                         Department = l.Department.Value,
                         PrototypeType = l.PrototypeType,
                         PrototypeWorkFlowLevel = l.PrototypeWorkFlowLevel,
@@ -906,5 +907,10 @@ namespace CheckListManager.AccessControl.Logic.Services
         public Task SaveSettingsAsync(DefaultIdentity identity, UserSettingsRequest data) =>
             _userRepository.SaveSettingsAsync(identity.CompanyId, identity.Code, data.Setting, data.Code, data.Value);
 
+        public async Task<Message<List<SummaryRecord>>> SummaryAsync(DefaultIdentity identity, UsersRequest data) =>
+            new Message<List<SummaryRecord>>
+            {
+                Data = await _userRepository.SummaryAsync(identity, data.From)
+            };
     }
 }

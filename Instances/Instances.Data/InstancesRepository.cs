@@ -115,6 +115,22 @@ namespace CheckListManager.Instances.Data
             INSTANCES_BASE_QUERY +
             "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
 
+        private const string SUMMARY_QUERY =
+            "select " +
+                "c.\"ID\" \"CompanyID\", max(c.\"Name\") \"CompanyDescription\", " +
+                "count(*) \"TotalInstances\", " +
+                "sum(case when i.\"InstanceState\" = 'In progress'  then 1 else 0 end) \"InProgressInstances\", " +
+                "sum(case when i.\"InstanceState\" = 'Completed'  then 1 else 0 end) \"CompletedInstances\", " +
+                "sum(case when i.\"InstanceState\" = 'Confirmed'  then 1 else 0 end) \"ConfirmedInstances\", " +
+                "sum(case when i.\"InstanceState\" = 'Deleted'  then 1 else 0 end) \"DeletedInstances\" " +
+            "from " +
+                "\"CheckLists\".\"Instances\" i " +
+                "inner join \"Infrastructure\".\"Companies\" c on i.\"Company\" = c.\"ID\" " +
+            "where " +
+                "(:from = '' or to_char(i.\"CreatedOn\", 'yyyy-mm-dd') >= :from) " +
+            "group by c.\"ID\" " +
+            "order by c.\"ID\"";
+
         private const string TASKS_LIST_QUERY =
             "with i as (" +
                 "select " +
@@ -264,6 +280,28 @@ namespace CheckListManager.Instances.Data
             var List = await Read<LifeCycleRecord>(LIFE_CYCLE_QUERY, Filters);
             return List.ToList();
         }
+
+        public async Task<List<SummaryRecord>> SummaryAsync
+        (
+            IDefaultIdentity identity,
+            InstanceFilters filters
+        )
+        {
+            var Filters = new
+            {
+                from = (
+                    filters.Period == "year" ? DateTimeOffset.UtcNow.AddYears(-1) :
+                    filters.Period == "six-months" ? DateTimeOffset.UtcNow.AddMonths(-6) :
+                    filters.Period == "month" ? DateTimeOffset.UtcNow.AddMonths(-1) :
+                    filters.Period == "week" ? DateTimeOffset.UtcNow.AddDays(-7) :
+                    default(DateTimeOffset?)
+                )?.ToString("yyyy-MM-dd") ?? string.Empty
+            };
+
+            var List = await Read<SummaryRecord>(SUMMARY_QUERY, Filters);
+            return List.ToList();
+        }
+
 
         public async Task<List<TasksRecord>> GetTasksAsync
         (

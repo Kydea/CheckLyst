@@ -26,6 +26,18 @@ namespace CheckListManager.WebApplication.Controllers
             return ConditionalView();
         }
 
+        [Route("InstanceSummary")]
+        public ActionResult InstanceSummary()
+        {
+            return ConditionalView();
+        }
+
+        [Route("UserSummary")]
+        public ActionResult UserSummary()
+        {
+            return ConditionalView();
+        }
+
         [Route("Tasks")]
         public ActionResult Tasks()
         {

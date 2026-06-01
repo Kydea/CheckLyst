@@ -1,0 +1,165 @@
+@{
+    ViewBag.Title = "Instance summary";
+}
+
+<div class="InstanceSummary">
+    <h1>Instance summary</h1>
+
+    <div class="ActionBar">
+        <a id="ListButton" href="#" class="Button"><i class="Icon fa fa-list"></i> List</a>
+    </div>
+
+    <div class="ShadowPanel">
+        <div class="Accordion"></div>
+        <form id="Filters" action="@BaseUrl/Instances/List">
+            <label>
+                <span>Period</span>
+                <i class="Icon fal fa-calendar-alt"></i>
+                <select name="period" data-nullable="(always)">
+                    <option value="year">last year</option>
+                    <option value="six-months">last six-months</option>
+                    <option value="month">last month</option>
+                    <option value="week">last week</option>
+                </select>
+            </label>
+        </form>
+        <table class="Grid">
+            <thead>
+                <tr>
+                    <th>Company ID</th>
+                    <th>Companu description</th>
+                    <th>Total instances</th>
+                    <th>In progress instances</th>
+                    <th>Copleted instances</th>
+                    <th>Confirmed instances</th>
+                    <th>Deleted instances</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-column="companyID"></td>
+                    <td data-column="companyDescription"></td>
+                    <td data-column="totalInstances" class="Right"></td>
+                    <td data-column="inProgressInstances" class="Right"></td>
+                    <td data-column="completedInstances" class="Right"></td>
+                    <td data-column="confirmedInstances" class="Right"></td>
+                    <td data-column="deletedInstances" class="Right"></td>
+                </tr>
+                <tr class="NoRecord"><td>(no record)</td></tr>
+            </tbody>
+        </table>
+        <div class="Clearing"></div>
+
+        <div style="height: 500px; width: 100%;">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+var
+    formSelector = "form#Filters",
+    chart,
+    filterHandler = function (response) {
+        const labels = response.data.map(item => item.companyDescription);
+        const ctx = document.getElementById("chart");
+
+        const datasets = [
+            {
+                label: "Total",
+                data: response.data.map(item => item.totalInstances),
+                backgroundColor: "#4472C4"
+            },
+            {
+                label: "In progress",
+                data: response.data.map(item => item.inProgressInstances),
+                backgroundColor: "#ED7D31"
+            },
+            {
+                label: "Completed",
+                data: response.data.map(item => item.completedInstances),
+                backgroundColor: "#A5A5A5"
+            },
+            {
+                label: "Confirmed",
+                data: response.data.map(item => item.confirmedInstances),
+                backgroundColor: "#FFC000"
+            },
+            {
+                label: "Deleted",
+                data: response.data.map(item => item.deletedInstances),
+                backgroundColor: "#70AD47"
+            }
+        ];
+
+        if (!chart) {
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "Instances",
+                            font: {
+                                size: 22,
+                                weight: "bold"
+                            }
+                        },
+                        legend: {
+                            position: "bottom"
+                        }
+                    },
+
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Site"
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Instance number"
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            chart.data.labels = labels;
+            chart.data.datasets = datasets;
+            chart.update();
+        }
+    };
+
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Users",
+            detailUrl: "@Url.Action("InstanceSummary")",
+            filterFormSelector: formSelector,
+            resultGridSelector: "div#Content table.Grid",
+            readOnly: true,
+            getDataEvent: "Summary",
+            breadCrumbs: [
+                { content: "users" }
+            ],
+            filterHandler: filterHandler
+        });
+
+        callback.call();
+};
+
+</script>

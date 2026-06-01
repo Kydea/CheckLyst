@@ -112,6 +112,15 @@ namespace CheckListManager.AccessControl.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Summary")]
+        [Authorize(Roles = "Reports#View")]
+        public async Task<IHttpActionResult> Summary(Message<UsersRequest> request)
+        {
+            if (Identity.CompanyId != 1) throw new UnauthorizedAccessException("This report is available only on the system company");
+            return Ok(await _userService.SummaryAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
         [Route("Export")]
         [Authorize(Roles = "Users#View")]
         public async Task<IHttpActionResult> Export(Message<UsersRequest> request)

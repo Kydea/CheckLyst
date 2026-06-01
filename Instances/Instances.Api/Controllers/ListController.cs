@@ -61,6 +61,15 @@ namespace CheckListManager.Instances.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Summary")]
+        [Authorize(Roles = "Reports#View")]
+        public async Task<IHttpActionResult> Summary(Message<InstanceFilters> request)
+        {
+            if (Identity.CompanyId != 1) throw new UnauthorizedAccessException("This report is available only on the system company");
+            return Ok(await _listService.SummaryAsync(Identity, request.Data));
+        }
+
+        [HttpPost]
         [Route("Tasks")]
         [Authorize(Roles = "Instances#View")]
         public async Task<IHttpActionResult> Tasks(Message<InstanceFilters> request)

@@ -40,5 +40,7 @@ namespace CheckListManager.AccessControl.Logic.Services
         
         Task<string> LoadSettingsAsync(DefaultIdentity identity, UserSettingsRequest data);
         Task SaveSettingsAsync(DefaultIdentity identity, UserSettingsRequest data);
+
+        Task<Message<List<SummaryRecord>>> SummaryAsync(DefaultIdentity identity, UsersRequest data);
     }
 }

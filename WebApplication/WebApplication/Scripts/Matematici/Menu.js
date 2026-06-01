@@ -86,10 +86,13 @@
             var
                 item = $(this),
                 roles = item.data("role").split(","),
-                hasRole = false;
+                hasRole = false,
+                company = item.data("company"),
+                hasCompnay = company == null || company == matematici.tokenManager.getCompany();
 
-            for (var role in roles)
-                hasRole = hasRole || matematici.tokenManager.checkRole(roles[role].trim() + "#");
+            if (hasCompnay)
+                for (var role in roles)
+                    hasRole = hasRole || matematici.tokenManager.checkRole(roles[role].trim() + "#");
 
             item.toggle(hasRole).toggleClass("Hidden", !hasRole);
         });
@@ -97,15 +100,6 @@
         $(".MenuItem .SubMenu", menu).each(function () {
             var item = $(this);
             item.parent().toggle(item.children().filter(":not(.Hidden)").length > 0);
-        });
-
-        var currentCompany = matematici.tokenManager.getCompany();
-        $("li[data-company]", menu).each(function () {
-            var
-                item = $(this),
-                visible = currentCompany == item.data("company");
-
-            item.toggle(visible).toggleClass("Hidden", !visible);
         });
     };
 

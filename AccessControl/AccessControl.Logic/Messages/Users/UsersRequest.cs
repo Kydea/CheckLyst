@@ -1,4 +1,5 @@
 ﻿using CheckListManager.Common.Logic.DataEngine;
+using System;
 
 namespace CheckListManager.AccessControl.Logic.Messages.Users
 {
@@ -15,5 +16,6 @@ namespace CheckListManager.AccessControl.Logic.Messages.Users
         public int? FailedLogins { get; set; }
         public int? InactivityDays { get; set; }
         public string Enabled { get; set; }
+        public DateTimeOffset From { get; set; }
     }
 }

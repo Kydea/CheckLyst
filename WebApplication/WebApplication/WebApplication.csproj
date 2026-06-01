@@ -663,6 +663,8 @@
     <Content Include="Content\Theme\GridSettings.scss" />
     <Content Include="Views\Default\NotificationsDiagnostics.cshtml" />
     <Content Include="Views\Prototypes\VersionComparer.cshtml" />
+    <Content Include="Views\Dashboards\InstanceSummary.cshtml" />
+    <Content Include="Views\Dashboards\UserSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.Core.Web\Common.Core.Web.csproj">

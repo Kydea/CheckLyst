@@ -42,6 +42,12 @@
                     <li data-role="Instances#View">
                         <a class="LightNotification" href="@Url.Action("Tasks", "Dashboards")">Tasks</a>
                     </li>
+                    <li data-role="Reports#View" data-company="1">
+                        <a href="@Url.Action("InstanceSummary", "Dashboards")">Instance Summary</a>
+                    </li>
+                    <li data-role="Reports#View" data-company="1">
+                        <a href="@Url.Action("UserSummary", "Dashboards")">User Summary</a>
+                    </li>
                 </ul>
             </li>
 

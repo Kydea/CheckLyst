@@ -71,7 +71,7 @@
                 value = data[column],
                 type = cell.data("type");
 
-            if (!!value) {
+            if (value != null) {
                 switch (type) {
                     case "DateTimeOffset":
                         var formattedDate = matematici.dateFormatter.format(moment.parseZone(value));
@@ -106,7 +106,6 @@
 
         update = function (data) {
             tableBody.empty();
-
             if (!data || data.length == 0)
                 noRecordRow.clone().appendTo(tableBody);
             else

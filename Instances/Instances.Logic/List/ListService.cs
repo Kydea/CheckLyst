@@ -168,6 +168,12 @@ namespace CheckListManager.Instances.Logic.List
                 Records = await _instancesRepository.LifeCycleAsync(identity, filters)
             };
 
+        public async Task<Message<List<SummaryRecord>>> SummaryAsync(IDefaultIdentity identity, InstanceFilters filters) =>
+            new Message<List<SummaryRecord>>
+            {
+                Data = await _instancesRepository.SummaryAsync(identity, filters)
+            };
+
         public async Task<TasksResponse> GetTasksAsync(IDefaultIdentity identity, string timeZone, InstanceFilters filters) =>
             new TasksResponse
             {
@@ -176,7 +182,7 @@ namespace CheckListManager.Instances.Logic.List
 
         public async Task<long> CountTasksAsync(IDefaultIdentity identity) =>
             await _instancesRepository.CountTasksAsync(identity);
-            
+
         public async Task<List<InstanceRecord>> ExportAsync(InstanceFilters filters) =>
             await _instancesRepository.ExportAsync(filters);
     }

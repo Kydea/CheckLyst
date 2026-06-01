@@ -50,5 +50,7 @@ namespace CheckListManager.AccessControl.Data
 
         Task<string> LoadSettingsAsync(long company, string user, string setting, string code);
         Task SaveSettingsAsync(long company, string user, string setting, string code, string value);
+        
+        Task<List<SummaryRecord>> SummaryAsync(DefaultIdentity identity, DateTimeOffset from);
     }
 }

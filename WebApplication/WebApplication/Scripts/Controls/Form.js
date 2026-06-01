@@ -62,6 +62,7 @@
                     event = options.applyButton.event,
                     handler = options.applyButton.handler;
                 options.applyButton = $(options.applyButton.button || options.applyButton);
+
                 if (event)
                     options.applyButton.on("click", function (e) {
                         if (options.applyButton.hasClass("ReadOnly")) return;
