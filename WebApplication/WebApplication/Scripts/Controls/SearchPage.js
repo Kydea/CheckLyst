@@ -19,7 +19,11 @@
         closeHandler = function () {
             matematici.canClose = true;
             matematici.save = null;
-            if (filtered && matematici.popup.getResult().saved) form.getOptions().applyButton.trigger("click");
+            if (filtered && matematici.popup.getResult().saved) trigger();
+        },
+
+        trigger = function () {
+            form.getOptions().applyButton.trigger("click");
         },
 
         setAdvancedSearchMode = function (value) {
@@ -133,6 +137,7 @@
 
     searchPage.setAdvancedSearchMode = setAdvancedSearchMode;
     searchPage.filterHandler = filterHandler;
+    searchPage.trigger = trigger;
 
 	setup();
 }

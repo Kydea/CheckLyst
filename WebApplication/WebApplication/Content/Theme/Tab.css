@@ -70,10 +70,20 @@ div.TabContainer .Tab.Selected {
   opacity: 1;
   z-index: 31;
 }
+div.TabContainer.Quick {
+  transition: unset;
+}
+div.TabContainer.Quick .Tab {
+  transition: unset;
+}
+
 div.ShadowPanel div.TabContainer {
   margin-bottom: 20px;
   margin-right: -20px;
   margin-left: -20px;
+}
+div.ShadowPanel div.TabContainer div.Tab.Padded {
+  padding-left: 20px;
 }
 
 div.Popup div.TabContainer {

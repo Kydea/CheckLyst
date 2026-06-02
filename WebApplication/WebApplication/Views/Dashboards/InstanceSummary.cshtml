@@ -5,9 +5,7 @@
 <div class="InstanceSummary">
     <h1>Instance summary</h1>
 
-    <div class="ActionBar">
-        <a id="ListButton" href="#" class="Button"><i class="Icon fa fa-list"></i> List</a>
-    </div>
+    <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -23,41 +21,52 @@
                 </select>
             </label>
         </form>
-        <table class="Grid">
-            <thead>
-                <tr>
-                    <th>Company ID</th>
-                    <th>Companu description</th>
-                    <th>Total instances</th>
-                    <th>In progress instances</th>
-                    <th>Copleted instances</th>
-                    <th>Confirmed instances</th>
-                    <th>Deleted instances</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td data-column="companyID"></td>
-                    <td data-column="companyDescription"></td>
-                    <td data-column="totalInstances" class="Right"></td>
-                    <td data-column="inProgressInstances" class="Right"></td>
-                    <td data-column="completedInstances" class="Right"></td>
-                    <td data-column="confirmedInstances" class="Right"></td>
-                    <td data-column="deletedInstances" class="Right"></td>
-                </tr>
-                <tr class="NoRecord"><td>(no record)</td></tr>
-            </tbody>
-        </table>
-        <div class="Clearing"></div>
 
-        <div style="height: 500px; width: 100%;">
-            <canvas id="chart"></canvas>
+        <div class="TabContainer Quick">
+            <div class="TabLabels">
+                <a href="#">Graph</a>
+                <a href="#">Data</a>
+            </div>
+            <div class="Tab Padded">
+                <div class="ChartContainer">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+            <div class="Tab Padded"">
+                <table class="Grid">
+                    <thead>
+                        <tr>
+                            <th>Company ID</th>
+                            <th>Companu description</th>
+                            <th>Total instances</th>
+                            <th>In progress instances</th>
+                            <th>Copleted instances</th>
+                            <th>Confirmed instances</th>
+                            <th>Deleted instances</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-column="companyID"></td>
+                            <td data-column="companyDescription"></td>
+                            <td data-column="totalInstances" class="Right"></td>
+                            <td data-column="inProgressInstances" class="Right"></td>
+                            <td data-column="completedInstances" class="Right"></td>
+                            <td data-column="confirmedInstances" class="Right"></td>
+                            <td data-column="deletedInstances" class="Right"></td>
+                        </tr>
+                        <tr class="NoRecord"><td>(no record)</td></tr>
+                    </tbody>
+                </table>
+                <div class="Clearing"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
 var
+    selector = ".InstanceSummary",
     formSelector = "form#Filters",
     chart,
     filterHandler = function (response) {
@@ -68,27 +77,27 @@ var
             {
                 label: "Total",
                 data: response.data.map(item => item.totalInstances),
-                backgroundColor: "#4472C4"
+                backgroundColor: "#4472c4"
             },
             {
                 label: "In progress",
                 data: response.data.map(item => item.inProgressInstances),
-                backgroundColor: "#ED7D31"
+                backgroundColor: "#ffba00"
             },
             {
                 label: "Completed",
                 data: response.data.map(item => item.completedInstances),
-                backgroundColor: "#A5A5A5"
+                backgroundColor: "#03c3b1"
             },
             {
                 label: "Confirmed",
                 data: response.data.map(item => item.confirmedInstances),
-                backgroundColor: "#FFC000"
+                backgroundColor: "#009688"
             },
             {
                 label: "Deleted",
                 data: response.data.map(item => item.deletedInstances),
-                backgroundColor: "#70AD47"
+                backgroundColor: "#cc0000"
             }
         ];
 
@@ -154,12 +163,18 @@ var
             readOnly: true,
             getDataEvent: "Summary",
             breadCrumbs: [
-                { content: "users" }
+                { content: "instance summary" }
             ],
             filterHandler: filterHandler
         });
 
+        new matematici.Tab(selector + " div.TabContainer", {
+            observedElements: [ ".ChartContainer" ]
+        });
+
         callback.call();
-};
+
+        searchPage.trigger();
+    };
 
 </script>

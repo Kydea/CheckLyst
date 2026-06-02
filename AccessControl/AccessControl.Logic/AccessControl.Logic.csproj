@@ -160,7 +160,6 @@
     <Compile Include="Messages\UserSettings\UserSettingsRequest.cs" />
     <Compile Include="Messages\Users\Function.cs" />
     <Compile Include="Messages\Users\UserRequest.cs" />
-    <Compile Include="Messages\Users\SummaryResponse.cs" />
     <Compile Include="Messages\Users\UserResponse.cs" />
     <Compile Include="Messages\Users\UsersRequest.cs" />
     <Compile Include="Messages\Users\UsersResponse.cs" />

@@ -226,5 +226,9 @@
   {
     "outputFile": "Content/Theme/GridSettings.css",
     "inputFile": "Content/Theme/GridSettings.scss"
+  },
+  {
+    "outputFile": "Content/Theme/Chart.css",
+    "inputFile": "Content/Theme/Chart.scss"
   }
 ]

@@ -94,10 +94,10 @@ namespace CheckListManager.AccessControl.Data
             "select " +
                 "c.\"ID\" \"CompanyID\", max(c.\"Name\") \"CompanyDescription\", " +
                 "count(*) \"TotalUsers\", " +
-                "sum(case when u.\"LastLoginOn\" > :from then 1 else 0 end) \"ActiveUsers\" " +
+                "sum(case when not :from is null and to_char(u.\"LastLoginOn\", 'yyyy-mm-dd') >= :from then 1 else 0 end) \"ActiveUsers\" " +
             "from " +
                 "\"Security\".\"Users\" u " +
-                "inner join \"Infrastructure\".\"Companies\" c on i.\"Company\" = c.\"ID\" " +
+                "inner join \"Infrastructure\".\"Companies\" c on u.\"Company\" = c.\"ID\" " +
             "where " +
                 "u.\"Enabled\" " +
             "group by c.\"ID\" " +
@@ -477,11 +477,11 @@ namespace CheckListManager.AccessControl.Data
             await SaveChangesAsync();
         }
 
-        public async Task<List<SummaryRecord>> SummaryAsync(DefaultIdentity identity, DateTimeOffset from)
+        public async Task<List<SummaryRecord>> SummaryAsync(DefaultIdentity identity, DateTimeOffset? from)
         {
             var Filters = new
             {
-                from = from.ToString("yyyy-MM-dd")
+                from = from?.ToString("yyyy-MM-dd") ?? string.Empty
             };
 
             var List = await Read<SummaryRecord>(SUMMARY_QUERY, Filters);

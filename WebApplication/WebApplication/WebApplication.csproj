@@ -113,6 +113,10 @@
     <Content Include="Content\Theme\Calendar.css">
       <DependentUpon>Calendar.scss</DependentUpon>
     </Content>
+    <None Include="Content\Theme\Chart.scss" />
+    <Content Include="Content\Theme\Chart.css">
+      <DependentUpon>Chart.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Theme\CheckList.css">
       <DependentUpon>CheckList.scss</DependentUpon>
     </Content>

@@ -87,6 +87,14 @@ div.TabContainer {
 
     &.MultiLine {
     }
+
+    &.Quick {
+        transition: unset;
+
+        .Tab {
+            transition: unset;
+        }
+    }
 }
 
 div.ShadowPanel {
@@ -94,6 +102,10 @@ div.ShadowPanel {
         margin-bottom: $Metric-Control-Space;
         margin-right: -20px;
         margin-left: -20px;
+
+        div.Tab.Padded {
+            padding-left: 20px;
+        }
     }
 }
 

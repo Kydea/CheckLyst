@@ -86,6 +86,10 @@
                 var label = $(this);
                 label.attr("title", label.text());
             });
+
+            if (options.observedElements) 
+                for (var index in options.observedElements)
+                    new ResizeObserver(resize).observe(document.querySelector(options.observedElements[index]));
         };
 
     this.getElement = function () {

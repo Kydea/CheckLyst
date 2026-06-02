@@ -1,0 +1,14 @@
+﻿div.ChartContainer {
+    height: 500px;
+    width: 100%;
+    min-height: 300px;
+    max-height: 100vh;
+    resize: vertical;
+    overflow: auto;
+
+    > canvas {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+    }
+}

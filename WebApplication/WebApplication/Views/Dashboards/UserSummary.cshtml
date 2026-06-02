@@ -2,29 +2,154 @@
     ViewBag.Title = "User summary";
 }
 
-<div class="InstanceOverview">
+<div class="UserSummary">
     <h1>User summary</h1>
 
-    <div class="ActionBar">
-        <a id="ListButton" href="#" class="Button"><i class="Icon fa fa-list"></i> List</a>
-    </div>
+    <div class="ActionBar"></div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
-        <form id="Filters" action="@BaseUrl/Instances/List">
+        <form id="Filters" action="@BaseUrl/AccessControl/Users">
             <label class="Width200">
-                <span>Login refrence</span>
+                <span>Active users reference</span>
                 <input type="text" name="from" class="DatePicker" />
             </label>
         </form>
-    </div>
-    <div class="ShadowPanel Hidden" id="Result">
+
+        <div class="TabContainer Quick">
+            <div class="TabLabels">
+                <a href="#">Graph</a>
+                <a href="#">Data</a>
+            </div>
+            <div class="Tab Padded">
+                <div class="ChartContainer">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+            <div class="Tab Padded" ">
+                <table class="Grid">
+                    <thead>
+                        <tr>
+                            <th>Company ID</th>
+                            <th>Companu description</th>
+                            <th>Total users</th>
+                            <th>Active users</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-column="companyID"></td>
+                            <td data-column="companyDescription"></td>
+                            <td data-column="totalUsers" class="Right"></td>
+                            <td data-column="activeUsers" class="Right"></td>
+                        </tr>
+                        <tr class="NoRecord"><td>(no record)</td></tr>
+                    </tbody>
+                </table>
+                <div class="Clearing"></div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    matematici.events.onPageLoad = function (callback) {
-        new instances.Overview("form#Filters", "Result");
-        callback.call();
+var
+    selector = ".UserSummary",
+    formSelector = "form#Filters",
+    chart,
+    filterHandler = function (response) {
+        const labels = response.data.map(item => item.companyDescription);
+        const ctx = document.getElementById("chart");
+
+        const datasets = [
+            {
+                label: "Total",
+                data: response.data.map(item => item.totalUsers),
+                backgroundColor: "#4472c4"
+            },
+            {
+                label: "Active",
+                data: response.data.map(item => item.activeUsers),
+                backgroundColor: "#009688"
+            }
+        ];
+
+        if (!chart) {
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "Users",
+                            font: {
+                                size: 22,
+                                weight: "bold"
+                            }
+                        },
+                        legend: {
+                            position: "bottom"
+                        }
+                    },
+
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Site"
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "User number"
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            chart.data.labels = labels;
+            chart.data.datasets = datasets;
+            chart.update();
+        }
     };
+
+    matematici.events.onPageLoad = function (callback) {
+        var searchPage = new matematici.SearchPage({
+            pageName: "Users",
+            detailUrl: "@Url.Action("UserSummary")",
+            filterFormSelector: formSelector,
+            resultGridSelector: "div#Content table.Grid",
+            readOnly: true,
+            getDataEvent: "Summary",
+            breadCrumbs: [
+                { content: "user summary" }
+            ],
+            filterHandler: filterHandler
+        });
+
+        new matematici.Tab(selector + " div.TabContainer", {
+            observedElements: [ ".ChartContainer" ]
+        });
+
+        $("input[name=from]").val(new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toLocaleDateString("sv-SE"));
+
+        callback.call();
+
+        searchPage.trigger();
+    };
+
 </script>
