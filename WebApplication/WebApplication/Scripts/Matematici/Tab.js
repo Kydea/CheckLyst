@@ -69,15 +69,15 @@
 
         clearObservedElements = function () {
             for (var index in observedElements)
-                observedElements.disconnect();
+                observedElements[index].disconnect();
         },
 
-		setup = function () {
-			if (!options) options = {};
-			select($("> .TabLabels a.Selected", element).prevAll("a").length);
+        setup = function () {
+            if (!options) options = {};
+            select($("> .TabLabels a.Selected", element).prevAll("a").length);
 
-			element
-				.data("tab", tab)
+            element
+                .data("tab", tab)
                 .on("click", "> .TabLabels a", function (e) {
                     e.preventDefault();
                     //e.stopPropagation();
@@ -88,14 +88,17 @@
                         handlers[index].call(this, currentItem);
                 });
 
-            $("> .TabLabels a", element).each(function() {
+            $("> .TabLabels a", element).each(function () {
                 var label = $(this);
                 label.attr("title", label.text());
             });
 
-            if (options.observedElements) 
-                for (var index in options.observedElements)
-                    observedElements.push(new ResizeObserver(resize).observe(document.querySelector(options.observedElements[index])));
+            if (options.observedElements)
+                for (var index in options.observedElements) {
+                    var observer = new ResizeObserver(resize);
+                    observer.observe(document.querySelector(options.observedElements[index]));
+                    observedElements.push(observer);
+                }
         };
 
     this.getElement = function () {
