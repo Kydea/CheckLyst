@@ -57,6 +57,8 @@ var
     selector = ".UserSummary",
     formSelector = "form#Filters",
     chart,
+    tab,
+
     filterHandler = function (response) {
         const labels = response.data.map(item => item.companyDescription);
         const ctx = document.getElementById("chart");
@@ -141,7 +143,7 @@ var
             filterHandler: filterHandler
         });
 
-        new matematici.Tab(selector + " div.TabContainer", {
+        tab = new matematici.Tab(selector + " div.TabContainer", {
             observedElements: [ ".ChartContainer" ]
         });
 
@@ -150,6 +152,15 @@ var
         callback.call();
 
         searchPage.trigger();
+    };
+
+    matematici.events.onPageUnload = function (callback) {
+        if (chart) {
+            chart.destroy();
+            chart = null;
+        }
+
+        tab.clearObservedElements();
     };
 
 </script>

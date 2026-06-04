@@ -4,22 +4,23 @@
         element = $(selector),
         currentItem,
         handlers = [],
+        observedElements = [],
 
         getLabelsHeight = function () {
             return $("> .TabLabels", element).outerHeight();
         },
 
-		getCurrentItemHeight = function () {
+        getCurrentItemHeight = function () {
             return getLabelsHeight() + currentItem.tab.height() + 3;
-		},
+        },
 
-		resize = function () {
-			element.show();
-			if (options.fixedHeight) {
+        resize = function () {
+            element.show();
+            if (options.fixedHeight) {
                 var
                     labelsHeight = getLabelsHeight();
-					tagHeight = 0,
-					currentIndex = currentItem && currentItem.index || 0;
+                tagHeight = 0,
+                    currentIndex = currentItem && currentItem.index || 0;
 
                 //$("> .Tab", element).css("margin-top", labelsHeight);
 
@@ -29,42 +30,47 @@
                     item.tab.hide();
                 });
 
-				select(currentIndex);
+                select(currentIndex);
                 element.height(tagHeight);
-			} else
-				element.height(getCurrentItemHeight());
-		},
+            } else
+                element.height(getCurrentItemHeight());
+        },
 
-		getItem = function (index) {
-			return {
-				index: index,
-				label: $("> .TabLabels a", element).eq(index),
-				tab: $("> .Tab", element).eq(index)
-			}
-		},
+        getItem = function (index) {
+            return {
+                index: index,
+                label: $("> .TabLabels a", element).eq(index),
+                tab: $("> .Tab", element).eq(index)
+            }
+        },
 
         setItem = function (index) {
-			var item = {
-				index: index,
+            var item = {
+                index: index,
                 label: $("> .TabLabels a", element).removeClass("Selected").eq(index).addClass("Selected"),
                 tab: $("> .Tab", element).removeClass("Selected").eq(index).addClass("Selected").show()
-			}
+            }
             setTimeout(function () { $("> .Tab:not(.Selected)", element).hide(); }, 500);
             return item;
-		},
+        },
 
-		select = function (index) {
-			currentItem = setItem(index);
-			if (!options.fixedHeight)
-				resize();
+        select = function (index) {
+            currentItem = setItem(index);
+            if (!options.fixedHeight)
+                resize();
 
-			$("select.AutoComplete").each(function (index) {
+            $("select.AutoComplete").each(function (index) {
                 var autoComplete = matematici.AutoComplete.get(this);
                 if (autoComplete) autoComplete.refresh();
             });
 
             return currentItem;
-		},
+        },
+
+        clearObservedElements = function () {
+            for (var index in observedElements)
+                observedElements.disconnect();
+        },
 
 		setup = function () {
 			if (!options) options = {};
@@ -89,7 +95,7 @@
 
             if (options.observedElements) 
                 for (var index in options.observedElements)
-                    new ResizeObserver(resize).observe(document.querySelector(options.observedElements[index]));
+                    observedElements.push(new ResizeObserver(resize).observe(document.querySelector(options.observedElements[index])));
         };
 
     this.getElement = function () {
@@ -100,9 +106,7 @@
         return currentItem;
     };
 
-    this.getItem = function(index) {
-        return getItem(index);
-	};
+    this.getItem = getItem(index);
 
 	this.getLabels = function () {
 		return $("> .TabLabels a", element);
@@ -113,9 +117,7 @@
         return this;
     };
 
-    this.select = function (index) {
-        select(index);
-    };
+    this.select = select;
 
 	this.add = function (label, id, cssClass, icon) {
 		var label = $("<a />").attr({ href: "#", id: id }).addClass(cssClass).append(label);
@@ -127,9 +129,9 @@
         $("> .TabLabels", element).empty();
 	};
 
-	this.resize = function () {
-		resize();
-	};
+    this.resize = resize;
+
+    this.clearObservedElements = clearObservedElements;
 
     setup();
 };
