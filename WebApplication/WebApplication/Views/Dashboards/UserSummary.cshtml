@@ -5,7 +5,10 @@
 <div class="UserSummary">
     <h1>User summary</h1>
 
-    <div class="ActionBar"></div>
+    <div class="ActionBar">
+        <a id="ExportDataButton" href="#" class="Button"><i class="Icon fa fa-caret-down"></i>Export data</a>
+        <a id="SaveGraphButton" href="#" class="Button"><i class="Icon fa fa-chart-bar"></i>Save graph</a>
+    </div>
 
     <div class="ShadowPanel">
         <div class="Accordion"></div>
@@ -58,8 +61,10 @@ var
     formSelector = "form#Filters",
     chart,
     tab,
+    data,
 
     filterHandler = function (response) {
+        data = response.data;
         const labels = response.data.map(item => item.companyDescription);
         const ctx = document.getElementById("chart");
 
@@ -160,9 +165,97 @@ var
             chart = null;
         }
 
+        data = null;
+
         tab.clearObservedElements();
 
         callback.call();
     };
+
+    $("#ExportDataButton").on("click", function (e) {
+        if (!data) return;
+
+        var table = document.querySelector("div#Content table.Grid");
+
+        if (!table)
+            return;
+
+        var headers = Array.from(table.querySelectorAll("thead th"));
+        var dataRow = table.querySelector("tbody tr:not(.NoRecord)");
+
+        if (!dataRow)
+            return;
+
+        var columns = Array.from(dataRow.querySelectorAll("td[data-column]")).map(function (cell, index) {
+            return {
+                header: headers[index] ? headers[index].textContent.trim() : cell.getAttribute("data-column"),
+                field: cell.getAttribute("data-column")
+            };
+        });
+
+        var escapeCsv = function (value) {
+            if (value === null || value === undefined)
+                return "";
+
+            value = String(value).replace(/"/g, '""');
+
+            if (
+                value.indexOf(";") >= 0 ||
+                value.indexOf('"') >= 0 ||
+                value.indexOf("\n") >= 0 ||
+                value.indexOf("\r") >= 0
+            )
+                return '"' + value + '"';
+
+            return value;
+        };
+
+        var rows = [];
+
+        rows.push(columns.map(function (column) {
+            return escapeCsv(column.header);
+        }).join(";"));
+
+        for (var i = 0; i < data.length; i++) {
+            rows.push(columns.map(function (column) {
+                return escapeCsv(data[i][column.field]);
+            }).join(";"));
+        }
+
+        var today = new Date().toLocaleDateString("sv-SE");
+        var csv = "\ufeffsep=;\r\n" + rows.join("\r\n");
+        var csvBlob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+        var csvLink = document.createElement("a");
+        csvLink.href = URL.createObjectURL(csvBlob);
+        csvLink.download = "user-summary-" + today + ".csv";
+        csvLink.click();
+
+        URL.revokeObjectURL(csvLink.href);
+    });
+
+    $("#SaveGraphButton").on("click", function (e) {
+        e.preventDefault();
+        if (chart) {
+            var sourceCanvas = chart.canvas;
+            var today = new Date().toLocaleDateString("sv-SE");
+
+            var exportCanvas = document.createElement("canvas");
+            exportCanvas.width = sourceCanvas.width;
+            exportCanvas.height = sourceCanvas.height;
+
+            var ctx = exportCanvas.getContext("2d");
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+            ctx.drawImage(sourceCanvas, 0, 0);
+
+            var chartLink = document.createElement("a");
+            chartLink.href = exportCanvas.toDataURL("image/png");
+            chartLink.download = "user-summary-chart-" + today + ".png";
+            chartLink.click();
+        }
+    });
 
 </script>
