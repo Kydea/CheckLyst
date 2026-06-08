@@ -18,8 +18,7 @@
             element.show();
             if (options.fixedHeight) {
                 var
-                    labelsHeight = getLabelsHeight();
-                tagHeight = 0,
+                    tagHeight = 0,
                     currentIndex = currentItem && currentItem.index || 0;
 
                 //$("> .Tab", element).css("margin-top", labelsHeight);
@@ -59,7 +58,7 @@
             if (!options.fixedHeight)
                 resize();
 
-            $("select.AutoComplete").each(function (index) {
+            $("select.AutoComplete").each(function () {
                 var autoComplete = matematici.AutoComplete.get(this);
                 if (autoComplete) autoComplete.refresh();
             });
@@ -109,7 +108,7 @@
         return currentItem;
     };
 
-    this.getItem = getItem(index);
+    this.getItem = getItem;
 
 	this.getLabels = function () {
 		return $("> .TabLabels a", element);
