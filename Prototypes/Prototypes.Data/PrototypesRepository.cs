@@ -294,7 +294,7 @@ namespace CheckListManager.Prototypes.Data
             Entities.PrototypeVersions.Where(filters).OrderBy(p => p.Prototype).ThenBy(p => p.Version).ToListAsync();
 
         public Task<long> CountPrototypesAsync(long company) => 
-            Entities.Prototypes.LongCountAsync(p => p.Company == company);
+            Entities.Prototypes.LongCountAsync(p => p.Company == company && !p.PrototypeVersions.All(pv => pv.VersionState == VersionState.Obsolete));
 
     }
 }

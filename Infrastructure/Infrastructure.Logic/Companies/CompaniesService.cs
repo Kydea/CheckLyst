@@ -231,6 +231,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         request.ID,
                         request.Name,
                         request.TimeZone,
+                        request.Online,
                         request.Username,
                         request.Settings,
                         ReasonForChange = request.Reason,
@@ -273,6 +274,7 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         request.ID,
                         request.Name,
                         request.TimeZone,
+                        request.Online,
                         request.Settings,
                         ReasonForChange = request.Reason,
                     });

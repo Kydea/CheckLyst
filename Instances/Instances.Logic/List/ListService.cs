@@ -146,7 +146,8 @@ namespace CheckListManager.Instances.Logic.List
 
                 response.Fields["TagValue"] = new Field
                 {
-                    Editable = tags.Any()
+                    Editable = tags.Any(),
+                    Value = form.TagValue
                 };
             }
 

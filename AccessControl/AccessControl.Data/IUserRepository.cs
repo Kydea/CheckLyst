@@ -27,7 +27,7 @@ namespace CheckListManager.AccessControl.Data
         Task<List<Users>> GetUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled, int skip, int take);
         Task<int> CountUsersAsync(long companyId, string code, string description, string corporateID, string group, string role, int? failedLogins, int? inactivityDays, string enabled);
         Task<Users> AddAsync(DefaultIdentity identity, Users user);
-        Task<Users> EditAsync(DefaultIdentity identity, Users user);
+        Task<Users> EditAsync(DefaultIdentity identity, Users user, bool licenceExpired);
         Task DeleteAsync(long companyId, string code);
         Task<long> CountUsersAsync(long companyId, bool? enabled);
         Task SetTimeZoneAsync(long companyId, string code, string value);

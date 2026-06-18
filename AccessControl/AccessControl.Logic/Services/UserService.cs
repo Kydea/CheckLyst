@@ -683,7 +683,7 @@ namespace CheckListManager.AccessControl.Logic.Services
             {
                 var currentCount = await _userRepository.CountUsersAsync(identity.CompanyId, true);
                 if (licensedCount.Value <= currentCount)
-                    throw new LicenseException("The maximum number of users allowed by the license has been reached");
+                    throw new LicenseException("The maximum number of active users allowed by the license has been reached");
             }
 
             var response = await ValidateAsync(identity, request);
@@ -731,6 +731,15 @@ namespace CheckListManager.AccessControl.Logic.Services
 
         public async Task<UserResponse> EditUserAsync(DefaultIdentity identity, UserRequest record)
         {
+            bool licenceExpired = false;
+            var licensedCount = (await _settingService.LicenseAsync(identity.CompanyId)).Payload.UsersCount;
+            if (licensedCount.HasValue)
+            {
+                var currentCount = await _userRepository.CountUsersAsync(identity.CompanyId, true);
+                if (licensedCount.Value <= currentCount)
+                    licenceExpired = true;
+            }
+
             var response = await ValidateAsync(identity, record);
             if (response.Valid)
                 try
@@ -750,7 +759,7 @@ namespace CheckListManager.AccessControl.Logic.Services
 
                     BuildFunctions(identity, record, User);
 
-                    await _userRepository.EditAsync(identity, User);
+                    await _userRepository.EditAsync(identity, User, licenceExpired);
 
                     await _commonRepository.AddTrailRecordAsync(new Records
                     {

@@ -280,9 +280,13 @@ namespace CheckListManager.AccessControl.Data
             return user;
         }
 
-        public async Task<Users> EditAsync(DefaultIdentity identity, Users user)
+        public async Task<Users> EditAsync(DefaultIdentity identity, Users user, bool licenceExpired)
         {
             var existingUser = await GetAsync(identity.CompanyId, user.Code) ?? throw new DatabaseException($"User {user.Code} not found");
+
+            if (licenceExpired && !existingUser.Enabled && user.Enabled)
+                throw new DatabaseException($"The maximum number of active users allowed by the license has been reached");
+
             existingUser.Description = user.Description;
             existingUser.Email = user.Email;
             existingUser.CorporateID = user.CorporateID;
