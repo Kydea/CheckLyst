@@ -205,7 +205,7 @@ namespace CheckListManager.Common.Logic.Services
         public Task<LicenseModel> LicenseAsync(long companyId)
         {
             const string code = "License";
-            return _cache.GetOrAddAsync($"{code}-{companyId}", async key =>
+            return companyId > 1 ? _cache.GetOrAddAsync($"{code}-{companyId}", async key =>
             {
                 var model = new LicenseModel
                 {
@@ -223,7 +223,18 @@ namespace CheckListManager.Common.Logic.Services
                 LicenseService.VerifyLicense(model.Payload, machineKey, signature);
 
                 return model;
-            }, RegionName, TimeSpan.FromMinutes(1));
+            }, RegionName, TimeSpan.FromMinutes(1)) :
+            Task.FromResult(new LicenseModel
+            {
+                Payload = new LicensePayload
+                {
+                    Expiration = null,
+                    Company = companyId,
+                    PrototypeTypesCount = 0,
+                    PrototypesCount = 0,
+                    UsersCount = null
+                }
+            });
         }
 
         private async Task<T> Load<T>(long companyId, string code)
