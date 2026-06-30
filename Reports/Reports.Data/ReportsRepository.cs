@@ -280,7 +280,7 @@ namespace CheckListManager.Reports.Data
                 .ToListAsync();
 
         public Task<Common.Data.Reports> GetLastVersionAsync(long company, string code) =>
-            Entities.Reports.Where(r => r.Company == company && r.Code == code && r.ReportState != ReportState.Draft).OrderByDescending(r => r.Version).FirstOrDefaultAsync();
+            Entities.Reports.Where(r => r.Company == company && r.Code == code).OrderByDescending(r => r.Version).FirstOrDefaultAsync();
 
         public async Task ToggleFavourite(long company, string user, string code, bool value)
         {

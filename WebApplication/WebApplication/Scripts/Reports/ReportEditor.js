@@ -184,11 +184,18 @@
                 }
 
                 var buttonGroup = $("div.ActionBar a.ButtonGroup", element);
-                $("a.History", buttonGroup).toggleClass("Hidden", options.id <= 0);
+                $("a.History", buttonGroup).toggleClass("Hidden", options.id <= 0 || options.newVersion);
                 $("a.Delete", buttonGroup).toggleClass("Hidden", !model.editable);
+                $("a.View", buttonGroup).toggleClass("Hidden", model.state == "Obsolete");
 
-                if (options.newVersion) 
+                if (options.newVersion) {
+                    if (!model.valid) {
+                        matematici.dialog.error("error", model.validationMessages[0].message);
+                        matematici.dialog.setCloseHandler(window.close);
+                        return;
+                    }
                     model.fields.description.editable = true;
+                }
 
                 detailPage = new matematici.DetailPage({
                     readOnly: !model.editable,
@@ -212,12 +219,14 @@
                 form.setValue("reportState", model.state);
                 form.setValue("version", model.version);
                 form.setValue("newVersion", !!model.newVersion);
-                form.setValue("createdBy", model.createdBy);
-                form.setValue("createdOn", model.createdOn);
-                form.setValue("modifiedBy", model.modifiedBy);
-                form.setValue("modifiedOn", model.modifiedOn);
-                form.setValue("proposedState", model.proposedState);
-                form.setValue("proposedDate", model.proposedDate);
+                if (!options.newVersion) {
+                    form.setValue("createdBy", model.createdBy);
+                    form.setValue("createdOn", model.createdOn);
+                    form.setValue("modifiedBy", model.modifiedBy);
+                    form.setValue("modifiedOn", model.modifiedOn);
+                    form.setValue("proposedState", model.proposedState);
+                    form.setValue("proposedDate", model.proposedDate);
+                }
 
                 setupReportSources(reportSources);
                 var autoComplete = matematici.AutoComplete.get(reportSourceSelect[0]);
@@ -418,7 +427,8 @@
                 url: matematici.urls.reports.api + "/List/Load",
                 data: {
                     data: {
-                        id: options.id
+                        id: options.id,
+                        newVersion: options.newVersion
                     }
                 }
             }).done(function (result) {

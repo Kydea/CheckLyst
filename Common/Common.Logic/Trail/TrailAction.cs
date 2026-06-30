@@ -91,5 +91,6 @@
         public const string ReportUpdated = "Report updated";
         public const string ReportDeleted = "Report deleted";
         public const string ReportStateChanged = "Report state changed";
+        public const string ReportStateChangedProposed = "Report state change proposed";
     }
 }

@@ -447,7 +447,11 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 else if (Instance != null)
                     SignResponse.State = Instance.InstanceState;
                 else if (Report != null)
+                {
                     SignResponse.State = Report.ReportState;
+                    SignResponse.ModifiedOn = Report.ModifiedOn;
+                    SignResponse.ModifiedBy = Report.ModifiedBy;
+                }
 
                 var checklistCode =
                         PrototypeVersion != null ? $"{PrototypeVersion.Prototypes.Name}.{PrototypeVersion.Version}" :

@@ -157,6 +157,14 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
+        private async Task CheckNewVersionAsync(Common.Data.Reports lastVersion, int? version)
+        {
+            if (version != lastVersion.Version + 1)
+                throw new Exception("The report version is not the last one.");
+            if (lastVersion.ReportState == "Draft")
+                throw new Exception("There is a draft version already.");
+        }
+
         public async Task<DetailResponse> LoadReportAsync(long company, DetailRequest request)
         {
             var response = new DetailResponse();
@@ -167,6 +175,11 @@ namespace CheckListManager.Reports.Logic.Detail
                 if (request.ID.HasValue && request.ID >= 0)
                 {
                     var report = await _reportsRepository.GetReportAsync(company, request.ID.Value, null);
+                    if (request.NewVersion)
+                    {
+                        var lastVersion = await _reportsRepository.GetLastVersionAsync(company, report.Code) ?? throw new Exception($"Report code {report.Code} not found.");
+                        await CheckNewVersionAsync(lastVersion, report.Version);
+                    }
 
                     response.ID = report.ID;
                     response.Code = report.Code;
@@ -281,10 +294,10 @@ namespace CheckListManager.Reports.Logic.Detail
                         }).ToList()
                     };
 
-                    var lastVersion = await _reportsRepository.GetLastVersionAsync(identity.CompanyId, request.Code);
+                    var lastVersion = await _reportsRepository.GetLastVersionAsync(identity.CompanyId, request.Code) ?? throw new Exception($"Report code {request.Code} not found.");
                     if (request.NewVersion)
                     {
-                        if (request.Version != lastVersion.Version + 1) throw new Exception("The report version is not the last one.");
+                        await CheckNewVersionAsync(lastVersion, request.Version);
                         request.ID = null;
                     }
 
@@ -318,7 +331,8 @@ namespace CheckListManager.Reports.Logic.Detail
                     }
                     else
                     {
-                        await _reportsRepository.AddReportAsync(identity, report, request.Groups, lastVersion == null ? 1 : lastVersion.Version + 1);
+                        request.Version = lastVersion == null ? 1 : lastVersion.Version + 1;
+                        await _reportsRepository.AddReportAsync(identity, report, request.Groups, request.Version);
                         request.ID = response.ID = report.ID;
                         report.ReportsHistory.Add(new ReportsHistory
                         {
@@ -374,7 +388,8 @@ namespace CheckListManager.Reports.Logic.Detail
             dynamic information = new ExpandoObject();
             information.ID = report.ID;
             information.Code = report.Code;
-            information.Versione = report.Version;
+            information.Version = report.Version;
+            bool proposed = false;
             if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow == null)
             {
                 information.State = report.ReportState = ReportState.Obsolete;
@@ -388,6 +403,7 @@ namespace CheckListManager.Reports.Logic.Detail
             }
             else if (request.State == ReportState.Obsolete && report.ReportState == ReportState.Confirmed && report.WorkFlow != null)
             {
+                proposed = true;
                 information.State = ReportState.Confirmed;
                 information.ProposedState = report.ProposedState = ReportState.Obsolete;
 
@@ -419,6 +435,7 @@ namespace CheckListManager.Reports.Logic.Detail
             }
             else if (request.State == ReportState.Completed && report.ReportState == ReportState.Draft && report.WorkFlow != null)
             {
+                proposed = true;
                 information.State = report.ReportState = ReportState.Completed;
                 information.ProposedState = report.ProposedState = ReportState.Confirmed;
 
@@ -452,7 +469,7 @@ namespace CheckListManager.Reports.Logic.Detail
             report.ModifiedOn = DateTimeOffset.UtcNow;
 
             await _reportsRepository.SaveChangesAsync();
-            await _commonRepository.AuditAsync(identity, TrailAction.ReportStateChanged, information);
+            await _commonRepository.AuditAsync(identity, proposed ? TrailAction.ReportStateChangedProposed : TrailAction.ReportStateChanged, information);
             return await LoadReportAsync(identity.CompanyId, request);
         }
 

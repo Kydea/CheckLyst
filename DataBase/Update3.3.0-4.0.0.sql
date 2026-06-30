@@ -121,6 +121,7 @@ create table "Configuration"."UserSettingValues"
 create unique index "Index_UserSettingValues_ID" on "Configuration"."SettingValues" ("Company", "Setting");
 
 insert into "Trail"."Actions" values ('Report state changed');
+insert into "Trail"."Actions" values ('Report state change proposed')
 
 create table "Reports"."ReportsHistory"
 (

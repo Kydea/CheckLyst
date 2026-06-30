@@ -93,7 +93,8 @@ values
 	('Report created'),
 	('Report updated'),
 	('Report deleted'),
-	('Report state changed');
+	('Report state changed'),
+	('Report state change proposed');
 
 create table "Trail"."Records"
 (
