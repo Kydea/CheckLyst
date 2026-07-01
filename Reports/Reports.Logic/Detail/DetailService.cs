@@ -294,9 +294,10 @@ namespace CheckListManager.Reports.Logic.Detail
                         }).ToList()
                     };
 
-                    var lastVersion = await _reportsRepository.GetLastVersionAsync(identity.CompanyId, request.Code) ?? throw new Exception($"Report code {request.Code} not found.");
+                    var lastVersion = await _reportsRepository.GetLastVersionAsync(identity.CompanyId, request.Code);
                     if (request.NewVersion)
                     {
+                        if (lastVersion == null) throw new Exception($"Report code {request.Code} not found.");
                         await CheckNewVersionAsync(lastVersion, request.Version);
                         request.ID = null;
                     }
