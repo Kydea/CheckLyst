@@ -121,7 +121,7 @@ namespace CheckListManager.Infrastructure.Logic.Notifications
                     if (!forceRefresh && IsFresh(b, DateTime.UtcNow))
                         return;
 
-                    requestState = b.State.Clone();
+                    requestState = invalidateMask.HasValue ? b.State.Clone() : new NotificationsState();
 
                     if (invalidateMask.HasValue)
                         ApplyInvalidateMask(requestState, invalidateMask.Value);

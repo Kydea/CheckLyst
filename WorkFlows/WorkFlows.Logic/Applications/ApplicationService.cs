@@ -586,6 +586,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 NotificationInvalidateMask.ReportsToSignCount;
 
             foreach (var user in Users)
+            {
                 if (!string.IsNullOrEmpty(user.Email))
                 {
                     var message = await _settingService.SignatureMessageAsync(user.Company);
@@ -608,15 +609,17 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                         {
                             TrailMessage = new EmailTrailMessage(identity.Code, label, Instance?.ID ?? PrototypeVersion?.Prototype, null)
                         });
-                    var token = user.Code + ":" + Guid.NewGuid();
-                    await _redisCache.SetAsync($"Token:{token}", new User
-                    {
-                        Company = user.Company,
-                        Code = user.Code
-                    }, "Service", new TimeSpan(0, 1, 0));
-
-                    await _serviceClient.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)mask}");
                 }
+
+                var token = user.Code + ":" + Guid.NewGuid();
+                await _redisCache.SetAsync($"Token:{token}", new User
+                {
+                    Company = user.Company,
+                    Code = user.Code
+                }, "Service", new TimeSpan(0, 1, 0));
+
+                await _serviceClient.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)mask}");
+            }
         }
     }
 }
