@@ -269,6 +269,13 @@ namespace CheckListManager.Infrastructure.Logic.Companies
                         TimeZone = request.TimeZone,
                         Online = request.Online
                     }, request.Settings);
+
+                    var smtpPassowrd = request.Settings.SingleOrDefault(s => s.Code == "SmtpPassword");
+                    if (smtpPassowrd != null && !string.IsNullOrEmpty(smtpPassowrd.Value)) smtpPassowrd.Value = "*****";
+
+                    var licenseSignature = request.Settings.SingleOrDefault(s => s.Code == "LicenseSignature");
+                    if (licenseSignature != null && !string.IsNullOrEmpty(licenseSignature.Value)) licenseSignature.Value = "*****";
+
                     await _commonRepository.AuditAsync(identity, TrailAction.CompanyUpdated, new
                     {
                         request.ID,

@@ -80,6 +80,18 @@ namespace CheckListManager.Infrastructure.Data
                 Function = "Edit",
                 CreatedOn = DateTimeOffset.UtcNow
             });
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Companies",
+                Function = "View",
+                CreatedOn = DateTimeOffset.UtcNow
+            });
+            configurator.UserFunctions.Add(new UserFunctions
+            {
+                FunctionGroup = "Companies",
+                Function = "Edit",
+                CreatedOn = DateTimeOffset.UtcNow
+            });
             company.Users.Add(configurator);
             foreach (var setting in settings)
                 company.SettingValues.Add(new SettingValues { Setting = setting.Code, Value = setting.Value ?? "", CreatedOn = DateTimeOffset.UtcNow });
