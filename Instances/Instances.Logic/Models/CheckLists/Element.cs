@@ -191,6 +191,7 @@ namespace CheckListManager.Instances.Logic.Models.CheckLists
             destination.ValidityMessage = source.ValidityMessage;
             destination.SignatureCode = source.SignatureCode;
             destination.PageBreak = source.PageBreak;
+            destination.UserGroup = source.UserGroup;
         }
 
         #endregion

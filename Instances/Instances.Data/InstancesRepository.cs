@@ -101,7 +101,9 @@ namespace CheckListManager.Instances.Data
 
         private const string OVERVIEW_QUERY =
             "select " +
-                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\" " +
+                "i.\"ID\", i.\"Code\", " +
+                "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", p.\"Name\" \"PrototypeName\", i.\"Version\" " +
             INSTANCES_BASE_QUERY +
                 "and pv.\"VersionState\" <> 'Draft' " +
                 "and pv.\"VersionState\" <> 'In progress' " +
@@ -110,7 +112,9 @@ namespace CheckListManager.Instances.Data
 
         private const string LIFE_CYCLE_QUERY =
             "select " +
-                "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                "i.\"ID\", i.\"Code\", " +
+                "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                "i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
                 "extract(day from now() - i.\"CreatedOn\") \"Days\", pv.\"LifeCycle\" " +
             INSTANCES_BASE_QUERY +
             "order by d.\"Name\", pt.\"Name\", p.\"Name\", i.\"Version\", i.\"Year\", i.\"Number\" ";
@@ -134,7 +138,9 @@ namespace CheckListManager.Instances.Data
         private const string TASKS_LIST_QUERY =
             "with i as (" +
                 "select " +
-                    "i.\"ID\", i.\"Code\", i.\"Year\", i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
+                    "i.\"ID\", i.\"Code\", " +
+                    "case when i.\"Year\" > 0 then cast(i.\"Year\" as text) when pv.\"VersionState\" = 'Draft' then 'Test' else 'SE' end \"Year\", " +
+                    "i.\"Number\", i.\"InstanceState\" \"State\", p.\"Department\", d.\"Name\" \"DepartmentName\", p.\"PrototypeType\", pt.\"Name\" \"PrototypeTypeName\", i.\"Prototype\", p.\"Name\" \"PrototypeName\", i.\"Version\", " +
                     "i.\"Description\" " +
                 INSTANCES_BASE_QUERY +
                 "and i.\"InstanceState\" = 'In progress'" +
