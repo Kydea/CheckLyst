@@ -64,18 +64,18 @@
                 if (handleGoToNext) next(handleGoToNext);
             }).trigger();
 
-        }
+        },
 
-    valueCopy = function (e) {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
-            instances.instance.update(result);
-            next();
-        }).trigger();
-    },
+        valueCopy = function (e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            new instances.Event(instances.Events.valueCopy, model.id).done(function (result) {
+                instances.instance.update(result);
+                next();
+            }).trigger();
+        },
 
         scan = function () {
             new matematici.Scanner(raiseChangeEvent);

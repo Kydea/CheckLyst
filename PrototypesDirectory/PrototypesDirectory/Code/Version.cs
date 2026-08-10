@@ -11,7 +11,7 @@ namespace Matematici
         public static readonly int Major = 4;
         public static readonly int Minor = 0;
         public static readonly int Release = 0;
-        public static readonly string Stage = ""; //empty, .beta, .alpha
+        public static readonly string Stage = ".beta"; //empty, .beta, .alpha
 
         public static string Get()
         {
