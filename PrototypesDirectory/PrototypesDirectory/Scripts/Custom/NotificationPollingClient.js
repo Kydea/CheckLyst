@@ -64,6 +64,13 @@
             setNotificationBadges("/Prototypes/List", snapshot.prototypeVersionsToSignCount);
         },
 
+        clearNotificationBadges = function () {
+            setNotificationBadges("/Reports/Runs", 0);
+            setNotificationBadges("/Reports/List", 0);
+            setNotificationBadges("/Instances/List", 0);
+            setNotificationBadges("/Prototypes/List", 0);
+        },
+
         onDiagnostics = function (state) {
             //console.log("diagiostics", state);
         },
@@ -229,6 +236,7 @@
         },
 
         enable = function () {
+            if (!coordinator) startCoordinator();
             if (enabled) return;
             enabled = true;
             coordinator.setDataEnabled(true);
@@ -238,7 +246,7 @@
         disable = function () {
             if (!enabled) return;
             enabled = false;
-            coordinator.setDataEnabled(false);
+            if (coordinator) coordinator.setDataEnabled(false);
             updateDiagnostics();
         },
 
@@ -258,6 +266,7 @@
             lastDeliveredVersion = null;
             overloadAttempts = 0;
             storeLastSnapshot(null);
+            clearNotificationBadges();
             updateDiagnostics();
         };
 
