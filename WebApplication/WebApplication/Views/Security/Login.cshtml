@@ -108,8 +108,8 @@
             savedValues.redirectTime = localStorage.redirectTime;
         }
 
-        if (matematici.notificationClient != null) 
-            matematici.notificationClient.dispose();
+        if (matematici.notificationPollingClient != null) 
+            matematici.notificationPollingClient.dispose();
 
         matematici.tokenManager.notifyLogout();
         localStorage.redirectUrl = savedValues.redirectUrl;
