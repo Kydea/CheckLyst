@@ -31,7 +31,7 @@ namespace CheckListManager.WorkFlows.Api.Controllers
 
         [HttpPost]
         [Route("Create")]
-        [Authorize(Roles = "Prototypes#Preview, Instances#Edit")]
+        [Authorize(Roles = "Prototypes#Preview, Instances#Edit, Reports#Edit")]
         public async Task<IHttpActionResult> Create(CreateRequest request)
         {
             return Ok(await _applicationService.CreateAsync(Identity, request));
