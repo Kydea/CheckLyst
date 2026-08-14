@@ -81,7 +81,7 @@ namespace CheckListManager.Instances.Data
                                 "and not exists (select 1 from \"WorkFlows\".\"WorkFlowApplicationSteps\" ps where wfas.\"WorkFlowApplication\" = ps.\"WorkFlowApplication\" and ps.\"User\" = :user and wfas.\"Step\" = ps.\"Step\") " +
                                 "and (" +
                                     "wfast.\"Tag\" is null " +
-                                    "or exists (select 1 from \"Security\".\"UserLevels\" ul where ul.\"Company\" = p.\"Company\" and ul.\"User\" = :user and ul.\"Department\" = p.\"Department\" and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = p.\"PrototypeType\") and ul.\"PrototypeWorkFlowLevel\" = wfast.\"Tag\") " +
+                                    "or exists (select 1 from \"Security\".\"UserLevels\" ul where ul.\"Company\" = p.\"Company\" and ul.\"User\" = :user and ul.\"Department\" = p.\"Department\" and (ul.\"PrototypeType\" is null or ul.\"PrototypeType\" = p.\"PrototypeType\") and ul.\"InstanceWorkFlowLevel\" = wfast.\"Tag\") " +
                                 ") " +
                     ")" +
                 ")";

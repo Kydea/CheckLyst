@@ -378,10 +378,10 @@ namespace CheckListManager.Infrastructure.Data
                     (x, tag) => new { x.report, x.application, x.step, tag }
                 )
                 .Where(x =>
-                    !x.application.Approved.HasValue
+                    x.report.Company == company
 
+                    && !x.application.Approved.HasValue
                     && x.step.User == null
-
                     && !Entities.WorkFlowApplicationSteps.Any(ps =>
                         ps.WorkFlowApplication == x.step.WorkFlowApplication
                         && ps.User == null
@@ -390,6 +390,7 @@ namespace CheckListManager.Infrastructure.Data
 
                     && !Entities.WorkFlowApplicationSteps.Any(cs =>
                         cs.WorkFlowApplication == x.step.WorkFlowApplication
+                        && cs.Company == company
                         && cs.User == user
                         && x.step.Step == cs.Step
                     )
@@ -448,7 +449,7 @@ namespace CheckListManager.Infrastructure.Data
                             && ul.User == user
                             && ul.Department == x.instance.Prototypes.Department
                             && (ul.PrototypeType == null || ul.PrototypeType == x.instance.Prototypes.PrototypeType)
-                            && ul.PrototypeWorkFlowLevel == x.tag.Tag
+                            && ul.InstanceWorkFlowLevel == x.tag.Tag
                         )
                     )
 
