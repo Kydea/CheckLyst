@@ -5,6 +5,7 @@
             epochStorageKey: "NotificationPolling.Epoch",
             leaderStorageKey: "NotificationPolling.Leader",
             snapshotStorageKey: "Notifications.LastSnapshot",
+            idleRefreshMilliseconds: 10 * 60 * 1000,
             heartbeatMilliseconds: 1000,
             leaderTimeToLiveMilliseconds: 3500,
             watchdogMilliseconds: 800,
@@ -37,6 +38,7 @@
         notificationListeners = new Map(),
 
         coordinator = null,
+        idleRefreshTimeoutId = null,
 
         addNotificationListener = function (code, listener) {
             notificationListeners.set(code, listener);
@@ -178,6 +180,24 @@
             });
         },
 
+        clearIdleRefresh = function () {
+            if (!idleRefreshTimeoutId) return;
+            window.clearTimeout(idleRefreshTimeoutId);
+            idleRefreshTimeoutId = null;
+        },
+
+        scheduleIdleRefresh = function () {
+            clearIdleRefresh();
+
+            idleRefreshTimeoutId = window.setTimeout(function () {
+                idleRefreshTimeoutId = null;
+
+                if (matematici.tokenManager && !matematici.tokenManager.isLoggedIn()) return;
+
+                enable();
+            }, configuration.idleRefreshMilliseconds);
+        },
+
         handleSnapshot = function (snapshot) {
             if (snapshot && snapshot.overloaded) {
                 overloadAttempts = overloadAttempts + 1;
@@ -193,7 +213,12 @@
             overloadAttempts = 0;
 
             if (snapshot && typeof snapshot.version !== "undefined") {
-                if (snapshot.idle) disable();
+                if (snapshot.idle) {
+                    disable();
+                    scheduleIdleRefresh();
+                } else {
+                    clearIdleRefresh();
+                }
 
                 var incomingVersion = Number(snapshot.version);
 
@@ -236,6 +261,7 @@
         },
 
         enable = function () {
+            clearIdleRefresh();
             if (!coordinator) startCoordinator();
             if (enabled) return;
             enabled = true;
@@ -244,6 +270,7 @@
         },
 
         disable = function () {
+            clearIdleRefresh();
             if (!enabled) return;
             enabled = false;
             if (coordinator) coordinator.setDataEnabled(false);
@@ -261,6 +288,7 @@
 
         dispose = function () {
             disable();
+            clearIdleRefresh();
             stopCoordinator();
             sinceVersion = 0;
             lastDeliveredVersion = null;
