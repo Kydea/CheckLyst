@@ -64,23 +64,36 @@ namespace CheckListManager.Infrastructure.Terminal
 
                             await reportsRepository.CompleteReportRunAsync(pendingRun.ID, data, null, cancellationToken);
 
-                            var token = pendingRun.User + ":" + Guid.NewGuid();
-                            var user = new User
-                            {
-                                Company = pendingRun.Company,
-                                Code = pendingRun.User
-                            };
-                            await redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
-                            await client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)Common.Logic.Models.Notifications.NotificationInvalidateMask.CompletedReportCount}");
+                            await TryInvalidateCompletedReportCountAsync(client, redisCache, pendingRun.Company, pendingRun.User, pendingRun.ID);
                         }
                         catch (Exception exception)
                         {
                             Logger.Error(exception, $"Error executing report run {pendingRun.ID}");
                             await reportsRepository.CompleteReportRunAsync(pendingRun.ID, null, exception, cancellationToken);
+                            await TryInvalidateCompletedReportCountAsync(client, redisCache, pendingRun.Company, pendingRun.User, pendingRun.ID);
                         }
                     }
                     reportProcessStrategy.Timer.Interval = 1000;
                 }
+            }
+        }
+
+        private static async Task TryInvalidateCompletedReportCountAsync(IServiceClient client, IRedisCache redisCache, long company, string userCode, long runId)
+        {
+            try
+            {
+                var token = userCode + ":" + Guid.NewGuid();
+                var user = new User
+                {
+                    Company = company,
+                    Code = userCode
+                };
+                await redisCache.SetAsync($"Token:{token}", user, "Service", new TimeSpan(0, 1, 0));
+                await client.GetAsync($"Infrastructure/Notifications/Invalidate?token={token}&mask={(int)Common.Logic.Models.Notifications.NotificationInvalidateMask.CompletedReportCount}");
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, $"Error invalidating completed report notification for report run {runId}");
             }
         }
 

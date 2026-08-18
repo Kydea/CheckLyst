@@ -157,7 +157,7 @@ namespace CheckListManager.Reports.Logic.Detail
             return response;
         }
 
-        private async Task CheckNewVersionAsync(Common.Data.Reports lastVersion, int? version)
+        private void CheckNewVersion(Common.Data.Reports lastVersion, int? version)
         {
             if (version != lastVersion.Version + 1)
                 throw new Exception("The report version is not the last one.");
@@ -178,7 +178,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     if (request.NewVersion)
                     {
                         var lastVersion = await _reportsRepository.GetLastVersionAsync(company, report.Code) ?? throw new Exception($"Report code {report.Code} not found.");
-                        await CheckNewVersionAsync(lastVersion, report.Version + 1);
+                        CheckNewVersion(lastVersion, report.Version + 1);
                     }
 
                     response.ID = report.ID;
@@ -298,7 +298,7 @@ namespace CheckListManager.Reports.Logic.Detail
                     if (request.NewVersion)
                     {
                         if (lastVersion == null) throw new Exception($"Report code {request.Code} not found.");
-                        await CheckNewVersionAsync(lastVersion, request.Version);
+                        CheckNewVersion(lastVersion, request.Version);
                         request.ID = null;
                     }
 

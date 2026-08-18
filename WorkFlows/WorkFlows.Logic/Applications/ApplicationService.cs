@@ -362,6 +362,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     throw new InvalidOperationException();
 
                 bool ExportFTP = false;
+                bool NotifyNextStep = false;
 
                 if (request.Approved)
                 {
@@ -403,7 +404,7 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                     if (AllApproved)
                         Step.WorkFlowApplications.Approved = true;
                     else
-                        await SendEmailsAsync(identity, Step.WorkFlowApplications);
+                        NotifyNextStep = true;
                 }
                 else
                 {
@@ -427,6 +428,9 @@ namespace CheckListManager.WorkFlows.Logic.Applications
                 }
 
                 await _workFlowsRepository.SaveChangesAsync();
+
+                if (NotifyNextStep)
+                    await SendEmailsAsync(identity, Step.WorkFlowApplications);
 
                 if (ExportFTP)
                 {
