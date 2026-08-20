@@ -82,6 +82,7 @@ namespace CheckListManager.Infrastructure.Logic.Email
                     Action = TrailAction.EmailFailed,
                     User = message.Message.TrailMessage?.User,
                     Company = message.Message.Company,
+                    Date = DateTimeOffset.UtcNow,
                     CheckListCode = message.Message.TrailMessage?.CheckListCode,
                     CheckListID = message.Message.TrailMessage?.CheckListID,
                     Information = exception.Message,
