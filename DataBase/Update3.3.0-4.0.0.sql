@@ -1,7 +1,7 @@
 alter table "Infrastructure"."Companies" add "Online" boolean not null default true;
 alter table "Security"."Users" add "TimeZone" varchar (100) references "Infrastructure"."TimeZones";
 alter table "CheckLists"."InstanceExpressionValues" add "Task" boolean not null default false;
-alter table "Security"."Users" add "PrototypeWorkFlowLevel" varchar (50);
+alter table "Security"."Users" add "ReportWorkFlowLevel" varchar (50);
 
 insert into "Configuration"."Configurations" values ('ContextualReportTimeout', '60');
 
