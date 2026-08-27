@@ -1,3 +1,5 @@
+--struttura per migration tools, non usata al momento
+
 alter table "CheckLists"."Instances" add column "ToolState" varchar(50);
 create schema "Tools";
 
