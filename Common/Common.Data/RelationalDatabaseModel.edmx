@@ -63,7 +63,6 @@
           <Property Name="ModifiedOn" Type="timestamptz" Precision="7" />
           <Property Name="Company" Type="int8" Nullable="false" />
           <Property Name="FileName" Type="text" />
-          <Property Name="ToolState" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="InstancesHistory">
           <Key>
@@ -310,7 +309,6 @@
           <Property Name="ParameterName" Type="varchar" MaxLength="50" />
           <Property Name="ParameterType" Type="varchar" MaxLength="30" />
           <Property Name="ClauseType" Type="varchar" MaxLength="30" />
-          <Property Name="CaseSensitive" Type="bool" Nullable="false" />
         </EntityType>
         <EntityType Name="ReportColumns">
           <Key>
@@ -3749,7 +3747,6 @@
           <NavigationProperty Name="InstancesHistory" Relationship="RelationalDatabaseModel.InstancesHistory_Instance_fkey" FromRole="Instances" ToRole="InstancesHistory" />
           <NavigationProperty Name="InstanceRelations" Relationship="RelationalDatabaseModel.InstanceRelations_Child_fkey" FromRole="Instances" ToRole="InstanceRelations" />
           <NavigationProperty Name="InstanceRelations1" Relationship="RelationalDatabaseModel.InstanceRelations_Parent_fkey" FromRole="Instances" ToRole="InstanceRelations" />
-          <Property Name="ToolState" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           </EntityType>
         <Association Name="InstanceExpressionValues_Instance_fkey">
           <End Type="RelationalDatabaseModel.Instances" Role="Instances" Multiplicity="1" />
@@ -4733,7 +4730,6 @@
           <Property Name="ParameterType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="ClauseType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Reports" Relationship="RelationalDatabaseModel.ReportClauses_Report_fkey" FromRole="ReportClauses" ToRole="Reports" />
-          <Property Name="CaseSensitive" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="ReportClauses_Report_fkey">
           <End Type="RelationalDatabaseModel.Reports" Role="Reports" Multiplicity="1">
@@ -5391,7 +5387,6 @@
           <EntitySetMapping Name="Instances">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.Instances">
               <MappingFragment StoreEntitySet="Instances">
-                <ScalarProperty Name="ToolState" ColumnName="ToolState" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
@@ -5703,7 +5698,6 @@
           <EntitySetMapping Name="ReportClauses">
             <EntityTypeMapping TypeName="RelationalDatabaseModel.ReportClauses">
               <MappingFragment StoreEntitySet="ReportClauses">
-                <ScalarProperty Name="CaseSensitive" ColumnName="CaseSensitive" />
                 <ScalarProperty Name="ClauseType" ColumnName="ClauseType" />
                 <ScalarProperty Name="ParameterType" ColumnName="ParameterType" />
                 <ScalarProperty Name="ParameterName" ColumnName="ParameterName" />
