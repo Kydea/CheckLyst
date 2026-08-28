@@ -50,32 +50,25 @@ namespace CheckListManager.Common.Logic.Api.PDF
 
         public async Task GenerateAsync(Stream Stream)
         {
-            try
+            if (!(GlobalFontSettings.FontResolver is FontResolver))
+                GlobalFontSettings.FontResolver = new FontResolver();
+
+            DocumentBuilder = new MigraDocBuilder()
             {
-                if (!(GlobalFontSettings.FontResolver is FontResolver))
-                    GlobalFontSettings.FontResolver = new FontResolver();
+                OnPageReady = OnPageReady
+            };
 
-                DocumentBuilder = new MigraDocBuilder()
-                {
-                    OnPageReady = OnPageReady
-                };
-                
-                await AddSectionAsync();
-                await OnGenerateAsync();
-                await OnRenderAttachmentsAsync();
+            await AddSectionAsync();
+            await OnGenerateAsync();
+            await OnRenderAttachmentsAsync();
 
-                DocumentBuilder
-                    .SetSubject(Subject)
-                    .SetCreator("www.matematici.com")
-                    .SetAuthor("Matematici")
-                    .Save(Stream);
+            DocumentBuilder
+                .SetSubject(Subject)
+                .SetCreator("www.matematici.com")
+                .SetAuthor("Matematici")
+                .Save(Stream);
 
-                Stream.Flush();
-            }
-            catch(System.Exception ex)
-            {
-                throw ex;
-            }
+            Stream.Flush();
         }
 
         protected virtual void OnPageReady(int pageNumber, PdfPage page, XGraphics graphics)

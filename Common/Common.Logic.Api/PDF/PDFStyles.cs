@@ -88,10 +88,17 @@ namespace CheckListManager.Common.Logic.Api.PDF
         {
             Image image = null;
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            if (uri == null ||
+                (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+            {
+                paragraph.AddText($"Image \"{uri}\" cannot be loaded: only HTTP/HTTPS resources are supported.");
+                return image;
+            }
 
             try
             {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
                 using (WebResponse response = request.GetResponse())
                 using (BinaryReader reader = new BinaryReader(response.GetResponseStream()))
                 {
@@ -117,6 +124,10 @@ namespace CheckListManager.Common.Logic.Api.PDF
                     paragraph.AddText($"Image \"{uri}\" not found.");
                 else
                     paragraph.AddText($"Error: {e.Message}");
+            }
+            catch (IOException e)
+            {
+                paragraph.AddText($"Error loading image \"{uri}\": {e.Message}");
             }
 
             return image;
