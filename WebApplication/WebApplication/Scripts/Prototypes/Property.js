@@ -58,8 +58,10 @@
         updateInformation();
 
         $("select", propertyPanel.getPropertyValue()).each(function () {
+            var value = $(this).val();
             var autoComplete = new matematici.AutoComplete(this);
             autoComplete.initialize();
+            if (value != null) autoComplete.setValue(value);
             setTimeout(function () {
                 autoComplete.refresh();
             }, 0);
