@@ -56,13 +56,17 @@
                 var prototypeTypes = departments[departmentIndex].prototypeTypes;
                 for (var index in prototypeTypes)
                     prototypeType.append($("<option />").text(prototypeTypes[index].name).attr("value", prototypeTypes[index].id));
-                prototypeType.val(initialValue).trigger("change");
+                prototypeType.val(initialValue);
             } else
-                prototypeType.val(null).trigger("change");
+                prototypeType.val(null);
+
+            var prototypeTypeAutoComplete = matematici.AutoComplete.get(prototypeType[0]);
+            prototypeTypeAutoComplete.refreshValues();
+            prototypeType.trigger("change");
             suspended = false;
 
             setTimeout(function () {
-                matematici.AutoComplete.get(prototypeType[0]).refresh();
+                prototypeTypeAutoComplete.refresh();
             }, 0);
         },
 
@@ -118,16 +122,18 @@
                     })
                     .appendTo(label);
 
-            department.val(model.department);
-            if (!!model.department) refreshPrototypeTypes(model.prototypeType);
-
             if (options.readOnly) {
                 matematici.controls.setEditable(department, false);
                 matematici.controls.setEditable(prototypeType, false);
-            } 
+            }
 
-            new matematici.AutoComplete(department[0]).initialize();
+            var departmentAutoComplete = new matematici.AutoComplete(department[0]);
+            departmentAutoComplete.initialize();
             new matematici.AutoComplete(prototypeType[0]).initialize();
+
+            department.val(model.department);
+            departmentAutoComplete.refresh();
+            if (!!model.department) refreshPrototypeTypes(model.prototypeType);
         };
 
 
