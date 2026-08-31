@@ -20,15 +20,15 @@
         refresh();
         valuePanel.addClass("DataSource");
         if (editable) {
-            valuePanel.append(sourceName = $("<select />").on("change", change));
+            valuePanel.append(sourceName = $("<select />").attr("data-nullable", "").on("change", change));
             for (var index in prototypes.prototype.getModel().externalSources)
                 $("<option />").appendTo(sourceName).text(index).attr("value", index);
 
-            sourceName.val(model[property]);
-            if (sourceName.val() != model.externalSourceName)
-                sourceName.attr("data-error", model.externalSourceName);
+            sourceName.val(model[property] == null ? null : model[property]);
+            if (sourceName.val() != model[property])
+                sourceName.attr("data-error", model[property]);
         } else
-            valuePanel.append($("<input />").attr({ type: "text", readOnly: true }).val(model.externalSourceName));
+            valuePanel.append($("<input />").attr({ type: "text", readOnly: true }).val(model[property]));
     }
 
     this.hasChanges = function () {
