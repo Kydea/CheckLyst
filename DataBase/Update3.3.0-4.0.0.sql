@@ -141,3 +141,5 @@ create table "Reports"."ReportsHistory"
 create index "Index_ReportsHistory_Report" on "Reports"."ReportsHistory"("Report");
 
 alter table "DataSources"."DataSources" alter column "Password" type text;
+drop trigger "Licensed users check" on "Security"."Users";
+drop function "Security"."Users_Count_Limit_Trigger"();
