@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.DirectoryServices.Protocols;
 using System.Net;
+using Matematici.Settings;
 
 namespace Matematici.Security
 {
@@ -48,6 +49,8 @@ namespace Matematici.Security
 
             if (string.IsNullOrWhiteSpace(Password))
                 throw new Exception("Please enter a password");
+
+            if (Provider.Values.DevelopmentMode) return;
 
             try
             {
