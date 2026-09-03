@@ -65,9 +65,7 @@
                 type: "post"
             }).done(function (result) {
                 if (result.ok) {
-                    $(".Company", matematici.elements.footer).text(companyList.val());
-                    $(".User", matematici.elements.footer).text(userCode.val());
-                    matematici.navigator.open("/");
+                    window.location = "@Url.Action("Index", "Default")";
                 } else
                     showError(result.message);
             }).fail(function (jqXhr, textStatus, errorThrown) {
