@@ -41,6 +41,21 @@ matematici.Clock = function () {
             });
         },
 
+        refresh = function () {
+            var now = new moment();
+
+            for (var index = 0; index < selectors.length; ++index) {
+                var
+                    local = elements[index].hasClass("LocalTime"),
+                    referenceTime = local ? localTime : utcTime,
+                    time = referenceTime && clientTime
+                        ? referenceTime.clone().add(now.diff(clientTime), "milliseconds")
+                        : local ? now : now.clone().utc();
+
+                elements[index].html(matematici.dateFormatter.both(time));
+            }
+        },
+
         updateLightNotifications = function () {
             if (matematici.tokenManager.checkRole("Instances#View#"))
                 $.ajax({
@@ -75,10 +90,7 @@ matematici.Clock = function () {
                         update();
                 }, Math.max(milliseconds || 0, 10000));
 
-                for (var index = 0; index < selectors.length; ++index) {
-                    var local = elements[index].hasClass("LocalTime");
-                    elements[index].html(matematici.dateFormatter.both(local ? localTime : utcTime));
-                }
+                refresh();
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 toggleWarning(true);
                 error = errorThrown;
@@ -113,6 +125,7 @@ matematici.Clock = function () {
         add: function (selector) {
             selectors.push(selector);
             elements.push($(selector));
+            refresh();
         },
 
         log: function () {
