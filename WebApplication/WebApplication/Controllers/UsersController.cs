@@ -43,6 +43,8 @@ namespace CheckListManager.WebApplication.Controllers
             return PartialView();
         }
 
+        [OverrideAuthorization]
+        [Authorize]
         [Route("TimeZone")]
         public ActionResult TimeZone()
         {
