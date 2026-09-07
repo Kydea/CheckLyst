@@ -175,13 +175,6 @@
                     _update(FALSE);
                 }
             },
-            _unload = function() {
-                if (_t.removeEventListener) {
-                    _t.removeEventListener(HASH_CHANGE, _listen, FALSE);
-                } else if (_t.detachEvent) {
-                    _t.detachEvent('on' + HASH_CHANGE, _listen);
-                }
-            },
             _uaMatch = function(ua) {
                 ua = ua.toLowerCase();
                 var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
@@ -264,7 +257,7 @@
             _options();
             $(_load);
         }
-        $(window).on('popstate', _popstate).on('unload', _unload);
+        $(window).on('popstate', _popstate);
 
         return {
             bind: function(type, data, fn) {
