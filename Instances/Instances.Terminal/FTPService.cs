@@ -82,6 +82,7 @@ namespace CheckListManager.Instances.Terminal
                 {
                     Action = TrailAction.InstanceExportCompleted,
                     Company = message.Message.Company,
+                    Date = DateTimeOffset.UtcNow,
                     CheckListCode = message.Message.Code,
                     CheckListID = message.Message.ID,
                     Information = JsonConvert.SerializeObject(
@@ -108,6 +109,7 @@ namespace CheckListManager.Instances.Terminal
                 {
                     Action = TrailAction.InstanceExportFailed,
                     Company = message.Message.Company,
+                    Date = DateTimeOffset.UtcNow,
                     CheckListCode = message.Message.Code,
                     CheckListID = message.Message.ID,
                     Information = JsonConvert.SerializeObject(new

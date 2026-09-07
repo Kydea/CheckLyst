@@ -95,6 +95,7 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportCompleted,
                     Company = message.Message.Company,
+                    Date = DateTimeOffset.UtcNow,
                     CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
                     CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(Information)
@@ -106,6 +107,7 @@ namespace CheckListManager.Prototypes.Terminal
                 {
                     Action = TrailAction.PrototypeExportFailed,
                     Company = message.Message.Company,
+                    Date = DateTimeOffset.UtcNow,
                     CheckListCode = $"{message.Message.PrototypeName}.{message.Message.Version}",
                     CheckListID = message.Message.Prototype,
                     Information = JsonConvert.SerializeObject(new
