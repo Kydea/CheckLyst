@@ -8,10 +8,10 @@ namespace Matematici
 {
     public static class DateTimeExtensions
     {
-        public static DateTime ToLocalTime(this DateTime DateTime, string TimeZone)
+        public static DateTimeOffset ToLocalTime(this DateTimeOffset DateTime, string TimeZone)
         {
             if (TimeZone == null) throw new ArgumentNullException();
-            return TimeZoneInfo.ConvertTimeFromUtc(DateTime, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
+            return TimeZoneInfo.ConvertTime(DateTime, TimeZoneInfo.FindSystemTimeZoneById(TimeZone));
         }
     }
 }

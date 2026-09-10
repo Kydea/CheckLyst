@@ -81,6 +81,21 @@
     matematici.tokenManager = new matematici.TokenManager(@Matematici.Settings.Provider.Values.SessionTimeout);
     matematici.hamburger = new matematici.Hamburger("#MenuButton");
 
+    (function (inactivityTimeout) {
+        var lastActivity = new Date();
+
+        matematici.elements.document.on("mousedown keydown", function () {
+            lastActivity = new Date();
+        });
+
+        setInterval(function () {
+            if (!matematici.isLoginPage && new Date() - lastActivity > inactivityTimeout * 1000) {
+                matematici.canClose = true;
+                window.location = matematici.urls.login;
+            }
+        }, 60000);
+    })(@Matematici.Settings.Provider.Values.SessionTimeout);
+
     matematici.navigator.handlePageLoad(null, function () { });
 
     matematici.clock.add("span.ServerTime");

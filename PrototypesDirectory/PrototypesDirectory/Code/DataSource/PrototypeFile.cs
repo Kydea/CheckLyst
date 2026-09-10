@@ -63,7 +63,8 @@ namespace Matematici.DataSource
             XFont Font = new XFont("Arial", 12);
             var CompanySettings = Settings.Provider.Values.Companies[Company];
             PdfDocument Document = PdfReader.Open(FileName);
-            var Watermark = $"Printed on {DateTime.UtcNow.ToLocalTime(CompanySettings.TimeZone):yyyy-MM-dd HH:mm:ss UTC zzz} by {User}";
+            var PrintedOn = DateTimeOffset.UtcNow.ToLocalTime(CompanySettings.TimeZone);
+            var Watermark = $"Printed on {PrintedOn:yyyy-MM-dd HH:mm:ss 'UTC' zzz} by {User}";
 
             for (int Index = 0; Index < Document.Pages.Count; Index++)
             {
