@@ -265,14 +265,17 @@
             parameterPrototype = rows.eq(0).remove();
             noRecord = rows.eq(1).remove();
 
-            if (source) 
-                setupParameters();
-            else {
+            if (!source)
                 tableBody.append(noRecord);
-                setTimeout(function () {
-                    matematici.AutoComplete.get(dataSourceSelect[0]).setValue(null);
-                }, 0);
-            }
+
+            setTimeout(function () {
+                var autoComplete = matematici.AutoComplete.get(dataSourceSelect[0]);
+                if (source) {
+                    autoComplete.setValue(source.dataSource);
+                    setupParameters();
+                } else
+                    autoComplete.setValue(null);
+            }, 0);
         },
 
         setup = function () {
